@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Planilla de Rondas - Golf Necochea</title>
+    <!-- Tailwind CSS para diseño fluido y moderno -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Iconos interactivos -->
+    <link class="col-span-1" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Quicksand:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Quicksand', sans-serif; transition: background-color 0.4s ease; }
+        h1, h2, h3, h4, .kids-font { font-family: 'Fredoka', sans-serif; }
+        .card-pop { transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .card-pop:active { transform: scale(0.95); }
+        .golf-bg {
+            background-image: radial-gradient(rgba(0, 0, 0, 0.03) 1.5px, transparent 1.5px), radial-gradient(rgba(0, 0, 0, 0.03) 1.5px, transparent 1.5px);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+        }
+        .accordion-content {
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+        }
+        .custom-scroll::-webkit-scrollbar {
+            height: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="golf-bg min-h-screen text-slate-800 pb-16 bg-slate-50 flex flex-col justify-between" id="rondas-body">
+
+    <!-- CABECERA ADAPTATIVA CON ACUMULADO GIGANTE -->
+    <header id="rondas-header" class="bg-gradient-to-r from-emerald-600 via-teal-500 to-green-600 text-white py-5 px-4 shadow-md sticky top-0 z-30 transition-all duration-500">
+        <div class="max-w-md mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <span class="text-3xl" id="header-avatar-emoji">🏌️‍♂️</span>
+                <div>
+                    <h1 class="text-lg font-bold tracking-wide" id="rondas-header-title">Golf Rondas Pro</h1>
+                    <p class="text-[11px] text-emerald-100 font-semibold uppercase tracking-wider">Planilla de Campo 2026</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-2 pr-6">
+                <!-- Botonera superior -->
+                <button onclick="resetPlayerSelection()" id="btn-cambiar-jugador" class="hidden bg-white/20 hover:bg-white/30 text-white text-[11px] px-3 py-2 rounded-full font-black transition-all">
+                    Perfil
+                </button>
+                <button onclick="openResetModal()" id="btn-reiniciar-ronda" class="hidden bg-red-600/35 hover:bg-red-600/50 text-white text-[11px] px-3 py-2 rounded-full font-black transition-all">
+                    Reiniciar 🔄
+                </button>
+                <button onclick="toggleSettings()" id="btn-settings-rondas" class="hidden bg-white/20 hover:bg-white/30 text-white text-[11px] p-2 rounded-full font-black transition-all">
+                    <i class="fa-solid fa-gears"></i>
+                </button>
+                <span class="hidden text-5xl font-black tracking-wider drop-shadow-md select-none transition-all duration-300 ml-2" id="score-acumulado-text">E</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-md w-full mx-auto px-4 py-6">
+
+        <!-- PANEL DE CONFIGURACIÓN -->
+        <section id="settings-panel" class="hidden bg-white rounded-3xl p-5 shadow-lg border-2 border-emerald-200 mb-6 space-y-4">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h3 class="font-bold text-sm text-emerald-800 flex items-center gap-1.5">
+                    <i class="fa-solid fa-link"></i> Configurar Enlaces de Sincronización
+                </h3>
+                <button onclick="toggleSettings()" class="text-slate-400 hover:text-slate-600 font-bold">✕</button>
+            </div>
+            <div class="space-y-1.5">
+                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">URL de Google Apps Script (doPost)</label>
+                <input type="url" id="apps-script-url-input" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-xs font-mono focus:outline-none focus:ring-2 focus:ring-emerald-400" placeholder="https://script.google.com/macros/s/.../exec">
+            </div>
+            <button onclick="saveAllSettings()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-3 rounded-xl transition-all shadow-md">Guardar Configuración</button>
+        </section>
+
+        <!-- PASO 1: SELECCIONAR JUGADOR -->
+        <section id="jugador-selector-section" class="bg-white rounded-[2.5rem] p-6 shadow-xl border border-slate-100 space-y-6">
+            <h2 class="text-center font-black text-slate-700 text-base uppercase tracking-wider">¿Quién está jugando la Ronda de Campo?</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="setRondaPlayer('CONSTANZA')" id="form-btn-constanza" class="p-5 rounded-3xl border-2 border-purple-300 bg-purple-100 flex flex-col items-center gap-2 transition-all active:scale-95 shadow-md">
+                    <span class="text-5xl">👧</span><span class="font-black text-sm text-purple-700">Constanza</span>
+                </button>
+                <button onclick="setRondaPlayer('SALVADOR')" id="form-btn-salvador" class="p-5 rounded-3xl border-2 border-blue-300 bg-blue-100 flex flex-col items-center gap-2 transition-all active:scale-95 shadow-md">
+                    <span class="text-5xl">👦</span><span class="font-black text-sm text-blue-700">Salvador</span>
+                </button>
+                <button onclick="setRondaPlayer('ELISA')" id="form-btn-elisa" class="p-5 rounded-3xl border-2 border-pink-300 bg-pink-100 flex flex-col items-center gap-2 transition-all active:scale-95 shadow-md">
+                    <span class="text-5xl">👩‍🦰</span><span class="font-black text-sm text-pink-700">Elisa</span>
+                </button>
+                <button onclick="setRondaPlayer('PAPA')" id="form-btn-papa" class="p-5 rounded-3xl border-2 border-emerald-300 bg-emerald-100 flex flex-col items-center gap-2 transition-all active:scale-95 shadow-md">
+                    <span class="text-5xl">👨</span><span class="font-black text-sm text-emerald-700">Papá</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- PLANILLA DE CAPTURA JUGADOR -->
+        <section id="captura-planilla-section" class="hidden space-y-6">
+            
+            <!-- Selector Rápido de 9 Hoyos -->
+            <div class="grid grid-cols-9 gap-1.5 w-full max-w-sm mx-auto px-1.5 mb-2" id="container-hoyos">
+                <!-- Botones de hoyos inyectados por JS -->
+            </div>
+
+            <!-- SECCIÓN 0: RESULTADO DEL HOYO -->
+            <div class="relative border-4 bg-white rounded-[2rem] p-5 pt-8 shadow-xl transition-all duration-300" id="container-score-window">
+                <div class="absolute -top-4.5 left-6 bg-white px-3 flex items-center gap-1.5">
+                    <span class="text-lg font-black tracking-wider uppercase kids-font" id="score-title-text">Resultado del Hoyo</span>
+                </div>
+                <div class="space-y-4">
+                    <p class="text-slate-400 text-xs font-black uppercase tracking-widest text-center">Toca tu score en este hoyo</p>
+                    <div class="flex justify-between items-center gap-2 overflow-x-auto pb-1 custom-scroll" id="score-buttons-row">
+                        <button onclick="selectScore(-2)" id="btn-score-m2" class="w-11 h-11 rounded-full bg-slate-50 border-2 border-slate-200 font-black text-sm flex items-center justify-center transition-all card-pop shrink-0">-2</button>
+                        <button onclick="selectScore(-1)" id="btn-score-m1" class="w-11 h-11 rounded-full bg-slate-50 border-2 border-slate-200 font-black text-sm flex items-center justify-center transition-all card-pop shrink-0">-1</button>
+                        <button onclick="selectScore(0)" id="btn-score-0" class="w-11 h-11 rounded-full bg-slate-50 border-2 border-slate-200 font-black text-sm flex items-center justify-center transition-all card-pop shrink-0">E</button>
+                        <button onclick="selectScore(1)" id="btn-score-1" class="w-11 h-11 rounded-full bg-slate-50 border-2 border-slate-200 font-black text-sm flex items-center justify-center transition-all card-pop shrink-0">+1</button>
+                        <button onclick="selectScore(2)" id="btn-score-2" class="w-11 h-11 rounded-full bg-slate-50 border-2 border-slate-200 font-black text-sm flex items-center justify-center transition-all card-pop shrink-0">+2</button>
+                        <button onclick="selectScore(3)" id="btn-score-3" class="w-11 h-11 rounded-full bg-slate-50 border-2 border-slate-200 font-black text-sm flex items-center justify-center transition-all card-pop shrink-0">+3</button>
+                        <button onclick="selectScore(4)" id="btn-score-4" class="w-11 h-11 rounded-full bg-slate-50 border-2 border-slate-200 font-black text-sm flex items-center justify-center transition-all card-pop shrink-0">+4</button>
+                    </div>
+                    <div id="score-achievement-badge" class="flex items-center rounded-3xl border-2 transition-all duration-300 h-24 overflow-hidden p-0 w-full">
+                        <!-- Relleno por JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACORDEÓN TÁCTIL EN CUADRÍCULA DE PAREJAS -->
+            <div class="grid grid-cols-2 gap-3.5" id="accordion-group">
+
+                <!-- 1. DRIVE (col-span-1 cerrado) -->
+                <div class="col-span-1 border-2 bg-white rounded-[1.8rem] shadow-sm overflow-hidden transition-all duration-300 border-slate-100" id="card-drive">
+                    <button onclick="toggleAccordion('drive')" class="w-full flex justify-between items-center px-5 py-4 bg-slate-50/50 hover:bg-slate-50 transition-all">
+                        <div class="flex items-center gap-2">
+                            <span class="text-base">🏌️‍♂️</span><span class="font-black text-slate-700 text-[11px] uppercase tracking-wider kids-font">Drive</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span id="badge-status-drive" class="text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded-full bg-slate-200 text-slate-500">Vacío</span>
+                            <i class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform duration-300" id="icon-arrow-drive"></i>
+                        </div>
+                    </button>
+                    <div id="content-drive" class="accordion-content max-h-0 opacity-0 overflow-hidden">
+                        <div class="p-3 border-t border-slate-50 grid grid-cols-3 gap-2">
+                            <button onclick="selectDriveOutcome('fairway')" id="btn-drive-fairway" class="card-pop py-2 px-1 rounded-xl border-2 border-slate-100 bg-slate-50 flex flex-col items-center text-center">
+                                <svg class="w-12 h-12" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect width="64" height="64" rx="16" fill="#e6f4ea"/>
+                                    <path d="M8 48 H56" stroke="#1b5e20" stroke-width="6" stroke-linecap="round"/>
+                                    <path d="M16 48 C20 40, 24 40, 28 48" stroke="#2e7d32" stroke-width="4" stroke-linecap="round"/>
+                                    <path d="M36 48 C40 40, 44 40, 48 48" stroke="#2e7d32" stroke-width="4" stroke-linecap="round"/>
+                                    <path d="M32 14 V48" stroke="#212121" stroke-width="4" stroke-linecap="round"/>
+                                    <path d="M32 14 L14 22 L32 30 Z" fill="#d50000"/>
+                                </svg>
+                                <span class="font-black text-[9px] text-slate-700 mt-1">Fairway</span>
+                            </button>
+                            <button onclick="selectDriveOutcome('sintiro')" id="btn-drive-sintiro" class="card-pop py-2 px-1 rounded-xl border-2 border-slate-100 bg-slate-50 flex flex-col items-center text-center">
+                                <svg class="w-12 h-12" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect width="64" height="64" rx="16" fill="#fef7e0"/>
+                                    <path d="M32 36 V52" stroke="#5d4037" stroke-width="8" stroke-linecap="round"/>
+                                    <circle cx="32" cy="24" r="14" fill="#1b5e20"/>
+                                    <circle cx="21" cy="30" r="11" fill="#0d5302"/>
+                                    <circle cx="43" cy="30" r="11" fill="#0d5302"/>
+                                </svg>
+                                <span class="font-black text-[9px] text-slate-700 mt-1">Sin Tiro</span>
+                            </button>
+                            <button onclick="selectDriveOutcome('castigo')" id="btn-drive-castigo" class="card-pop py-2 px-1 rounded-xl border-2 border-slate-100 bg-slate-50 flex flex-col items-center text-center">
+                                <svg class="w-12 h-12" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect width="64" height="64" rx="16" fill="#e8f0fe"/>
+                                    <path d="M12 36 C18 30, 22 30, 28 36 C34 42, 38 42, 44 36 C50 30, 54 30, 60 36" stroke="#0d47a1" stroke-width="5" stroke-linecap="round"/>
+                                    <path d="M8 46 C14 40, 18 40, 24 46 C30 52, 34 52, 40 46 C46 40, 50 40, 56 46" stroke="#1565c0" stroke-width="5" stroke-linecap="round"/>
+                                    <circle cx="20" cy="22" r="3.5" fill="#1976d2"/>
+                                    <circle cx="44" cy="20" r="3" fill="#1976d2"/>
+                                </svg>
+                                <span class="font-black text-[9px] text-slate-700 mt-1">Castigo</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. APPROACH 120-150y -->
+                <div class="col-span-1 border-2 bg-white rounded-[1.8rem] shadow-sm overflow-hidden transition-all duration-300 border-slate-100" id="card-app120_150">
+                    <button onclick="toggleAccordion('app120_150')" class="w-full flex justify-between items-center px-5 py-4 bg-slate-50/50 hover:bg-slate-50 transition-all">
+                        <div class="flex items-center gap-2">
+                            <span class="text-base">🚀</span><span class="font-black text-slate-700 text-[11px] uppercase tracking-wider kids-font">120-150y</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span id="badge-status-app120_150" class="text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded-full bg-slate-200 text-slate-500">Vacío</span>
+                            <i class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform duration-300" id="icon-arrow-app120_150"></i>
+                        </div>
+                    </button>
+                    <div id="content-app120_150" class="accordion-content max-h-0 opacity-0 overflow-hidden">
+                        <div class="p-3 border-t border-slate-50 grid grid-cols-3 gap-2">
+                            <button onclick="selectApproachTwinOutcome('app120_150', 'green')" id="btn-app120_150-green" class="card-pop py-2 px-1 rounded-xl border-2 border-slate-100 bg-slate-50 flex flex-col items-center text-center">
+                                <svg class="w-10 h-10" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="64" rx="16" fill="#e6f4ea"/><ellipse cx="32" cy="46" rx="20" ry="10" fill="#a8e6cf"/><ellipse cx="32" cy="46" rx="6" ry="3" fill="#1b5e20"/><path d="M32 14 V46" stroke="#212121" stroke-width="4" stroke-linecap="round"/><path d="M32 14 L14 22 L32 30 Z" fill="#d50000"/></svg>
+                                <span class="font-black text-[9px] text-slate-700 mt-1">Al Green</span>
+                            </button>
+                            <button onclick="selectApproachTwinOutcome('app120_150', 'barbas')" id="btn-app120_150-barbas" class="card-pop py-2 px-1 rounded-xl border-2 border-slate-100 bg-slate-50 flex flex-col items-center text-center">
+                                <svg class="w-10 h-10" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="64" rx="16" fill="#fef7e0"/><ellipse cx="32" cy="44" rx="22" ry="13" fill="#0d5302" stroke="#1b5e20" stroke-width="3"/><ellipse cx="32" cy="44" rx="12" ry="7" fill="#ffffff"/><path d="M32 20 V39" stroke="#424242" stroke-width="3.5" stroke-linecap="round"/><path d="M32 20 L20 26 L32 32 Z" fill="#e53935"/></svg>
+                                <span class="font-black text-[9px] text-slate-700 mt-1">Barbas</span>
+                            </button>
+                            <button onclick="selectApproachTwinOutcome('app120_150', 'trampa')" id="btn-app120_150-trampa" class="card-pop py-2 px-1 rounded-xl border-2 border-slate-100 bg-slate-50 flex flex-col items-center text-center">
+                                <svg class="w-10 h-10" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="64" rx="16" fill="#efebe9"/><path d="M12 42 C12 30, 24 26, 38 28 C52 30, 54 40, 48 48 C42 56, 16 54, 12 42 Z" fill="#a1887f" stroke="#5d4037" stroke-width="4"/><circle cx="24" cy="38" r="1.5" fill="#3e2723"/><circle cx="36" cy="44" r="2" fill="#3e2723"/><circle cx="44" cy="36" r="1.5" fill="#3e2723"/><path d="M44 44 L26 28" stroke="#3e2723" stroke-width="3.5" stroke-linecap="round"/><path d="M23 31 L29 25" stroke="#3e2723" stroke-width="3.5" stroke-linecap="round"/></svg>
+                                <span class="font-black text-[9px] text-slate-700 mt-1">Trampa</span>
+                                <span class="text-[8px] text-slate-400 font-bold leading-none block mt-0.5">+30y / Arena</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. APPROACH 90-120y -->
+                <div class="col-span-1 border-2 bg-white rounded-[1.8rem] shadow-sm overflow-hidden transition-all duration-300 border-slate-100" id="card-app90_120">
+                    <button onclick="toggleAccordion('app90_120')" class="w-full flex justify-between items-center px-5 py-4 bg-slate-50/50 hover:bg-slate-50 transition-all">
+                        <div class="flex items-center gap-2">
+                            <span class="text-base">🏌️</span><span class="font-black text-slate-700 text-[11px] uppercase tracking-wider kids-font">90-120y</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span id="badge-status-app90_120" class="text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded-full bg-slate-200 text-slate-500">Vacío</span>
+                            <i class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform duration-300" id="icon-arrow-app90_120"></i>
+                        </div>
+                    </button>
+                    <div id="content-app90_120" class="accordion-content max-h-0 opacity-0 overflow-hidden">
+                        <div class="p-3 border-t border-slate-50 grid grid-cols-3 gap-2">
+                            <button onclick="selectApproachTwinOutcome('app90_120', 'green')" id="btn-app90_120-green" class="card-pop py-2 px-1 rounded-xl border-2 border-slate-100 bg-slate-50 flex flex-col items-center text-center">
+                                <svg class="w-10 h-10" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="64" rx="16" fill="#e6f4ea"/><ellipse cx="32" cy="46" rx="20" ry="10" fill="#a8e6cf"/><ellipse cx="32" cy="46" rx="6" ry="3" fill="#1b5e20"/><path d="M32 14 V46" stroke="#212121" stroke-width="4" stroke-linecap="round"/><path d="M32 14 L14 22 L32 30 Z" fill="#d50000"/></svg>                                <span class="font-black text-[9px] text-slate-700 mt-1">Al Green</span>
+                            </button>
+                            <button onclick="selectApproachTwinOutcome('app90_120', 'barbas')" id="btn-app90_120-barbas" class="card-pop py-2 px-1 rounded-xl border-2 border-slate-100 bg-slate-50 flex flex-col items-center text-center">
+                                <svg class="w-10 h-10" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="64" rx="16" fill="#fef7e0"/><ellipse cx="32" cy="44" rx="22" ry="13" fill="#0d5302" stroke="#1b5e20" stroke-width="3"/><ellipse cx="32" cy="44" rx="12" ry="7" fill="#ffffff"/><path d="M32 20 V39" stroke="#424242" stroke-width="3.5" stroke-linecap="round"/><path d="M32 20 L20 26 L32 32 Z" fill="#e53935"/></svg>
+                                <span class="font-black text-[9px] text-slate-700 mt-1">Barbas</span>
+                            </button>
+                            <button onclick="selectApproachTwinOutcome('app90_120', 'trampa')" id="btn-app90_120-trampa" class="card-pop py-2 px-1 rounded-xl border-2 border-slate-100 bg-slate-50 flex flex-col items-center text-center">
+                                <svg class="w-10 h-10" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="64" rx="16" fill="#efebe9"/><path d="M12 42 C12 30, 24 26, 38 28 C52 30, 54 40, 48 48 C42 56, 16 54, 12 42 Z" fill="#a1887f" stroke="#5d4037" stroke-width="4"/><circle cx="24" cy="38" r="1.5" fill="#3e2723"/><circle cx="36" cy="44" r="2" fill="#3e2723"/><circle cx="44" cy="36" r="1.5" fill="#3e2723"/><path d="M44 44 L26 28" stroke="#3e2723" stroke-width="3.5" stroke-linecap="round"/><path d="M23 31 L29 25" stroke="#3e2723" stroke-width="3.5" stroke-linecap="round"/></svg>
+                                <span class="font-black text-[9px] text-slate-700 mt-1">Trampa</span>
+                                <span class="text-[8px] text-slate-400 font-bold leading-none block mt-0.5">+30y / Arena</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. APPROACH 60-90y -->
+                <div class="col-span-1 border-2 bg-white rounded-[1.8rem] shadow-sm overflow-hidden transition-all duration-300 border-slate-100" id="card-app60_90">
+                    <button onclick="toggleAccordion('app60_90')" class="w-full flex justify-between items-center px-5 py-4 bg-slate-50/50 hover:bg-slate-50 transition-all">
+                        <div class="flex items-center gap-2">
+                            <span class="text-base">⚡</span><span class="font-black text-slate-700 text-[11px] uppercase tracking-wider kids-font">60-90y</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span id="badge-status-app60_90" class="text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded-full bg-slate-200 text-slate-500">Vacío</span>
+                            <i class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform duration-300" id="icon-arrow-app60_90"></i>
+                        </div>
+                    </button>
+                    <div id="content-app60_90" class="accordion-content max-h-0 opacity-0 overflow-hidden">
+                        <div class="p-3 border-t border-slate-50 grid grid-cols-3 gap-2">
+                            <button onclick="selectApproachTwinOutcome('app60_90', 'green')" id="btn-app60_90-green" class="card-pop py-2 px-1 rounded-xl border-2 border-slate-100 bg-slate-50 flex flex-col items-center text-center">
+                                <svg class="w-10 h-10" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="64" rx="16" fill="#e6f4ea"/><ellipse cx="32" cy="46" rx="20" ry="10" fill="#a8e6cf"/><ellipse cx="32" cy="46" rx="6" ry="3" fill="#1b5e20"/><path d="M32 14 V46" stroke="#212121" stroke-width="4" stroke-linecap="round"/><path d="M32 14 L14 22 L32 30 Z" fill="#d50000"/></svg>
+                                <span class="font-black text-[9px] text-slate-700 mt-1">Al Green</span>
+                            </button>
+                            <button onclick="selectApproachTwinOutcome('app60_90', 'barbas')" id="btn-app60_90-barbas" class="card-pop py-2 px-1 rounded-xl border-2 border-slate-100 bg-slate-50 flex flex-col items-center text-center">
+                                <svg class="w-10 h-10" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="64" rx="16" fill="#fef7e0"/><ellipse cx="32" cy="44" rx="22" ry="13" fill="#0d5302" stroke="#1b5e20" stroke-width="3"/><ellipse cx="32" cy="44" rx="12" ry="7" fill="#ffffff"/><path d="M32 20 V39" stroke="#424242" stroke-width="3.5" stroke-linecap="round"/><path d="M32 20 L20 26 L32 32 Z" fill="#e53935"/></svg>
+                                <span class="font-black text-[9px] text-slate-700 mt-1">Barbas</span>
+                            </button>
+                            <button onclick="selectApproachTwinOutcome('app60_90', 'trampa')" id="btn-app60_90-trampa" class="card-pop py-2 px-1 rounded-xl border-2 border-slate-100 bg-slate-50 flex flex-col items-center text-center">
+                                <svg class="w-10 h-10" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="64" rx="16" fill="#efebe9"/><path d="M12 42 C12 30, 24 26, 38 28 C52 30, 54 40, 48 48 C42 56, 16 54, 12 42 Z" fill="#a1887f" stroke="#5d4037" stroke-width="4"/><circle cx="24" cy="38" r="1.5" fill="#3e2723"/><circle cx="36" cy="44" r="2" fill="#3e2723"/><circle cx="44" cy="36" r="1.5" fill="#3e2723"/><path d="M44 44 L26 28" stroke="#3e2723" stroke-width="3.5" stroke-linecap="round"/><path d="M23 31 L29 25" stroke="#3e2723" stroke-width="3.5" stroke-linecap="round"/></svg>
+                                <span class="font-black text-[9px] text-slate-700 mt-1">Trampa</span>
+                                <span class="text-[8px] text-slate-400 font-bold leading-none block mt-0.5">+30y / Arena</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. APPROACH 30-60y -->
+                <div class="col-span-1 border-2 bg-white rounded-[1.8rem] shadow-sm overflow-hidden transition-all duration-300 border-slate-100" id="card-approach">
+                    <button onclick="toggleAccordion('approach')" class="w-full flex justify-between items-center px-5 py-4 bg-slate-50/50 hover:bg-slate-50 transition-all">
+                        <div class="flex items-center gap-2">
+                            <span class="text-base">🎯</span><span class="font-black text-slate-700 text-[11px] uppercase tracking-wider kids-font">30-60y</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span id="badge-status-approach" class="text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded-full bg-slate-200 text-slate-500">Vacío</span>
+                            <i class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform duration-300" id="icon-arrow-approach"></i>
+                        </div>
+                    </button>
+                    <div id="content-approach" class="accordion-content max-h-0 opacity-0 overflow-hidden">
+                        <div class="p-3 border-t border-slate-50 grid grid-cols-3 gap-2">
+                            <button onclick="selectApproachOutcome('green')" id="btn-approach-green" class="card-pop py-2 px-1 rounded-xl border-2 border-slate-100 bg-slate-50 flex flex-col items-center text-center">
+                                <svg class="w-10 h-10" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="64" rx="16" fill="#e6f4ea"/><ellipse cx="32" cy="46" rx="20" ry="10" fill="#a8e6cf"/><ellipse cx="32" cy="46" rx="6" ry="3" fill="#1b5e20"/><path d="M32 14 V46" stroke="#212121" stroke-width="4" stroke-linecap="round"/><path d="M32 14 L14 22 L32 30 Z" fill="#d50000"/></svg>
+                                <span class="font-black text-[9px] text-slate-700 mt-1">Al Green</span>
+                            </button>
+                            <button onclick="selectApproachOutcome('barbas')" id="btn-approach-barbas" class="card-pop py-2 px-1 rounded-xl border-2 border-slate-100 bg-slate-50 flex flex-col items-center text-center">
+                                <svg class="w-10 h-10" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="64" rx="16" fill="#fef7e0"/><ellipse cx="32" cy="44" rx="22" ry="13" fill="#0d5302" stroke="#1b5e20" stroke-width="3"/><ellipse cx="32" cy="44" rx="12" ry="7" fill="#ffffff"/><path d="M32 20 V39" stroke="#424242" stroke-width="3.5" stroke-linecap="round"/><path d="M32 20 L20 26 L32 32 Z" fill="#e53935"/></svg>
+                                <span class="font-black text-[9px] text-slate-700 mt-1">Barbas</span>
+                            </button>
+                            <button onclick="selectApproachOutcome('trampa')" id="btn-approach-trampa" class="card-pop py-2 px-1 rounded-xl border-2 border-slate-100 bg-slate-50 flex flex-col items-center text-center">
+                                <svg class="w-10 h-10" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="64" height="64" rx="16" fill="#efebe9"/><path d="M12 42 C12 30, 24 26, 38 28 C52 30, 54 40, 48 48 C42 56, 16 54, 12 42 Z" fill="#a1887f" stroke="#5d4037" stroke-width="4"/><circle cx="24" cy="38" r="1.5" fill="#3e2723"/><circle cx="36" cy="44" r="2" fill="#3e2723"/><circle cx="44" cy="36" r="1.5" fill="#3e2723"/><path d="M44 44 L26 28" stroke="#3e2723" stroke-width="3.5" stroke-linecap="round"/><path d="M23 31 L29 25" stroke="#3e2723" stroke-width="3.5" stroke-linecap="round"/></svg>
+                                <span class="font-black text-[9px] text-slate-700 mt-1">Trampa</span>
+                                <span class="text-[8px] text-slate-400 font-bold leading-none block mt-0.5">+30y / Arena</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. JUEGO CORTO 0-30y -->
+                <div class="col-span-1 border-2 bg-white rounded-[1.8rem] shadow-sm overflow-hidden transition-all duration-300 border-slate-100" id="card-approach30">
+                    <button onclick="toggleAccordion('approach30')" class="w-full flex justify-between items-center px-5 py-4 bg-slate-50/50 hover:bg-slate-50 transition-all">
+                        <div class="flex items-center gap-2">
+                            <span class="text-base">⛳</span><span class="font-black text-slate-700 text-[11px] uppercase tracking-wider kids-font">0-30y</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <span id="badge-status-approach30" class="text-[8px] font-extrabold uppercase px-1.5 py-0.5 rounded-full bg-slate-200 text-slate-500">Vacío</span>
+                            <i class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform duration-300" id="icon-arrow-approach30"></i>
+                        </div>
+                    </button>
+                    <div id="content-approach30" class="accordion-content max-h-0 opacity-0 overflow-hidden">
+                        <div class="p-4 border-t border-slate-50 space-y-3">
+                            <p class="text-slate-400 text-[10px] font-black uppercase text-center">¿Tiros al Green?</p>
+                            <div class="flex justify-center items-center gap-4">
+                                <button onclick="selectApproach30Outcome(1)" id="btn-app30-1" class="w-11 h-11 rounded-full bg-slate-50 border-2 border-slate-200 font-black text-base flex items-center justify-center transition-all card-pop text-slate-700">1</button>
+                                <button onclick="selectApproach30Outcome(2)" id="btn-app30-2" class="w-11 h-11 rounded-full bg-slate-50 border-2 border-slate-200 font-black text-base flex items-center justify-center transition-all card-pop text-slate-700">2</button>
+                                <button onclick="selectApproach30Outcome(3)" id="btn-app30-3" class="w-11 h-11 rounded-full bg-slate-50 border-2 border-slate-200 font-black text-base flex items-center justify-center transition-all card-pop text-slate-700">3+</button>
+                            </div>
+                            <div id="approach30-achievement-badge" class="flex items-center rounded-2xl border-2 border-dashed border-slate-200 h-16 overflow-hidden p-0 w-full">
+                                <!-- Badge por JS -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. PUTT (ANCHO COMPLETO - DOBLE ANCHO INTEGRADO Y UNIFICADO DE LADO A LADO) -->
+                <div class="col-span-2 border-2 bg-white rounded-[2rem] shadow-sm overflow-hidden transition-all duration-300 border-slate-100" id="card-putt">
+                    <!-- Cabecera de Putt con la misma altura de padding py-4 de las demas fichas de forma fija -->
+                    <button onclick="toggleAccordion('putt')" class="w-full flex justify-between items-center px-5 py-4 bg-slate-50/50 hover:bg-slate-50 transition-all">
+                        <div class="flex items-center gap-2.5">
+                            <span class="text-lg">🏌️‍♂️</span><span class="font-black text-slate-700 text-[11px] uppercase tracking-wider kids-font">Análisis de Putt (Obligatorio)</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span id="badge-status-putt" class="text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded-full bg-slate-200 text-slate-500">Vacío</span>
+                            <i class="fa-solid fa-chevron-down text-slate-400 text-[10px] transition-transform duration-300" id="icon-arrow-putt"></i>
+                        </div>
+                    </button>
+                    <div id="content-putt" class="accordion-content max-h-0 opacity-0 overflow-hidden">
+                        <div class="p-6 border-t border-slate-50 space-y-6">
+                            
+                            <!-- Rango del Primer Putt -->
+                            <div class="space-y-2.5">
+                                <p class="text-slate-400 text-xs font-black uppercase tracking-widest text-center">👣 Distancia del Primer Putt</p>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <button id="btn-puttdist-0-2" onclick="selectPuttDist('0-2')" class="card-pop p-3 rounded-2xl border-2 border-slate-200 bg-slate-50 text-xs font-black text-slate-700">0 - 2 Pasos</button>
+                                    <button id="btn-puttdist-3-6" onclick="selectPuttDist('3-6')" class="card-pop p-3 rounded-2xl border-2 border-slate-200 bg-slate-50 text-xs font-black text-slate-700">3 - 6 Pasos</button>
+                                    <button id="btn-puttdist-7-12" onclick="selectPuttDist('7-12')" class="card-pop p-3 rounded-2xl border-2 border-slate-200 bg-slate-50 text-xs font-black text-slate-700">7 - 12 Pasos</button>
+                                    <button id="btn-puttdist-12+" onclick="selectPuttDist('12+')" class="card-pop p-3 rounded-2xl border-2 border-slate-200 bg-slate-50 text-xs font-black text-slate-700">Más de 12</button>
+                                </div>
+                            </div>
+
+                            <!-- Putt de menos de 2 pasos -->
+                            <div class="space-y-3 pt-5 border-t border-slate-100">
+                                <p class="text-slate-700 text-xs font-black uppercase tracking-wider text-center">⚠️ ¿Tuviste un Putt de menos de 2 pasos?</p>
+                                <div class="grid grid-cols-3 gap-3 max-w-sm mx-auto">
+                                    <button id="btn-missed-nohubo" onclick="selectMissedShort('nohubo')" class="card-pop py-3 px-1 rounded-xl border-2 border-slate-200 bg-slate-50 flex flex-col items-center justify-center gap-1 text-[11px] font-black transition-all">
+                                        <span class="text-xl">🔵</span><span class="text-slate-800 text-center leading-tight">No hubo Putt</span>
+                                    </button>
+                                    <button id="btn-missed-no" onclick="selectMissedShort('no')" class="card-pop py-3 px-1 rounded-xl border-2 border-slate-200 bg-slate-50 flex flex-col items-center justify-center gap-1 text-[11px] font-black transition-all">
+                                        <span class="text-xl">👍</span><span class="text-slate-800 text-center leading-tight font-extrabold text-white">Lo metí</span>
+                                    </button>
+                                    <button id="btn-missed-si" onclick="selectMissedShort('si')" class="card-pop py-3 px-1 rounded-xl border-2 border-slate-200 bg-slate-50 flex flex-col items-center justify-center gap-1 text-[11px] font-black transition-all">
+                                        <span class="text-xl">😢</span><span class="text-slate-800 text-center leading-tight font-extrabold text-white">Lo fallé</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Putts Totales -->
+                            <div class="space-y-2.5 pt-5 border-t border-slate-100">
+                                <p class="text-slate-400 text-xs font-black uppercase tracking-widest text-center">⛳ Cantidad de Putts Realizados</p>
+                                <div class="flex justify-center items-center gap-6">
+                                    <button id="btn-puttcount-1" onclick="selectPuttCount(1)" class="w-14 h-14 rounded-full bg-slate-50 border-2 border-slate-200 font-black text-base flex items-center justify-center transition-all card-pop text-slate-700">1</button>
+                                    <button id="btn-puttcount-2" onclick="selectPuttCount(2)" class="w-14 h-14 rounded-full bg-slate-50 border-2 border-slate-200 font-black text-base flex items-center justify-center transition-all card-pop text-slate-700">2</button>
+                                    <button id="btn-puttcount-3" onclick="selectPuttCount(3)" class="w-14 h-14 rounded-full bg-slate-50 border-2 border-slate-200 font-black text-base flex items-center justify-center transition-all card-pop text-slate-700">3+</button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- NAVEGACIÓN INFERIOR -->
+            <div class="bg-white rounded-3xl p-4 shadow-lg border border-slate-100 flex justify-between items-center gap-3">
+                <button onclick="navigateHoyo(-1)" id="btn-hoyo-back" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs py-2.5 px-5 rounded-xl transition-all">Atrás</button>
+                <button onclick="navigateHoyo(1)" id="btn-hoyo-next" class="bg-slate-800 hover:bg-slate-900 text-white font-bold text-xs py-2.5 px-6 rounded-xl transition-all shadow-md">Siguiente</button>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- CONFIRM RESET MODAL -->
+    <div id="confirm-reset-modal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/80 backdrop-blur-sm flex justify-center items-center p-4">
+        <div class="bg-white rounded-[2rem] w-full max-w-sm shadow-2xl border-4 border-red-400 p-6 text-center space-y-4">
+            <span class="text-5xl">🔄</span>
+            <h3 class="text-lg font-black text-slate-800 kids-font uppercase">¿Reiniciar Ronda?</h3>
+            <p class="text-xs text-slate-500 font-semibold leading-relaxed">Se borrarán todos tus hoyos en este dispositivo de forma definitiva.</p>
+            <div class="flex gap-3 pt-2">
+                <button onclick="closeResetModal()" class="flex-1 bg-slate-100 text-slate-600 font-bold text-xs py-3 rounded-xl border border-slate-200">Cancelar</button>
+                <button onclick="confirmResetRonda()" class="flex-1 bg-red-600 text-white font-bold text-xs py-3 rounded-xl">Reiniciar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FINALIZE MODAL -->
+    <div id="finalize-modal" class="hidden fixed inset-0 z-50 overflow-y-auto bg-slate-900/80 backdrop-blur-sm flex justify-center items-center p-4">
+        <div class="bg-white rounded-[2rem] w-full max-w-sm shadow-2xl border-4 border-emerald-400 p-6 text-center space-y-4">
+            <span class="text-6xl animate-bounce">🏆</span>
+            <h3 class="text-xl font-black text-slate-800 kids-font uppercase">¡Ronda Completada!</h3>
+            <p class="text-xs text-slate-500 font-semibold leading-relaxed">Felicidades! Lograste completar los 9 hoyos de juego. Tu acumulado es: <span id="finalize-score-badge" class="font-black text-lg text-emerald-600">E</span></p>
+            <div class="bg-emerald-50 border border-emerald-100 p-4 rounded-2xl text-left space-y-2">
+                <h4 class="font-extrabold text-[10px] text-emerald-800 uppercase tracking-wider border-b pb-1">Desglose de Estadísticas:</h4>
+                <p class="text-[11px] text-slate-600 font-bold">👤 <strong>Jugador:</strong> <span id="summary-final-player">-</span></p>
+                <p class="text-[11px] text-slate-600 font-bold">🏌️ <strong>Resultado Final:</strong> <span id="summary-final-golpes">-</span></p>
+                <p class="text-[11px] text-slate-600 font-bold">🟢 <strong>Fairways:</strong> <span id="summary-final-fw">-</span></p>
+                <p class="text-[11px] text-slate-600 font-bold">⛳ <strong>Total de Putts:</strong> <span id="summary-final-putts">-</span></p>
+                <p class="text-[11px] text-slate-600 font-bold">⚠️ <strong>Fallados &lt; 2 Pasos:</strong> <span id="summary-final-fallados">-</span></p>
+                <p class="text-[11px] text-slate-600 font-bold">🏆 <strong>Up & Down Exitosos:</strong> <span id="summary-final-ud">-</span></p>
+                <p class="text-[11px] text-slate-600 font-bold">🏜️ <strong>Trampas/Castigos:</strong> <span id="summary-final-trampas">-</span></p>
+            </div>
+            <div class="flex flex-col gap-2.5 pt-2">
+                <button id="btn-submit-ronda" onclick="submitRondaFinalToGoogle()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs py-3.5 px-8 rounded-xl transition-all shadow-md flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Guardar en Google Sheets (En Vivo)
+                </button>
+                <button id="btn-copy-ronda-csv" onclick="copyRondaToClipboardCSV()" class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs py-3 rounded-xl transition-all flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-copy"></i> Copiar Fila CSV
+                </button>
+                <button id="btn-close-finalize-modal" onclick="closeFinalizeModal()" class="w-full bg-slate-100 text-slate-600 font-bold text-xs py-2 rounded-xl">Seguir Editando</button>
+                <button id="btn-success-close" onclick="finishAndClearRonda()" class="hidden w-full bg-emerald-700 text-white font-extrabold text-xs py-3.5 rounded-xl shadow-md">Salir de la Ronda ✓</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="border-t border-slate-200 py-4 bg-white text-center text-[10px] text-slate-400 transition-colors duration-200">
+        <p>Golf Necochea 2026 — Planilla de Campo Táctil para Dispositivos Móviles</p>
+    </footer>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast-notification" class="fixed bottom-5 right-5 bg-emerald-600 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 transform translate-y-24 opacity-0 transition-all duration-300 z-50">
+        <span class="text-2xl" id="toast-emoji">🎉</span>
+        <div>
+            <h4 class="font-bold text-sm" id="toast-title">¡Sincronizado!</h4>
+            <p class="text-xs text-emerald-100" id="toast-msg">Mensaje de estado.</p>
+        </div>
+    </div>
+
+    <!-- LOGICA SCRIPT COMPLETA Y ROBUSTA -->
+    <script>
+        let selectedPlayer = null;
+        let currentHoyo = 1;
+        const totalHoyos = 9;
+        let rondaStats = {};
+        let rondaConsolidada = {};
+        let activeAccordionId = null;
+
+        function initializeEmptyRonda() {
+            rondaStats = {};
+            for (let i = 1; i <= totalHoyos; i++) {
+                rondaStats[i] = {
+                    score: null,
+                    drive: '',
+                    approach120_150: '',
+                    approach90_120: '',
+                    approach60_90: '',
+                    approach: '',
+                    approach30: null,
+                    putt_dist: '',
+                    putts_count: null,
+                    missed_short: ''
+                };
+            }
+        }
+
+        function ensureValidRondaStats() {
+            if (!rondaStats || typeof rondaStats !== 'object' || Object.keys(rondaStats).length < 9) {
+                initializeEmptyRonda();
+                return;
+            }
+            for (let i = 1; i <= totalHoyos; i++) {
+                if (!rondaStats[i] || typeof rondaStats[i] !== 'object') {
+                    rondaStats[i] = {
+                        score: null,
+                        drive: '',
+                        approach120_150: '',
+                        approach90_120: '',
+                        approach60_90: '',
+                        approach: '',
+                        approach30: null,
+                        putt_dist: '',
+                        putts_count: null,
+                        missed_short: ''
+                    };
+                } else {
+                    if (rondaStats[i].score === undefined) rondaStats[i].score = null;
+                    if (rondaStats[i].drive === undefined) rondaStats[i].drive = '';
+                    if (rondaStats[i].approach120_150 === undefined) rondaStats[i].approach120_150 = '';
+                    if (rondaStats[i].approach90_120 === undefined) rondaStats[i].approach90_120 = '';
+                    if (rondaStats[i].approach60_90 === undefined) rondaStats[i].approach60_90 = '';
+                    if (rondaStats[i].approach === undefined) rondaStats[i].approach = '';
+                    if (rondaStats[i].approach30 === undefined) rondaStats[i].approach30 = null;
+                    if (rondaStats[i].putt_dist === undefined) rondaStats[i].putt_dist = '';
+                    if (rondaStats[i].putts_count === undefined) rondaStats[i].putts_count = null;
+                    if (rondaStats[i].missed_short === undefined) rondaStats[i].missed_short = '';
+                }
+            }
+        }
+
+        function saveDraftToLocalStorage() {
+            if (selectedPlayer) {
+                localStorage.setItem('golf_ronda_stats_draft', JSON.stringify(rondaStats));
+                localStorage.setItem('golf_ronda_player_draft', selectedPlayer);
+                localStorage.setItem('golf_ronda_hoyo_draft', currentHoyo.toString());
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedScriptUrl = localStorage.getItem('golf_apps_script_url') || localStorage.getItem('apps_script_url');
+            if (savedScriptUrl) document.getElementById('apps-script-url-input').value = savedScriptUrl;
+
+            const savedPlayer = localStorage.getItem('golf_ronda_player_draft');
+            const savedStats = localStorage.getItem('golf_ronda_stats_draft');
+            const savedHoyo = localStorage.getItem('golf_ronda_hoyo_draft');
+
+            if (savedPlayer && savedStats) {
+                try {
+                    rondaStats = JSON.parse(savedStats);
+                    ensureValidRondaStats();
+                    selectedPlayer = savedPlayer;
+                    if (savedHoyo) currentHoyo = parseInt(savedHoyo, 10);
+                    setRondaPlayer(selectedPlayer);
+                } catch(e) {
+                    initializeEmptyRonda();
+                }
+            } else {
+                initializeEmptyRonda();
+            }
+        });
+
+        function toggleSettings() {
+            document.getElementById('settings-panel').classList.toggle('hidden');
+        }
+
+        function saveAllSettings() {
+            const scriptUrl = document.getElementById('apps-script-url-input').value.trim();
+            if (scriptUrl) {
+                localStorage.setItem('golf_apps_script_url', scriptUrl);
+                localStorage.setItem('apps_script_url', scriptUrl);
+            } else {
+                localStorage.removeItem('golf_apps_script_url');
+                localStorage.removeItem('apps_script_url');
+            }
+            showNotification("Configuración Guardada", "Enlaces actualizados perfectamente ✓", "✅");
+            toggleSettings();
+        }
+
+        function buildHoyoSelector() {
+            const container = document.getElementById('container-hoyos');
+            if (!container) return;
+            container.innerHTML = '';
+            const currentColors = getPlayerColors(selectedPlayer);
+            for (let i = 1; i <= totalHoyos; i++) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.onclick = () => selectHoyo(i);
+                btn.id = `btn-quick-hoyo-${i}`;
+                if (i === currentHoyo) {
+                    btn.className = `w-full aspect-square rounded-full font-black text-xs transition-all text-white ring-4 ring-white/60 shadow-md ${currentColors.btnBg}`;
+                } else {
+                    btn.className = 'w-full aspect-square rounded-full font-black text-xs transition-all bg-white border border-slate-200 text-slate-500 hover:bg-slate-50';
+                }
+                btn.innerText = i;
+                container.appendChild(btn);
+            }
+        }
+
+        function getPlayerColors(player) {
+            if (!player) return null;
+            const colors = {
+                CONSTANZA: { name: 'purple', code: '#e9d5ff', headerFrom: 'from-purple-800', headerTo: 'to-indigo-800', border: 'border-purple-500', text: 'text-purple-700', btnBg: 'bg-purple-600', avatar: '👧' },
+                ELISA: { name: 'pink', code: '#fbcfe8', headerFrom: 'from-pink-600', headerTo: 'to-rose-600', border: 'border-pink-500', text: 'text-pink-600', btnBg: 'bg-pink-500', avatar: '👩‍🦰' },
+                SALVADOR: { name: 'blue', code: '#bfdbfe', headerFrom: 'from-blue-700', headerTo: 'to-indigo-800', border: 'border-blue-500', text: 'text-blue-700', btnBg: 'bg-blue-600', avatar: '👦' },
+                PAPA: { name: 'emerald', code: '#bbf7d0', headerFrom: 'from-emerald-700', headerTo: 'to-teal-700', border: 'border-emerald-500', text: 'text-emerald-700', btnBg: 'bg-emerald-600', avatar: '👨' }
+            };
+            return colors[player.toUpperCase()] || null;
+        }
+
+        function setRondaPlayer(player) {
+            selectedPlayer = player;
+            const c = getPlayerColors(player);
+            if (!c) return;
+
+            document.getElementById('jugador-selector-section').classList.add('hidden');
+            document.getElementById('rondas-body').style.backgroundColor = c.code;
+            document.getElementById('rondas-header').className = `bg-gradient-to-r ${c.headerFrom} ${c.headerTo} text-white py-4 px-4 shadow-md sticky top-0 z-30 transition-all duration-500`;
+            document.getElementById('rondas-header-title').innerText = `Golf Rondas - ${player} ${c.avatar}`;
+            document.getElementById('header-avatar-emoji').innerText = c.avatar;
+
+            document.getElementById('btn-cambiar-jugador').classList.remove('hidden');
+            document.getElementById('btn-reiniciar-ronda').classList.remove('hidden');
+            document.getElementById('btn-settings-rondas').classList.remove('hidden');
+            document.getElementById('score-acumulado-text').classList.remove('hidden');
+
+            document.getElementById('container-score-window').className = `relative border-4 ${c.border} bg-white rounded-[2rem] p-5 pt-8 shadow-xl transition-all duration-300`;
+            document.getElementById('score-title-text').className = `text-lg font-black ${c.text} tracking-wider uppercase kids-font transition-colors duration-300`;
+
+            document.getElementById('captura-planilla-section').classList.remove('hidden');
+            ensureValidRondaStats();
+            buildHoyoSelector();
+            updateHoyoView();
+            saveDraftToLocalStorage();
+        }
+
+        function resetPlayerSelection() {
+            selectedPlayer = null;
+            document.getElementById('captura-planilla-section').classList.add('hidden');
+            document.getElementById('btn-cambiar-jugador').classList.add('hidden');
+            document.getElementById('btn-reiniciar-ronda').classList.add('hidden');
+            document.getElementById('btn-settings-rondas').classList.add('hidden');
+            document.getElementById('score-acumulado-text').classList.add('hidden');
+            document.getElementById('jugador-selector-section').classList.remove('hidden');
+            document.getElementById('rondas-body').style.backgroundColor = '#f8fafc';
+            document.getElementById('rondas-header').className = 'bg-gradient-to-r from-emerald-600 via-teal-500 to-green-600 text-white py-4 px-4 shadow-md sticky top-0 z-30 transition-all duration-500';
+            document.getElementById('rondas-header-title').innerText = 'Golf Rondas Pro';
+            document.getElementById('header-avatar-emoji').innerText = '🏌️‍♂️';
+            
+            localStorage.setItem('golf_ronda_stats_draft', JSON.stringify(rondaStats));
+            localStorage.removeItem('golf_ronda_player_draft');
+        }
+
+        function openResetModal() { document.getElementById('confirm-reset-modal').classList.remove('hidden'); }
+        function closeResetModal() { document.getElementById('confirm-reset-modal').classList.add('hidden'); }
+        
+        function confirmResetRonda() {
+            initializeEmptyRonda(); 
+            currentHoyo = 1;
+            saveDraftToLocalStorage();
+            closeResetModal();
+            updateHoyoView();
+            buildHoyoSelector();
+            showNotification("Ronda Reiniciada 🔄", "Todos los hoyos se limpiaron. ¡Swing limpio!", "🏌️‍♂️");
+        }
+
+        function openFinalizeModal() {
+            let totalScore = 0;
+            let driveFws = 0;   let driveIntentos = 0;
+            let app120Intent = 0;
+            let app90Intent = 0;
+            let app60Intent = 0;
+            let app30Intent = 0;
+            let app0_30Intent = 0;
+
+            let totalPutts = 0;
+            let puttsCortosMetidos = 0;
+            let puttsCortosFallados = 0;
+            let upDowns = 0;
+            let totalUpDownOpportunities = 0;
+            let totalTrampas = 0;
+            let distances = { '0-2': 0, '3-6': 0, '7-12': 0, '12+': 0 };
+
+            for (let i = 1; i <= totalHoyos; i++) {
+                const h = rondaStats[i];
+                if (h.score !== null) totalScore += h.score;
+                
+                if (h.drive === 'fairway') driveFws++;
+                if (h.drive !== '') driveIntentos++;
+
+                if (h.approach120_150 !== '') app120Intent++;
+                if (h.approach90_120 !== '') app90Intent++;
+                if (h.approach60_90 !== '') app60Intent++;
+                if (h.approach !== '') app30Intent++;
+                if (h.approach30 !== null) app0_30Intent++;
+
+                if (h.putts_count !== null && h.putts_count !== 0) totalPutts += (h.putts_count === 3 ? 3 : h.putts_count);
+                if (h.missed_short === 'no') puttsCortosMetidos++;
+                if (h.missed_short === 'si') puttsCortosFallados++;
+                
+                if (h.approach30 !== null && h.approach30 !== '') {
+                    var appVal = parseInt(h.approach30);
+                    if (appVal === 1) {
+                        totalUpDownOpportunities++;
+                        if (h.putts_count === 1) upDowns++;
+                    }
+                }
+
+                if (h.approach === 'trampa' || h.approach120_150 === 'trampa' || h.approach90_120 === 'trampa' || h.approach60_90 === 'trampa') totalTrampas++;
+                if (h.putt_dist) distances[h.putt_dist]++;
+            }
+
+            let maxDistCount = 0;
+            let dominantDist = '—';
+            Object.keys(distances).forEach(d => {
+                if (distances[d] > maxDistCount) {
+                    maxDistCount = distances[d];
+                    dominantDist = d === '0-2' ? '0-2p' : (d === '3-6' ? '3-6p' : (d === '7-12' ? '7-12p' : '12p+'));
+                }
+            });
+
+            const golpesTotalesCalculados = 36 + totalScore;
+            const fairwayStr = driveIntentos > 0 ? `${driveFws}/${driveIntentos}` : "—";
+            const upDownStr = totalUpDownOpportunities > 0 ? `${upDowns}/${totalUpDownOpportunities}` : "—";
+            const cortosTotalIntentos = puttsCortosFallados + puttsCortosMetidos;
+            const puttsCortosStr = cortosTotalIntentos > 0 ? `${puttsCortosFallados}/${cortosTotalIntentos}` : "—";
+
+            let golpesRelativeStr = "E";
+            if (totalScore > 0) golpesRelativeStr = `+${totalScore}`;
+            else if (totalScore < 0) golpesRelativeStr = totalScore.toString();
+
+            rondaConsolidada = {
+                golpes_totales: golpesRelativeStr,
+                fairway: fairwayStr,
+                dist_1er_putt: dominantDist,
+                putts_totales: totalPutts,
+                putts_fallados_2p: puttsCortosStr,
+                up_down: upDownStr,
+                trampas_castigos: totalTrampas
+            };
+
+            document.getElementById('summary-final-player').innerText = selectedPlayer;
+            document.getElementById('summary-final-golpes').innerText = golpesRelativeStr;
+            document.getElementById('summary-final-fw').innerText = fairwayStr;
+            document.getElementById('summary-final-putts').innerText = totalPutts;
+            document.getElementById('summary-final-fallados').innerText = puttsCortosStr;
+            document.getElementById('summary-final-ud').innerText = upDownStr;
+            document.getElementById('summary-final-trampas').innerText = totalTrampas;
+
+            document.getElementById('btn-submit-ronda').classList.remove('hidden');
+            document.getElementById('btn-copy-ronda-csv').classList.remove('hidden');
+            document.getElementById('btn-close-finalize-modal').classList.remove('hidden');
+            document.getElementById('btn-success-close').classList.add('hidden');
+            document.getElementById('finalize-modal').classList.remove('hidden');
+        }
+
+        function closeFinalizeModal() { document.getElementById('finalize-modal').classList.add('hidden'); }
+
+        async function submitRondaFinalToGoogle() {
+            const apiURL = document.getElementById('apps-script-url-input').value.trim();
+            if (!apiURL) {
+                showNotification("Falta Configuración", "Ingresa la URL de Google Apps Script en el engrane.", "⚠️");
+                return;
+            }
+
+            const submitBtn = document.getElementById('btn-submit-ronda');
+            const copyBtn = document.getElementById('btn-copy-ronda-csv');
+            const closeBtn = document.getElementById('btn-close-finalize-modal');
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Enviando...`;
+            if(copyBtn) copyBtn.classList.add('hidden');
+            if(closeBtn) closeBtn.classList.add('hidden');
+
+            const hoy = new Date();
+            const fechaStr = `${String(hoy.getDate()).padStart(2, '0')}/${String(hoy.getMonth() + 1).padStart(2, '0')}/${hoy.getFullYear()}`;
+
+            const hoyosBreakdown = [];
+            let totalRelativeScore = 0;
+            for (let i = 1; i <= totalHoyos; i++) {
+                const h = rondaStats[i];
+                const relativeHoyoScore = h.score === null ? 0 : parseInt(h.score);
+                totalRelativeScore += relativeHoyoScore;
+
+                let cumulativeStr = "E";
+                if (totalRelativeScore > 0) cumulativeStr = `+${totalRelativeScore}`;
+                else if (totalRelativeScore < 0) cumulativeStr = totalRelativeScore.toString();
+
+                const formatApproachVal = (val, puttDist) => {
+                    if (val === 'green') return `Green-${puttDist || '3-6'}`;
+                    if (val === 'barbas') return 'Barbas';
+                    if (val === 'trampa') return 'Trampa';
+                    return '';
+                };
+
+                hoyosBreakdown.push({
+                    hoyo: i,
+                    score: cumulativeStr, 
+                    drive: h.drive || "",
+                    approach120_150: formatApproachVal(h.approach120_150, h.putt_dist),
+                    approach90_120: formatApproachVal(h.approach90_120, h.putt_dist),
+                    approach60_90: formatApproachVal(h.approach60_90, h.putt_dist),
+                    approach: formatApproachVal(h.approach, h.putt_dist),
+                    approach30: h.approach30 !== null ? h.approach30.toString() : "",
+                    putt_dist: h.putt_dist || "",
+                    putts_count: h.putts_count !== null ? h.putts_count.toString() : "",
+                    missed_short: h.missed_short || ""
+                });
+            }
+
+            const payload = {
+                fecha: fechaStr,
+                persona: selectedPlayer,
+                actividad: "RONDA",
+                descripcion: "Ronda de Campo de 9 Hoyos",
+                tiempo: 120,
+                llaves: 3,
+                golpes: rondaConsolidada.golpes_totales, 
+                hoyos: hoyosBreakdown
+            };
+
+            try {
+                await fetch(apiURL, {
+                    method: "POST",
+                    mode: "no-cors", 
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                submitBtn.className = "w-full bg-emerald-100 text-emerald-800 border-2 border-emerald-400 font-extrabold text-xs py-3.5 rounded-xl flex items-center justify-center gap-2 cursor-default";
+                submitBtn.innerHTML = `¡Ronda Guardada Correctamente! ✓`;
+                document.getElementById('btn-success-close').classList.remove('hidden');
+
+                localStorage.removeItem('golf_ronda_stats_draft');
+                localStorage.removeItem('golf_ronda_player_draft');
+                localStorage.removeItem('golf_ronda_hoyo_draft');
+                initializeEmptyRonda(); 
+
+                showNotification("¡Envío Exitoso! 🏆", "Ronda de 9 hoyos cargada consecutivamente.", "✅");
+            } catch (err) {
+                console.error(err);
+                submitBtn.disabled = false;
+                submitBtn.className = "w-full bg-emerald-600 text-white font-extrabold text-xs py-3.5 rounded-xl flex items-center justify-center gap-2";
+                submitBtn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Reintentar Guardar`;
+                if(copyBtn) copyBtn.classList.remove('hidden');
+                if(closeBtn) closeBtn.classList.remove('hidden');
+                showNotification("Error de conexión", "Los datos siguen guardados en el teléfono.", "⚠️");
+            }
+        }
+
+        function copyRondaToClipboardCSV() {
+            const hoy = new Date();
+            const fechaStr = `${String(hoy.getDate()).padStart(2, '0')}/${String(hoy.getMonth() + 1).padStart(2, '0')}/${hoy.getFullYear()}`;
+            
+            let totalRelativeScore = 0;
+            for (let i = 1; i <= totalHoyos; i++) {
+                if (rondaStats[i].score !== null) {
+                    totalRelativeScore += parseInt(rondaStats[i].score);
+                }
+            }
+            let golpesRelativeStr = "E";
+            if (totalRelativeScore > 0) golpesRelativeStr = `+${totalRelativeScore}`;
+            else if (totalRelativeScore < 0) golpesRelativeStr = totalRelativeScore.toString();
+
+            const rowData = [
+                fechaStr, selectedPlayer, "RONDA", "\"Ronda de Campo de 9 Hoyos\"", 120, 3,
+                golpesRelativeStr, 
+                rondaConsolidada.fairway,
+                rondaConsolidada.dist_1er_putt,
+                rondaConsolidada.putts_totales, 
+                rondaConsolidada.putts_fallados_2p,
+                rondaConsolidada.up_down, 
+                rondaConsolidada.trampas_castigos
+            ];
+            const csvLine = rowData.join(",");
+            const tempTextArea = document.createElement("textarea");
+            tempTextArea.value = csvLine;
+            document.body.appendChild(tempTextArea);
+            tempTextArea.select();
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showNotification("¡CSV Copiado! 📋", "Renglón listo para pegar manualmente.", "✅");
+                    document.getElementById('btn-success-close').classList.remove('hidden');
+                }
+            } catch (err) {
+                showNotification("Error", "Copia el texto de forma manual.", "⚠️");
+            }
+            document.body.removeChild(tempTextArea);
+        }
+
+        function finishAndClearRonda() {
+            localStorage.removeItem('golf_ronda_stats_draft');
+            localStorage.removeItem('golf_ronda_player_draft');
+            localStorage.removeItem('golf_ronda_hoyo_draft');
+            initializeEmptyRonda();
+            currentHoyo = 1;
+            document.getElementById('finalize-modal').classList.add('hidden');
+            resetPlayerSelection();
+            updateHoyoView();
+        }
+
+        function checkRondaCompleta() {
+            for (let i = 1; i <= totalHoyos; i++) {
+                if (rondaStats[i].score === null) return false;
+            }
+            return true;
+        }
+
+        function selectHoyo(hNum) {
+            currentHoyo = hNum;
+            buildHoyoSelector();
+            updateHoyoView();
+            saveDraftToLocalStorage();
+        }
+
+        function navigateHoyo(direction) {
+            if (direction === 1) {
+                const h = rondaStats[currentHoyo];
+                if (h.putt_dist === '' || h.missed_short === '' || h.putts_count === null) {
+                    showNotification("Putt Incompleto ⚠️", "Debes responder las 3 preguntas del Análisis de Putt antes de continuar.", "🏌️‍♂️");
+                    forceOpenAccordion('putt');
+                    return;
+                }
+            }
+            if (currentHoyo === 9 && direction === 1 && checkRondaCompleta()) {
+                openFinalizeModal();
+                return;
+            }
+            let next = currentHoyo + direction;
+            if (next >= 1 && next <= totalHoyos) {
+                selectHoyo(next);
+            }
+        }
+
+        function selectScore(scoreVal) {
+            const currentSaved = rondaStats[currentHoyo].score;
+            if (currentSaved === scoreVal) rondaStats[currentHoyo].score = null;
+            else rondaStats[currentHoyo].score = scoreVal;
+            updateHoyoView();
+            saveDraftToLocalStorage();
+        }
+
+        function selectPuttDist(val) {
+            const currentSaved = rondaStats[currentHoyo].putt_dist;
+            if (currentSaved === val) rondaStats[currentHoyo].putt_dist = '';
+            else rondaStats[currentHoyo].putt_dist = val;
+            updateHoyoView();
+            saveDraftToLocalStorage();
+            checkAndClosePutt();
+        }
+
+        function getPuttColor(dist, count) {
+            if (count === null || count === '') return null;
+            const c = parseInt(count);
+            
+            if (dist === '0-2') {
+                if (c === 1) return 'verde';
+                if (c === 2 || c >= 3) return 'rojo';
+            } else if (dist === '3-6' || dist === '7-12') {
+                if (c === 1) return 'azul';
+                if (c === 2) return 'verde';
+                if (c >= 3) return 'rojo';
+            } else if (dist === '12+') {
+                if (c === 1) return 'azul';
+                if (c === 2) return 'verde';
+                if (c >= 3) return 'amarillo';
+            }
+
+            if (c === 0) return 'azul'; 
+            if (c === 1) return 'azul';
+            if (c === 2) return 'verde';
+            return 'rojo';
+        }
+
+        function selectPuttCount(val) {
+            const currentSaved = rondaStats[currentHoyo].putts_count;
+            if (currentSaved === val) {
+                rondaStats[currentHoyo].putts_count = null;
+            } else {
+                rondaStats[currentHoyo].putts_count = val;
+            }
+            updateHoyoView();
+            saveDraftToLocalStorage();
+
+            if (rondaStats[currentHoyo].putts_count !== null) {
+                setTimeout(() => {
+                    if (activeAccordionId === 'putt') {
+                        toggleAccordion('putt');
+                    }
+                }, 350);
+            }
+        }
+
+        // ==========================================================
+        // ✅ FIX: selectMissedShort ya NO asigna putts_count = 0
+        // cuando se selecciona 'nohubo'. De esta manera la ventana
+        // permanece abierta y el usuario puede completar la tercer
+        // pregunta (Cantidad de Putts) sin que se cierre el acordeón.
+        // ==========================================================
+        function selectMissedShort(val) {
+            const currentSaved = rondaStats[currentHoyo].missed_short;
+            if (currentSaved === val) {
+                // Deseleccionar: limpiar el valor
+                rondaStats[currentHoyo].missed_short = '';
+            } else {
+                rondaStats[currentHoyo].missed_short = val;
+                // REMOVIDO: ya no se asigna putts_count = 0 para 'nohubo'
+                // porque eso disparaba el cierre automático del acordeón
+                // antes de que el usuario pudiera responder la 3ª pregunta.
+                // Si el usuario cambiaba de 'nohubo' a otra opción también
+                // se reseteaba putts_count, lo cual tampoco es deseable.
+            }
+            updateHoyoView();
+            saveDraftToLocalStorage();
+            // El acordeón NO se cierra aquí; solo se cierra cuando el usuario
+            // responde la última pregunta: Cantidad de Putts (selectPuttCount).
+        }
+
+        function checkAndClosePutt() {
+            const h = rondaStats[currentHoyo];
+            if (h.putt_dist !== '' && h.missed_short !== '' && h.putts_count !== null) {
+                setTimeout(() => {
+                    if (activeAccordionId === 'putt') {
+                        toggleAccordion('putt');
+                    }
+                }, 350);
+            }
+        }
+
+        function selectApproach30Outcome(val) {
+            const currentSaved = rondaStats[currentHoyo].approach30;
+            if (currentSaved === val) {
+                rondaStats[currentHoyo].approach30 = null;
+            } else {
+                rondaStats[currentHoyo].approach30 = val;
+            }
+            updateHoyoView();
+            saveDraftToLocalStorage();
+            if (rondaStats[currentHoyo].approach30 !== null) {
+                setTimeout(() => forceOpenAccordion('putt'), 350);
+            }
+        }
+
+        function selectDriveOutcome(outcome) {
+            const currentSaved = rondaStats[currentHoyo].drive;
+            if (currentSaved === outcome) {
+                rondaStats[currentHoyo].drive = '';
+            } else {
+                rondaStats[currentHoyo].drive = outcome;
+            }
+            updateHoyoView();
+            saveDraftToLocalStorage();
+            
+            if (rondaStats[currentHoyo].drive !== '') {
+                setTimeout(() => {
+                    if (activeAccordionId === 'drive') {
+                        toggleAccordion('drive');
+                    }
+                }, 350);
+            }
+        }
+
+        function selectApproachTwinOutcome(prefix, outcome) {
+            const dbKey = (prefix === 'app120_150') ? 'approach120_150' : ((prefix === 'app90_120') ? 'approach90_120' : 'approach60_90');
+            const currentSaved = rondaStats[currentHoyo][dbKey];
+            if (currentSaved === outcome) {
+                rondaStats[currentHoyo][dbKey] = '';
+            } else {
+                rondaStats[currentHoyo][dbKey] = outcome;
+            }
+            updateHoyoView();
+            saveDraftToLocalStorage();
+            
+            if (rondaStats[currentHoyo][dbKey] !== '') {
+                if (outcome === 'green') {
+                    setTimeout(() => forceOpenAccordion('putt'), 350);
+                } else if (outcome === 'barbas') {
+                    setTimeout(() => forceOpenAccordion('approach30'), 350);
+                } else {
+                    setTimeout(() => {
+                        if (activeAccordionId === prefix) {
+                            toggleAccordion(prefix);
+                        }
+                    }, 350);
+                }
+            }
+        }
+
+        function selectApproachOutcome(outcome) {
+            const currentSaved = rondaStats[currentHoyo].approach;
+            if (currentSaved === outcome) {
+                rondaStats[currentHoyo].approach = '';
+            } else {
+                rondaStats[currentHoyo].approach = outcome;
+            }
+            updateHoyoView();
+            saveDraftToLocalStorage();
+            if (rondaStats[currentHoyo].approach !== '') {
+                if (outcome === 'green') {
+                    setTimeout(() => forceOpenAccordion('putt'), 350);
+                } else if (outcome === 'barbas') {
+                    setTimeout(() => forceOpenAccordion('approach30'), 350);
+                } else {
+                    setTimeout(() => {
+                        if (activeAccordionId === 'approach') {
+                            toggleAccordion('approach');
+                        }
+                    }, 350);
+                }
+            }
+        }
+
+        function resetOutcomeButtons() {
+            ['fairway', 'sintiro', 'castigo'].forEach(o => {
+                const btn = document.getElementById(`btn-drive-${o}`);
+                if (btn) btn.className = "card-pop p-4 rounded-2xl border-2 border-slate-100 bg-slate-50 flex flex-col items-center gap-2.5 text-center transition-all duration-200 hover:bg-slate-100 text-slate-800";
+            });
+        }
+
+        function updateHoyoView() {
+            if (!rondaStats || !rondaStats[currentHoyo]) return;
+
+            const stepsOrder = [
+                { id: 'drive', dbKey: 'drive' },
+                { id: 'app120_150', dbKey: 'approach120_150' },
+                { id: 'app90_120', dbKey: 'approach90_120' },
+                { id: 'app60_90', dbKey: 'approach60_90' },
+                { id: 'approach', dbKey: 'approach' },
+                { id: 'approach30', dbKey: 'approach30' }
+            ];
+
+            const visibility = {
+                drive: true,
+                app120_150: true,
+                app90_120: true,
+                app60_90: true,
+                approach: true,
+                approach30: true
+            };
+
+            let lastFilledIdx = -1;
+            for (let idx = 0; idx < stepsOrder.length; idx++) {
+                const step = stepsOrder[idx];
+                const val = rondaStats[currentHoyo][step.dbKey];
+                if (val !== null && val !== '') {
+                    lastFilledIdx = idx;
+                }
+            }
+
+            if (lastFilledIdx !== -1) {
+                for (let j = 0; j < lastFilledIdx; j++) {
+                    const step = stepsOrder[j];
+                    const val = rondaStats[currentHoyo][step.dbKey];
+                    if (val === null || val === '') {
+                        visibility[step.id] = false;
+                    }
+                }
+            }
+
+            let hasHitGreen = false;
+            let hasHitBarbas = false;
+
+            for (let idx = 0; idx < stepsOrder.length; idx++) {
+                const step = stepsOrder[idx];
+                
+                if (hasHitGreen) {
+                    visibility[step.id] = false;
+                    rondaStats[currentHoyo][step.dbKey] = (step.id === 'approach30') ? null : '';
+                } else if (hasHitBarbas) {
+                    if (step.id !== 'approach30') {
+                        visibility[step.id] = false;
+                        rondaStats[currentHoyo][step.dbKey] = '';
+                    }
+                }
+
+                const val = rondaStats[currentHoyo][step.dbKey];
+                if (val === 'green') {
+                    hasHitGreen = true;
+                } else if (val === 'barbas') {
+                    hasHitBarbas = true;
+                }
+            }
+
+            const cardDrive = document.getElementById('card-drive');
+            if (cardDrive) cardDrive.style.display = visibility['drive'] ? 'block' : 'none';
+
+            const card120 = document.getElementById('card-app120_150');
+            if (card120) card120.style.display = visibility['app120_150'] ? 'block' : 'none';
+
+            const card90 = document.getElementById('card-app90_120');
+            if (card90) card90.style.display = visibility['app90_120'] ? 'block' : 'none';
+
+            const card60 = document.getElementById('card-app60_90');
+            if (card60) card60.style.display = visibility['app60_90'] ? 'block' : 'none';
+
+            const cardApproach = document.getElementById('card-approach');
+            if (cardApproach) cardApproach.style.display = visibility['approach'] ? 'block' : 'none';
+
+            const cardApproach30 = document.getElementById('card-approach30');
+            if (cardApproach30) cardApproach30.style.display = visibility['approach30'] ? 'block' : 'none';
+
+            updateScoreAcumulado();
+
+            const activeScore = rondaStats[currentHoyo].score;
+
+            const scoreButtons = { "-2": "m2", "-1": "m1", "0": "0", "1": "1", "2": "2", "3": "3", "4": "4" };
+            Object.keys(scoreButtons).forEach(key => {
+                const btn = document.getElementById(`btn-score-${scoreButtons[key]}`);
+                if (btn) {
+                    btn.className = "w-11 h-11 rounded-full bg-slate-50 border-2 border-slate-200 font-black text-sm flex items-center justify-center transition-all card-pop shrink-0 text-slate-700";
+                }
+            });
+
+            if (activeScore !== null && scoreButtons[activeScore.toString()]) {
+                const scoreColors = {
+                    "-2": "bg-purple-600 border-purple-700 text-white ring-4 ring-purple-100 scale-110",
+                    "-1": "bg-blue-900 border-blue-950 text-white ring-4 ring-blue-100 scale-110",
+                    "0": "bg-emerald-700 border-emerald-800 text-white ring-4 ring-emerald-100 scale-110 shadow-emerald-500/20", 
+                    "1": "bg-green-400 border-green-500 text-slate-900 ring-4 ring-green-100 scale-110",
+                    "2": "bg-amber-400 border-amber-500 text-slate-900 ring-4 ring-amber-100 scale-110",
+                    "3": "bg-red-500 border-red-600 text-white ring-4 ring-red-100 scale-110",
+                    "4": "bg-red-755 border-red-855 text-white ring-4 ring-red-200"
+                };
+                const activeBtn = document.getElementById(`btn-score-${scoreButtons[activeScore.toString()]}`);
+                if (activeBtn) {
+                    activeBtn.className = `w-11 h-11 rounded-full ${scoreColors[activeScore.toString()]} font-black text-sm flex items-center justify-center transition-all card-pop shrink-0`;
+                }
+            }
+
+            renderScoreBadge(activeScore);
+
+            const activeDrive = rondaStats[currentHoyo].drive;
+            resetOutcomeButtons();
+
+            if (activeDrive) {
+                const colors = {
+                    fairway: { bg: 'bg-emerald-500', border: 'border-emerald-600', text: 'text-white' },
+                    sintiro: { bg: 'bg-amber-500', border: 'border-amber-600', text: 'text-white' },
+                    castigo: { bg: 'bg-red-500', border: 'border-red-600', text: 'text-white' }
+                };
+                const col = colors[activeDrive];
+                if (col) {
+                    const activeBtn = document.getElementById(`btn-drive-${activeDrive}`);
+                    if (activeBtn) {
+                        activeBtn.className = `card-pop p-4 rounded-2xl border-2 ${col.border} ${col.bg} ${col.text} flex flex-col items-center gap-2.5 text-center transition-all duration-200 ring-4 ring-slate-100`;
+                    }
+                }
+            }
+
+            const twinZ = ['app120_150', 'app90_120', 'app60_90'];
+            twinZ.forEach(tz => {
+                const dbKey = (tz === 'app120_150') ? 'approach120_150' : ((tz === 'app90_120') ? 'approach90_120' : 'approach60_90');
+                const act = rondaStats[currentHoyo][dbKey];
+                resetTwinButtons(tz);
+                if (act) {
+                    const colors = { green: 'bg-emerald-500 border-emerald-600 text-white', barbas: 'bg-amber-500 border-amber-600 text-white', trampa: 'bg-red-500 border-red-600 text-white' };
+                    const btn = document.getElementById(`btn-${tz}-${act}`);
+                    if (btn) btn.className = `card-pop p-3 rounded-2xl border-2 ${colors[act]} flex flex-col items-center text-center scale-105 transition-all`;
+                }
+            });
+
+            const activeApp = rondaStats[currentHoyo].approach;
+            resetApproachButtons('approach');
+
+            if (activeApp) {
+                const colors = {
+                    green: { bg: 'bg-emerald-500', border: 'border-emerald-600', text: 'text-white' },
+                    barbas: { bg: 'bg-amber-500', border: 'border-amber-600', text: 'text-white' },
+                    trampa: { bg: 'bg-red-500', border: 'border-red-600', text: 'text-white' }
+                };
+                const col = colors[activeApp];
+                if (col) {
+                    const activeBtn = document.getElementById(`btn-approach-${activeApp}`);
+                    if (activeBtn) {
+                        activeBtn.className = `card-pop p-3.5 rounded-2xl border-2 ${col.border} ${col.bg} ${col.text} flex flex-col items-center gap-2.5 text-center transition-all duration-200 ring-4 ring-slate-100`;
+                    }
+                }
+            }
+
+            const activeApproach30 = rondaStats[currentHoyo].approach30;
+            resetApproach30Buttons();
+
+            if (activeApproach30 !== null) {
+                const colors = {
+                    1: "bg-emerald-700 border-emerald-800 text-white ring-4 ring-emerald-100 scale-110", 
+                    2: "bg-amber-500 border-amber-600 text-white ring-4 ring-amber-100",
+                    3: "bg-red-500 border-red-600 text-white ring-4 ring-red-100"
+                };
+                const activeBtn = document.getElementById(`btn-app30-${activeApproach30}`);
+                if (activeBtn) {
+                    activeBtn.className = `w-14 h-14 rounded-full ${colors[activeApproach30]} font-black text-xl flex items-center justify-center transition-all card-pop scale-110`;
+                }
+            }
+
+            renderApproach30Badge(activeApproach30);
+
+            const activePuttDist = rondaStats[currentHoyo].putt_dist;
+            resetPuttDistButtons();
+            if (activePuttDist) {
+                const distColors = {
+                    '0-2': "bg-emerald-500 border-emerald-600 text-white ring-2 ring-emerald-100",
+                    '3-6': "bg-emerald-500 border-emerald-600 text-white ring-2 ring-emerald-100",
+                    '7-12': "bg-amber-500 border-amber-600 text-white ring-2 ring-amber-100",
+                    '12+': "bg-red-500 border-red-600 text-white ring-2 ring-red-100"
+                };
+                const btn = document.getElementById(`btn-puttdist-${activePuttDist}`);
+                if (btn) {
+                    btn.className = `card-pop p-4 rounded-2xl border-2 ${distColors[activePuttDist]} flex flex-col items-center text-center text-xs font-black scale-105`;
+                }
+            }
+
+            const activePuttCount = rondaStats[currentHoyo].putts_count;
+            resetPuttCountButtons();
+            if (activePuttCount !== null) {
+                const resolvedColor = getPuttColor(activePuttDist, activePuttCount);
+                const countColors = {
+                    'azul': "bg-blue-600 border-blue-700 text-white ring-4 ring-blue-100 scale-110",
+                    'verde': "bg-emerald-600 border-emerald-700 text-white ring-4 ring-emerald-100 scale-110",
+                    'rojo': "bg-red-500 border-red-600 text-white ring-4 ring-red-100 scale-110",
+                    'amarillo': "bg-amber-500 border-amber-600 text-slate-900 ring-4 ring-amber-100 scale-110"
+                };
+                const btn = document.getElementById(`btn-puttcount-${activePuttCount}`);
+                if (btn && resolvedColor && countColors[resolvedColor]) {
+                    btn.className = `w-14 h-14 rounded-full ${countColors[resolvedColor]} font-black text-lg flex items-center justify-center transition-all card-pop scale-110 shadow-md`;
+                }
+            }
+
+            const activeMissed = rondaStats[currentHoyo].missed_short;
+            resetMissedShortButtons();
+            if (activeMissed) {
+                const missedColors = {
+                    no: "bg-emerald-600 border-4 border-slate-950 text-white ring-4 ring-emerald-100", 
+                    si: "bg-red-600 border-4 border-slate-950 text-white ring-4 ring-red-100",
+                    nohubo: "bg-blue-600 border-4 border-slate-950 text-white ring-4 ring-blue-100"
+                };
+                const btn = document.getElementById(`btn-missed-${activeMissed}`);
+                if (btn) {
+                    btn.className = `card-pop py-3 px-1 rounded-xl ${missedColors[activeMissed]} flex flex-col items-center justify-center gap-1 text-[11px] font-black scale-105 transition-all shadow-md`;
+                    const textSpan = btn.querySelector('span:last-child');
+                    if (textSpan) {
+                        textSpan.className = "text-white text-center leading-tight font-extrabold";
+                    }
+                }
+            }
+
+            const puttColorMapping = {
+                'azul': 'bg-blue-600 border-blue-700 text-white',
+                'verde': 'bg-emerald-600 border-emerald-700 text-white',
+                'rojo': 'bg-red-500 border-red-600 text-white',
+                'amarillo': 'bg-amber-500 border-amber-600 text-slate-900'
+            };
+
+            const stateSections = [
+                { id: 'drive', val: rondaStats[currentHoyo].drive, mapping: { fairway: 'bg-emerald-500 border-emerald-600 text-white', sintiro: 'bg-amber-500 border-amber-600 text-white', castigo: 'bg-red-500 border-red-600 text-white' } },
+                { id: 'app120_150', val: rondaStats[currentHoyo].approach120_150, mapping: { green: 'bg-emerald-500 border-emerald-600 text-white', barbas: 'bg-amber-500 border-amber-600 text-white', trampa: 'bg-red-500 border-red-600 text-white' } },
+                { id: 'app90_120', val: rondaStats[currentHoyo].approach90_120, mapping: { green: 'bg-emerald-500 border-emerald-600 text-white', barbas: 'bg-amber-500 border-amber-600 text-white', trampa: 'bg-red-500 border-red-600 text-white' } },
+                { id: 'app60_90', val: rondaStats[currentHoyo].approach60_90, mapping: { green: 'bg-emerald-500 border-emerald-600 text-white', barbas: 'bg-amber-500 border-amber-600 text-white', trampa: 'bg-red-500 border-red-600 text-white' } },
+                { id: 'approach', val: rondaStats[currentHoyo].approach, mapping: { green: 'bg-emerald-500 border-emerald-600 text-white', barbas: 'bg-amber-500 border-amber-600 text-white', trampa: 'bg-red-500 border-red-600 text-white' } },
+                { id: 'approach30', val: rondaStats[currentHoyo].approach30, mapping: { '1': 'bg-emerald-700 border-emerald-800 text-white', '2': 'bg-amber-500 border-amber-600 text-white', '3': 'bg-red-500 border-red-600 text-white' } },
+                { id: 'putt', val: rondaStats[currentHoyo].putts_count, mapping: null } 
+            ];
+
+            stateSections.forEach(section => {
+                const card = document.getElementById(`card-${section.id}`);
+                const badge = document.getElementById(`badge-status-${section.id}`);
+                if (card && badge) {
+                    const isOpen = (activeAccordionId === section.id);
+                    const hasValue = (section.val !== null && section.val !== undefined && section.val !== '');
+                    
+                    const btnHeader = card.querySelector('button');
+                    const textSpan = card.querySelector('button span.kids-font');
+                    const iconArrow = card.querySelector('button i');
+                    
+                    let cardColorClass = "bg-white border-slate-100 opacity-90";
+                    let btnBgClass = "bg-slate-50/50 hover:bg-slate-50 text-slate-700";
+                    let badgeClass = "bg-slate-200 text-slate-500";
+                    let badgeText = "Vacío";
+                    
+                    if (isOpen) {
+                        cardColorClass = "bg-white border-emerald-400 ring-2 ring-emerald-100";
+                        btnBgClass = "bg-slate-50/20 hover:bg-slate-50/40 text-slate-800";
+                        badgeClass = hasValue ? "bg-emerald-500 text-white" : "bg-slate-300 text-slate-600";
+                        badgeText = hasValue ? "Listo ✓" : "Editando";
+                    } else if (hasValue) {
+                        if (section.id === 'putt') {
+                            const resolvedColor = getPuttColor(activePuttDist, activePuttCount);
+                            if (resolvedColor && puttColorMapping[resolvedColor]) {
+                                cardColorClass = puttColorMapping[resolvedColor];
+                                btnBgClass = "bg-transparent text-white";
+                                badgeClass = "bg-white text-slate-800 font-bold shadow-sm";
+                                badgeText = "Listo ✓";
+                            }
+                        } else if (section.mapping && section.mapping[section.val.toString()]) {
+                            const styleClass = section.mapping[section.val.toString()]; 
+                            cardColorClass = styleClass;
+                            btnBgClass = "bg-transparent text-white";
+                            badgeClass = "bg-white text-slate-800 font-bold shadow-sm";
+                            badgeText = "Listo ✓";
+                        }
+                    }
+                    
+                    const colSpanClass = (section.id === 'putt' || isOpen) ? 'col-span-2' : 'col-span-1';
+                    card.className = `border-2 rounded-[1.8rem] shadow-md overflow-hidden transition-all duration-300 ${colSpanClass} ${cardColorClass}`;
+                    
+                    if (btnHeader) {
+                        btnHeader.className = `w-full flex justify-between items-center px-5 py-4 transition-all ${btnBgClass}`;
+                    }
+                    if (textSpan) {
+                        textSpan.className = `font-black text-[11px] uppercase tracking-wider kids-font ${hasValue && !isOpen ? 'text-white' : 'text-slate-700'}`;
+                    }
+                    if (iconArrow) {
+                        iconArrow.className = `fa-solid fa-chevron-down text-xs transition-transform duration-300 ${hasValue && !isOpen ? 'text-white/80' : 'text-slate-400'}`;
+                    }
+                    badge.className = `text-[9px] font-extrabold uppercase px-2.5 py-0.5 rounded-full ${badgeClass}`;
+                    badge.innerText = badgeText;
+                }
+            });
+
+            if (activeAccordionId) {
+                const activeContent = document.getElementById(`content-${activeAccordionId}`);
+                if (activeContent) {
+                    if (activeAccordionId === 'putt') {
+                        activeContent.style.maxHeight = '1000px';
+                    } else {
+                        activeContent.style.maxHeight = activeContent.scrollHeight + "px";
+                    }
+                }
+            }
+        }
+
+        function resetTwinButtons(prefix) {
+            ['green', 'barbas', 'trampa'].forEach(a => {
+                const btn = document.getElementById(`btn-${prefix}-${a}`);
+                if (btn) {
+                    btn.className = "card-pop p-4 rounded-2xl border-2 border-slate-100 bg-slate-50 flex flex-col items-center gap-2.5 text-center transition-all duration-200 hover:bg-slate-100 text-slate-800";
+                }
+            });
+        }
+
+        function resetApproachButtons(prefix) {
+            ['green', 'barbas', 'trampa'].forEach(a => {
+                const btn = document.getElementById(`btn-${prefix}-${a}`);
+                if (btn) {
+                    btn.className = "card-pop p-3.5 rounded-2xl border-2 border-slate-100 bg-slate-50 flex flex-col items-center gap-2.5 text-center transition-all duration-200 hover:bg-slate-100 text-slate-800";
+                }
+            });
+        }
+
+        function resetApproach30Buttons() {
+            [1, 2, 3].forEach(val => {
+                const btn = document.getElementById(`btn-app30-${val}`);
+                if (btn) btn.className = "w-12 h-12 rounded-full bg-slate-50 border-2 border-slate-200 font-black text-lg flex items-center justify-center transition-all card-pop text-slate-700";
+            });
+        }
+
+        function resetPuttDistButtons() {
+            ['0-2', '3-6', '7-12', '12+'].forEach(val => {
+                const btn = document.getElementById(`btn-puttdist-${val}`);
+                if (btn) {
+                    btn.className = "card-pop p-3 rounded-2xl border-2 border-slate-200 bg-slate-50 text-xs font-black text-slate-700 transition-all";
+                }
+            });
+        }
+
+        function resetPuttCountButtons() {
+            [1, 2, 3].forEach(val => {
+                const btn = document.getElementById(`btn-puttcount-${val}`);
+                if (btn) {
+                    btn.className = "w-12 h-12 rounded-full bg-slate-50 border-2 border-slate-200 font-black text-sm flex items-center justify-center transition-all card-pop text-slate-700";
+                }
+            });
+        }
+
+        function resetMissedShortButtons() {
+            ['si', 'no', 'nohubo'].forEach(val => {
+                const btn = document.getElementById(`btn-missed-${val}`);
+                if (btn) {
+                    btn.className = "card-pop py-3 px-1 rounded-xl border-2 border-slate-200 bg-slate-50 flex flex-col items-center justify-center gap-1 text-[11px] font-black transition-all text-slate-500";
+                    const textSpan = btn.querySelector('span:last-child');
+                    if (textSpan) {
+                        textSpan.className = "text-slate-800 text-center leading-tight";
+                    }
+                }
+            });
+        }
+
+        function toggleAccordion(id) {
+            const content = document.getElementById(`content-${id}`);
+            const arrow = document.getElementById(`icon-arrow-${id}`);
+            if (!content) return;
+            
+            if (activeAccordionId === id) {
+                content.style.maxHeight = '0px';
+                content.style.opacity = '0';
+                if (arrow) arrow.style.transform = 'rotate(0deg)';
+                activeAccordionId = null;
+            } else {
+                if (activeAccordionId) {
+                    const prevContent = document.getElementById(`content-${activeAccordionId}`);
+                    const prevArrow = document.getElementById(`icon-arrow-${activeAccordionId}`);
+                    if (prevContent) prevContent.style.maxHeight = '0px';
+                    if (prevContent) prevContent.style.opacity = '0';
+                    if (prevArrow) prevArrow.style.transform = 'rotate(0deg)';
+                }
+                
+                if (id === 'putt') {
+                    content.style.maxHeight = '1000px';
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+                
+                content.style.opacity = '1';
+                if (arrow) arrow.style.transform = 'rotate(180deg)';
+                activeAccordionId = id;
+            }
+            updateHoyoView(); 
+        }
+
+        function forceOpenAccordion(id) {
+            const ids = ['drive', 'app120_150', 'app90_120', 'app60_90', 'approach', 'approach30', 'putt'];
+            ids.forEach(i => {
+                const content = document.getElementById(`content-${i}`);
+                const arrow = document.getElementById(`icon-arrow-${i}`);
+                if (content) {
+                    content.style.maxHeight = '0px';
+                    content.style.opacity = '0';
+                }
+                if (arrow) arrow.style.transform = 'rotate(0deg)';
+            });
+
+            const content = document.getElementById(`content-${id}`);
+            const arrow = document.getElementById(`icon-arrow-${id}`);
+            if (content) {
+                if (id === 'putt') {
+                    content.style.maxHeight = '1000px';
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+                content.style.opacity = '1';
+            }
+            if (arrow) arrow.style.transform = 'rotate(180deg)';
+            activeAccordionId = id;
+            updateHoyoView(); 
+        }
+
+        function updateScoreAcumulado() {
+            if (!rondaStats) return;
+            let total = 0;
+            let activeCount = 0;
+            for (let i = 1; i <= totalHoyos; i++) {
+                if (rondaStats[i] && rondaStats[i].score !== null) {
+                    total += rondaStats[i].score;
+                    activeCount++;
+                }
+            }
+            const txt = document.getElementById('score-acumulado-text');
+            if (!txt) return;
+            if (activeCount === 0) {
+                txt.innerText = "—";
+            } else if (total === 0) {
+                txt.innerText = "E";
+            } else if (total > 0) {
+                txt.innerText = `+${total}`;
+            } else {
+                txt.innerText = total; 
+            }
+        }
+
+        function renderScoreBadge(score) {
+            const container = document.getElementById('score-achievement-badge');
+            if (!container) return;
+            if (score === null) {
+                container.className = "flex items-center bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 transition-all duration-300 h-24 overflow-hidden p-0 w-full";
+                container.innerHTML = `
+                    <div class="flex-shrink-0 w-24 h-24 flex items-center justify-center bg-slate-200/50">
+                        <span class="text-4xl animate-pulse">🎯</span>
+                    </div>
+                    <div class="text-left px-4">
+                        <h4 class="font-black text-xs text-slate-500 uppercase tracking-wide">Espera de Score</h4>
+                        <p class="text-[11px] text-slate-400 font-bold">Selecciona cuántos golpes hiciste sobre el par.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const badges = {
+                "-2": { title: "Águila", subtitle: "¡Impresionante! -2 Golpes", bgColor: "bg-purple-600", borderColor: "border-purple-700", textColor: "text-purple-100", svg: `<svg class="w-12 h-12" viewBox="0 0 64 64" fill="none" overflow="visible"><circle cx="32" cy="32" r="24" fill="#7b1fa2"/><path d="M16 34 C14 26, 20 18, 32 18 C44 18, 50 26, 48 34" stroke="#ffd54f" stroke-width="2" stroke-linecap="round" stroke-dasharray="4 4"/><path d="M16 28 L28 26 L32 18 L36 26 L48 28 L38 34 L40 44 L32 38 L24 44 Z" fill="#ffca28"/></svg>` },
+                "-1": { title: "Birdie", subtitle: "¡Súper Vuelo! -1 Golpe", bgColor: "bg-blue-900", borderColor: "border-blue-950", textColor: "text-blue-100", svg: `<svg class="w-12 h-12" viewBox="0 0 64 64" fill="none" overflow="visible"><circle cx="32" cy="32" r="24" fill="#0d47a1"/><circle cx="32" cy="32" r="13" fill="#29b6f6"/></svg>` },
+                "0": { title: "Par", subtitle: "¡Excelente! En el Par", bgColor: "bg-emerald-700", borderColor: "border-emerald-800", textColor: "text-emerald-50", svg: `<svg class="w-12 h-12" viewBox="0 0 64 64" fill="none" overflow="visible"><circle cx="32" cy="32" r="24" fill="#1b5e20"/><path d="M22 20 H42 V30 C42 36, 38 40, 32 40 Z" fill="#ffd54f"/></svg>` }, 
+                "1": { title: "Bogey", subtitle: "Buen Intento! +1 Golpe", bgColor: "bg-green-400", borderColor: "border-green-500", textColor: "text-slate-900", svg: `<svg class="w-12 h-12" viewBox="0 0 64 64" fill="none" overflow="visible"><circle cx="32" cy="32" r="24" fill="#a5d6a7"/><circle cx="24" cy="36" r="7" fill="#ffffff"/></svg>` },
+                "2": { title: "Doble Bogey", subtitle: "¡Casi! Concentración +2", bgColor: "bg-amber-400", borderColor: "border-amber-500", textColor: "text-amber-950", svg: `<svg class="w-12 h-12" viewBox="0 0 64 64" fill="none" overflow="visible"><circle cx="32" cy="32" r="24" fill="#ffca28"/><circle cx="32" cy="32" r="11" fill="#fff9c4"/></svg>` },
+                "3": { title: "Triple Bogey", subtitle: "¡A Seguir Practicando! +3", bgColor: "bg-red-500", borderColor: "border-red-600", textColor: "text-red-50", svg: `<svg class="w-12 h-12" viewBox="0 0 64 64" fill="none" overflow="visible"><circle cx="32" cy="32" r="24" fill="#c62828"/><path d="M32 16 L48 44 H16 Z" fill="#ffb300"/></svg>` },
+                "4": { title: "Cuádruple", subtitle: "Concentración Máxima +4", bgColor: "bg-red-700", borderColor: "border-red-800", textColor: "text-red-50", svg: `<svg class="w-12 h-12 mx-auto" viewBox="0 0 64 64" fill="none" overflow="visible"><circle cx="32" cy="32" r="24" fill="#b71c1c"/><path d="M22 28 C22 18, 42 18, 42 28 C42 34, 38 38, 38 42 H26 C26 38, 22 34, 22 28 Z" fill="#ff8a80" stroke="#ff5252" stroke-width="2.5"/></svg>` }
+            };
+
+            const activeBadge = badges[score.toString()];
+            container.className = `flex items-center rounded-3xl border-2 ${activeBadge.borderColor} ${activeBadge.bgColor} ${activeBadge.textColor} transition-all duration-300 transform scale-100 shadow-md h-24 overflow-hidden p-0 w-full`;
+            container.innerHTML = `
+                <div class="flex-shrink-0 w-24 h-24 flex items-center justify-center bg-black/15">
+                    ${activeBadge.svg}
+                </div>
+                <div class="text-left px-4 flex-grow text-white">
+                    <h4 class="font-black text-lg uppercase tracking-wider kids-font leading-none text-white">${activeBadge.title}</h4>
+                    <p class="text-xs font-bold opacity-90 leading-tight mt-1.5 text-white">${activeBadge.subtitle}</p>
+                </div>
+            `;
+        }
+
+        function renderApproach30Badge(val) {
+            const container = document.getElementById('approach30-achievement-badge');
+            if (!container) return;
+            if (val === null) {
+                container.className = "flex items-center bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 transition-all duration-300 h-20 overflow-hidden p-0 w-full";
+                container.innerHTML = `
+                    <div class="flex-shrink-0 w-20 h-20 flex items-center justify-center bg-slate-200/50">
+                        <span class="text-3xl">⛳</span>
+                    </div>
+                    <div class="text-left px-4">
+                        <h4 class="font-black text-xs text-slate-500 uppercase tracking-wide">Espera de Golpes</h4>
+                        <p class="text-[10px] text-slate-400 font-bold">Selecciona con cuántos golpes subiste al Green.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const badges = {
+                1: { title: "Excelente", subtitle: "¡Aproximación Perfecta! 1 Golpe", bgColor: "bg-emerald-700", borderColor: "border-emerald-800", textColor: "text-emerald-50", svg: `<svg class="w-12 h-12" viewBox="0 0 64 64" fill="none" overflow="visible"><circle cx="32" cy="32" r="24" fill="#1b5e20"/><ellipse cx="32" cy="46" rx="14" ry="7" fill="#a8e6cf"/></svg>` }, 
+                2: { title: "¡Casi!", subtitle: "Subiste en 2 Golpes", bgColor: "bg-amber-400", borderColor: "border-amber-600", textColor: "text-amber-950", svg: `<svg class="w-12 h-12" viewBox="0 0 64 64" fill="none" overflow="visible"><circle cx="32" cy="32" r="10" fill="#ffb74d"/></svg>` },
+                3: { title: "Sigue Adelante", subtitle: "3 o más Tiros", bgColor: "bg-red-500", borderColor: "border-red-600", textColor: "text-red-50", svg: `<svg class="w-12 h-12" viewBox="0 0 64 64" fill="none" overflow="visible"><circle cx="32" cy="32" r="24" fill="#c62828"/><path d="M32 16 L48 44 H16 Z" fill="#ffb300"/></svg>` }
+            };
+
+            const activeBadge = badges[val];
+            container.className = `flex items-center rounded-2xl border-2 ${activeBadge.borderColor} ${activeBadge.bgColor} ${activeBadge.textColor} transition-all duration-300 transform scale-100 shadow-md h-20 overflow-hidden p-0 w-full`;
+            container.innerHTML = `
+                <div class="flex-shrink-0 w-20 h-20 flex items-center justify-center bg-black/15">
+                    ${activeBadge.svg}
+                </div>
+                <div class="text-left px-4 flex-grow text-white">
+                    <h4 class="font-black text-base uppercase tracking-wider kids-font leading-none text-white">${activeBadge.title}</h4>
+                    <p class="text-[10px] font-bold opacity-90 leading-tight mt-1.5 text-white">${activeBadge.subtitle}</p>
+                </div>
+            `;
+        }
+
+        function showNotification(title, msg, emoji = "🎉", duration = 4000) {
+            const toast = document.getElementById('toast-notification');
+            if (!toast) return;
+            document.getElementById('toast-title').innerText = title;
+            document.getElementById('toast-msg').innerText = msg;
+            document.getElementById('toast-emoji').innerText = emoji;
+
+            toast.classList.remove('translate-y-24', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-24', 'opacity-0');
+            }, duration);
+        }
+    </script>
+</body>
+</html>
