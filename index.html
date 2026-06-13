@@ -1438,6 +1438,34 @@ let tiroParcial = {
   score: null, metidaFuera: false
 };
 
+function combinarConParcial(nuevo, parcial) {
+  var r = JSON.parse(JSON.stringify(nuevo));
+  if (!r.drive && parcial.drive) r.drive = parcial.drive;
+  if ((!r.hierros||r.hierros.length===0) && parcial.hierros && parcial.hierros.length>0) r.hierros = parcial.hierros;
+  else if (r.hierros && r.hierros.length>0 && parcial.hierros && parcial.hierros.length>0) {
+    parcial.hierros.forEach(function(h){ if(!r.hierros.find(function(x){return x.dist===h.dist;})) r.hierros.push(h); });
+  }
+  if (!r.approach && parcial.approach) r.approach = parcial.approach;
+  if (r.putts===null && parcial.putts!==null) r.putts = parcial.putts;
+  if (r.pasos===null && parcial.pasos!==null) r.pasos = parcial.pasos;
+  if (!r.puttCorto && parcial.puttCorto) r.puttCorto = parcial.puttCorto;
+  if (r.score===null && parcial.score!==null) r.score = parcial.score;
+  return r;
+}
+
+function combinarDatos(nuevos, anteriores) {
+  if (!anteriores) return nuevos;
+  var r = JSON.parse(JSON.stringify(nuevos));
+  if (r.score===null && anteriores.score!==null) r.score = anteriores.score;
+  if (!r.drive && anteriores.drive) r.drive = anteriores.drive;
+  if ((!r.hierros||r.hierros.length===0) && anteriores.hierros && anteriores.hierros.length>0) r.hierros = anteriores.hierros;
+  if (!r.approach && anteriores.approach) r.approach = anteriores.approach;
+  if (r.putts===null && anteriores.putts!==null) r.putts = anteriores.putts;
+  if (r.pasos===null && anteriores.pasos!==null) r.pasos = anteriores.pasos;
+  if (!r.puttCorto && anteriores.puttCorto) r.puttCorto = anteriores.puttCorto;
+  return r;
+}
+
 // ===================================================
 // BOTÓN MICRÓFONO — UN TOQUE INICIA, OTRO PARA
 // ===================================================
@@ -2010,6 +2038,7 @@ function mostrarTirosParciales(parcial) {
     if (hint) hint.textContent = 'Faltan putts — toca para continuar';
   }
 }
+
 
 // ── INICIALIZAR APP ──────────────────────────────────────────────────────────
 renderHoyos();
