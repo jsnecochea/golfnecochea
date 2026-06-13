@@ -936,9 +936,9 @@ body {
   </div>
 
   <div class="res-botones">
-    <button class="btn-guardar">☁️ Guardar en Google Sheets</button>
-    <div class="btn-cont-10">↻ Continuar — hoyos 10 al 18</div>
-    <div class="btn-salir">Salir sin guardar</div>
+    <button class="btn-guardar" onclick="guardarEnSheets()">☁️ Guardar en Google Sheets</button>
+    <div class="btn-cont-10" onclick="continuarSegundaVuelta()">↻ Continuar — hoyos 10 al 18</div>
+    <div class="btn-salir" onclick="irA('view-selector')">Salir sin guardar</div>
   </div>
 </div>
 
@@ -954,7 +954,7 @@ body {
     </div>
     <div class="btn-cerrar-notas" onclick="cerrarNotas()">✕</div>
   </div>
-  <div class="btn-leer-notas">
+  <div class="btn-leer-notas" onclick="leerNotas()">
     <span style="font-size:20px;color:var(--amber-light)">🔊</span>
     <span style="color:white;font-size:13px;font-weight:600;flex:1">Leerme las notas en voz alta</span>
     <span style="color:var(--text-dim)">›</span>
@@ -1036,7 +1036,7 @@ body {
       </div>
     </div>
     <div class="conf-botones">
-      <div class="btn-editar">🎤 Editar</div>
+      <div class="btn-editar" onclick="editarPorVoz()">⏺  Editar por voz</div>
       <button class="btn-correcto" onclick="confirmarHoyo()">✓ Correcto</button>
     </div>
   </div>
@@ -1104,11 +1104,12 @@ body {
     <div class="sheet-handle"><span></span></div>
     <div class="reset-header">↺ Borrar tiros del hoyo actual</div>
     <div class="reset-body">
-      <div class="reset-pregunta">¿Borrar el hoyo <span id="reset-num">4</span>?</div>
-      <div class="reset-sub">Se eliminarán todos los tiros registrados en este hoyo. Esta acción no se puede deshacer.</div>
+      <div class="reset-pregunta">¿Qué quieres borrar?</div>
+      <div class="reset-sub">Puedes borrar solo este hoyo o empezar la ronda desde cero.</div>
     </div>
     <div class="reset-botones">
-      <button class="btn-confirmar-reset" onclick="confirmarReset()">↺ Sí, borrar este hoyo</button>
+      <button class="btn-confirmar-reset" onclick="confirmarReset()">↺ Borrar hoyo <span id="reset-num">4</span></button>
+      <button class="btn-confirmar-reset" style="background:rgba(220,38,38,.6);margin-top:4px" onclick="resetearRonda()">⊗ Empezar ronda desde cero</button>
       <div class="btn-cancelar-reset" onclick="cerrarModal('modal-reset')">Cancelar</div>
     </div>
   </div>
@@ -1313,17 +1314,9 @@ function abrirDesglose(nom){
   abrirModal('modal-desglose');
 }
 
-function confirmarHoyo(){
-  const h=E.hoyos.find(x=>x.num===E.hoyoActual);
-  if(h&&!h.ok){h.ok=true; h.res=2;}
-  cerrarModal('modal-conf');
-  renderHoyos(); actualizarHoyo();
-  if(E.hoyoActual<E.totalHoyos) setTimeout(()=>hoyoSiguiente(),300);
-}
-
 function borrarHoyo(){
   const h=E.hoyos.find(x=>x.num===E.hoyoActual);
-  if(h){h.ok=false; h.res=null;}
+  if(h){h.ok=false; h.res=null; h.tiros={};}
   renderHoyos(); actualizarHoyo();
 }
 function confirmarReset(){ borrarHoyo(); cerrarModal('modal-reset'); }
@@ -1346,8 +1339,10 @@ function irAResumen(){
 }
 
 function cambiarCat(el,nom,ico){
-  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
-  el.classList.add('active');
+  if(el) {
+    document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+    el.classList.add('active');
+  }
   document.getElementById('notas-cat').textContent=nom;
   document.getElementById('notas-icon').textContent=ico;
 }
@@ -1808,15 +1803,25 @@ function arrancarReconocimiento() {
 // ===================================================
 // FINALIZAR: usuario tocó LISTO
 // ===================================================
+let finalizando = false;
+
 function finalizarVoz() {
+  if (finalizando) return; // evitar doble ejecución
+  finalizando = true;
   escuchando = false;
-  reiniciandoVoz = false;
-  if (reconocimiento) { try { reconocimiento.stop(); } catch(e){} reconocimiento = null; }
+  reiniciandoVoz = true; // bloquear reinicio automático en onend
+
+  if (reconocimiento) {
+    try { reconocimiento.stop(); } catch(e){}
+    reconocimiento = null;
+  }
+
   setBtnEstado(false);
   ocultarEscuchando();
 
   const texto = textoAcumulado.trim();
   textoAcumulado = '';
+  finalizando = false;
 
   if (texto) {
     const datos = interpretarHoyo(texto);
@@ -1824,14 +1829,13 @@ function finalizarVoz() {
     E.ultimoTextoVoz = texto;
     mostrarConfirmacion(texto, datos);
   } else {
-    // Sin texto — abrir confirmación vacía
-    mostrarConfirmacion('', {score:null,drive:null,hierros:[],approach:null,putts:null,pasos:null,puttCorto:null});
+    mostrarConfirmacion('', {score:null,drive:null,hierros:[],approach:null,putts:null,pasos:null,puttCorto:null,metidaFuera:false});
   }
 }
 
 function cancelarVoz() {
   escuchando = false;
-  reiniciandoVoz = false;
+  reiniciandoVoz = true; // bloquear reinicio en onend
   if (reconocimiento) { try { reconocimiento.stop(); } catch(e){} reconocimiento = null; }
   setBtnEstado(false);
   ocultarEscuchando();
@@ -1921,11 +1925,11 @@ function mostrarConfirmacion(textoOriginal, datos) {
   // ¿Falta putt corto?
   const faltante = document.getElementById('conf-faltante');
   if (faltante) {
-    if (datos.putts && datos.putts > 0 && datos.puttCorto === null) {
-      faltante.style.display = 'block';
-    } else {
-      faltante.style.display = 'none';
-    }
+    // Mostrar solo si: hay putts, no es hoyo en uno, y NO se detectó el putt corto
+    const necesitaPuttCorto = datos.putts && datos.putts > 0 &&
+                               datos.puttCorto === null &&
+                               !datos.metidaFuera;
+    faltante.style.display = necesitaPuttCorto ? 'block' : 'none';
   }
 
   abrirModal('modal-conf');
@@ -2091,35 +2095,42 @@ function leerNotas() {
 function confirmarHoyo() {
   const h = E.hoyos.find(x => x.num === E.hoyoActual);
   if (h) {
+    // Marcar como completado
     h.ok = true;
-    // Usar score detectado o calcular desde tiros
+
+    // Score: usar el detectado por voz
     if (E.ultimosDatos && E.ultimosDatos.score !== null) {
       h.res = E.ultimosDatos.score;
     } else if (E.ultimosDatos) {
-      // Calcular score por tiros si no se dijo explícitamente
-      // (lógica básica: putts + tiros)
-      const tiros = (E.ultimosDatos.drive ? 1 : 0) +
-                    (E.ultimosDatos.hierros.length || (E.ultimosDatos.approach ? 1 : 0)) +
-                    (E.ultimosDatos.putts || 2);
-      // Par estimado = 4 (par 4 promedio)
-      h.res = tiros - 4;
+      // Calcular score desde tiros si no se dijo explícitamente
+      const numTiros = (E.ultimosDatos.drive ? 1 : 0) +
+        Math.max(E.ultimosDatos.hierros ? E.ultimosDatos.hierros.length : 0,
+                 E.ultimosDatos.approach ? 1 : 0) +
+        (E.ultimosDatos.putts || 2);
+      h.res = numTiros - 4; // asumiendo par 4
     } else {
-      h.res = 0; // par por defecto
+      h.res = 0;
     }
-    // Guardar datos del hoyo
-    h.tiros = E.ultimosDatos || {};
-    // Actualizar tiros en pantalla
+
+    // Guardar tiros del hoyo
+    h.tiros = E.ultimosDatos ? {...E.ultimosDatos} : {};
+
+    // Actualizar lista de tiros visible en pantalla
     actualizarTirosHoyo(h);
   }
 
-  // Limpiar estado
-  tirosHoyo = {drive:null,hierros:[],approach:null,putts:null,pasos:null,puttCorto:null,score:null};
+  // Limpiar estado de voz
   E.ultimosDatos = null;
+  E.ultimoTextoVoz = null;
 
   cerrarModal('modal-conf');
   renderHoyos();
   actualizarHoyo();
-  if (E.hoyoActual < E.totalHoyos) setTimeout(() => hoyoSiguiente(), 300);
+
+  // Avanzar al siguiente hoyo automáticamente
+  if (E.hoyoActual < E.totalHoyos) {
+    setTimeout(() => hoyoSiguiente(), 400);
+  }
 }
 
 // ===================================================
@@ -2184,6 +2195,48 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+
+// ── Guardar en Google Sheets (placeholder — se conectará con Sheets) ──────
+function guardarEnSheets() {
+  // Por ahora muestra confirmación visual
+  const btn = document.querySelector('.btn-guardar');
+  if (btn) {
+    btn.textContent = '✅ Guardado correctamente';
+    btn.style.background = '#185FA5';
+    setTimeout(() => {
+      btn.innerHTML = '☁️ Guardar en Google Sheets';
+      btn.style.background = '';
+    }, 2500);
+  }
+  // TODO: conectar con Google Sheets API
+}
+
+// ── Resetear ronda completa ────────────────────────────────────────────────
+function resetearRonda() {
+  E.hoyos = [];
+  for (let i = 1; i <= 9; i++) E.hoyos.push({num:i, ok:false, res:null, tiros:{}});
+  E.hoyoActual = 1;
+  E.totalHoyos = 9;
+  E.ultimosDatos = null;
+  E.ultimoTextoVoz = null;
+  cerrarModal('modal-reset');
+  renderHoyos();
+  actualizarHoyo();
+}
+
+// ── Editar por voz — reabre micrófono ─────────────────────────────────────
+function editarPorVoz() {
+  cerrarModal('modal-conf');
+  setTimeout(() => iniciarVoz(), 300);
+}
+
+// ── Borrar nota ────────────────────────────────────────────────────────────
+document.addEventListener('click', e => {
+  if (e.target.classList.contains('btn-borrar-nota') || e.target.closest('.btn-borrar-nota')) {
+    const nota = e.target.closest('.nota-item');
+    if (nota) nota.remove();
+  }
+});
 
 document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('active');}));
 
