@@ -575,8 +575,7 @@ body {
         <span id="mic-label" style="color:white;font-size:22px;font-weight:700;letter-spacing:1px;display:none">LISTO</span>
       </button>
       <span class="dictar-hint" style="font-size:12px" id="mic-hint">Toca para hablar</span>
-      <!-- texto-transcrito eliminado — no necesario -->
-      <div id="texto-transcrito" style="display:none"></div>
+      <div id="debug-voz" style="color:#34d399;font-size:12px;text-align:center;padding:0 20px;min-height:20px;line-height:1.5;max-width:320px"></div>
     </div>
   </div>
 
@@ -1712,110 +1711,82 @@ function setBtnEstado(grabando) {
 }
 
 // ===================================================
-// VOZ — CONTROL SIMPLIFICADO Y ROBUSTO
+// VOZ — VERSION SIMPLE Y ROBUSTA
 // ===================================================
 let modoGrabando = false;
-let textoFinalLocal = '';
 
 function toggleVoz() {
-  if (!modoGrabando) {
-    iniciarGrabacion();
-  } else {
-    detenerYProcesar();
-  }
+  if (!modoGrabando) iniciarGrabacion();
+  else detenerYProcesar();
 }
 
 function iniciarGrabacion() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) {
-    alert('Reconocimiento de voz no disponible. Usa Chrome en Android o Safari en iPhone.');
+    alert('Usa Chrome en Android para el micrófono.');
     return;
   }
-
   modoGrabando = true;
   textoAcumulado = '';
-  textoFinalLocal = '';
   setBtnEstado(true);
-
-  crearYArrancar();
+  grabar();
 }
 
-function crearYArrancar() {
+function grabar() {
   if (!modoGrabando) return;
-
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   reconocimiento = new SR();
   reconocimiento.lang = 'es-MX';
-  reconocimiento.continuous = false; // más compatible en iOS/Android
-  reconocimiento.interimResults = false;
+  reconocimiento.continuous = true;
+  reconocimiento.interimResults = true;
   reconocimiento.maxAlternatives = 1;
 
-  reconocimiento.onresult = (event) => {
-    for (let i = 0; i < event.results.length; i++) {
-      if (event.results[i].isFinal) {
-        const t = event.results[i][0].transcript.trim();
-        textoAcumulado += (textoAcumulado ? ' ' : '') + t;
-      }
+  reconocimiento.onresult = (ev) => {
+    let acum = '';
+    for (let i = 0; i < ev.results.length; i++) {
+      acum += ev.results[i][0].transcript;
     }
+    textoAcumulado = acum.trim();
+    const dbg = document.getElementById('debug-voz');
+    if (dbg) dbg.textContent = textoAcumulado;
   };
 
   reconocimiento.onerror = (ev) => {
     if (ev.error === 'not-allowed') {
       modoGrabando = false;
       setBtnEstado(false);
-      alert('Permiso de micrófono denegado. En Chrome, ve a Configuración → Privacidad → Micrófono y permite este sitio.');
+      alert('Permiso de micrófono denegado. Ve a Configuración del navegador y permite el micrófono para este sitio.');
     }
-    // no-speech, aborted, network → ignorar, onend reiniciará
   };
 
   reconocimiento.onend = () => {
-    // Si el usuario sigue grabando, reiniciar inmediatamente
-    if (modoGrabando) {
-      setTimeout(() => {
-        if (modoGrabando) crearYArrancar();
-      }, 100);
-    }
+    if (modoGrabando) setTimeout(grabar, 200);
   };
 
-  try {
-    reconocimiento.start();
-  } catch(e) {
-    // Si falla el start, reintentar en 300ms
-    setTimeout(() => { if (modoGrabando) crearYArrancar(); }, 300);
+  try { reconocimiento.start(); } catch(e) {
+    setTimeout(grabar, 300);
   }
 }
 
 function detenerYProcesar() {
   modoGrabando = false;
   setBtnEstado(false);
-
-  // Detener el reconocimiento actual
   if (reconocimiento) {
     try { reconocimiento.stop(); } catch(e) {}
     reconocimiento = null;
   }
-
-  // Procesar después de un pequeño delay para que llegue el último resultado
   setTimeout(() => {
     const texto = textoAcumulado.trim();
     textoAcumulado = '';
-
-    if (texto) {
-      const datos = interpretarHoyo(texto);
-      E.ultimosDatos = datos;
-      E.ultimoTextoVoz = texto;
-      mostrarConfirmacion(texto, datos);
-    } else {
-      // Nada detectado — abrir tarjeta vacía para entrada manual
-      mostrarConfirmacion('', {
-        score:null, drive:null, hierros:[], approach:null,
-        putts:null, pasos:null, puttCorto:null, metidaFuera:false
-      });
-    }
-  }, 300);
+    const dbg = document.getElementById('debug-voz');
+    if (dbg) dbg.textContent = '';
+    const datos = interpretarHoyo(texto || '');
+    E.ultimosDatos = datos;
+    E.ultimoTextoVoz = texto;
+    mostrarConfirmacion(texto, datos);
+  }, 400);
 }
 
-// Alias para compatibilidad
 function iniciarVoz() { iniciarGrabacion(); }
 function finalizarVoz() { detenerYProcesar(); }
 function cancelarVoz() {
@@ -1823,6 +1794,8 @@ function cancelarVoz() {
   setBtnEstado(false);
   if (reconocimiento) { try { reconocimiento.stop(); } catch(e){} reconocimiento = null; }
   textoAcumulado = '';
+  const dbg = document.getElementById('debug-voz');
+  if (dbg) dbg.textContent = '';
 }
 
 // ===================================================
