@@ -1226,6 +1226,8 @@ function selJugador(id,av,nom){
   document.getElementById('jug-avatar').textContent=av;
   document.getElementById('jug-nombre').textContent=nom;
   document.getElementById('torneo-mi').textContent=av+' '+nom;
+  tiroParcialPorHoyo = {};
+  tiroParcial = getTiroParcial(1);
   renderHoyos(); actualizarHoyo(); irA('view-hoyo');
 }
 
@@ -1243,8 +1245,8 @@ function renderHoyos(){
 }
 
 function cambiarHoyo(n){
-  // Limpiar parcial al cambiar de hoyo manualmente
-  tiroParcial = { drive:null, hierros:[], approach:null, putts:null, pasos:null, puttCorto:null, score:null, metidaFuera:false };
+  // Guardar parcial actual y cargar el del nuevo hoyo
+  tiroParcial = getTiroParcial(n);
   E.hoyoActual=n; renderHoyos(); actualizarHoyo();
 }
 
@@ -1261,15 +1263,41 @@ function actualizarHoyo(){
   const tiros=document.getElementById('tiros-list');
   const actions=document.getElementById('hoyo-actions');
   const dictar=document.getElementById('dictar-wrap');
+
   if(h&&h.ok){
     sub.textContent='Completado';
     const sc=scoreClass(h.res);
-    badge.className='badge-res badge-'+sc; badge.textContent=scoreTexto[sc]||''; badge.classList.remove('hidden');
-    tiros.classList.remove('hidden'); actions.classList.remove('hidden'); dictar.classList.add('hidden');
+    badge.className='badge-res badge-'+sc;
+    badge.textContent=scoreTexto[sc]||'';
+    badge.classList.remove('hidden');
+    tiros.classList.remove('hidden');
+    actions.classList.remove('hidden');
+    dictar.classList.add('hidden');
+    // Reconstruir lista de tiros desde datos guardados
+    if(h.tiros) reconstruirTiros(tiros, h.tiros);
   } else {
-    sub.textContent='En curso'; badge.classList.add('hidden');
-    tiros.classList.add('hidden'); actions.classList.add('hidden'); dictar.classList.remove('hidden');
+    sub.textContent='En curso';
+    badge.classList.add('hidden');
+    actions.classList.add('hidden');
+    // Mostrar tiros parciales si hay alguno guardado para este hoyo
+    var parcialActual = getTiroParcial(E.hoyoActual);
+    var hayParcial = parcialActual.drive || parcialActual.hierros.length > 0 ||
+                     parcialActual.approach || parcialActual.putts !== null;
+    if (hayParcial) {
+      tiros.classList.remove('hidden');
+      reconstruirTiros(tiros, parcialActual);
+      dictar.classList.remove('hidden');
+      var hint = document.getElementById('mic-hint');
+      if (hint) hint.textContent = 'Hoyo en curso — toca para continuar';
+    } else {
+      tiros.classList.add('hidden');
+      tiros.innerHTML='';
+      dictar.classList.remove('hidden');
+      var hint2 = document.getElementById('mic-hint');
+      if (hint2) hint2.textContent = 'Toca para hablar';
+    }
   }
+
   const btnS=document.getElementById('btn-sig');
   if(btnS) {
     if(esUltimo){
@@ -1284,12 +1312,100 @@ function actualizarHoyo(){
   }
 }
 
+function reconstruirTiros(lista, d) {
+  lista.innerHTML='';
+  if(!d) return;
+
+  // Drive
+  if(d.drive){
+    var texD={fairway:'Fairway',  'sin-tiro':'Sin tiro / Árboles', castigo:'Castigo / OB / Agua'};
+    lista.innerHTML+='<div class="tiro-card tc-drive"><span class="tiro-emoji">🏌️</span>'+
+      '<div class="tiro-info"><div class="tiro-subtipo">Drive</div>'+
+      '<div class="tiro-val">'+(texD[d.drive]||d.drive)+'</div></div></div>';
+  }
+
+  // Hierros ordenados mayor a menor
+  var hierros=(d.hierros||[]).slice().sort(function(a,b){return b.dist-a.dist;});
+  hierros.forEach(function(h){
+    var texR={green:'Al green',barbas:'Barbas',trampa:'Trampa',castigo:'Castigo'};
+    lista.innerHTML+='<div class="tiro-card tc-hierro"><span class="tiro-emoji">🔨</span>'+
+      '<div class="tiro-info"><div class="tiro-subtipo">'+h.dist+' yardas</div>'+
+      '<div class="tiro-val">'+(texR[h.resultado]||'Al green')+'</div></div></div>';
+  });
+
+  // Approach sin yardas
+  if(d.approach && (!d.hierros||d.hierros.length===0)){
+    var texA={green:'Al green',barbas:'Barbas',trampa:'Trampa',castigo:'Castigo'};
+    lista.innerHTML+='<div class="tiro-card tc-approach"><span class="tiro-emoji">🎯</span>'+
+      '<div class="tiro-info"><div class="tiro-subtipo">Tiro al green</div>'+
+      '<div class="tiro-val">'+(texA[d.approach]||d.approach)+'</div></div></div>';
+  }
+
+  // Putts
+  if(d.putts!==null && d.putts!==undefined){
+    var pasosStr=d.pasos===0?' — dado (menos de 1 paso)':d.pasos?' — '+d.pasos+' pasos':'';
+    var pStr=d.putts===0?'Entró directo':d.putts+' putt'+(d.putts>1?'s':'')+pasosStr;
+    var cortoStr='';
+    if(d.puttCorto==='lo-meti') cortoStr='<div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:3px">✅ Corto metido</div>';
+    else if(d.puttCorto==='lo-falle') cortoStr='<div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:3px">❌ Corto fallado</div>';
+    else if(d.puttCorto==='no-hubo') cortoStr='<div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:3px">— Sin putt corto</div>';
+    lista.innerHTML+='<div class="tiro-card tc-putt"><span class="tiro-emoji">⛳</span>'+
+      '<div class="tiro-info"><div class="tiro-subtipo">Putting</div>'+
+      '<div style="color:white;font-size:16px;font-weight:700">'+pStr+'</div>'+cortoStr+'</div></div>';
+  }
+}
+
 function hoyoSiguiente(){ if(E.hoyoActual<E.totalHoyos){E.hoyoActual++; renderHoyos(); actualizarHoyo();} }
 function hoyoAnterior(){ if(E.hoyoActual>1){E.hoyoActual--; renderHoyos(); actualizarHoyo();} }
 
 function setModo(m){
   document.getElementById('btn-voz').className='ctrl-btn ctrl-voz'+(m==='voz'?' ':'  inactive');
   document.getElementById('btn-bot').className='ctrl-btn ctrl-botones'+(m==='botones'?' active':'');
+}
+
+var modoGrabandoNota = false;
+var reconocimientoNota = null;
+
+function toggleVozNota() {
+  if (!modoGrabandoNota) {
+    // Iniciar
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { alert('Usa Chrome para el micrófono.'); return; }
+    modoGrabandoNota = true;
+    var btn = document.getElementById('btn-mic-nota');
+    var emoji = document.getElementById('mic-nota-emoji');
+    var lbl = document.getElementById('mic-nota-label');
+    if (btn) btn.style.background = '#DC2626';
+    if (emoji) emoji.style.display = 'none';
+    if (lbl) lbl.style.display = 'block';
+
+    reconocimientoNota = new SR();
+    reconocimientoNota.lang = 'es-MX';
+    reconocimientoNota.continuous = true;
+    reconocimientoNota.interimResults = true;
+    var textoNota = '';
+    reconocimientoNota.onresult = function(ev) {
+      var t = '';
+      for (var i=0; i<ev.results.length; i++) t += ev.results[i][0].transcript;
+      textoNota = t.trim();
+    };
+    reconocimientoNota.onend = function() { if (modoGrabandoNota) reconocimientoNota.start(); };
+    reconocimientoNota.start();
+    reconocimientoNota._textoRef = function() { return textoNota; };
+
+  } else {
+    // Parar y guardar nota
+    var textoFinal = reconocimientoNota && reconocimientoNota._textoRef ? reconocimientoNota._textoRef() : '';
+    modoGrabandoNota = false;
+    if (reconocimientoNota) { try { reconocimientoNota.stop(); } catch(e){} reconocimientoNota = null; }
+    var btn = document.getElementById('btn-mic-nota');
+    var emoji = document.getElementById('mic-nota-emoji');
+    var lbl = document.getElementById('mic-nota-label');
+    if (btn) btn.style.background = 'var(--green)';
+    if (emoji) emoji.style.display = 'block';
+    if (lbl) lbl.style.display = 'none';
+    if (textoFinal) agregarNota(textoFinal);
+  }
 }
 
 function toggleMenu() {
@@ -1432,11 +1548,22 @@ let editando = false;
 let datosAnteriores = null;
 
 // Tiros parciales del hoyo en curso (se van acumulando dictado a dictado)
-let tiroParcial = {
-  drive: null, hierros: [], approach: null,
-  putts: null, pasos: null, puttCorto: null,
-  score: null, metidaFuera: false
-};
+// Tiros parciales POR HOYO — nunca se pierden al cambiar de hoyo
+var tiroParcialPorHoyo = {};
+
+function getTiroParcial(num) {
+  if (!tiroParcialPorHoyo[num]) {
+    tiroParcialPorHoyo[num] = {
+      drive:null, hierros:[], approach:null,
+      putts:null, pasos:null, puttCorto:null,
+      score:null, metidaFuera:false
+    };
+  }
+  return tiroParcialPorHoyo[num];
+}
+
+// Alias para compatibilidad — apunta al hoyo actual
+var tiroParcial = getTiroParcial(1);
 
 function combinarConParcial(nuevo, parcial) {
   var r = JSON.parse(JSON.stringify(nuevo));
@@ -1531,6 +1658,21 @@ function toggleVoz() {
     // 4. Procesar y mostrar tarjeta
     try {
       var datos = interpretarHoyo(texto);
+
+      // ¿Es un comando de notas?
+      if (datos._esNota) {
+        var catMap = {approach:'Approach', drive:'Drive', hierros:'Hierros', putt:'Putt', greens:'Greens'};
+        var icoMap = {approach:'🎯', drive:'🏌️', hierros:'🔨', putt:'⛳', greens:'📋'};
+        var cat = datos._catNota || 'approach';
+        cambiarCat(null, catMap[cat], icoMap[cat]);
+        // Si quiere anotar algo, agregarlo a las notas
+        if (datos._textoNota) {
+          agregarNota(datos._textoNota);
+        }
+        abrirNotas();
+        return;
+      }
+
       if (editando && datosAnteriores) {
         datos = combinarDatos(datos, datosAnteriores);
         editando = false;
@@ -1614,7 +1756,9 @@ const DICT = {
     'saque','saqué','sali','salí',
     'al pin','cerca del pin','cerca del hoyo','junto al pin',
     'lo mande al green','lo mandé al green','chip al green','chip',
-    'me fui al green','me fui arriba'
+    'me fui al green','me fui arriba',
+    'deje dada','dejé dada','la deje dada','la dejé dada',
+    'dejo dada','dejó dada','quedo dada','quedó dada'
   ],
   resultado_barbas: [
     'barbas','en barbas','barbitas','collar','en el collar',
@@ -1728,6 +1872,21 @@ function interpretarHoyo(txt) {
   var n = norm(txt);
   var r = { score:null, drive:null, hierros:[], approach:null, putts:null, pasos:null, puttCorto:null, metidaFuera:false };
 
+  // Si menciona "notas" → no interpretar como tiro, abrir notas
+  if (/notas?/i.test(txt)) {
+    r._esNota = true;
+    // Detectar categoría
+    if (/drive/i.test(txt)) r._catNota = 'drive';
+    else if (/approach|aproach/i.test(txt)) r._catNota = 'approach';
+    else if (/hierro/i.test(txt)) r._catNota = 'hierros';
+    else if (/p[ou]t|green/i.test(txt)) r._catNota = 'putt';
+    else r._catNota = 'approach'; // default
+    // Detectar si quiere anotar algo
+    var mAnota = txt.match(/(?:anota(?:me)?|escribe(?:me)?|guarda(?:me)?)\s+(?:en\s+mis?\s+notas?\s+)?(.+)/i);
+    if (mAnota) r._textoNota = mAnota[1].trim();
+    return r;
+  }
+
   // Metida desde fuera
   if (DICT.metidaFuera.some(function(p){ return n.includes(norm(p)); })) {
     r.metidaFuera = true; r.putts = 0; r.pasos = 0; r.puttCorto = 'no-hubo';
@@ -1789,9 +1948,11 @@ function interpretarHoyo(txt) {
     /(?:de|desde)\s+\d+\s*(yardas?|yards?)/i.test(txt) ||
     (!r.drive && !esDistanciaRestante);
 
-  // Excepción: si hay drive, las yardas sin resultado son distancia restante
-  if (r.drive && !resApp && !esDistanciaRestante) {
-    esTiroHierro = false;
+  // Regla simple y universal:
+  // Si ya se mencionó el drive (con cualquier resultado) → las yardas son el siguiente tiro
+  // EXCEPCIÓN: si dicen explícitamente "quedé a X yardas" → es distancia restante
+  if (r.drive && !esDistanciaRestante) {
+    esTiroHierro = true;
   }
 
   if (esTiroHierro) {
@@ -2038,8 +2199,9 @@ function confirmarHoyo() {
     h.tiros = JSON.parse(JSON.stringify(datos));
   }
 
-  // Limpiar parcial para el siguiente hoyo
-  tiroParcial = { drive:null, hierros:[], approach:null, putts:null, pasos:null, puttCorto:null, score:null, metidaFuera:false };
+  // Limpiar parcial de este hoyo ya completado
+  tiroParcialPorHoyo[E.hoyoActual] = { drive:null, hierros:[], approach:null, putts:null, pasos:null, puttCorto:null, score:null, metidaFuera:false };
+  tiroParcial = getTiroParcial(E.hoyoActual + 1);
   E.ultimosDatos = null;
 
   cerrarModal('modal-conf');
@@ -2098,6 +2260,33 @@ function mostrarTirosParciales(parcial) {
   }
 }
 
+
+function leerNotas() {
+  var notas = Array.from(document.querySelectorAll('.nota-texto')).map(function(n){return n.textContent;});
+  if (!notas.length) return;
+  var u = new SpeechSynthesisUtterance(notas.join('. '));
+  u.lang = 'es-MX'; u.rate = 0.9;
+  window.speechSynthesis.speak(u);
+}
+
+
+
+function agregarNota(texto) {
+  var lista = document.getElementById('notas-list');
+  if (!lista || !texto) return;
+  var div = document.createElement('div');
+  div.className = 'nota-item';
+  var span = document.createElement('span');
+  span.className = 'nota-texto';
+  span.textContent = texto;
+  var btn = document.createElement('button');
+  btn.className = 'btn-borrar-nota';
+  btn.textContent = '🗑️';
+  btn.onclick = function(){ div.remove(); };
+  div.appendChild(span);
+  div.appendChild(btn);
+  lista.appendChild(div);
+}
 
 // ── INICIALIZAR APP ──────────────────────────────────────────────────────────
 renderHoyos();
