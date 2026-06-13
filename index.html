@@ -1722,24 +1722,35 @@ function toggleVoz() {
 
 function iniciarGrabacion() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const dbg = document.getElementById('debug-voz');
+
   if (!SR) {
+    if (dbg) dbg.textContent = '❌ Este navegador no soporta voz. Usa Chrome.';
     alert('Usa Chrome en Android para el micrófono.');
     return;
   }
+
   modoGrabando = true;
   textoAcumulado = '';
   setBtnEstado(true);
+  if (dbg) dbg.textContent = '⏳ Iniciando micrófono...';
   grabar();
 }
 
 function grabar() {
   if (!modoGrabando) return;
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const dbg = document.getElementById('debug-voz');
+
   reconocimiento = new SR();
   reconocimiento.lang = 'es-MX';
   reconocimiento.continuous = true;
   reconocimiento.interimResults = true;
   reconocimiento.maxAlternatives = 1;
+
+  reconocimiento.onstart = () => {
+    if (dbg) dbg.textContent = '🎤 Escuchando... habla ahora';
+  };
 
   reconocimiento.onresult = (ev) => {
     let acum = '';
@@ -1747,23 +1758,31 @@ function grabar() {
       acum += ev.results[i][0].transcript;
     }
     textoAcumulado = acum.trim();
-    const dbg = document.getElementById('debug-voz');
     if (dbg) dbg.textContent = textoAcumulado;
   };
 
   reconocimiento.onerror = (ev) => {
+    if (dbg) dbg.textContent = '⚠️ Error: ' + ev.error;
     if (ev.error === 'not-allowed') {
       modoGrabando = false;
       setBtnEstado(false);
-      alert('Permiso de micrófono denegado. Ve a Configuración del navegador y permite el micrófono para este sitio.');
+      alert('Micrófono bloqueado. En Chrome: toca los 3 puntos → Configuración → Configuración del sitio → Micrófono → permite tu URL.');
     }
+    // Para otros errores, onend reiniciará
   };
 
   reconocimiento.onend = () => {
-    if (modoGrabando) setTimeout(grabar, 200);
+    if (modoGrabando) {
+      if (dbg && !dbg.textContent.includes('⚠️')) dbg.textContent = (textoAcumulado || '') + ' [reiniciando...]';
+      setTimeout(grabar, 200);
+    }
   };
 
-  try { reconocimiento.start(); } catch(e) {
+  try {
+    reconocimiento.start();
+    if (dbg) dbg.textContent = '⏳ Conectando micrófono...';
+  } catch(e) {
+    if (dbg) dbg.textContent = '⚠️ Error al iniciar: ' + e.message;
     setTimeout(grabar, 300);
   }
 }
