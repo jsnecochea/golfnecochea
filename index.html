@@ -1066,9 +1066,9 @@ body {
       <div class="conf-falt-hdr">❓ Falta un dato</div>
       <div class="conf-pregunta">¿Tuviste un putt de menos de 2 pasos?</div>
       <div class="conf-opciones">
-        <div class="conf-opcion op-no-hubo">No hubo</div>
-        <div class="conf-opcion op-lo-meti">Lo metí</div>
-        <div class="conf-opcion op-lo-falle">Lo fallé</div>
+        <div class="conf-opcion op-no-hubo" onclick="selPuttCorto('no-hubo',this)">No hubo</div>
+        <div class="conf-opcion op-lo-meti" onclick="selPuttCorto('lo-meti',this)">Lo metí</div>
+        <div class="conf-opcion op-lo-falle" onclick="selPuttCorto('lo-falle',this)">Lo fallé</div>
       </div>
     </div>
     <div class="conf-botones">
@@ -1333,8 +1333,9 @@ function reconstruirTiros(lista, d) {
       '<div class="tiro-val">'+(texR[h.resultado]||'Al green')+'</div></div></div>';
   });
 
-  // Approach sin yardas
-  if(d.approach && (!d.hierros||d.hierros.length===0)){
+  // Approach — mostrar si no hay hierros, O si hierros quedaron en barbas/trampa
+  var hierrosEnBarbasR = (d.hierros||[]).some(function(h){return h.resultado==='barbas'||h.resultado==='trampa';});
+  if(d.approach && ((!d.hierros||d.hierros.length===0) || (d.approach==='green' && hierrosEnBarbasR))){
     var texA={green:'Al green',barbas:'Barbas',trampa:'Trampa',castigo:'Castigo'};
     lista.innerHTML+='<div class="tiro-card tc-approach"><span class="tiro-emoji">🎯</span>'+
       '<div class="tiro-info"><div class="tiro-subtipo">Tiro al green</div>'+
@@ -1718,13 +1719,28 @@ const DICT = {
 
   // ── SCORE ──────────────────────────────────────
   score: {
-    'aguila':-2,'eagle':-2,'aguilita':-2,
-    'birdie':-1,'verdi':-1,'verde':-1,'burdi':-1,'berdi':-1,
+    // Eagle / Águila (-2)
+    'aguila':-2,'aguilita':-2,'eagle':-2,'menos dos':-2,'mas menos dos':-2,
+    // Birdie (-1)
+    'birdie':-1,'verdi':-1,'verde':-1,'burdi':-1,'berdi':-1,'birdi':-1,
+    'menos uno':-1,'menos 1':-1,
+    // Par (0)
     'par':0,'empate':0,'pareo':0,
-    'bogey':1,'bogi':1,'bogui':1,'boque':1,
-    'doble bogey':2,'doble':2,'quesopi':2,'sopi':2,'sopilote':2,'sopilotes':2,'queso':2,
-    'triple bogey':3,'triple':3,
-    'cuadruple bogey':4,'cuadruple':4,'cuadruple bogey':4
+    // Bogey (+1)
+    'bogey':1,'bogi':1,'bogui':1,'bogue':1,'boke':1,'boqui':1,
+    'mas uno':1,'más uno':1,'mas 1':1,'+1':1,
+    // Doble bogey (+2)
+    'doble bogey':2,'doble bogi':2,'doble':2,
+    'sopi':2,'sopilote':2,'sopilotes':2,'quesopi':2,'queso':2,
+    'mas dos':2,'más dos':2,'mas 2':2,'+2':2,
+    // Triple bogey (+3)
+    'triple bogey':3,'triple bogi':3,'triple':3,
+    'mas tres':3,'más tres':3,'mas 3':3,'+3':3,
+    // Cuádruple (+4)
+    'cuadruple bogey':4,'cuadruple bogi':4,'cuadruple':4,'cuádruple':4,
+    'mas cuatro':4,'más cuatro':4,'mas 4':4,'+4':4,
+    // Quíntuple (+5)
+    'mas cinco':5,'más cinco':5,'mas 5':5,'+5':5
   },
 
   // ── DRIVE ──────────────────────────────────────
@@ -1758,7 +1774,12 @@ const DICT = {
     'lo mande al green','lo mandé al green','chip al green','chip',
     'me fui al green','me fui arriba',
     'deje dada','dejé dada','la deje dada','la dejé dada',
-    'dejo dada','dejó dada','quedo dada','quedó dada'
+    'dejo dada','dejó dada','quedo dada','quedó dada',
+    'de ahi me subi','de ahí me subí','de ahi subi','de ahí subí',
+    'de ahi me fui','de ahí me fui','de ahi me mande','de ahí me mandé',
+    'desde ahi me subi','desde ahí me subí','desde ahi subi',
+    'y me subi','y me subí','luego me subi','luego me subí',
+    'y subi','y subí','y llegue','y llegué','y la meti','y la metí'
   ],
   resultado_barbas: [
     'barbas','en barbas','barbitas','collar','en el collar',
@@ -1988,7 +2009,24 @@ function interpretarHoyo(txt) {
     r.drive = 'fairway';
   }
 
-  if (r.hierros.length > 0) {
+  // Detectar si hay DOS resultados distintos en el mismo dictado:
+  // "180 yardas barbas, de barbas me subí" → hierro=barbas + approach=green
+  var resBarbas = DICT.resultado_barbas.some(function(p){ return n.includes(norm(p)); });
+  var resGreen  = DICT.resultado_green.some(function(p){ return n.includes(norm(p)); });
+  var resTrampa = DICT.resultado_trampa.some(function(p){ return n.includes(norm(p)); });
+
+  // Si hay barbas/trampa Y green en el mismo dictado con hierros
+  // → hierro quedó en barbas/trampa, approach al green
+  var hayDosResultados = (resBarbas || resTrampa) && resGreen && r.hierros.length > 0;
+
+  if (hayDosResultados) {
+    // El hierro quedó en barbas o trampa
+    var resHierro = resBarbas ? 'barbas' : 'trampa';
+    r.hierros = r.hierros.sort(function(a,b){ return b.dist-a.dist; })
+      .map(function(h){ return {dist:h.dist, resultado:resHierro}; });
+    // El approach al green es un tiro adicional
+    r.approach = 'green';
+  } else if (r.hierros.length > 0) {
     r.hierros = r.hierros.sort(function(a,b){ return b.dist-a.dist; })
       .map(function(h){ return {dist:h.dist, resultado:resApp||'green'}; });
     r.approach = resApp || 'green';
@@ -2031,11 +2069,43 @@ function interpretarHoyo(txt) {
   // "un poco" solo como putt (cuando no hay contexto de cantidad)
   if (!r.putts && /un\s+poco/i.test(txt) && /green|arriba|subi|barbas/i.test(txt)) r.putts = 1;
 
-  // Pasos
-  var mPasos = txt.match(/(\w+)\s+pasos?/i);
-  if (mPasos) { var ps = extraerNum(mPasos[1]); if (ps && ps<=80) r.pasos = ps; }
+  // Pasos — detectar TODOS los números de pasos mencionados
+  // "dos puts, uno de doce pasos y uno de dos pasos"
+  // → pasos = 12 (el mayor = primer putt), putt corto = 2 pasos → lo-meti
+
+  var todosLosNums = [];
+  // Buscar X pasos
+  var regTodosPasos = /(\w+)\s+pasos?/gi;
+  var mTP;
+  while ((mTP = regTodosPasos.exec(txt)) !== null) {
+    var pN = extraerNum(mTP[1]);
+    if (pN && pN >= 1 && pN <= 80) todosLosNums.push(pN);
+  }
+  // Buscar "uno de X" / "de X pasos"
+  var regUnoD = /(?:uno|de)\s+de\s+(\w+)/gi;
+  while ((mTP = regUnoD.exec(txt)) !== null) {
+    var pN2 = extraerNum(mTP[1]);
+    if (pN2 && pN2 >= 1 && pN2 <= 80 && todosLosNums.indexOf(pN2) < 0) todosLosNums.push(pN2);
+  }
+
+  if (todosLosNums.length >= 2) {
+    todosLosNums.sort(function(a,b){ return b-a; });
+    r.pasos = todosLosNums[0]; // Mayor = primer putt
+    var menorP = todosLosNums[todosLosNums.length-1];
+    // El menor <= 2 = putt corto metido (si no dijeron que lo fallaron)
+    if (menorP <= 2 && !DICT.puttCorto.lofalle.some(function(p){ return n.includes(norm(p)); })) {
+      r.puttCorto = 'lo-meti';
+    }
+  } else if (todosLosNums.length === 1) {
+    r.pasos = todosLosNums[0];
+    if (todosLosNums[0] <= 2 && !DICT.puttCorto.lofalle.some(function(p){ return n.includes(norm(p)); })) {
+      r.puttCorto = 'lo-meti';
+    }
+  }
+
+  // Fallback si no encontró con "pasos"
   if (!r.pasos) {
-    var mA2 = txt.match(/(?:a|estoy a|quede a|quede a|son)\s+(\w+)\s*(?:pasos?)?/i);
+    var mA2 = txt.match(/(?:a|estoy a|quede a|quedé a|son)\s+(\w+)\s*(?:pasos?)?/i);
     if (mA2) { var pa = extraerNum(mA2[1]); if (pa && pa<=80) r.pasos = pa; }
   }
 
@@ -2114,8 +2184,12 @@ function mostrarConfirmacion(textoOriginal, datos) {
         '<div class="tiro-val">' + (texR[h.resultado]||'Al green ✅') + '</div></div></div>';
     }
 
-    // Approach (si no hubo hierros)
-    if (datos.approach && (!datos.hierros || datos.hierros.length === 0)) {
+    // Approach — mostrar si:
+    // a) No hubo hierros (approach directo)
+    // b) Hubo hierros en barbas/trampa Y hay approach al green adicional
+    var hierrosEnBarbas = datos.hierros && datos.hierros.some(function(h){ return h.resultado==='barbas'||h.resultado==='trampa'; });
+    var hayApproachAdicional = datos.approach === 'green' && hierrosEnBarbas;
+    if (datos.approach && ((!datos.hierros || datos.hierros.length === 0) || hayApproachAdicional)) {
       var texA = {green:'Al green ✅', barbas:'Barbas', trampa:'Trampa / Bunker', castigo:'Castigo'};
       lista.innerHTML += '<div class="conf-tiro ct-approach">' +
         '<span style="font-size:16px">🎯</span>' +
@@ -2184,18 +2258,17 @@ function confirmarHoyo() {
     return; // NO avanzar al siguiente hoyo
   }
 
-  // Hay putts — hoyo completo
+  // Hay putts — pero NECESITAMOS score explícito del jugador
+  if (datos.score === null || datos.score === undefined) {
+    // No confirmar — pedir score
+    pedirScore();
+    return;
+  }
+
   var h = E.hoyos.find(function(x){ return x.num === E.hoyoActual; });
   if (h) {
     h.ok = true;
-    if (datos.score !== null && datos.score !== undefined) {
-      h.res = datos.score;
-    } else {
-      var numTiros = (datos.drive ? 1 : 0) +
-        Math.max((datos.hierros||[]).length, datos.approach ? 1 : 0) +
-        (datos.putts || 2);
-      h.res = numTiros - 4;
-    }
+    h.res = datos.score;
     h.tiros = JSON.parse(JSON.stringify(datos));
   }
 
@@ -2270,6 +2343,55 @@ function leerNotas() {
 }
 
 
+
+function pedirScore() {
+  // Mostrar selector de score en la tarjeta de confirmación
+  var lista = document.querySelector('.conf-tiros');
+  if (!lista) return;
+
+  // Quitar selector anterior si existe
+  var viejo = document.getElementById('selector-score');
+  if (viejo) viejo.remove();
+
+  var div = document.createElement('div');
+  div.id = 'selector-score';
+  div.style.cssText = 'margin:8px 0;padding:12px;background:rgba(217,119,6,.1);border:1.5px solid rgba(217,119,6,.3);border-radius:14px;';
+  div.innerHTML = '<div style="color:var(--amber-light);font-size:11px;font-weight:700;text-transform:uppercase;margin-bottom:10px">⚠️ ¿Cuánto hiciste en este hoyo?</div>' +
+    '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">' +
+    [[-2,'🦅-2'],[-1,'Verdi -1'],[0,'Par'],[1,'Bogi +1'],[2,'Sopi +2'],[3,'Triple +3'],[4,'+4'],[5,'+5']].map(function(s){
+      return '<div onclick="guardarScore('+s[0]+')" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:8px 4px;text-align:center;cursor:pointer;font-size:12px;font-weight:700;color:white">'+s[1]+'</div>';
+    }).join('') +
+    '</div>';
+  lista.appendChild(div);
+}
+
+function guardarScore(score) {
+  if (E.ultimosDatos) E.ultimosDatos.score = score;
+  var viejo = document.getElementById('selector-score');
+  if (viejo) viejo.remove();
+  // Actualizar badge
+  var badge = document.querySelector('#modal-conf .badge-res');
+  if (badge) {
+    var sc = scoreClass(score);
+    badge.className = 'badge-res badge-' + sc;
+    badge.textContent = scoreTexto[sc] || '';
+  }
+}
+
+function selPuttCorto(val, el) {
+  // Marcar visualmente
+  document.querySelectorAll('.conf-opcion').forEach(function(o){
+    o.style.opacity = '0.4';
+    o.style.outline = 'none';
+  });
+  el.style.opacity = '1';
+  el.style.outline = '2px solid currentColor';
+  // Guardar en datos
+  if (E.ultimosDatos) E.ultimosDatos.puttCorto = val;
+  // Ocultar la pregunta
+  var faltante = document.getElementById('conf-faltante');
+  if (faltante) setTimeout(function(){ faltante.style.display='none'; }, 300);
+}
 
 function agregarNota(texto) {
   var lista = document.getElementById('notas-list');
