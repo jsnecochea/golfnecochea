@@ -1432,6 +1432,12 @@ function toggleVoz() {
     if (dbg) dbg.textContent = '';
 
     var datos = interpretarHoyo(texto);
+    // Si estábamos editando, combinar con datos anteriores
+    if (editando && datosAnteriores) {
+      datos = combinarDatos(datos, datosAnteriores);
+      editando = false;
+      datosAnteriores = null;
+    }
     E.ultimosDatos = datos;
     E.ultimoTextoVoz = texto;
     mostrarConfirmacion(texto, datos);
@@ -1462,10 +1468,227 @@ function cancelarVoz() { if (modoGrabando) { modoGrabando = false; setBtnEstado(
 function detenerVoz() { cancelarVoz(); }
 
 // ===================================================
-// MOSTRAR TARJETA DE CONFIRMACIÓN
+// DICCIONARIO Y MOTOR DE INTERPRETACIÓN
 // ===================================================
-// Mantener compatibilidad
-function detenerVoz() { cancelarVoz(); }
+const DICT = {
+
+  // ── SCORE ──────────────────────────────────────
+  score: {
+    'aguila':-2,'eagle':-2,'aguilita':-2,
+    'birdie':-1,'verdi':-1,'verde':-1,'burdi':-1,'berdi':-1,
+    'par':0,'empate':0,'pareo':0,
+    'bogey':1,'bogi':1,'bogui':1,'boque':1,
+    'doble bogey':2,'doble':2,'quesopi':2,'sopi':2,'sopilote':2,'sopilotes':2,'queso':2,
+    'triple bogey':3,'triple':3,
+    'cuadruple bogey':4,'cuadruple':4,'cuadruple bogey':4
+  },
+
+  // ── DRIVE ──────────────────────────────────────
+  drive_fairway: [
+    'fairway','fair way','en la calle','calle','al centro','en el centro',
+    'centro','derecho','recto','bien','lo mande bien','lo tire bien',
+    'en el fairway','cai en fairway','cayo en fairway','a la calle'
+  ],
+  drive_sintiro: [
+    'sin tiro','entre arboles','entre los arboles','en los arboles',
+    'arboles','arbol','bosque','en el bosque','maleza','matorral',
+    'incomodo','rough','en el rough','en rough','al rough',
+    'en la maleza','fuera del fairway','fuera de la calle','lie malo',
+    'hierba alta','en la hierba'
+  ],
+
+  // ── RESULTADO CUALQUIER TIRO ───────────────────
+  resultado_green: [
+    'green','al green','en green','en el green','subi','subí',
+    'arriba','llegue','llegué','en regulacion','en regulación',
+    'regulation','green en regla','puse en green','lo puse en green',
+    'meti al green','metí al green','lo meti','lo metí',
+    'al pin','cerca del pin','cerca del hoyo','junto al pin',
+    'lo mande al green','lo mandé al green'
+  ],
+  resultado_barbas: [
+    'barbas','en barbas','barbitas','collar','en el collar',
+    'alrededor del green','junto al green','cerca del green',
+    'frente al green','al lado del green','alrededor',
+    'en las barbas','en el fringe','fringe','orilla del green',
+    'en la orilla','a un lado del green','junto a la bandera',
+    'pase del green','me pase del green'
+  ],
+  resultado_trampa: [
+    'trampa','en trampa','en la trampa','bunker','en el bunker',
+    'en bunker','arena','en la arena','en arena','en el arenal',
+    'arenal','me fui a la trampa','a la trampa','cai en trampa',
+    'cai en el bunker','me meti al bunker','me meti a la trampa',
+    'en el sand','sand trap','en la arena del green'
+  ],
+  resultado_castigo: [
+    'castigo','agua','al agua','en el agua','lago','al lago','en el lago',
+    'ob','fuera de limites','fuera de límites','fuera','out of bounds',
+    'arabaunt','around','araband','araban','fuera del campo',
+    'penal','penalidad','a castigo','tiro de castigo',
+    'se fue al agua','se fue al lago','cai al agua','cai al lago',
+    'se fue de ob','me fui al agua','lo mande al agua'
+  ],
+
+  // ── METIDA DESDE FUERA ─────────────────────────
+  metidaFuera: [
+    'meti desde fuera','metí desde fuera','entro desde fuera',
+    'entró desde fuera','hoyo en uno','hole in one',
+    'la meti desde fuera','entro sola','hoyo de uno'
+  ],
+
+  // ── PUTT CORTO ─────────────────────────────────
+  puttCorto: {
+    nohubo: [
+      'no hubo','sin putt corto','no tuve corto','no habia corto',
+      'no habia','sin corto','no hubo corto','no tuve putt corto',
+      'no hubo putt corto'
+    ],
+    lometi: [
+      'lo meti','lo metí','meti el corto','metí el corto',
+      'lo entre','lo entré','si lo meti','sí lo metí',
+      'entre el corto','entré el corto','lo mande adentro',
+      'lo metí dentro','lo puse adentro',
+      'dado','dada','un dado','una dada','era dado','era dada',
+      'era un dado','era una dada','quedo dado','quedó dado',
+      'quedo dada','quedó dada','fue dado','fue dada',
+      'es dado','es dada','esta dado','está dado',
+      'esta dada','está dada','lo di dado'
+    ],
+    lofalle: [
+      'lo falle','lo fallé','falle el corto','fallé el corto',
+      'no lo meti','no lo metí','lo erre','lo erré',
+      'se me fue','se me escapo','lo deje afuera',
+      'lo dejé afuera','no entro','no entró','falle el putt'
+    ]
+  },
+
+  // ── NÚMEROS ────────────────────────────────────
+  numeros: {
+    'un':1,'una':1,'uno':1,
+    'dos':2,'tres':3,'cuatro':4,'cinco':5,'seis':6,'siete':7,
+    'ocho':8,'nueve':9,'diez':10,'once':11,'doce':12,
+    'trece':13,'catorce':14,'quince':15,
+    'dieciseis':16,'diecisiete':17,'dieciocho':18,'diecinueve':19,
+    'veinte':20,'veintiuno':21,'veintidos':22,'veintitres':23,
+    'veinticuatro':24,'veinticinco':25,'veintiseis':26,
+    'veintisiete':27,'veintiocho':28,'veintinueve':29,
+    'treinta':30,'cuarenta':40,'cincuenta':50,'sesenta':60,
+    'setenta':70,'ochenta':80,'noventa':90,'cien':100,
+    'ciento diez':110,'ciento veinte':120,'ciento treinta':130,
+    'ciento cuarenta':140,'ciento cincuenta':150,
+    'ciento sesenta':160,'ciento setenta':170,'ciento ochenta':180,
+    'doscientos':200
+  },
+
+  // ── NOTAS POR VOZ ──────────────────────────────
+  notas: {
+    approach: ['approach','aproach','tiros al green','abreme mis notas de approach','notas de approach'],
+    drive: ['drive','drives','abreme mis notas de drive','notas de drive'],
+    hierros: ['hierros','irons','abreme mis notas de hierros','notas de hierros'],
+    putt: ['putt','putts','putting','abreme mis notas de putt','notas de putt'],
+    greens: ['greens','abreme mis notas de greens','notas de greens']
+  }
+};
+
+function norm(txt) {
+  return (txt||'').toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g,'')
+    .replace(/[^a-z0-9\s]/g,' ').replace(/\s+/g,' ').trim();
+}
+
+function extraerNum(txt) {
+  var n = norm(txt);
+  var m = n.match(/(\d+)/);
+  if (m) return parseInt(m[1]);
+  for (var pal in DICT.numeros) {
+    if (n.includes(pal)) return DICT.numeros[pal];
+  }
+  return null;
+}
+
+function interpretarHoyo(txt) {
+  var n = norm(txt);
+  var r = { score:null, drive:null, hierros:[], approach:null, putts:null, pasos:null, puttCorto:null, metidaFuera:false };
+
+  // Metida desde fuera
+  if (DICT.metidaFuera.some(function(p){ return n.includes(norm(p)); })) {
+    r.metidaFuera = true; r.putts = 0; r.pasos = 0; r.puttCorto = 'no-hubo';
+  }
+
+  // Score
+  var scoreEntries = Object.entries(DICT.score).sort(function(a,b){ return b[0].length - a[0].length; });
+  for (var i=0; i<scoreEntries.length; i++) {
+    if (n.includes(norm(scoreEntries[i][0]))) { r.score = scoreEntries[i][1]; break; }
+  }
+
+  // Drive
+  if (DICT.drive_fairway.some(function(p){ return n.includes(norm(p)); })) r.drive = 'fairway';
+  else if (DICT.drive_sintiro.some(function(p){ return n.includes(norm(p)); })) r.drive = 'sin-tiro';
+  else if (DICT.resultado_castigo.some(function(p){ return n.includes(norm(p)); }) && !n.match(/\d+\s*(yardas?|yards?)/)) r.drive = 'castigo';
+
+  // Yardas
+  var regY = /(\d{2,3})\s*(yardas?|yards?)/gi;
+  var mY;
+  while ((mY = regY.exec(txt)) !== null) {
+    var y = parseInt(mY[1]);
+    if (y >= 10 && y <= 320 && !r.hierros.find(function(h){ return h.dist===y; })) r.hierros.push({dist:y, resultado:null});
+  }
+  // Palabras + yardas
+  var yardasPal = Object.entries(DICT.numeros).sort(function(a,b){ return b[0].length-a[0].length; });
+  for (var j=0; j<yardasPal.length; j++) {
+    var pal = norm(yardasPal[j][0]);
+    if (n.includes(pal+' yardas') || n.includes(pal+' yards')) {
+      var dist = yardasPal[j][1];
+      if (dist>=10 && !r.hierros.find(function(h){ return h.dist===dist; })) r.hierros.push({dist:dist, resultado:null});
+    }
+  }
+
+  // Resultado approach
+  var resApp = null;
+  if (DICT.resultado_castigo.some(function(p){ return n.includes(norm(p)); })) resApp = 'castigo';
+  else if (DICT.resultado_trampa.some(function(p){ return n.includes(norm(p)); })) resApp = 'trampa';
+  else if (DICT.resultado_barbas.some(function(p){ return n.includes(norm(p)); })) resApp = 'barbas';
+  else if (DICT.resultado_green.some(function(p){ return n.includes(norm(p)); })) resApp = 'green';
+  if (n.includes('fairway') && resApp === 'castigo' && r.hierros.length > 0) { r.drive = 'fairway'; }
+
+  if (r.hierros.length > 0) {
+    r.hierros = r.hierros.sort(function(a,b){ return b.dist-a.dist; }).map(function(h){ return {dist:h.dist, resultado:resApp||'green'}; });
+    r.approach = resApp || 'green';
+  } else if (resApp) {
+    r.approach = resApp;
+  }
+
+  // Putts
+  var mP = txt.match(/(\w+)\s+(putts?|pots?)/i);
+  if (mP) { var np = extraerNum(mP[1]); if (np && np<=8) r.putts = np; }
+  if (n.match(/un\s+(putt|pot)/)) r.putts = 1;
+  if (n.match(/dos\s+(putts?|pots?)/)) r.putts = 2;
+  if (n.match(/tres\s+(putts?|pots?)/) || n.includes('triputtie')) r.putts = 3;
+  if (n.includes('la meti de uno') || n.includes('la metí de uno')) r.putts = 1;
+  var mNP = txt.match(/([1-5])\s*(putts?|pots?)/i);
+  if (mNP) r.putts = parseInt(mNP[1]);
+
+  // Pasos
+  var mPasos = txt.match(/(\w+)\s+pasos?/i);
+  if (mPasos) { var ps = extraerNum(mPasos[1]); if (ps && ps<=80) r.pasos = ps; }
+  if (!r.pasos) {
+    var mA = txt.match(/(?:a|estoy a|quede a|quedé a|son)\s+(\w+)\s*(?:pasos?)?/i);
+    if (mA) { var pa = extraerNum(mA[1]); if (pa && pa<=80) r.pasos = pa; }
+  }
+
+  // Dado/dada = menos de 1 paso, lo metí
+  if (/dad[oa]/i.test(txt)) { r.puttCorto = 'lo-meti'; if (!r.pasos) r.pasos = 0; }
+
+  // Putt corto
+  if (!r.puttCorto) {
+    if (DICT.puttCorto.lofalle.some(function(p){ return n.includes(norm(p)); })) r.puttCorto = 'lo-falle';
+    else if (DICT.puttCorto.lometi.some(function(p){ return n.includes(norm(p)); })) r.puttCorto = 'lo-meti';
+    else if (DICT.puttCorto.nohubo.some(function(p){ return n.includes(norm(p)); })) r.puttCorto = 'no-hubo';
+  }
+
+  return r;
+}
 
 // ===================================================
 // MOSTRAR TARJETA DE CONFIRMACIÓN
@@ -1726,10 +1949,34 @@ function resetearRonda() {
   actualizarHoyo();
 }
 
-// ── Editar por voz — reabre micrófono ─────────────────────────────────────
+// ── Editar por voz ─────────────────────────────────────────────────────────
+// Al editar, el nuevo dictado SOBREESCRIBE el dato que se diga
+// y CONSERVA lo que no se mencione del dictado anterior
+var editando = false;
+var datosAnteriores = null;
+
 function editarPorVoz() {
+  // Guardar datos actuales para combinar después
+  datosAnteriores = E.ultimosDatos ? JSON.parse(JSON.stringify(E.ultimosDatos)) : null;
+  editando = true;
   cerrarModal('modal-conf');
-  setTimeout(() => iniciarVoz(), 300);
+  // Limpiar texto y abrir micrófono
+  textoAcumulado = '';
+  setTimeout(function() { toggleVoz(); }, 300);
+}
+
+function combinarDatos(nuevos, anteriores) {
+  if (!anteriores) return nuevos;
+  // Conservar del anterior lo que no se detectó en el nuevo
+  var r = JSON.parse(JSON.stringify(nuevos));
+  if (r.score === null && anteriores.score !== null) r.score = anteriores.score;
+  if (!r.drive && anteriores.drive) r.drive = anteriores.drive;
+  if (r.hierros.length === 0 && anteriores.hierros && anteriores.hierros.length > 0) r.hierros = anteriores.hierros;
+  if (!r.approach && anteriores.approach) r.approach = anteriores.approach;
+  if (r.putts === null && anteriores.putts !== null) r.putts = anteriores.putts;
+  if (r.pasos === null && anteriores.pasos !== null) r.pasos = anteriores.pasos;
+  if (r.puttCorto === null && anteriores.puttCorto !== null) r.puttCorto = anteriores.puttCorto;
+  return r;
 }
 
 // ── Borrar nota ────────────────────────────────────────────────────────────
