@@ -1762,20 +1762,16 @@ function grabar() {
   };
 
   reconocimiento.onerror = (ev) => {
-    if (dbg) dbg.textContent = '⚠️ Error: ' + ev.error;
     if (ev.error === 'not-allowed') {
       modoGrabando = false;
       setBtnEstado(false);
       alert('Micrófono bloqueado. En Chrome: toca los 3 puntos → Configuración → Configuración del sitio → Micrófono → permite tu URL.');
     }
-    // Para otros errores, onend reiniciará
   };
 
   reconocimiento.onend = () => {
-    if (modoGrabando) {
-      if (dbg && !dbg.textContent.includes('⚠️')) dbg.textContent = (textoAcumulado || '') + ' [reiniciando...]';
-      setTimeout(grabar, 200);
-    }
+    // Solo reiniciar si el usuario sigue grabando
+    if (modoGrabando) setTimeout(grabar, 200);
   };
 
   try {
@@ -1788,31 +1784,26 @@ function grabar() {
 }
 
 function detenerYProcesar() {
-  // Guardar texto ANTES de detener — onend puede sobrescribir textoAcumulado
-  const textoGuardado = textoAcumulado.trim();
-
   modoGrabando = false;
   setBtnEstado(false);
 
+  // Parar el reconocimiento
   if (reconocimiento) {
     try { reconocimiento.stop(); } catch(e) {}
     reconocimiento = null;
   }
 
-  // Limpiar inmediatamente para que onend no lo use
-  textoAcumulado = '';
-
-  const dbg = document.getElementById('debug-voz');
-  if (dbg) dbg.textContent = textoGuardado ? '✅ ' + textoGuardado : '';
-
-  // Procesar con el texto ya guardado
+  // Esperar 500ms para asegurar que el último onresult llegó
   setTimeout(() => {
+    const texto = textoAcumulado.trim();
+    textoAcumulado = '';
+    const dbg = document.getElementById('debug-voz');
     if (dbg) dbg.textContent = '';
-    const datos = interpretarHoyo(textoGuardado || '');
+    const datos = interpretarHoyo(texto || '');
     E.ultimosDatos = datos;
-    E.ultimoTextoVoz = textoGuardado;
-    mostrarConfirmacion(textoGuardado, datos);
-  }, 300);
+    E.ultimoTextoVoz = texto;
+    mostrarConfirmacion(texto, datos);
+  }, 600);
 }
 
 function iniciarVoz() { iniciarGrabacion(); }
