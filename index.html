@@ -1784,26 +1784,32 @@ function grabar() {
 }
 
 function detenerYProcesar() {
-  modoGrabando = false;
-  setBtnEstado(false);
+  // 1. Guardar texto AHORA antes de tocar nada
+  const textoFinal = textoAcumulado.trim();
 
-  // Parar el reconocimiento
+  // 2. Apagar bandera para que onend no reinicie
+  modoGrabando = false;
+  textoAcumulado = '';
+
+  // 3. UI
+  setBtnEstado(false);
+  const dbg = document.getElementById('debug-voz');
+  if (dbg) dbg.textContent = textoFinal ? '✅ ' + textoFinal : '';
+
+  // 4. Parar micrófono
   if (reconocimiento) {
     try { reconocimiento.stop(); } catch(e) {}
     reconocimiento = null;
   }
 
-  // Esperar 500ms para asegurar que el último onresult llegó
+  // 5. Procesar con el texto ya guardado
   setTimeout(() => {
-    const texto = textoAcumulado.trim();
-    textoAcumulado = '';
-    const dbg = document.getElementById('debug-voz');
     if (dbg) dbg.textContent = '';
-    const datos = interpretarHoyo(texto || '');
+    const datos = interpretarHoyo(textoFinal || '');
     E.ultimosDatos = datos;
-    E.ultimoTextoVoz = texto;
-    mostrarConfirmacion(texto, datos);
-  }, 600);
+    E.ultimoTextoVoz = textoFinal;
+    mostrarConfirmacion(textoFinal, datos);
+  }, 300);
 }
 
 function iniciarVoz() { iniciarGrabacion(); }
