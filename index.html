@@ -572,9 +572,10 @@ body {
     <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:20px 0">
       <button class="btn-mic-circulo" id="btn-mic" onclick="toggleVoz()">
         <span id="mic-emoji" style="font-size:52px;line-height:1">🎤</span>
-        <span id="mic-label" style="color:white;font-size:14px;font-weight:700;letter-spacing:.5px;display:none">LISTO</span>
+        <span id="mic-label" style="color:white;font-size:22px;font-weight:700;letter-spacing:1px;display:none">LISTO</span>
       </button>
       <span class="dictar-hint" style="font-size:12px" id="mic-hint">Toca para hablar</span>
+      <div id="texto-transcrito" style="display:none;color:#34d399;font-size:13px;font-weight:600;text-align:center;padding:0 24px;line-height:1.5;max-height:80px;overflow-y:auto"></div>
     </div>
   </div>
 
@@ -1163,13 +1164,13 @@ body {
 <script>
 const E = {
   jugador: {id:'salvador', avatar:'👦', nombre:'Salvador'},
-  hoyoActual: 4,
+  hoyoActual: 1,
   totalHoyos: 9,
   torneoActivo: false,
   hoyos: [
-    {num:1,ok:true, res:-1},{num:2,ok:true, res:0},{num:3,ok:true, res:2},
-    {num:4,ok:false,res:null},{num:5,ok:false,res:null},{num:6,ok:false,res:null},
-    {num:7,ok:false,res:null},{num:8,ok:false,res:null},{num:9,ok:false,res:null}
+    {num:1,ok:false,res:null,tiros:{}},{num:2,ok:false,res:null,tiros:{}},{num:3,ok:false,res:null,tiros:{}},
+    {num:4,ok:false,res:null,tiros:{}},{num:5,ok:false,res:null,tiros:{}},{num:6,ok:false,res:null,tiros:{}},
+    {num:7,ok:false,res:null,tiros:{}},{num:8,ok:false,res:null,tiros:{}},{num:9,ok:false,res:null,tiros:{}}
   ]
 };
 
@@ -1684,28 +1685,18 @@ function interpretarHoyo(txt) {
 // OVERLAY DE ESCUCHA
 // ===================================================
 function mostrarEscuchando() {
-  let ov = document.getElementById('overlay-escucha');
-  if (!ov) {
-    ov = document.createElement('div');
-    ov.id = 'overlay-escucha';
-    ov.style.cssText = 'position:fixed;inset:0;z-index:500;background:rgba(5,7,8,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:20px';
-    ov.innerHTML = `
-      <div style="color:rgba(255,255,255,.4);font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px">Escuchando</div>
-      <div id="escucha-texto" style="color:#34d399;font-size:16px;font-weight:600;min-height:48px;text-align:center;line-height:1.5;padding:0 10px"></div>
-      <div style="color:rgba(255,255,255,.35);font-size:12px;text-align:center">Habla todo lo que quieras · toca <strong style="color:white">LISTO</strong> al terminar</div>
-    `;
-    document.body.appendChild(ov);
-  }
-  ov.style.display = 'flex';
+  // No usamos overlay — el texto aparece debajo del botón
+  const txt = document.getElementById('texto-transcrito');
+  if (txt) { txt.style.display = 'block'; txt.textContent = ''; }
 }
 
 function ocultarEscuchando() {
-  const ov = document.getElementById('overlay-escucha');
-  if (ov) ov.style.display = 'none';
+  const txt = document.getElementById('texto-transcrito');
+  if (txt) { txt.style.display = 'none'; txt.textContent = ''; }
 }
 
 function actualizarTextoEscucha(txt) {
-  const el = document.getElementById('escucha-texto');
+  const el = document.getElementById('texto-transcrito');
   if (el && txt) el.textContent = '"' + txt + '"';
 }
 
@@ -2213,12 +2204,22 @@ function guardarEnSheets() {
 
 // ── Resetear ronda completa ────────────────────────────────────────────────
 function resetearRonda() {
+  // Resetear todos los hoyos a vacío
   E.hoyos = [];
   for (let i = 1; i <= 9; i++) E.hoyos.push({num:i, ok:false, res:null, tiros:{}});
   E.hoyoActual = 1;
   E.totalHoyos = 9;
   E.ultimosDatos = null;
   E.ultimoTextoVoz = null;
+  E.torneoActivo = false;
+  // Limpiar tiros visibles
+  const tirosList = document.getElementById('tiros-list');
+  if (tirosList) tirosList.innerHTML = '';
+  // Quitar modo torneo si estaba activo
+  const btnTorneo = document.getElementById('btn-torneo');
+  if (btnTorneo) btnTorneo.classList.remove('on');
+  const riverasRow = document.getElementById('rivales-row');
+  if (riverasRow) { riverasRow.classList.remove('on'); riverasRow.innerHTML = ''; }
   cerrarModal('modal-reset');
   renderHoyos();
   actualizarHoyo();
