@@ -1027,7 +1027,7 @@ body {
         <span class="ct-check">✅</span>
       </div>
     </div>
-    <div class="conf-faltante">
+    <div class="conf-faltante" id="conf-faltante">
       <div class="conf-falt-hdr">❓ Falta un dato</div>
       <div class="conf-pregunta">¿Tuviste un putt de menos de 2 pasos?</div>
       <div class="conf-opciones">
@@ -1784,12 +1784,16 @@ function mostrarConfirmacion(textoOriginal, datos) {
   }
 
   // Sección faltante — putt corto
-  const faltante = document.getElementById('conf-faltante');
-  if (datos.putts !== null && datos.puttCorto === null && datos.putts > 0) {
-    faltante.style.display = 'block';
-    document.querySelector('.conf-pregunta').textContent = '¿Tuviste un putt de menos de 2 pasos?';
-  } else {
-    faltante.style.display = 'none';
+  var faltante = document.getElementById('conf-faltante');
+  if (faltante) {
+    var necesitaPuttCorto = datos.putts && datos.putts > 0 &&
+                            datos.puttCorto === null &&
+                            !datos.metidaFuera;
+    faltante.style.display = necesitaPuttCorto ? 'block' : 'none';
+    if (necesitaPuttCorto) {
+      var pregunta = document.querySelector('.conf-pregunta');
+      if (pregunta) pregunta.textContent = '¿Tuviste un putt de menos de 2 pasos?';
+    }
   }
 
   // Guardar texto original para posible corrección
