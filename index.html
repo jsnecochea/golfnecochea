@@ -575,7 +575,8 @@ body {
         <span id="mic-label" style="color:white;font-size:22px;font-weight:700;letter-spacing:1px;display:none">LISTO</span>
       </button>
       <span class="dictar-hint" style="font-size:12px" id="mic-hint">Toca para hablar</span>
-      <div id="texto-transcrito" style="display:none;color:#34d399;font-size:13px;font-weight:600;text-align:center;padding:0 24px;line-height:1.5;max-height:80px;overflow-y:auto"></div>
+      <!-- texto-transcrito eliminado — no necesario -->
+      <div id="texto-transcrito" style="display:none"></div>
     </div>
   </div>
 
@@ -1684,21 +1685,9 @@ function interpretarHoyo(txt) {
 // ===================================================
 // OVERLAY DE ESCUCHA
 // ===================================================
-function mostrarEscuchando() {
-  // No usamos overlay — el texto aparece debajo del botón
-  const txt = document.getElementById('texto-transcrito');
-  if (txt) { txt.style.display = 'block'; txt.textContent = ''; }
-}
-
-function ocultarEscuchando() {
-  const txt = document.getElementById('texto-transcrito');
-  if (txt) { txt.style.display = 'none'; txt.textContent = ''; }
-}
-
-function actualizarTextoEscucha(txt) {
-  const el = document.getElementById('texto-transcrito');
-  if (el && txt) el.textContent = '"' + txt + '"';
-}
+function mostrarEscuchando() { /* sin overlay */ }
+function ocultarEscuchando() { /* sin overlay */ }
+function actualizarTextoEscucha(txt) { /* sin overlay */ }
 
 // ===================================================
 // CONTROL DEL BOTÓN
