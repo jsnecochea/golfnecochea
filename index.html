@@ -60,9 +60,9 @@ body {
 .jugador-pill { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.12); border-radius:20px; padding:7px 14px 7px 8px; cursor:pointer; }
 .jugador-nombre { color:white; font-size:14px; font-weight:600; }
 .jugador-cambiar { color:rgba(255,255,255,.45); font-size:10px; }
-.acumulado-wrap { text-align:right; }
+.acumulado-wrap { text-align:right; padding-right:2px; }
 .acumulado-label { color:rgba(255,255,255,.45); font-size:9px; text-transform:uppercase; letter-spacing:.8px; }
-.acumulado-num { color:white; font-size:36px; font-weight:700; letter-spacing:-1px; line-height:1; }
+.acumulado-num { color:white; font-size:30px; font-weight:700; letter-spacing:-1px; line-height:1; }
 
 /* ── BARRA CONTROLES ── */
 .controles-bar { display:flex; background:rgba(0,0,0,.25); border-radius:14px; padding:3px; gap:2px; }
@@ -498,22 +498,22 @@ body {
   <!-- Header verde -->
   <div class="header-green">
     <div class="header-top">
-      <div class="jugador-pill" onclick="irA('view-selector')">
-        <span id="jug-avatar" style="font-size:18px">👦</span>
-        <div>
-          <div class="jugador-nombre" id="jug-nombre">Salvador</div>
-          <div class="jugador-cambiar">Cambiar ▾</div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="jugador-pill" onclick="irA('view-selector')">
+          <span id="jug-avatar" style="font-size:18px">👦</span>
+          <div>
+            <div class="jugador-nombre" id="jug-nombre">Salvador</div>
+            <div class="jugador-cambiar">Cambiar ▾</div>
+          </div>
         </div>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <div class="acumulado-wrap">
-          <div class="acumulado-label">Acumulado</div>
-          <div class="acumulado-num" id="acumulado">+3</div>
-        </div>
-        <!-- Menú hamburguesa -->
+        <!-- Menú hamburguesa junto al nombre -->
         <div class="menu-ham" onclick="toggleMenu()">
           <span></span><span></span><span></span>
         </div>
+      </div>
+      <div class="acumulado-wrap">
+        <div class="acumulado-label">Acumulado</div>
+        <div class="acumulado-num" id="acumulado">+3</div>
       </div>
     </div>
 
@@ -527,9 +527,6 @@ body {
       </div>
       <div class="menu-item" onclick="abrirModal('modal-reset');cerrarMenu()">
         ↺ Reset
-      </div>
-      <div class="menu-item menu-item-danger" onclick="irA('view-selector');cerrarMenu()">
-        ← Cambiar jugador
       </div>
     </div>
 
@@ -1199,6 +1196,8 @@ body {
   </div>
 </div>
 
+</div><!-- fin .app -->
+
 <script>
 const E = {
   jugador: {id:'salvador', avatar:'👦', nombre:'Salvador'},
@@ -1272,14 +1271,16 @@ function actualizarHoyo(){
     tiros.classList.add('hidden'); actions.classList.add('hidden'); dictar.classList.remove('hidden');
   }
   const btnS=document.getElementById('btn-sig');
-  if(esUltimo){
-    btnS.className='btn-terminar-vuelta';
-    btnS.innerHTML='🏁 Terminar vuelta';
-    btnS.onclick=()=>abrirFin();
-  } else {
-    btnS.className='btn-sig';
-    btnS.innerHTML='Siguiente →';
-    btnS.onclick=()=>hoyoSiguiente();
+  if(btnS) {
+    if(esUltimo){
+      btnS.className='btn-terminar-vuelta';
+      btnS.innerHTML='🏁 Terminar vuelta';
+      btnS.onclick=()=>abrirFin();
+    } else {
+      btnS.className='btn-sig';
+      btnS.innerHTML='Siguiente →';
+      btnS.onclick=()=>hoyoSiguiente();
+    }
   }
 }
 
@@ -2004,6 +2005,10 @@ function mostrarTirosParciales(parcial) {
     if (hint) hint.textContent = 'Faltan putts — toca para continuar';
   }
 }
+
+// ── INICIALIZAR APP ──────────────────────────────────────────────────────────
+renderHoyos();
+actualizarHoyo();
 
 </script>
 </body>
