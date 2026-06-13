@@ -1330,7 +1330,7 @@ function reconstruirTiros(lista, d) {
     var texR={green:'Al green',barbas:'Barbas',trampa:'Trampa',castigo:'Castigo',lejos:'Lejos del green'};
     lista.innerHTML+='<div class="tiro-card tc-hierro"><span class="tiro-emoji">🔨</span>'+
       '<div class="tiro-info"><div class="tiro-subtipo">'+h.dist+' yardas</div>'+
-      '<div class="tiro-val">'+(texR[h.resultado]||(h.resultado?h.resultado:'❓ Pendiente'))+'</div></div></div>';
+      '<div class="tiro-val" style="'+(h.resultado?'':'color:rgba(255,165,0,.8)')+'">'+(texR[h.resultado]||(h.resultado||'❓ ¿Dónde quedó?'))+'</div></div></div>';
   });
 
   // Approach — mostrar si no hay hierros, O si hierros quedaron en barbas/trampa
@@ -1782,12 +1782,15 @@ const DICT = {
     'y subi','y subí','y llegue','y llegué','y la meti','y la metí'
   ],
   resultado_barbas: [
-    'barbas','en barbas','barbitas','collar','en el collar',
+    'barbas','en barbas','barba','en barba','barbitas','en barbitas',
+    'collar','en el collar','en collar',
     'alrededor del green','junto al green','cerca del green',
     'frente al green','al lado del green','alrededor',
-    'en las barbas','en el fringe','fringe','orilla del green',
-    'en la orilla','a un lado del green','junto a la bandera',
-    'pase del green','me pase del green'
+    'en las barbas','en el fringe','fringe','en fringe',
+    'orilla del green','en la orilla','en orilla',
+    'a un lado del green','junto a la bandera',
+    'pase del green','me pase del green',
+    'en el collar del green','borde del green','en el borde'
   ],
   resultado_trampa: [
     'trampa','en trampa','en la trampa','bunker','en el bunker',
@@ -1973,7 +1976,7 @@ function interpretarHoyo(txt) {
   // Si hay drive Y yardas pero SIN resultado de approach
   // → las yardas son distancia restante, no hierro
   // Si hay resultado de approach → las yardas SÍ son el hierro
-  var esTiroHierro = resApp !== null ||
+  var esTiroHierro = (resApp !== null) ||
     /(?:tirando?|tiro|tiré)\s+(?:de|desde)?\s*\d+/i.test(txt) ||
     /(?:de|desde)\s+\d+\s*(yardas?|yards?)/i.test(txt) ||
     (!r.drive && !esDistanciaRestante);
@@ -2080,30 +2083,47 @@ function interpretarHoyo(txt) {
   // "un poco" solo como putt (cuando no hay contexto de cantidad)
   if (!r.putts && /un\s+poco/i.test(txt) && /green|arriba|subi|barbas/i.test(txt)) r.putts = 1;
 
-  // Pasos — detectar TODOS los números de pasos mencionados
-  // "dos puts, uno de doce pasos y uno de dos pasos"
-  // → pasos = 12 (el mayor = primer putt), putt corto = 2 pasos → lo-meti
+  // Pasos — detectar TODOS los números mencionados después de los putts
+  // Soporta: "uno de veinte, uno de quince y uno de cinco"
+  //          "dos puts, uno de ocho pasos y uno de dos"
+  //          "tres puts a veinte pasos"
+  //          "un put de tres pasos"
 
   var todosLosNums = [];
-  // Buscar X pasos
-  var regTodosPasos = /(\w+)\s+pasos?/gi;
+
+  // 1. Buscar X pasos (con la palabra pasos)
+  var regConPasos = /(\w+)\s+pasos?/gi;
   var mTP;
-  while ((mTP = regTodosPasos.exec(txt)) !== null) {
+  while ((mTP = regConPasos.exec(txt)) !== null) {
     var pN = extraerNum(mTP[1]);
-    if (pN && pN >= 1 && pN <= 80) todosLosNums.push(pN);
-  }
-  // Buscar "uno de X" / "de X pasos"
-  var regUnoD = /(?:uno|de)\s+de\s+(\w+)/gi;
-  while ((mTP = regUnoD.exec(txt)) !== null) {
-    var pN2 = extraerNum(mTP[1]);
-    if (pN2 && pN2 >= 1 && pN2 <= 80 && todosLosNums.indexOf(pN2) < 0) todosLosNums.push(pN2);
+    if (pN && pN >= 1 && pN <= 80 && todosLosNums.indexOf(pN) < 0) todosLosNums.push(pN);
   }
 
+  // 2. Buscar "uno de X" (pasos implícitos cuando hay contexto de putts)
+  if (r.putts && r.putts > 0) {
+    var regUnoD = /uno\s+de\s+(\w+)/gi;
+    while ((mTP = regUnoD.exec(txt)) !== null) {
+      var pN2 = extraerNum(mTP[1]);
+      if (pN2 && pN2 >= 1 && pN2 <= 80 && todosLosNums.indexOf(pN2) < 0) todosLosNums.push(pN2);
+    }
+    // "de X" suelto también puede ser pasos
+    var regDeX = /de\s+(\w+)/gi;
+    while ((mTP = regDeX.exec(txt)) !== null) {
+      var pN3 = extraerNum(mTP[1]);
+      // Solo si es un número razonable de pasos y no es yardas
+      if (pN3 && pN3 >= 1 && pN3 <= 60 && todosLosNums.indexOf(pN3) < 0) {
+        // Verificar que no sea una yarda ya registrada
+        var esYarda = r.hierros && r.hierros.some(function(h){ return h.dist === pN3; });
+        if (!esYarda) todosLosNums.push(pN3);
+      }
+    }
+  }
+
+  // 3. Usar los números encontrados
   if (todosLosNums.length >= 2) {
     todosLosNums.sort(function(a,b){ return b-a; });
     r.pasos = todosLosNums[0]; // Mayor = primer putt
     var menorP = todosLosNums[todosLosNums.length-1];
-    // El menor <= 2 = putt corto metido (si no dijeron que lo fallaron)
     if (menorP <= 2 && !DICT.puttCorto.lofalle.some(function(p){ return n.includes(norm(p)); })) {
       r.puttCorto = 'lo-meti';
     }
@@ -2114,7 +2134,7 @@ function interpretarHoyo(txt) {
     }
   }
 
-  // Fallback si no encontró con "pasos"
+  // 4. Fallback
   if (!r.pasos) {
     var mA2 = txt.match(/(?:a|estoy a|quede a|quedé a|son)\s+(\w+)\s*(?:pasos?)?/i);
     if (mA2) { var pa = extraerNum(mA2[1]); if (pa && pa<=80) r.pasos = pa; }
@@ -2125,16 +2145,15 @@ function interpretarHoyo(txt) {
   if (r.puttCorto === 'lo-meti' && !r.putts) r.putts = 1;
 
   // "La dejé dada" = llegué al green + 1 putt dado
-  // Funciona desde cualquier situación: barbas, 130 yardas, etc.
   if (/(?:la\s+)?dej[eé]\s+dad[oa]|dej[oó]\s+dad[oa]/i.test(txt)) {
-    // Si no detectó approach, inferir green
     if (!r.approach && (!r.hierros || r.hierros.length === 0)) r.approach = 'green';
-    // Si tenía hierros, el resultado de esos hierros es green
     if (r.hierros && r.hierros.length > 0) {
-      r.hierros = r.hierros.map(function(h){ return {dist:h.dist, resultado:'green'}; });
+      // Solo poner green si el hierro no tiene resultado ya
+      r.hierros = r.hierros.map(function(h){
+        return {dist:h.dist, resultado: h.resultado || 'green'};
+      });
       r.approach = 'green';
     }
-    // Si venía de barbas (en parcial), el approach es green
     r.putts = 1;
     r.puttCorto = 'lo-meti';
     r.pasos = 0;
@@ -2440,6 +2459,15 @@ function selPuttCorto(val, el) {
   // Ocultar la pregunta
   var faltante = document.getElementById('conf-faltante');
   if (faltante) setTimeout(function(){ faltante.style.display='none'; }, 300);
+}
+
+function editarPorVoz() {
+  // Guardar datos actuales para combinar después
+  datosAnteriores = E.ultimosDatos ? JSON.parse(JSON.stringify(E.ultimosDatos)) : null;
+  editando = true;
+  cerrarModal('modal-conf');
+  textoAcumulado = '';
+  setTimeout(function() { toggleVoz(); }, 200);
 }
 
 function agregarNota(texto) {
