@@ -1432,7 +1432,6 @@ function toggleVoz() {
     if (dbg) dbg.textContent = '';
 
     var datos = interpretarHoyo(texto);
-    // Si estábamos editando, combinar con datos anteriores
     if (editando && datosAnteriores) {
       datos = combinarDatos(datos, datosAnteriores);
       editando = false;
@@ -1440,7 +1439,13 @@ function toggleVoz() {
     }
     E.ultimosDatos = datos;
     E.ultimoTextoVoz = texto;
-    mostrarConfirmacion(texto, datos);
+    try {
+      mostrarConfirmacion(texto, datos);
+    } catch(err) {
+      var dbg = document.getElementById('debug-voz');
+      if (dbg) dbg.textContent = 'ERROR: ' + err.message;
+      alert('Error al mostrar tarjeta: ' + err.message);
+    }
   }
 }
 
