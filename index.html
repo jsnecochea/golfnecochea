@@ -1788,22 +1788,31 @@ function grabar() {
 }
 
 function detenerYProcesar() {
+  // Guardar texto ANTES de detener — onend puede sobrescribir textoAcumulado
+  const textoGuardado = textoAcumulado.trim();
+
   modoGrabando = false;
   setBtnEstado(false);
+
   if (reconocimiento) {
     try { reconocimiento.stop(); } catch(e) {}
     reconocimiento = null;
   }
+
+  // Limpiar inmediatamente para que onend no lo use
+  textoAcumulado = '';
+
+  const dbg = document.getElementById('debug-voz');
+  if (dbg) dbg.textContent = textoGuardado ? '✅ ' + textoGuardado : '';
+
+  // Procesar con el texto ya guardado
   setTimeout(() => {
-    const texto = textoAcumulado.trim();
-    textoAcumulado = '';
-    const dbg = document.getElementById('debug-voz');
     if (dbg) dbg.textContent = '';
-    const datos = interpretarHoyo(texto || '');
+    const datos = interpretarHoyo(textoGuardado || '');
     E.ultimosDatos = datos;
-    E.ultimoTextoVoz = texto;
-    mostrarConfirmacion(texto, datos);
-  }, 400);
+    E.ultimoTextoVoz = textoGuardado;
+    mostrarConfirmacion(textoGuardado, datos);
+  }, 300);
 }
 
 function iniciarVoz() { iniciarGrabacion(); }
