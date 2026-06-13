@@ -1353,9 +1353,13 @@ function reconstruirTiros(lista, d) {
   var hierrosEnBarbasR = (d.hierros||[]).some(function(h){return h.resultado==='barbas'||h.resultado==='trampa';});
   if(d.approach && ((!d.hierros||d.hierros.length===0) || (d.approach==='green' && hierrosEnBarbasR))){
     var texA={green:'Al green',barbas:'Barbas',trampa:'Trampa',castigo:'Castigo'};
+    var prevR2 = hierrosEnBarbasR ?
+      ((d.hierros||[]).find(function(h){return h.resultado==='trampa';}) ? 'trampa' : 'barbas') : null;
+    var subR2 = prevR2==='barbas' ? 'Chip desde barbas (0–30y)' :
+                prevR2==='trampa' ? 'Chip desde trampa (0–30y)' : 'Tiro al green';
     lista.innerHTML+='<div class="tiro-card tc-approach"><span class="tiro-emoji">🎯</span>'+
-      '<div class="tiro-info"><div class="tiro-subtipo">Tiro al green</div>'+
-      '<div class="tiro-val">'+(texA[d.approach]||d.approach)+'</div></div></div>';
+      '<div class="tiro-info"><div class="tiro-subtipo">'+subR2+'</div>'+
+      '<div class="tiro-val">'+(d.approach==='green'?'Al green':(texA[d.approach]||d.approach))+'</div></div></div>';
   }
 
   // Putts
@@ -1604,14 +1608,23 @@ function combinarConParcial(nuevo, parcial) {
 }
 
 function combinarDatos(nuevos, anteriores) {
+  // Al editar: el nuevo dictado REEMPLAZA lo que menciona
+  // Solo conserva del anterior lo que el nuevo NO mencionó
   if (!anteriores) return nuevos;
   var r = JSON.parse(JSON.stringify(nuevos));
-  if (r.score===null && anteriores.score!==null) r.score = anteriores.score;
+  // Score: nunca heredar del anterior (debe ser explícito)
+  // Drive: si el nuevo no menciona drive, conservar el anterior
   if (!r.drive && anteriores.drive) r.drive = anteriores.drive;
-  if ((!r.hierros||r.hierros.length===0) && anteriores.hierros && anteriores.hierros.length>0) r.hierros = anteriores.hierros;
+  // Hierros: si el nuevo menciona hierros, REEMPLAZAR completamente (no mezclar)
+  // Si el nuevo no menciona hierros, conservar los anteriores
+  if ((!r.hierros || r.hierros.length === 0) && anteriores.hierros && anteriores.hierros.length > 0) {
+    r.hierros = anteriores.hierros;
+  }
+  // Approach: si el nuevo no menciona approach, conservar el anterior
   if (!r.approach && anteriores.approach) r.approach = anteriores.approach;
-  if (r.putts===null && anteriores.putts!==null) r.putts = anteriores.putts;
-  if (r.pasos===null && anteriores.pasos!==null) r.pasos = anteriores.pasos;
+  // Putts: si el nuevo menciona putts, REEMPLAZAR (no mezclar)
+  if (r.putts === null && anteriores.putts !== null) r.putts = anteriores.putts;
+  if (r.pasos === null && anteriores.pasos !== null) r.pasos = anteriores.pasos;
   if (!r.puttCorto && anteriores.puttCorto) r.puttCorto = anteriores.puttCorto;
   return r;
 }
@@ -1697,7 +1710,19 @@ function toggleVoz() {
       }
 
       if (editando && datosAnteriores) {
-        datos = combinarDatos(datos, datosAnteriores);
+        // Al editar: el nuevo dictado REEMPLAZA lo que menciona
+        // Si el nuevo tiene hierros → los hierros anteriores se descartan
+        // Si el nuevo tiene putts → los putts anteriores se descartan
+        // Solo conservar lo que el nuevo NO menciona
+        if (!datos.drive && datosAnteriores.drive) datos.drive = datosAnteriores.drive;
+        if ((!datos.hierros || datos.hierros.length === 0) && datosAnteriores.hierros && datosAnteriores.hierros.length > 0) {
+          datos.hierros = datosAnteriores.hierros;
+        }
+        if (!datos.approach && datosAnteriores.approach) datos.approach = datosAnteriores.approach;
+        if (datos.putts === null && datosAnteriores.putts !== null) datos.putts = datosAnteriores.putts;
+        if (datos.pasos === null && datosAnteriores.pasos !== null) datos.pasos = datosAnteriores.pasos;
+        if (!datos.puttCorto && datosAnteriores.puttCorto) datos.puttCorto = datosAnteriores.puttCorto;
+        // Score nunca se hereda
         editando = false;
         datosAnteriores = null;
       }
@@ -1741,28 +1766,21 @@ const DICT = {
 
   // ── SCORE ──────────────────────────────────────
   score: {
-    // Eagle / Águila (-2)
-    'aguila':-2,'aguilita':-2,'eagle':-2,'menos dos':-2,'mas menos dos':-2,
+    // Eagle / Águila (-2) — palabras únicas sin ambigüedad
+    'aguila':-2,'aguilita':-2,'eagle':-2,'menos dos':-2,
     // Birdie (-1)
-    'birdie':-1,'verdi':-1,'verde':-1,'burdi':-1,'berdi':-1,'birdi':-1,
-    'menos uno':-1,'menos 1':-1,
+    'birdie':-1,'verdi':-1,'verde':-1,'burdi':-1,'berdi':-1,'birdi':-1,'menos uno':-1,
     // Par (0)
     'par':0,'empate':0,'pareo':0,
-    // Bogey (+1)
+    // Bogey (+1) — NO incluir 'mas uno' ni '+1' (dan falsos positivos)
     'bogey':1,'bogi':1,'bogui':1,'bogue':1,'boke':1,'boqui':1,
-    'mas uno':1,'más uno':1,'mas 1':1,'+1':1,
     // Doble bogey (+2)
     'doble bogey':2,'doble bogi':2,'doble':2,
-    'sopi':2,'sopilote':2,'sopilotes':2,'quesopi':2,'queso':2,
-    'mas dos':2,'más dos':2,'mas 2':2,'+2':2,
+    'sopi':2,'sopilote':2,'sopilotes':2,'quesopi':2,
     // Triple bogey (+3)
     'triple bogey':3,'triple bogi':3,'triple':3,
-    'mas tres':3,'más tres':3,'mas 3':3,'+3':3,
     // Cuádruple (+4)
-    'cuadruple bogey':4,'cuadruple bogi':4,'cuadruple':4,'cuádruple':4,
-    'mas cuatro':4,'más cuatro':4,'mas 4':4,'+4':4,
-    // Quíntuple (+5)
-    'mas cinco':5,'más cinco':5,'mas 5':5,'+5':5
+    'cuadruple bogey':4,'cuadruple bogi':4,'cuadruple':4
   },
 
   // ── DRIVE ──────────────────────────────────────
@@ -1946,10 +1964,31 @@ function interpretarHoyo(txt) {
     r.metidaFuera = true; r.putts = 0; r.pasos = 0; r.puttCorto = 'no-hubo';
   }
 
-  // Score
+  // Score — detectar palabras explícitas del diccionario
   var scoreEntries = Object.entries(DICT.score).sort(function(a,b){ return b[0].length - a[0].length; });
   for (var i=0; i<scoreEntries.length; i++) {
     if (n.includes(norm(scoreEntries[i][0]))) { r.score = scoreEntries[i][1]; break; }
+  }
+  // Detectar "más N" y "+N" con regex explícito (evitar falsos positivos del diccionario)
+  if (r.score === null) {
+    var mMas = txt.match(/(?:mas|más)\s+([a-z]+|\d+)/i);
+    if (mMas) {
+      var masN = extraerNum(mMas[1]);
+      if (masN && masN >= 1 && masN <= 6) r.score = masN;
+    }
+    // "+N" solo si viene explícito al inicio o separado
+    var mPlus = txt.match(/(?:^|\s)\+(\d)/);
+    if (mPlus) {
+      var plusN = parseInt(mPlus[1]);
+      if (plusN >= 1 && plusN <= 6) r.score = plusN;
+    }
+    // "menos N" para birdie/eagle
+    var mMenos = txt.match(/menos\s+([a-z]+|\d+)/i);
+    if (mMenos) {
+      var menosN = extraerNum(mMenos[1]);
+      if (menosN === 1) r.score = -1;
+      if (menosN === 2) r.score = -2;
+    }
   }
 
   // Drive
@@ -2146,12 +2185,17 @@ function interpretarHoyo(txt) {
     todosLosNums.sort(function(a,b){ return b-a; });
     r.pasos = todosLosNums[0]; // Mayor = primer putt
     var menorP = todosLosNums[todosLosNums.length-1];
-    if (menorP <= 2 && !DICT.puttCorto.lofalle.some(function(p){ return n.includes(norm(p)); })) {
+    if (menorP > 2) {
+      // Todos los putts son largos → no hubo putt corto
+      r.puttCorto = 'no-hubo';
+    } else if (!DICT.puttCorto.lofalle.some(function(p){ return n.includes(norm(p)); })) {
       r.puttCorto = 'lo-meti';
     }
   } else if (todosLosNums.length === 1) {
     r.pasos = todosLosNums[0];
-    if (todosLosNums[0] <= 2 && !DICT.puttCorto.lofalle.some(function(p){ return n.includes(norm(p)); })) {
+    if (todosLosNums[0] > 2) {
+      r.puttCorto = 'no-hubo';
+    } else if (!DICT.puttCorto.lofalle.some(function(p){ return n.includes(norm(p)); })) {
       r.puttCorto = 'lo-meti';
     }
   }
@@ -2242,11 +2286,18 @@ function mostrarConfirmacion(textoOriginal, datos) {
     var hierrosEnBarbas = datos.hierros && datos.hierros.some(function(h){ return h.resultado==='barbas'||h.resultado==='trampa'; });
     var hayApproachAdicional = datos.approach === 'green' && hierrosEnBarbas;
     if (datos.approach && ((!datos.hierros || datos.hierros.length === 0) || hayApproachAdicional)) {
+      // Subtipo muestra la distancia estimada según de dónde viene
+      var subtipoApp = 'Tiro al green';
+      var resultado_prev = hierrosEnBarbas ?
+        (datos.hierros.find(function(h){ return h.resultado==='trampa'; }) ? 'trampa' : 'barbas') :
+        null;
+      if (resultado_prev === 'barbas') subtipoApp = 'Chip desde barbas (0–30y)';
+      else if (resultado_prev === 'trampa') subtipoApp = 'Chip desde trampa (0–30y)';
       var texA = {green:'Al green ✅', barbas:'Barbas', trampa:'Trampa / Bunker', castigo:'Castigo'};
       lista.innerHTML += '<div class="conf-tiro ct-approach">' +
         '<span style="font-size:16px">🎯</span>' +
-        '<div class="tiro-info"><div class="tiro-subtipo">Tiro al green</div>' +
-        '<div class="tiro-val">' + (texA[datos.approach]||datos.approach) + '</div></div></div>';
+        '<div class="tiro-info"><div class="tiro-subtipo">' + subtipoApp + '</div>' +
+        '<div class="tiro-val">' + (datos.approach === 'green' ? 'Al green ✅' : (texA[datos.approach]||datos.approach)) + '</div></div></div>';
     }
 
     // Putts — mostrar con todos sus datos
@@ -2293,21 +2344,11 @@ function mostrarConfirmacion(textoOriginal, datos) {
   // 4. El menor paso mencionado es <= 2 (o no se mencionaron pasos)
   var faltante = document.getElementById('conf-faltante');
   if (faltante) {
-    var pasosMinimos = datos.pasos; // pasos del primer putt
-    // Si hay dos putts y el menor paso es > 2, obviamente no hubo corto
-    var todosSonLargos = pasosMinimos && pasosMinimos > 2 && datos.putts <= 1;
-    // Si hay múltiples putts con pasos conocidos, revisar si alguno es <= 2
-    // (ya lo detectamos automáticamente en interpretarHoyo, así que si puttCorto
-    // sigue null aquí, es porque ninguno fue <= 2 o no se mencionaron pasos)
+    // Solo preguntar si: hay putts, no hay puttCorto detectado, no es hoyo en uno
+    // Si ya detectamos puttCorto en interpretarHoyo → NO preguntar
     var necesitaPreguntar = datos.putts && datos.putts > 0 &&
                             !datos.puttCorto &&
-                            !datos.metidaFuera &&
-                            !todosSonLargos;
-    // Si hay pasos y todos son > 2, no preguntar
-    if (necesitaPreguntar && pasosMinimos && pasosMinimos > 2) {
-      necesitaPreguntar = false;
-      if (E.ultimosDatos) E.ultimosDatos.puttCorto = 'no-hubo';
-    }
+                            !datos.metidaFuera;
     faltante.style.display = necesitaPreguntar ? 'block' : 'none';
   }
 
