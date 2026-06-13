@@ -1355,8 +1355,8 @@ function reconstruirTiros(lista, d) {
     var texA={green:'Al green',barbas:'Barbas',trampa:'Trampa',castigo:'Castigo'};
     var prevR2 = hierrosEnBarbasR ?
       ((d.hierros||[]).find(function(h){return h.resultado==='trampa';}) ? 'trampa' : 'barbas') : null;
-    var subR2 = prevR2==='barbas' ? 'Chip desde barbas (0–25y)' :
-                prevR2==='trampa' ? 'Chip desde trampa (0–25y)' : 'Tiro al green';
+    var subR2 = prevR2==='barbas' ? 'Chip desde barbas (0–30y)' :
+                prevR2==='trampa' ? 'Chip desde trampa (0–30y)' : 'Tiro al green';
     lista.innerHTML+='<div class="tiro-card tc-approach"><span class="tiro-emoji">🎯</span>'+
       '<div class="tiro-info"><div class="tiro-subtipo">'+subR2+'</div>'+
       '<div class="tiro-val">'+(d.approach==='green'?'Al green':(texA[d.approach]||d.approach))+'</div></div></div>';
@@ -1599,15 +1599,16 @@ function combinarConParcial(nuevo, parcial) {
     parcial.hierros.forEach(function(h){ if(!r.hierros.find(function(x){return x.dist===h.dist;})) r.hierros.push(h); });
   }
   // Si el parcial tenía hierros en barbas/trampa y el nuevo approach es green
-  // → agregar chip de 25y automáticamente
+  // → agregar chip de 25y automáticamente, SOLO si no viene ya en r.hierros
   if (!r.approach && parcial.approach) r.approach = parcial.approach;
   var parcialEnBarbas = (parcial.hierros||[]).some(function(h){ return h.resultado==='barbas'||h.resultado==='trampa'; });
   if (r.approach === 'green' && parcialEnBarbas) {
     var yaHayChip = r.hierros && r.hierros.some(function(h){ return h.esChip; });
+    // Solo agregar si no hay chip ya (evitar duplicado cuando viene en el mismo dictado)
     if (!yaHayChip) {
       var tipoChip = (parcial.hierros||[]).some(function(h){ return h.resultado==='trampa'; }) ? 'trampa' : 'barbas';
       if (!r.hierros) r.hierros = [];
-      r.hierros.push({dist:25, resultado:'green', esChip:true, desdeChip:tipoChip});
+      r.hierros.push({dist:30, resultado:'green', esChip:true, desdeChip:tipoChip});
     }
   }
   if (r.putts===null && parcial.putts!==null) r.putts = parcial.putts;
@@ -2120,10 +2121,11 @@ function interpretarHoyo(txt) {
   if (hayDosResultados) {
     // El hierro quedó en barbas o trampa
     var resHierro = resBarbas ? 'barbas' : 'trampa';
-    r.hierros = r.hierros.sort(function(a,b){ return b.dist-a.dist; })
+    r.hierros = r.hierros.filter(function(h){ return !h.esChip; }) // quitar chips previos
+      .sort(function(a,b){ return b.dist-a.dist; })
       .map(function(h){ return {dist:h.dist, resultado:resHierro}; });
-    // El chip desde barbas/trampa al green = 25 yardas (rango estándar 0-25y)
-    r.hierros.push({dist:25, resultado:'green', esChip:true});
+    // Agregar chip de 25y solo una vez
+    r.hierros.push({dist:30, resultado:'green', esChip:true, desdeChip:resHierro});
     r.approach = 'green';
   } else if (r.hierros.length > 0) {
     // NO adivinar el resultado — solo asignar si se dijo explícitamente
@@ -2302,7 +2304,7 @@ function mostrarConfirmacion(textoOriginal, datos) {
       var h = hierros[i];
       var texR = {green:'Al green ✅', barbas:'Barbas', trampa:'Trampa / Bunker', castigo:'Castigo', lejos:'Lejos del green'};
       var subtipoHierro = h.esChip ?
-        ('Chip desde ' + (h.desdeChip||'barbas') + ' (0–25y)') :
+        ('Chip desde ' + (h.desdeChip||'barbas') + ' (0–30y)') :
         (h.dist + ' yardas');
       var emojiHierro = h.esChip ? '🎯' : '🔨';
       var distKey = h.esChip ? 'chip' : String(h.dist);
@@ -2324,8 +2326,8 @@ function mostrarConfirmacion(textoOriginal, datos) {
       var resultado_prev = hierrosEnBarbas ?
         (datos.hierros.find(function(h){ return h.resultado==='trampa'; }) ? 'trampa' : 'barbas') :
         null;
-      if (resultado_prev === 'barbas') subtipoApp = 'Chip desde barbas (0–25y)';
-      else if (resultado_prev === 'trampa') subtipoApp = 'Chip desde trampa (0–25y)';
+      if (resultado_prev === 'barbas') subtipoApp = 'Chip desde barbas (0–30y)';
+      else if (resultado_prev === 'trampa') subtipoApp = 'Chip desde trampa (0–30y)';
       var texA = {green:'Al green ✅', barbas:'Barbas', trampa:'Trampa / Bunker', castigo:'Castigo'};
       lista.innerHTML += '<div class="conf-tiro ct-approach" data-tipo="approach">' +
         '<span style="font-size:16px">🎯</span>' +
