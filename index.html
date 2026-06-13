@@ -148,11 +148,28 @@ body {
 .btn-borrar   { flex:1; background:rgba(220,38,38,.08); border:1px solid rgba(220,38,38,.15); border-radius:12px; padding:10px; color:rgba(248,113,113,.6); font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; }
 
 /* ── BOTÓN DICTAR ── */
-.dictar-wrap { padding:0 16px 16px; display:flex; flex-direction:column; align-items:center; gap:8px; }
-.btn-dictar { width:100%; background:var(--green); border-radius:18px; padding:16px 10px; display:flex; flex-direction:column; align-items:center; gap:8px; box-shadow:0 0 0 8px rgba(15,110,86,.1); cursor:pointer; border:none; transition:transform .15s; }
-.btn-dictar:active { transform:scale(.98); }
-.mic-circle { width:52px; height:52px; border-radius:50%; background:rgba(255,255,255,.15); display:flex; align-items:center; justify-content:center; font-size:28px; }
-.btn-dictar-label { color:white; font-size:14px; font-weight:700; }
+.dictar-wrap { padding:0; display:flex; flex-direction:column; align-items:center; flex:1; }
+.btn-mic-circulo {
+  width:190px; height:190px; border-radius:50%;
+  background:var(--green);
+  border:none; cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
+  box-shadow:0 0 0 10px rgba(15,110,86,.2), 0 0 0 20px rgba(15,110,86,.08);
+  transition:transform .15s, background .2s, box-shadow .2s;
+}
+.btn-mic-circulo:active { transform:scale(.93); }
+.btn-mic-circulo.grabando {
+  background:#CC0000;
+  box-shadow:
+    0 0 0 8px rgba(204,0,0,.5),
+    0 0 0 18px rgba(204,0,0,.3),
+    0 0 0 30px rgba(204,0,0,.12);
+  animation:pulso-rojo 1s ease infinite;
+}
+@keyframes pulso-rojo {
+  0%,100%{box-shadow:0 0 0 8px rgba(204,0,0,.5),0 0 0 18px rgba(204,0,0,.3),0 0 0 30px rgba(204,0,0,.1)}
+  50%{box-shadow:0 0 0 12px rgba(204,0,0,.6),0 0 0 26px rgba(204,0,0,.25),0 0 0 42px rgba(204,0,0,.06)}
+}
 .dictar-hint { color:var(--text-dim); font-size:10px; }
 
 /* ── BOTTOM BAR ── */
@@ -552,11 +569,13 @@ body {
 
   <!-- Botón dictar -->
   <div class="dictar-wrap" id="dictar-wrap">
-    <button class="btn-dictar" onclick="abrirModal('modal-conf')">
-      <div class="mic-circle">🎤</div>
-      <span class="btn-dictar-label">Dictar tiros</span>
-    </button>
-    <span class="dictar-hint">Di un tiro o todo el hoyo de un jalón</span>
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:20px 0">
+      <button class="btn-mic-circulo" id="btn-mic" onclick="toggleVoz()">
+        <span id="mic-emoji" style="font-size:52px;line-height:1">🎤</span>
+        <span id="mic-label" style="color:white;font-size:14px;font-weight:700;letter-spacing:.5px;display:none">LISTO</span>
+      </button>
+      <span class="dictar-hint" style="font-size:12px" id="mic-hint">Toca para hablar</span>
+    </div>
   </div>
 
   <!-- Bottom bar -->
@@ -1351,6 +1370,638 @@ function selBench(el,b){
     try{const d=JSON.parse(e.dataset.b); if(d[b]!==undefined) e.textContent=d[b];}catch(err){}
   });
 }
+
+
+// ===================================================
+// ESTADO DE TIROS DEL HOYO ACTUAL
+// ===================================================
+let tirosHoyo = {
+  drive: null,       // 'fairway' | 'sin-tiro' | 'castigo'
+  hierros: [],       // [{dist, resultado}]
+  approach: null,    // 'green' | 'barbas' | 'trampa' | 'castigo'
+  putts: null,       // número
+  pasos: null,       // número de pasos
+  puttCorto: null,   // 'no-hubo' | 'lo-meti' | 'lo-falle'
+  score: null        // número relativo al par
+};
+
+let etapaVoz = 'inicio'; // 'inicio' | 'drive' | 'hierros' | 'approach' | 'putts' | 'pasos' | 'puttcorto' | 'completo'
+let reconocimiento = null;
+let escuchando = false;
+
+// ===================================================
+// DICCIONARIO COMPLETO
+// ===================================================
+const DICT = {
+  score: {
+    'aguila': -2, 'eagle': -2,
+    'birdie': -1, 'verdi': -1, 'verde': -1,
+    'par': 0, 'empate': 0,
+    'bogey': 1, 'bogi': 1,
+    'doble': 2, 'doble bogey': 2, 'quesopi': 2, 'sopi': 2, 'sopilote': 2,
+    'triple': 3, 'triple bogey': 3,
+    'cuadruple': 4, 'cuádruple': 4
+  },
+  drive: {
+    fairway: ['fairway','calle','centro','bien','derecho','derecha','recto'],
+    sintiro: ['sin tiro','arboles','árboles','arbol','árbol','bosque','incomodo','incómodo','rough','maleza','matorral'],
+    castigo: ['castigo','agua','lago','fuera','ob','out','arabaunt','around','arobando','fuera de limites','fuera de límites']
+  },
+  approach: {
+    green: ['green','regulation','arriba','en green','subi','subí','llegué','llegue','meti','metí','al green','en el green'],
+    barbas: ['barbas','barbitas','alrededor','muy cerca','cerca del green','frente al green','junto al green'],
+    trampa: ['trampa','bunker','arena','muy lejos','quedé corto','quede corto','me pasé','me pase','agua','lago','castigo','arabaunt'],
+    castigo: ['castigo','ob','fuera','agua','lago','penal','penalidad']
+  },
+  metidaFuera: ['meti desde fuera','metí desde fuera','entró desde fuera','entro desde fuera','hoyo en uno','hole in one'],
+  puttCorto: {
+    nohubo: ['no hubo','sin putt corto','no tuve','no había','no habia'],
+    lometi: ['lo meti','lo metí','meti el corto','metí el corto','entre','entré','si lo meti','sí lo metí'],
+    lofalle: ['lo falle','lo fallé','falle el corto','fallé el corto','lo erré','lo erre','no lo meti','no lo metí']
+  },
+  numeros: {
+    'uno':1,'dos':2,'tres':3,'cuatro':4,'cinco':5,'seis':6,'siete':7,'ocho':8,'nueve':9,'diez':10,
+    'once':11,'doce':12,'trece':13,'catorce':14,'quince':15,'dieciseis':16,'dieciséis':16,
+    'diecisiete':17,'dieciocho':18,'diecinueve':19,'veinte':20,'veintiuno':21,'veintidos':22,
+    'veintidós':22,'veintitres':23,'veintitrés':23,'veinticuatro':24,'veinticinco':25,
+    'treinta':30,'cuarenta':40,'cincuenta':50,'sesenta':60,'setenta':70,'ochenta':80,'noventa':90,
+    'cien':100,'ciento':100,'ciento veinte':120,'ciento treinta':130,'ciento cuarenta':140,
+    'ciento cincuenta':150,'ciento sesenta':160
+  },
+  notas: {
+    approach: ['approach','aproach','tiros al green','hierros','abre mis notas de approach','notas de approach'],
+    drive: ['drive','drives','tiro de salida','abre mis notas de drive','notas de drive'],
+    hierros: ['hierros','irons','abre mis notas de hierros','notas de hierros'],
+    putt: ['putt','putts','putting','abre mis notas de putt','notas de putt','notas de putting'],
+    greens: ['greens','green','abre mis notas de greens','notas de greens']
+  }
+};
+
+// ===================================================
+// NORMALIZAR TEXTO
+// ===================================================
+function normalizar(txt) {
+  return txt.toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g,'')
+    .replace(/[^a-z0-9\s]/g,'')
+    .trim();
+}
+
+// ===================================================
+// EXTRAER NÚMERO DE TEXTO
+// ===================================================
+function extraerNumero(txt) {
+  // Primero buscar dígitos
+  const digitos = txt.match(/\d+/);
+  if (digitos) return parseInt(digitos[0]);
+  // Luego palabras
+  const n = normalizar(txt);
+  for (const [pal, num] of Object.entries(DICT.numeros)) {
+    if (n.includes(pal)) return num;
+  }
+  return null;
+}
+
+// ===================================================
+// DETECTAR PASOS EN TEXTO
+// ===================================================
+function extraerPasos(txt) {
+  const n = normalizar(txt);
+  // "a ocho pasos", "ocho pasos", "quedé a ocho", "son ocho", "estoy a ocho"
+  const patrones = [
+    /(\w+)\s*pasos?/,
+    /a\s+(\w+)/,
+    /son\s+(\w+)/,
+    /estoy\s+a\s+(\w+)/,
+    /quede?\s+a\s+(\w+)/
+  ];
+  for (const p of patrones) {
+    const m = n.match(p);
+    if (m) {
+      const num = extraerNumero(m[1]);
+      if (num) return num;
+    }
+  }
+  return extraerNumero(txt);
+}
+
+// ===================================================
+// DETECTAR YARDAS EN TEXTO
+// ===================================================
+function extraerYardas(txt) {
+  const n = normalizar(txt);
+  const m = n.match(/(\d+)\s*(yardas?|yards?)?/);
+  if (m) return parseInt(m[1]);
+  // Palabras
+  for (const [pal, num] of Object.entries(DICT.numeros)) {
+    if (n.includes(pal + ' yardas') || n.includes(pal + ' yardsas')) return num;
+  }
+  return null;
+}
+
+// ===================================================
+// DETECTAR NOTAS EN TEXTO
+// ===================================================
+function detectarNota(txt) {
+  const n = normalizar(txt);
+  for (const [cat, palabras] of Object.entries(DICT.notas)) {
+    if (palabras.some(p => n.includes(normalizar(p)))) {
+      const leer = n.includes('leeme') || n.includes('leeme') || n.includes('lee mis');
+      return { cat, leer };
+    }
+  }
+  return null;
+}
+
+// ===================================================
+// COINCIDIR CON DICCIONARIO
+// ===================================================
+function coincidir(txt, lista) {
+  const n = normalizar(txt);
+  return lista.some(p => n.includes(normalizar(p)));
+}
+
+// ===================================================
+// INTERPRETAR TEXTO COMPLETO DE UN HOYO
+// ===================================================
+function interpretarHoyo(txt) {
+  const n = normalizar(txt);
+  const resultado = {
+    score: null,
+    drive: null,
+    hierros: [],
+    approach: null,
+    putts: null,
+    pasos: null,
+    puttCorto: null,
+    metidaFuera: false
+  };
+
+  // ¿Metida desde fuera?
+  if (DICT.metidaFuera.some(p => n.includes(normalizar(p)))) {
+    resultado.metidaFuera = true;
+    resultado.putts = 0;
+    resultado.pasos = 0;
+    resultado.puttCorto = 'no-hubo';
+  }
+
+  // Score
+  for (const [pal, val] of Object.entries(DICT.score)) {
+    if (n.includes(normalizar(pal))) {
+      resultado.score = val;
+      break;
+    }
+  }
+
+  // Drive
+  if (coincidir(txt, DICT.drive.castigo)) resultado.drive = 'castigo';
+  else if (coincidir(txt, DICT.drive.sintiro)) resultado.drive = 'sin-tiro';
+  else if (coincidir(txt, DICT.drive.fairway)) resultado.drive = 'fairway';
+
+  // Approach / tiro al green
+  if (coincidir(txt, DICT.approach.castigo) && n.includes('castigo')) resultado.approach = 'castigo';
+  else if (coincidir(txt, DICT.approach.trampa)) resultado.approach = 'trampa';
+  else if (coincidir(txt, DICT.approach.barbas)) resultado.approach = 'barbas';
+  else if (coincidir(txt, DICT.approach.green)) resultado.approach = 'green';
+
+  // Putts - buscar "X putts" o "X pots"
+  const mPutts = n.match(/(\w+)\s*(putts?|pots?|putos?)/);
+  if (mPutts) {
+    const num = extraerNumero(mPutts[1]);
+    if (num) resultado.putts = num;
+  }
+  // "triputtié" = 3, "la metí de uno" = 1
+  if (n.includes('triputtie') || n.includes('triputi') || n.includes('triple putt')) resultado.putts = 3;
+  if (n.includes('la meti de uno') || n.includes('un putt') || n.includes('hoyo en uno')) resultado.putts = 1;
+
+  // Pasos
+  resultado.pasos = extraerPasos(txt);
+
+  // Putt corto
+  if (coincidir(txt, DICT.puttCorto.lofalle)) resultado.puttCorto = 'lo-falle';
+  else if (coincidir(txt, DICT.puttCorto.lometi)) resultado.puttCorto = 'lo-meti';
+  else if (coincidir(txt, DICT.puttCorto.nohubo)) resultado.puttCorto = 'no-hubo';
+
+  // Yardas para hierros (distancias mencionadas)
+  const mYardas = [...n.matchAll(/(\d+)\s*(yardas?|yards?)/g)];
+  mYardas.forEach(m => {
+    const y = parseInt(m[1]);
+    if (y > 20 && y < 300) resultado.hierros.push({dist: y, resultado: resultado.approach || 'green'});
+  });
+
+  return resultado;
+}
+
+// ===================================================
+// MOSTRAR OVERLAY DE ESCUCHA
+// ===================================================
+function mostrarEscuchando(txt) {
+  let overlay = document.getElementById('overlay-escucha');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'overlay-escucha';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;backdrop-filter:blur(8px)';
+    overlay.innerHTML = `
+      <div style="display:flex;gap:6px;align-items:center" id="ondas-voz">
+        <div style="width:4px;border-radius:2px;background:#34d399;animation:onda .6s ease infinite" class="ov1"></div>
+        <div style="width:4px;border-radius:2px;background:#34d399;animation:onda .6s ease .1s infinite" class="ov2"></div>
+        <div style="width:4px;border-radius:2px;background:#34d399;animation:onda .6s ease .2s infinite" class="ov3"></div>
+        <div style="width:4px;border-radius:2px;background:#34d399;animation:onda .6s ease .3s infinite" class="ov4"></div>
+        <div style="width:4px;border-radius:2px;background:#34d399;animation:onda .6s ease .4s infinite" class="ov5"></div>
+      </div>
+      <div id="escucha-titulo" style="color:white;font-size:18px;font-weight:700">Escuchando...</div>
+      <div id="escucha-subtitulo" style="color:rgba(255,255,255,.5);font-size:13px;text-align:center;padding:0 30px">Di el score, drive, hierros y putts</div>
+      <div id="escucha-texto" style="color:#34d399;font-size:16px;font-weight:600;min-height:24px;text-align:center;padding:0 20px"></div>
+      <div style="display:flex;gap:12px;margin-top:10px">
+        <button onclick="cancelarVoz()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:10px 20px;color:rgba(255,255,255,.6);font-size:13px;font-weight:600;cursor:pointer">Cancelar</button>
+        <button onclick="finalizarVoz()" style="background:#0F6E56;border:none;border-radius:20px;padding:10px 28px;color:white;font-size:15px;font-weight:700;cursor:pointer">Listo ✓</button>
+      </div>
+    `;
+    // Animar ondas
+    const style = document.createElement('style');
+    style.textContent = '.ov1{height:20px}.ov2{height:35px}.ov3{height:50px}.ov4{height:35px}.ov5{height:20px}';
+    overlay.appendChild(style);
+    document.body.appendChild(overlay);
+  }
+  overlay.style.display = 'flex';
+  if (txt) document.getElementById('escucha-texto').textContent = '"' + txt + '"';
+}
+
+function ocultarEscuchando() {
+  const o = document.getElementById('overlay-escucha');
+  if (o) o.style.display = 'none';
+}
+
+// ===================================================
+// INICIAR RECONOCIMIENTO DE VOZ
+// ===================================================
+let textoAcumulado = '';
+let reiniciandoVoz = false;
+
+function toggleVoz() {
+  if (!escuchando) {
+    iniciarVoz();
+  } else {
+    finalizarVoz();
+  }
+}
+
+function iniciarVoz() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) {
+    alert('Tu navegador no soporta reconocimiento de voz. Usa Chrome en Android o Safari en iPhone.');
+    return;
+  }
+
+  textoAcumulado = '';
+  reiniciandoVoz = false;
+
+  // Cambiar apariencia del botón a GRABANDO
+  const btnMic = document.getElementById('btn-mic');
+  const micEmoji = document.getElementById('mic-emoji');
+  const micLabel = document.getElementById('mic-label');
+  const micHint = document.getElementById('mic-hint');
+  if (btnMic) btnMic.classList.add('grabando');
+  if (micEmoji) micEmoji.style.display = 'none';
+  if (micLabel) micLabel.style.display = 'block';
+  if (micHint) micHint.innerHTML = 'Escuchando... toca de nuevo cuando termines';
+
+  arrancarReconocimiento();
+}
+
+function arrancarReconocimiento() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  reconocimiento = new SpeechRecognition();
+  reconocimiento.lang = 'es-MX';
+  reconocimiento.continuous = true;
+  reconocimiento.interimResults = true;
+  reconocimiento.maxAlternatives = 1;
+
+  reconocimiento.onstart = () => {
+    escuchando = true;
+    if (!reiniciandoVoz) mostrarEscuchando('');
+  };
+
+  reconocimiento.onresult = (event) => {
+    let interim = '';
+    for (let i = event.resultIndex; i < event.results.length; i++) {
+      const t = event.results[i][0].transcript;
+      if (event.results[i].isFinal) {
+        textoAcumulado += ' ' + t;
+        document.getElementById('escucha-texto').textContent = '"' + textoAcumulado.trim() + '"';
+      } else {
+        interim = t;
+        document.getElementById('escucha-texto').textContent = '"' + (textoAcumulado + ' ' + interim).trim() + '"';
+      }
+    }
+  };
+
+  reconocimiento.onerror = (event) => {
+    if (event.error === 'not-allowed') {
+      cancelarVoz();
+      alert('Necesitas dar permiso al micrófono. En tu navegador ve a Configuración → Privacidad → Micrófono y permite este sitio.');
+    } else if (event.error === 'no-speech' || event.error === 'aborted') {
+      // ignorar — el usuario pausó
+    } else {
+      console.warn('Error voz:', event.error);
+    }
+  };
+
+  reconocimiento.onend = () => {
+    // Si el usuario no picó Listo, reiniciar automáticamente para seguir escuchando
+    if (escuchando && !reiniciandoVoz) {
+      reiniciandoVoz = true;
+      setTimeout(() => {
+        reiniciandoVoz = false;
+        if (escuchando) arrancarReconocimiento();
+      }, 200);
+    }
+  };
+
+  try { reconocimiento.start(); } catch(e) { console.warn(e); }
+}
+
+function finalizarVoz() {
+  // El usuario picó "Listo" — procesar todo lo acumulado
+  escuchando = false;
+  reiniciandoVoz = false;
+  if (reconocimiento) { try { reconocimiento.stop(); } catch(e){} }
+  const btnMic = document.getElementById('btn-mic');
+  const micEmoji = document.getElementById('mic-emoji');
+  const micLabel = document.getElementById('mic-label');
+  const micHint = document.getElementById('mic-hint');
+  if (btnMic) btnMic.classList.remove('grabando');
+  if (micEmoji) micEmoji.style.display = 'block';
+  if (micLabel) micLabel.style.display = 'none';
+  if (micHint) micHint.innerHTML = 'Toca para hablar';
+  ocultarEscuchando();
+  const texto = textoAcumulado.trim();
+  if (texto) {
+    procesarVoz(texto);
+  } else {
+    // Nada detectado
+    abrirModal('modal-conf');
+  }
+  textoAcumulado = '';
+}
+
+function cancelarVoz() {
+  escuchando = false;
+  reiniciandoVoz = false;
+  if (reconocimiento) { try { reconocimiento.stop(); } catch(e){} }
+  const btnMic = document.getElementById('btn-mic');
+  const micEmoji = document.getElementById('mic-emoji');
+  const micLabel = document.getElementById('mic-label');
+  const micHint = document.getElementById('mic-hint');
+  if (btnMic) btnMic.classList.remove('grabando');
+  if (micEmoji) micEmoji.style.display = 'block';
+  if (micLabel) micLabel.style.display = 'none';
+  if (micHint) micHint.innerHTML = 'Toca para hablar';
+  ocultarEscuchando();
+  textoAcumulado = '';
+}
+
+// Mantener compatibilidad con botón Corregir por voz
+function detenerVoz() { cancelarVoz(); }
+
+// ===================================================
+// PROCESAR VOZ — LÓGICA PRINCIPAL
+// ===================================================
+function procesarVoz(texto) {
+  ocultarEscuchando();
+  const n = normalizar(texto);
+
+  // ¿Comando de notas?
+  const nota = detectarNota(texto);
+  if (nota) {
+    const catMap = {approach:'Approach', drive:'Drive', hierros:'Hierros', putt:'Putt', greens:'Greens'};
+    const icoMap = {approach:'🎯', drive:'🏌️', hierros:'🔨', putt:'⛳', greens:'📋'};
+    cambiarCat(null, catMap[nota.cat], icoMap[nota.cat]);
+    abrirNotas();
+    if (nota.leer) leerNotas();
+    return;
+  }
+
+  // Interpretar todo el texto del hoyo
+  const interpretado = interpretarHoyo(texto);
+  tirosHoyo = { ...tirosHoyo, ...interpretado };
+
+  // Mostrar tarjeta de confirmación con lo detectado
+  mostrarConfirmacion(texto, interpretado);
+}
+
+// ===================================================
+// MOSTRAR TARJETA DE CONFIRMACIÓN CON DATOS REALES
+// ===================================================
+function mostrarConfirmacion(textoOriginal, datos) {
+  // Actualizar título
+  document.getElementById('conf-titulo').textContent = 'Hoyo ' + E.hoyoActual;
+
+  // Calcular score
+  const scoreVal = datos.score;
+  const badge = document.querySelector('#modal-conf .badge-res');
+  if (scoreVal !== null) {
+    const sc = scoreClass(scoreVal);
+    badge.className = 'badge-res badge-' + sc;
+    badge.textContent = scoreTexto[sc] || '';
+  } else {
+    badge.className = 'badge-res badge-par';
+    badge.textContent = 'Detectando...';
+  }
+
+  // Construir lista de tiros
+  const lista = document.querySelector('.conf-tiros');
+  lista.innerHTML = '';
+
+  // Drive
+  if (datos.drive) {
+    const texDrive = {fairway:'Fairway ✅', 'sin-tiro':'Sin tiro (rough)', castigo:'Castigo / OB / Agua'};
+    const clsDrive = {fairway:'ct-drive', 'sin-tiro':'ct-hierro', castigo:'ct-putt'};
+    lista.innerHTML += `
+      <div class="conf-tiro ${clsDrive[datos.drive] || 'ct-drive'}">
+        <span style="font-size:16px">🏌️</span>
+        <div class="tiro-info">
+          <div class="tiro-subtipo">Drive</div>
+          <div class="tiro-val">${texDrive[datos.drive] || datos.drive}</div>
+        </div>
+      </div>`;
+  }
+
+  // Hierros/yardas
+  datos.hierros.forEach(h => {
+    lista.innerHTML += `
+      <div class="conf-tiro ct-hierro">
+        <span style="font-size:16px">🔨</span>
+        <div class="tiro-info">
+          <div class="tiro-subtipo">${h.dist} yardas</div>
+          <div class="tiro-val">${h.resultado === 'green' ? 'Al green ✅' : h.resultado === 'barbas' ? 'Barbas' : h.resultado === 'trampa' ? 'Trampa' : 'Castigo'}</div>
+        </div>
+      </div>`;
+  });
+
+  // Approach (si no viene de hierros)
+  if (datos.approach && datos.hierros.length === 0) {
+    const texApp = {green:'Al green ✅', barbas:'Barbas', trampa:'Trampa / Bunker', castigo:'Castigo / Agua'};
+    lista.innerHTML += `
+      <div class="conf-tiro ct-approach">
+        <span style="font-size:16px">🎯</span>
+        <div class="tiro-info">
+          <div class="tiro-subtipo">Tiro al green</div>
+          <div class="tiro-val">${texApp[datos.approach] || datos.approach}</div>
+        </div>
+      </div>`;
+  }
+
+  // Putts
+  if (datos.putts !== null) {
+    const puttStr = datos.putts === 0 ? 'Entró directo' :
+      datos.putts + ' putt' + (datos.putts > 1 ? 's' : '') +
+      (datos.pasos ? ' — ' + datos.pasos + ' pasos' : '');
+    lista.innerHTML += `
+      <div class="conf-tiro ct-putt">
+        <span style="font-size:16px">⛳</span>
+        <div class="tiro-info">
+          <div class="tiro-subtipo">Putting</div>
+          <div style="color:white;font-size:16px;font-weight:700">${puttStr}</div>
+        </div>
+      </div>`;
+  }
+
+  // Si no detectó nada claro
+  if (!datos.drive && !datos.approach && datos.putts === null && datos.hierros.length === 0) {
+    lista.innerHTML = `
+      <div style="padding:16px;text-align:center;color:rgba(255,255,255,.5);font-size:13px">
+        No entendí bien. Intenta de nuevo con:<br><br>
+        <span style="color:white">"Birdie, fairway, 120 yardas green, un putt a 8 pasos"</span>
+      </div>`;
+  }
+
+  // Sección faltante — putt corto
+  const faltante = document.getElementById('conf-faltante');
+  if (datos.putts !== null && datos.puttCorto === null && datos.putts > 0) {
+    faltante.style.display = 'block';
+    document.querySelector('.conf-pregunta').textContent = '¿Tuviste un putt de menos de 2 pasos?';
+  } else {
+    faltante.style.display = 'none';
+  }
+
+  // Guardar texto original para posible corrección
+  E.ultimoTextoVoz = textoOriginal;
+  E.ultimosDatos = datos;
+
+  abrirModal('modal-conf');
+}
+
+// ===================================================
+// LEER NOTAS EN VOZ ALTA (TTS)
+// ===================================================
+function leerNotas() {
+  const notas = [...document.querySelectorAll('.nota-texto')].map(n => n.textContent);
+  if (notas.length === 0) { return; }
+  const utterance = new SpeechSynthesisUtterance(notas.join('. '));
+  utterance.lang = 'es-MX';
+  utterance.rate = 0.9;
+  window.speechSynthesis.speak(utterance);
+}
+
+// ===================================================
+// CONFIRMAR HOYO CON DATOS REALES
+// ===================================================
+function confirmarHoyo() {
+  const h = E.hoyos.find(x => x.num === E.hoyoActual);
+  if (h) {
+    h.ok = true;
+    // Usar score detectado o calcular desde tiros
+    if (E.ultimosDatos && E.ultimosDatos.score !== null) {
+      h.res = E.ultimosDatos.score;
+    } else if (E.ultimosDatos) {
+      // Calcular score por tiros si no se dijo explícitamente
+      // (lógica básica: putts + tiros)
+      const tiros = (E.ultimosDatos.drive ? 1 : 0) +
+                    (E.ultimosDatos.hierros.length || (E.ultimosDatos.approach ? 1 : 0)) +
+                    (E.ultimosDatos.putts || 2);
+      // Par estimado = 4 (par 4 promedio)
+      h.res = tiros - 4;
+    } else {
+      h.res = 0; // par por defecto
+    }
+    // Guardar datos del hoyo
+    h.tiros = E.ultimosDatos || {};
+    // Actualizar tiros en pantalla
+    actualizarTirosHoyo(h);
+  }
+
+  // Limpiar estado
+  tirosHoyo = {drive:null,hierros:[],approach:null,putts:null,pasos:null,puttCorto:null,score:null};
+  E.ultimosDatos = null;
+
+  cerrarModal('modal-conf');
+  renderHoyos();
+  actualizarHoyo();
+  if (E.hoyoActual < E.totalHoyos) setTimeout(() => hoyoSiguiente(), 300);
+}
+
+// ===================================================
+// ACTUALIZAR LISTA DE TIROS VISIBLE EN EL HOYO
+// ===================================================
+function actualizarTirosHoyo(h) {
+  const lista = document.getElementById('tiros-list');
+  if (!h.tiros) return;
+  const d = h.tiros;
+  let html = '';
+
+  if (d.drive) {
+    const texDrive = {fairway:'Fairway', 'sin-tiro':'Sin tiro (rough)', castigo:'Castigo / OB'};
+    html += `<div class="tiro-card tc-drive"><span class="tiro-emoji">🏌️</span><div class="tiro-info"><div class="tiro-subtipo">Drive</div><div class="tiro-val">${texDrive[d.drive]||d.drive}</div></div></div>`;
+  }
+
+  d.hierros && d.hierros.forEach(hi => {
+    html += `<div class="tiro-card tc-hierro"><span class="tiro-emoji">🔨</span><div class="tiro-info"><div class="tiro-subtipo">${hi.dist} yardas</div><div class="tiro-val">${hi.resultado==='green'?'Al green':hi.resultado==='barbas'?'Barbas':hi.resultado==='trampa'?'Trampa':'Castigo'}</div></div></div>`;
+  });
+
+  if (d.approach && (!d.hierros || d.hierros.length===0)) {
+    const texApp = {green:'Al green', barbas:'Barbas', trampa:'Trampa', castigo:'Castigo'};
+    html += `<div class="tiro-card tc-approach"><span class="tiro-emoji">🎯</span><div class="tiro-info"><div class="tiro-subtipo">Tiro al green</div><div class="tiro-val">${texApp[d.approach]||d.approach}</div></div></div>`;
+  }
+
+  if (d.putts !== null) {
+    const puttStr = d.putts===0?'Entró directo':d.putts+' putt'+(d.putts>1?'s':'')+(d.pasos?' — '+d.pasos+' pasos':'');
+    html += `<div class="tiro-card tc-putt"><span class="tiro-emoji">⛳</span><div class="tiro-info"><div class="tiro-subtipo">Putting</div><div style="color:white;font-size:16px;font-weight:700">${puttStr}</div></div></div>`;
+  }
+
+  lista.innerHTML = html || lista.innerHTML;
+}
+
+// ===================================================
+// REEMPLAZAR BOTÓN DICTAR CON VOZ REAL
+// ===================================================
+document.addEventListener('DOMContentLoaded', () => {
+  // Reasignar botón dictar
+  const btnDictar = document.querySelector('.btn-dictar');
+  if (btnDictar) {
+    btnDictar.onclick = iniciarVoz;
+  }
+
+  // Botón leer notas
+  const btnLeer = document.querySelector('.btn-leer-notas');
+  if (btnLeer) {
+    btnLeer.onclick = leerNotas;
+  }
+
+  // Opciones de putt corto
+  document.querySelectorAll('.conf-opcion').forEach(op => {
+    op.addEventListener('click', () => {
+      document.querySelectorAll('.conf-opcion').forEach(o => o.style.opacity = '0.5');
+      op.style.opacity = '1';
+      op.style.outline = '2px solid currentColor';
+      if (op.classList.contains('op-no-hubo')) tirosHoyo.puttCorto = 'no-hubo';
+      if (op.classList.contains('op-lo-meti')) tirosHoyo.puttCorto = 'lo-meti';
+      if (op.classList.contains('op-lo-falle')) tirosHoyo.puttCorto = 'lo-falle';
+      if (E.ultimosDatos) E.ultimosDatos.puttCorto = tirosHoyo.puttCorto;
+    });
+  });
+});
+
 
 document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('active');}));
 
