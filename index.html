@@ -1294,20 +1294,12 @@ function setModo(m){
 function toggleMenu() {
   var menu = document.getElementById('menu-dropdown');
   if (menu) menu.classList.toggle('hidden');
+  // Detener propagación no es necesario aquí
 }
 function cerrarMenu() {
   var menu = document.getElementById('menu-dropdown');
   if (menu) menu.classList.add('hidden');
 }
-
-// Cerrar menú al tocar fuera
-document.addEventListener('click', function(e) {
-  var menu = document.getElementById('menu-dropdown');
-  var ham = document.querySelector('.menu-ham');
-  if (menu && ham && !menu.contains(e.target) && !ham.contains(e.target)) {
-    menu.classList.add('hidden');
-  }
-});
 
 function toggleTorneo(){
   if(!E.torneoActivo){ abrirModal('modal-torneo'); }
