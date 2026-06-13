@@ -1371,337 +1371,84 @@ function selBench(el,b){
 // ===================================================
 // ESTADO DE TIROS DEL HOYO ACTUAL
 // ===================================================
-let tirosHoyo = { drive:null, hierros:[], approach:null, putts:null, pasos:null, puttCorto:null, score:null };
-let textoAcumulado = '';
+let tirosHoyo = {};
 let reconocimiento = null;
-let escuchando = false;
-let reiniciandoVoz = false;
+let modoGrabando = false;
+let textoAcumulado = '';
 
 // ===================================================
-// DICCIONARIO COMPLETO
+// BOTÓN MICRÓFONO — UN TOQUE INICIA, OTRO PARA
 // ===================================================
-const DICT = {
+function toggleVoz() {
+  if (!modoGrabando) {
+    // INICIAR
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { alert('Usa Chrome en Android.'); return; }
 
-  // ── SCORE ──────────────────────────────────────
-  score: {
-    'aguila':-2,'eagle':-2,'aguilita':-2,
-    'birdie':-1,'verdi':-1,'verde':-1,'burdi':-1,'berdi':-1,
-    'par':0,'empate':0,'pareo':0,
-    'bogey':1,'bogi':1,'bogui':1,'boque':1,
-    'doble bogey':2,'doble':2,'quesopi':2,'sopi':2,'sopilote':2,'sopilotes':2,'queso':2,
-    'triple bogey':3,'triple':3,
-    'cuadruple bogey':4,'cuadruple':4,'cuádruple':4
-  },
+    modoGrabando = true;
+    textoAcumulado = '';
+    setBtnEstado(true);
 
-  // ── DRIVE ──────────────────────────────────────
-  // fairway = única palabra exclusiva del drive
-  drive_fairway: [
-    'fairway','fair way','en la calle','calle','al centro','en el centro',
-    'centro','derecho','recto','bien','lo mande bien','lo tiré bien',
-    'en el fairway','caí en fairway','cayó en fairway'
-  ],
-  // sin tiro = rough, árboles, incomodidad
-  drive_sintiro: [
-    'sin tiro','entre arboles','entre los arboles','en los arboles',
-    'arboles','árbol','arbol','bosque','en el bosque','maleza','matorral',
-    'incomodo','incómodo','rough','en el rough','en rough','al rough',
-    'en la maleza','fuera del fairway','fuera de la calle','lie malo',
-    'lie incomodo','lie incómodo','en la hierba alta','hierba alta'
-  ],
+    reconocimiento = new SR();
+    reconocimiento.lang = 'es-MX';
+    reconocimiento.continuous = true;
+    reconocimiento.interimResults = true;
 
-  // ── RESULTADO DE CUALQUIER TIRO (approach, hierro, chip) ──
-  // green = llegué al green en regulación
-  resultado_green: [
-    'green','al green','en green','en el green','subí','subi',
-    'arriba','llegué','llegue','en regulacion','en regulación',
-    'regulation','green en regla','puse en green','lo puse en green',
-    'metí al green','meti al green','lo metí','lo meti',
-    'en el hoyo','lo mandé al green','lo mande al green',
-    'al pin','cerca del pin','junto al pin','cerca del hoyo'
-  ],
-  // barbas = alrededor del green, collar
-  resultado_barbas: [
-    'barbas','en barbas','barbitas','collar','en el collar',
-    'alrededor del green','junto al green','cerca del green',
-    'frente al green','al lado del green','alrededor',
-    'en las barbas','en el fringe','fringe','orilla del green',
-    'en la orilla','a un lado del green','junto a la bandera',
-    'pasé del green','me pasé del green'
-  ],
-  // trampa = bunker, arena
-  resultado_trampa: [
-    'trampa','en trampa','en la trampa','bunker','en el bunker',
-    'en bunker','arena','en la arena','en arena','en el arenal',
-    'arenal','me fui a la trampa','a la trampa','caí en trampa',
-    'caí en el bunker','me metí al bunker','me metí a la trampa',
-    'en el sand','en el sand trap','sand trap','en la arena del green'
-  ],
-  // castigo = agua, ob, lago, fuera — aplica a CUALQUIER tiro
-  resultado_castigo: [
-    'castigo','agua','al agua','en el agua','lago','al lago','en el lago',
-    'ob','fuera de limites','fuera de límites','fuera','out of bounds',
-    'arabaunt','around','araband','arabán','fuera del campo',
-    'penal','penalidad','a castigo','tiro de castigo',
-    'se fue al agua','se fue al lago','caí al agua','caí al lago',
-    'se fue de ob','me fui al agua','lo mandé al agua'
-  ],
+    reconocimiento.onresult = function(ev) {
+      var txt = '';
+      for (var i = 0; i < ev.results.length; i++) {
+        txt += ev.results[i][0].transcript;
+      }
+      textoAcumulado = txt;
+      var dbg = document.getElementById('debug-voz');
+      if (dbg) dbg.textContent = txt;
+    };
 
-  // ── METIDA DESDE FUERA ────────────────────────
-  metidaFuera: [
-    'meti desde fuera','metí desde fuera','entró desde fuera',
-    'entro desde fuera','hoyo en uno','hole in one','la metí desde fuera',
-    'entró sola','hoyo de uno'
-  ],
+    reconocimiento.onerror = function(ev) {
+      if (ev.error === 'not-allowed') {
+        modoGrabando = false;
+        setBtnEstado(false);
+        alert('Permiso de micrófono denegado.');
+      }
+    };
 
-  // ── PUTT CORTO ────────────────────────────────
-  puttCorto: {
-    nohubo: [
-      'no hubo','sin putt corto','no tuve corto','no había corto',
-      'no habia corto','sin corto','no hubo corto','no tuve putt corto',
-      'no hubo putt corto'
-    ],
-    lometi: [
-      'lo metí','lo meti','metí el corto','meti el corto',
-      'lo entré','lo entre','sí lo metí','si lo meti',
-      'entré el corto','entre el corto','lo mandé adentro',
-      'lo metí dentro','lo puse adentro','lo metí dentro',
-      'dado','un dado','era dado','era un dado','lo di dado',
-      'quedó dado','quedo dado','fue dado','es dado',
-      'dada','una dada','era dada','era una dada','quedó dada',
-      'quedo dada','fue dada','es dada','está dada','esta dada',
-      'está dado','esta dado'
-    ],
-    lofalle: [
-      'lo fallé','lo falle','fallé el corto','falle el corto',
-      'no lo metí','no lo meti','lo erré','lo erre',
-      'se me fue','se me escapó','se me escap','lo dejé afuera',
-      'lo deje afuera','no entró','no entro','fallé el putt'
-    ]
-  },
+    reconocimiento.onend = function() {
+      if (modoGrabando) {
+        try { reconocimiento.start(); } catch(e) {}
+      }
+    };
 
-  // ── NÚMEROS ───────────────────────────────────
-  numeros: {
-    'un':1,'una':1,'uno':1,
-    'dos':2,'tres':3,'cuatro':4,'cinco':5,'seis':6,'siete':7,
-    'ocho':8,'nueve':9,'diez':10,'once':11,'doce':12,
-    'trece':13,'catorce':14,'quince':15,
-    'dieciseis':16,'dieciséis':16,'diecisiete':17,'dieciocho':18,
-    'diecinueve':19,'veinte':20,'veintiun':21,'veintiuno':21,
-    'veintidos':22,'veintidós':22,'veintitres':23,'veintitrés':23,
-    'veinticuatro':24,'veinticinco':25,'veintiseis':26,'veintisiete':27,
-    'veintiocho':28,'veintinueve':29,'treinta':30,
-    'cuarenta':40,'cincuenta':50,'sesenta':60,'setenta':70,
-    'ochenta':80,'noventa':90,'cien':100,'ciento':100,
-    'ciento diez':110,'ciento veinte':120,'ciento treinta':130,
-    'ciento cuarenta':140,'ciento cincuenta':150,
-    'ciento sesenta':160,'ciento setenta':170,'ciento ochenta':180,
-    'doscientos':200
-  },
+    reconocimiento.start();
 
-  // ── YARDAS EN PALABRAS ────────────────────────
-  yardasPalabras: {
-    'diez':10,'veinte':20,'treinta':30,'cuarenta':40,'cincuenta':50,
-    'sesenta':60,'setenta':70,'ochenta':80,'noventa':90,'cien':100,
-    'ciento diez':110,'ciento veinte':120,'ciento treinta':130,
-    'ciento cuarenta':140,'ciento cincuenta':150,'ciento sesenta':160,
-    'ciento setenta':170,'ciento ochenta':180,'doscientas':200,'doscientos':200
+  } else {
+    // PARAR Y PROCESAR
+    var texto = textoAcumulado;
+    modoGrabando = false;
+    setBtnEstado(false);
+
+    try { reconocimiento.stop(); } catch(e) {}
+
+    var dbg = document.getElementById('debug-voz');
+    if (dbg) dbg.textContent = '';
+
+    var datos = interpretarHoyo(texto);
+    E.ultimosDatos = datos;
+    E.ultimoTextoVoz = texto;
+    mostrarConfirmacion(texto, datos);
   }
-};
-
-function norm(txt) {
-  return (txt||'').toLowerCase()
-    .normalize('NFD').replace(/[̀-ͯ]/g,'')
-    .replace(/[^a-z0-9\s]/g,' ')
-    .replace(/\s+/g,' ').trim();
 }
 
-function extraerNum(txt) {
-  const n = norm(txt);
-  // Dígitos primero
-  const m = n.match(/(\d+)/);
-  if (m) return parseInt(m[1]);
-  // Palabras
-  for (const [pal,num] of Object.entries(DICT.numeros)) {
-    if (n.includes(pal)) return num;
-  }
-  return null;
-}
-
-function coincidir(txt, lista) {
-  const n = norm(txt);
-  return lista.some(p => n.includes(norm(p)));
-}
-
-// ===================================================
-// INTERPRETAR TEXTO — LÓGICA PRINCIPAL
-// ===================================================
-function interpretarHoyo(txt) {
-  const n = norm(txt);
-  const r = {
-    score: null, drive: null, hierros: [],
-    approach: null, putts: null, pasos: null,
-    puttCorto: null, metidaFuera: false
-  };
-
-  // ── Metida desde fuera / hoyo en uno ──────────
-  if (DICT.metidaFuera.some(p => n.includes(norm(p)))) {
-    r.metidaFuera = true;
-    r.putts = 0; r.pasos = 0; r.puttCorto = 'no-hubo';
-  }
-
-  // ── Score ─────────────────────────────────────
-  // Buscar frases más largas primero para evitar falsos positivos
-  const scoreEntries = Object.entries(DICT.score).sort((a,b) => b[0].length - a[0].length);
-  for (const [pal, val] of scoreEntries) {
-    if (n.includes(norm(pal))) { r.score = val; break; }
-  }
-
-  // ── DRIVE ─────────────────────────────────────
-  // Regla: fairway es exclusivo del drive
-  // Castigo/trampa también pueden ser del drive
-  const esFairway = DICT.drive_fairway.some(p => n.includes(norm(p)));
-  const esSinTiro  = DICT.drive_sintiro.some(p => n.includes(norm(p)));
-  const esCastigoDrive = DICT.resultado_castigo.some(p => n.includes(norm(p)));
-
-  if (esFairway) r.drive = 'fairway';
-  else if (esSinTiro) r.drive = 'sin-tiro';
-  else if (esCastigoDrive && !n.includes('yardas') && !n.includes('yards')) {
-    // Solo asignar castigo al drive si NO hay yardas mencionadas
-    // (las yardas indican que el castigo fue en un hierro/approach)
-    r.drive = 'castigo';
-  }
-
-  // ── YARDAS (hierros/approach) ─────────────────
-  // Buscar dígitos + yardas: "150 yardas", "120 yards"
-  const regDigYardas = /(\d{2,3})\s*(yardas?|yards?)/gi;
-  let mDY;
-  while ((mDY = regDigYardas.exec(txt)) !== null) {
-    const y = parseInt(mDY[1]);
-    if (y >= 10 && y <= 320) {
-      if (!r.hierros.find(h => h.dist === y)) r.hierros.push({dist: y, resultado: null});
-    }
-  }
-  // Buscar palabras + yardas: "ciento cincuenta yardas", "noventa yardas"
-  const yardasOrdenadas = Object.entries(DICT.yardasPalabras)
-    .sort((a,b) => b[0].length - a[0].length);
-  for (const [pal, dist] of yardasOrdenadas) {
-    const patron = norm(pal);
-    if (n.includes(patron + ' yardas') || n.includes(patron + ' yards') || n.includes(patron + ' y ')) {
-      if (!r.hierros.find(h => h.dist === dist)) r.hierros.push({dist, resultado: null});
-    }
-  }
-  // Si solo dijeron un número sin "yardas" pero está entre 30-300, puede ser yardas
-  // (más conservador — solo si hay palabras de approach cerca)
-  if (r.hierros.length === 0) {
-    const numSolo = txt.match(/(\d{2,3})/g);
-    if (numSolo && (DICT.resultado_green.some(p=>n.includes(norm(p))) ||
-                    DICT.resultado_barbas.some(p=>n.includes(norm(p))) ||
-                    DICT.resultado_trampa.some(p=>n.includes(norm(p))))) {
-      numSolo.forEach(ns => {
-        const y = parseInt(ns);
-        if (y >= 20 && y <= 300) r.hierros.push({dist: y, resultado: null});
-      });
-    }
-  }
-
-  // ── RESULTADO DEL APPROACH / HIERRO ───────────
-  // Detectar resultado — aplica a cualquier tiro después del drive
-  // Orden de prioridad: castigo > trampa > barbas > green
-  let resApp = null;
-  if (DICT.resultado_castigo.some(p => n.includes(norm(p)))) resApp = 'castigo';
-  else if (DICT.resultado_trampa.some(p => n.includes(norm(p)))) resApp = 'trampa';
-  else if (DICT.resultado_barbas.some(p => n.includes(norm(p)))) resApp = 'barbas';
-  else if (DICT.resultado_green.some(p => n.includes(norm(p)))) resApp = 'green';
-
-  // Si el castigo va con yardas, es del hierro — NO del drive
-  if (resApp === 'castigo' && r.hierros.length > 0 && r.drive === 'castigo') {
-    r.drive = null; // limpiar drive — el castigo fue del hierro
-  }
-  // Si fairway Y castigo: fairway fue el drive, castigo fue el hierro
-  if (esFairway && resApp === 'castigo') {
-    r.drive = 'fairway';
-  }
-
-  // Asignar resultado a hierros
-  if (r.hierros.length > 0) {
-    r.hierros = r.hierros.map(h => ({...h, resultado: resApp || 'green'}));
-    r.approach = resApp || 'green';
-  } else if (resApp) {
-    r.approach = resApp;
-  }
-
-  // ── PUTTS ─────────────────────────────────────
-  if (!r.metidaFuera) {
-    // Buscar "X putts", "X pots", "X pot", "X putt"
-    const regPutts = /(\w+)\s+(putts?|pots?|pot|putt)/i;
-    const mP = txt.match(regPutts);
-    if (mP) {
-      const num = extraerNum(mP[1]);
-      if (num && num >= 1 && num <= 8) r.putts = num;
-    }
-    // Variantes escritas
-    if (n.match(/un\s+(putt|pot)/)) r.putts = 1;
-    if (n.match(/dos\s+(putts?|pots?)/)) r.putts = 2;
-    if (n.match(/tres\s+(putts?|pots?)/) || n.includes('triputtie') || n.includes('triple putt')) r.putts = 3;
-    if (n.includes('la meti de uno') || n.includes('la metí de uno') || n.includes('un solo putt')) r.putts = 1;
-    // Número + p: "1 putt", "2 putts"
-    const regNumP = /([1-5])\s*(putts?|pots?)/i;
-    const mNP = txt.match(regNumP);
-    if (mNP) r.putts = parseInt(mNP[1]);
-  }
-
-  // ── PASOS ─────────────────────────────────────
-  // "X pasos", "a X pasos", "quedé a X", "son X pasos", "estoy a X"
-  const regPasos = /(\w+)\s+pasos?/i;
-  const mPasos = txt.match(regPasos);
-  if (mPasos) {
-    const p = extraerNum(mPasos[1]);
-    if (p && p <= 60) r.pasos = p;
-  }
-  if (!r.pasos) {
-    const regA = /(?:a|estoy a|quedé a|quede a|son|fui a|quedé a)\s+(\w+)\s*(?:pasos?)?/gi;
-    let mA;
-    while ((mA = regA.exec(txt)) !== null) {
-      const p = extraerNum(mA[1]);
-      if (p && p >= 1 && p <= 60) { r.pasos = p; break; }
-    }
-  }
-  // Número solo con "pasos" escrito cerca
-  if (!r.pasos && n.includes('pasos')) {
-    const m = n.match(/(\d+)\s*pasos?/);
-    if (m) r.pasos = parseInt(m[1]);
-  }
-
-  // ── PUTT CORTO ────────────────────────────────
-  // Buscar en orden: falló > metió > no hubo
-  if (DICT.puttCorto.lofalle.some(p => n.includes(norm(p)))) r.puttCorto = 'lo-falle';
-  else if (DICT.puttCorto.lometi.some(p => n.includes(norm(p)))) r.puttCorto = 'lo-meti';
-  else if (DICT.puttCorto.nohubo.some(p => n.includes(norm(p)))) r.puttCorto = 'no-hubo';
-
-  return r;
-}
-
-// ===================================================
-// OVERLAY DE ESCUCHA
-// ===================================================
-function mostrarEscuchando() { /* sin overlay */ }
-function ocultarEscuchando() { /* sin overlay */ }
-function actualizarTextoEscucha(txt) { /* sin overlay */ }
-
-// ===================================================
-// CONTROL DEL BOTÓN
-// ===================================================
 function setBtnEstado(grabando) {
-  const btn = document.getElementById('btn-mic');
-  const emoji = document.getElementById('mic-emoji');
-  const lbl = document.getElementById('mic-label');
-  const hint = document.getElementById('mic-hint');
+  var btn = document.getElementById('btn-mic');
+  var emoji = document.getElementById('mic-emoji');
+  var lbl = document.getElementById('mic-label');
+  var hint = document.getElementById('mic-hint');
   if (!btn) return;
   if (grabando) {
     btn.classList.add('grabando');
     if (emoji) emoji.style.display = 'none';
     if (lbl) lbl.style.display = 'block';
-    if (hint) hint.textContent = 'Toca LISTO cuando termines de hablar';
+    if (hint) hint.textContent = 'Toca LISTO cuando termines';
   } else {
     btn.classList.remove('grabando');
     if (emoji) emoji.style.display = 'block';
@@ -1710,118 +1457,9 @@ function setBtnEstado(grabando) {
   }
 }
 
-// ===================================================
-// VOZ — VERSION SIMPLE Y ROBUSTA
-// ===================================================
-let modoGrabando = false;
-
-function toggleVoz() {
-  if (!modoGrabando) iniciarGrabacion();
-  else detenerYProcesar();
-}
-
-function iniciarGrabacion() {
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const dbg = document.getElementById('debug-voz');
-
-  if (!SR) {
-    if (dbg) dbg.textContent = '❌ Este navegador no soporta voz. Usa Chrome.';
-    alert('Usa Chrome en Android para el micrófono.');
-    return;
-  }
-
-  modoGrabando = true;
-  textoAcumulado = '';
-  setBtnEstado(true);
-  if (dbg) dbg.textContent = '⏳ Iniciando micrófono...';
-  grabar();
-}
-
-function grabar() {
-  if (!modoGrabando) return;
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  const dbg = document.getElementById('debug-voz');
-
-  reconocimiento = new SR();
-  reconocimiento.lang = 'es-MX';
-  reconocimiento.continuous = true;
-  reconocimiento.interimResults = true;
-  reconocimiento.maxAlternatives = 1;
-
-  reconocimiento.onstart = () => {
-    if (dbg) dbg.textContent = '🎤 Escuchando... habla ahora';
-  };
-
-  reconocimiento.onresult = (ev) => {
-    let acum = '';
-    for (let i = 0; i < ev.results.length; i++) {
-      acum += ev.results[i][0].transcript;
-    }
-    textoAcumulado = acum.trim();
-    if (dbg) dbg.textContent = textoAcumulado;
-  };
-
-  reconocimiento.onerror = (ev) => {
-    if (ev.error === 'not-allowed') {
-      modoGrabando = false;
-      setBtnEstado(false);
-      alert('Micrófono bloqueado. En Chrome: toca los 3 puntos → Configuración → Configuración del sitio → Micrófono → permite tu URL.');
-    }
-  };
-
-  reconocimiento.onend = () => {
-    // Solo reiniciar si el usuario sigue grabando
-    if (modoGrabando) setTimeout(grabar, 200);
-  };
-
-  try {
-    reconocimiento.start();
-    if (dbg) dbg.textContent = '⏳ Conectando micrófono...';
-  } catch(e) {
-    if (dbg) dbg.textContent = '⚠️ Error al iniciar: ' + e.message;
-    setTimeout(grabar, 300);
-  }
-}
-
-function detenerYProcesar() {
-  // 1. Guardar texto AHORA antes de tocar nada
-  const textoFinal = textoAcumulado.trim();
-
-  // 2. Apagar bandera para que onend no reinicie
-  modoGrabando = false;
-  textoAcumulado = '';
-
-  // 3. UI
-  setBtnEstado(false);
-  const dbg = document.getElementById('debug-voz');
-  if (dbg) dbg.textContent = textoFinal ? '✅ ' + textoFinal : '';
-
-  // 4. Parar micrófono
-  if (reconocimiento) {
-    try { reconocimiento.stop(); } catch(e) {}
-    reconocimiento = null;
-  }
-
-  // 5. Procesar con el texto ya guardado
-  setTimeout(() => {
-    if (dbg) dbg.textContent = '';
-    const datos = interpretarHoyo(textoFinal || '');
-    E.ultimosDatos = datos;
-    E.ultimoTextoVoz = textoFinal;
-    mostrarConfirmacion(textoFinal, datos);
-  }, 300);
-}
-
-function iniciarVoz() { iniciarGrabacion(); }
-function finalizarVoz() { detenerYProcesar(); }
-function cancelarVoz() {
-  modoGrabando = false;
-  setBtnEstado(false);
-  if (reconocimiento) { try { reconocimiento.stop(); } catch(e){} reconocimiento = null; }
-  textoAcumulado = '';
-  const dbg = document.getElementById('debug-voz');
-  if (dbg) dbg.textContent = '';
-}
+function iniciarVoz() { if (!modoGrabando) toggleVoz(); }
+function cancelarVoz() { if (modoGrabando) { modoGrabando = false; setBtnEstado(false); try { reconocimiento.stop(); } catch(e){} textoAcumulado = ''; } }
+function detenerVoz() { cancelarVoz(); }
 
 // ===================================================
 // MOSTRAR TARJETA DE CONFIRMACIÓN
