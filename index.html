@@ -1422,15 +1422,23 @@ function toggleVoz() {
 
   } else {
     // PARAR Y PROCESAR
+    // 1. Guardar texto y apagar bandera ANTES de stop()
     var texto = textoAcumulado;
-    modoGrabando = false;
+    modoGrabando = false;  // onend verá esto y NO reiniciará
+    textoAcumulado = '';
+
+    // 2. Parar micrófono
+    if (reconocimiento) {
+      try { reconocimiento.stop(); } catch(e) {}
+      reconocimiento = null;
+    }
+
+    // 3. UI
     setBtnEstado(false);
-
-    try { reconocimiento.stop(); } catch(e) {}
-
     var dbg = document.getElementById('debug-voz');
     if (dbg) dbg.textContent = '';
 
+    // 4. Procesar y mostrar tarjeta
     var datos = interpretarHoyo(texto);
     if (editando && datosAnteriores) {
       datos = combinarDatos(datos, datosAnteriores);
@@ -1439,13 +1447,7 @@ function toggleVoz() {
     }
     E.ultimosDatos = datos;
     E.ultimoTextoVoz = texto;
-    try {
-      mostrarConfirmacion(texto, datos);
-    } catch(err) {
-      var dbg = document.getElementById('debug-voz');
-      if (dbg) dbg.textContent = 'ERROR: ' + err.message;
-      alert('Error al mostrar tarjeta: ' + err.message);
-    }
+    mostrarConfirmacion(texto, datos);
   }
 }
 
