@@ -1244,8 +1244,24 @@ function renderHoyos(){
   });
 }
 
+function puedeAbandonarHoyo() {
+  // Verifica si el hoyo actual tiene tiros en progreso sin score
+  var parcial = getTiroParcial(E.hoyoActual);
+  var h = E.hoyos.find(function(x){ return x.num === E.hoyoActual; });
+  // Si el hoyo ya está completado, puede cambiar
+  if (h && h.ok) return true;
+  // Si hay tiros parciales con putts pero sin score, NO puede cambiar
+  var hayPutts = parcial.putts !== null && parcial.putts !== undefined;
+  if (hayPutts && (parcial.score === null || parcial.score === undefined)) {
+    alert('⚠️ Falta registrar el score de este hoyo antes de cambiar.');
+    return false;
+  }
+  return true;
+}
+
 function cambiarHoyo(n){
-  // Guardar parcial actual y cargar el del nuevo hoyo
+  if (n === E.hoyoActual) return;
+  if (!puedeAbandonarHoyo()) return;
   tiroParcial = getTiroParcial(n);
   E.hoyoActual=n; renderHoyos(); actualizarHoyo();
 }
@@ -1356,7 +1372,12 @@ function reconstruirTiros(lista, d) {
   }
 }
 
-function hoyoSiguiente(){ if(E.hoyoActual<E.totalHoyos){E.hoyoActual++; renderHoyos(); actualizarHoyo();} }
+function hoyoSiguiente(){
+  if(E.hoyoActual<E.totalHoyos){
+    if(!puedeAbandonarHoyo()) return;
+    E.hoyoActual++; renderHoyos(); actualizarHoyo();
+  }
+}
 function hoyoAnterior(){ if(E.hoyoActual>1){E.hoyoActual--; renderHoyos(); actualizarHoyo();} }
 
 function setModo(m){
@@ -1577,7 +1598,8 @@ function combinarConParcial(nuevo, parcial) {
   if (r.putts===null && parcial.putts!==null) r.putts = parcial.putts;
   if (r.pasos===null && parcial.pasos!==null) r.pasos = parcial.pasos;
   if (!r.puttCorto && parcial.puttCorto) r.puttCorto = parcial.puttCorto;
-  if (r.score===null && parcial.score!==null) r.score = parcial.score;
+  // NUNCA heredar score del parcial — el jugador debe declararlo explícitamente
+  // r.score permanece como viene en "nuevo"
   return r;
 }
 
@@ -2296,19 +2318,24 @@ function mostrarConfirmacion(textoOriginal, datos) {
 function confirmarHoyo() {
   var datos = E.ultimosDatos || {};
 
-  // Si no hay putts todavía, guardar como parcial y seguir en el mismo hoyo
+  // Limpiar score de datos antes de combinar con parcial
+  // El score SOLO viene del dictado que lo mencione explícitamente
+  var scoreExplicito = datos.score;
+
+  // Si no hay putts todavía, guardar como parcial
   if (datos.putts === null || datos.putts === undefined) {
-    // Guardar tiros parciales
+    datos.score = null;
     tiroParcial = combinarConParcial(datos, tiroParcial);
+    tiroParcial.score = null;
     cerrarModal('modal-conf');
-    // Mostrar tiros parciales en la pantalla del hoyo
     mostrarTirosParciales(tiroParcial);
-    return; // NO avanzar al siguiente hoyo
+    return;
   }
 
-  // Hay putts — pero NECESITAMOS score explícito del jugador
-  if (datos.score === null || datos.score === undefined) {
-    // No confirmar — pedir score
+  // Hay putts — verificar score
+  // Si el score vino en este dictado, usarlo
+  // Si no, pedir al jugador
+  if (scoreExplicito === null || scoreExplicito === undefined) {
     pedirScore();
     return;
   }
@@ -2393,42 +2420,43 @@ function leerNotas() {
 
 
 function pedirScore() {
-  var lista = document.querySelector('.conf-tiros');
-  if (!lista) return;
+  // Quitar selector anterior si existe
   var viejo = document.getElementById('selector-score');
   if (viejo) viejo.remove();
 
+  // Insertar ANTES de los botones de la tarjeta, no dentro de los tiros
+  var botones = document.querySelector('.conf-botones');
+  if (!botones) return;
+
   var div = document.createElement('div');
   div.id = 'selector-score';
-  div.style.cssText = 'margin:8px 0;padding:14px;background:rgba(217,119,6,.1);border:1.5px solid rgba(217,119,6,.4);border-radius:14px;';
+  div.style.cssText = 'padding:14px 16px 0;';
 
-  // Scores principales en botones grandes
   var scores = [
     {v:-2, label:'🦅 Águila', sub:'-2', color:'#818cf8'},
-    {v:-1, label:'Verdi', sub:'-1', color:'#818cf8'},
-    {v:0,  label:'Par', sub:'E', color:'var(--green-light)'},
-    {v:1,  label:'Bogey', sub:'+1', color:'var(--amber-light)'},
-    {v:2,  label:'Sopi', sub:'+2', color:'#fb923c'},
-    {v:3,  label:'Triple', sub:'+3', color:'var(--red-light)'}
+    {v:-1, label:'Verdi',    sub:'-1', color:'#818cf8'},
+    {v:0,  label:'Par',      sub:'E',  color:'var(--green-light)'},
+    {v:1,  label:'Bogey',    sub:'+1', color:'var(--amber-light)'},
+    {v:2,  label:'Sopi',     sub:'+2', color:'#fb923c'},
+    {v:3,  label:'Triple',   sub:'+3', color:'var(--red-light)'}
   ];
 
-  var html = '<div style="color:var(--amber-light);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px">¿Cuánto hiciste en este hoyo?</div>';
-  html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px">';
+  var html = '<div style="color:var(--amber-light);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">⚠️ ¿Cuánto hiciste en este hoyo?</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:7px">';
   scores.forEach(function(s) {
-    html += '<div onclick="guardarScore('+s.v+')" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 4px;text-align:center;cursor:pointer;">' +
-      '<div style="color:'+s.color+';font-size:13px;font-weight:700">'+s.label+'</div>' +
-      '<div style="color:rgba(255,255,255,.4);font-size:10px;margin-top:2px">'+s.sub+'</div></div>';
+    html += '<div onclick="guardarScore('+s.v+')" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:12px 4px;text-align:center;cursor:pointer;active:opacity:.7">' +
+      '<div style="color:'+s.color+';font-size:14px;font-weight:700">'+s.label+'</div>' +
+      '<div style="color:rgba(255,255,255,.35);font-size:11px;margin-top:2px">'+s.sub+'</div></div>';
   });
   html += '</div>';
-  // Otros scores en fila pequeña
-  html += '<div style="display:flex;gap:6px">';
+  html += '<div style="display:flex;gap:6px;margin-bottom:4px">';
   [{v:4,l:'+4'},{v:5,l:'+5'},{v:6,l:'+6'}].forEach(function(s){
-    html += '<div onclick="guardarScore('+s.v+')" style="flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:7px;text-align:center;cursor:pointer;color:rgba(255,255,255,.5);font-size:12px;font-weight:700">'+s.l+'</div>';
+    html += '<div onclick="guardarScore('+s.v+')" style="flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:8px;text-align:center;cursor:pointer;color:rgba(255,255,255,.4);font-size:13px;font-weight:700">'+s.l+'</div>';
   });
   html += '</div>';
 
   div.innerHTML = html;
-  lista.appendChild(div);
+  botones.parentNode.insertBefore(div, botones);
 }
 
 function guardarScore(score) {
