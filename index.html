@@ -1652,7 +1652,11 @@ const DICT = {
     nohubo: [
       'no hubo','sin putt corto','no tuve corto','no habia corto',
       'no habia','sin corto','no hubo corto','no tuve putt corto',
-      'no hubo putt corto'
+      'no hubo putt corto','no tuve pot','no hubo pot',
+      'no tuve puts','no hubo puts',
+      'no tuve pot de un paso','no tuve pot de dos pasos',
+      'no tuve put de un paso','no tuve put de dos',
+      'no hubo pot corto','no hubo put corto'
     ],
     lometi: [
       'lo meti','lo metí','meti el corto','metí el corto',
@@ -1663,7 +1667,10 @@ const DICT = {
       'era un dado','era una dada','quedo dado','quedó dado',
       'quedo dada','quedó dada','fue dado','fue dada',
       'es dado','es dada','esta dado','está dado',
-      'esta dada','está dada','lo di dado'
+      'esta dada','está dada','lo di dado',
+      'la deje dada','la dejé dada','deje dada','dejé dada',
+      'la deje dado','la dejé dado','deje dado','dejé dado',
+      'quedo dada','la quede dada','la quedé dada'
     ],
     lofalle: [
       'lo falle','lo fallé','falle el corto','fallé el corto',
@@ -1828,27 +1835,52 @@ function interpretarHoyo(txt) {
     r.approach = resApp;
   }
 
-  // Putts
-  var mP = txt.match(/(\w+)\s+(putts?|pots?)/i);
-  if (mP) { var np = extraerNum(mP[1]); if (np && np<=8) r.putts = np; }
-  if (n.match(/un\s+(putt|pot)/)) r.putts = 1;
-  if (n.match(/dos\s+(putts?|pots?)/)) r.putts = 2;
-  if (n.match(/tres\s+(putts?|pots?)/) || n.includes('triputtie')) r.putts = 3;
-  if (n.includes('la meti de uno') || n.includes('la metí de uno')) r.putts = 1;
-  var mNP = txt.match(/([1-5])\s*(putts?|pots?)/i);
-  if (mNP) r.putts = parseInt(mNP[1]);
+  // Putts — vocabulario real de voz en español
+  // El microfono transcribe: puts, pots, putts, pot, putt, potier, tripotier
+
+  if (/trip[ou]t|tripotier|tripottier|triputtie|triple.p[ou]t/i.test(txt)) {
+    r.putts = 3;
+  } else if (/cuadrup[ou]t|cuadrupotier|cuadruple.p[ou]t/i.test(txt)) {
+    r.putts = 4;
+  } else {
+    var mHice = txt.match(/(?:hice|meti|metí|tire|tiré|di)\s+(\w+)\s+p[ou]t/i);
+    if (mHice) { var nh = extraerNum(mHice[1]); if (nh && nh<=8) r.putts = nh; }
+    if (!r.putts) { var mNP2 = txt.match(/\b([1-8])\s*p[ou]t/i); if (mNP2) r.putts = parseInt(mNP2[1]); }
+    if (!r.putts) { var mP2 = txt.match(/(\w+)\s+p[ou]t/i); if (mP2) { var np2 = extraerNum(mP2[1]); if (np2 && np2>=1 && np2<=8) r.putts = np2; } }
+    if (!r.putts && /\bun\s+p[ou]t/i.test(txt)) r.putts = 1;
+    if (!r.putts && /\bdos\s+p[ou]t/i.test(txt)) r.putts = 2;
+    if (!r.putts && /\btres\s+p[ou]t/i.test(txt)) r.putts = 3;
+  }
+  if (!r.putts && /met[ií]\s+(?:el|la|un)\s+p[ou]t/i.test(txt)) r.putts = 1;
+  if (!r.putts && /la\s+met[ií]\s+de\s+uno/i.test(txt)) r.putts = 1;
 
   // Pasos
-  var mPasos = txt.match(/(\w+)\s+pasos?/i);
+  var mPasos = txt.match(/(\w+)\s+pasos?/i);
   if (mPasos) { var ps = extraerNum(mPasos[1]); if (ps && ps<=80) r.pasos = ps; }
   if (!r.pasos) {
-    var mA = txt.match(/(?:a|estoy a|quede a|quedé a|son)\s+(\w+)\s*(?:pasos?)?/i);
-    if (mA) { var pa = extraerNum(mA[1]); if (pa && pa<=80) r.pasos = pa; }
+    var mA2 = txt.match(/(?:a|estoy a|quede a|quede a|son)\s+(\w+)\s*(?:pasos?)?/i);
+    if (mA2) { var pa = extraerNum(mA2[1]); if (pa && pa<=80) r.pasos = pa; }
   }
 
-  // Dado/dada = menos de 1 paso, lo metí
-  if (/dad[oa]/i.test(txt)) { r.puttCorto = 'lo-meti'; if (!r.pasos) r.pasos = 0; }
+  // Dado/dada = menos de 1 paso = lo meti
+  if (/dad[oa]/i.test(txt)) { r.puttCorto = 'lo-meti'; if (!r.pasos) r.pasos = 0; if (!r.putts) r.putts = 1; }
+  if (r.puttCorto === 'lo-meti' && !r.putts) r.putts = 1;
 
+  // "La dejé dada" = llegué al green + 1 putt dado
+  // Funciona desde cualquier situación: barbas, 130 yardas, etc.
+  if (/(?:la\s+)?dej[eé]\s+dad[oa]|dej[oó]\s+dad[oa]/i.test(txt)) {
+    // Si no detectó approach, inferir green
+    if (!r.approach && (!r.hierros || r.hierros.length === 0)) r.approach = 'green';
+    // Si tenía hierros, el resultado de esos hierros es green
+    if (r.hierros && r.hierros.length > 0) {
+      r.hierros = r.hierros.map(function(h){ return {dist:h.dist, resultado:'green'}; });
+      r.approach = 'green';
+    }
+    // Si venía de barbas (en parcial), el approach es green
+    r.putts = 1;
+    r.puttCorto = 'lo-meti';
+    r.pasos = 0;
+  }
   // Putt corto
   if (!r.puttCorto) {
     if (DICT.puttCorto.lofalle.some(function(p){ return n.includes(norm(p)); })) r.puttCorto = 'lo-falle';
