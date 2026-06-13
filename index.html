@@ -1327,10 +1327,10 @@ function reconstruirTiros(lista, d) {
   // Hierros ordenados mayor a menor
   var hierros=(d.hierros||[]).slice().sort(function(a,b){return b.dist-a.dist;});
   hierros.forEach(function(h){
-    var texR={green:'Al green',barbas:'Barbas',trampa:'Trampa',castigo:'Castigo'};
+    var texR={green:'Al green',barbas:'Barbas',trampa:'Trampa',castigo:'Castigo',lejos:'Lejos del green'};
     lista.innerHTML+='<div class="tiro-card tc-hierro"><span class="tiro-emoji">🔨</span>'+
       '<div class="tiro-info"><div class="tiro-subtipo">'+h.dist+' yardas</div>'+
-      '<div class="tiro-val">'+(texR[h.resultado]||'Al green')+'</div></div></div>';
+      '<div class="tiro-val">'+(texR[h.resultado]||(h.resultado?h.resultado:'❓ Pendiente'))+'</div></div></div>';
   });
 
   // Approach — mostrar si no hay hierros, O si hierros quedaron en barbas/trampa
@@ -1796,6 +1796,14 @@ const DICT = {
     'cai en el bunker','me meti al bunker','me meti a la trampa',
     'en el sand','sand trap','en la arena del green'
   ],
+  resultado_lejos: [
+    'lejos','muy lejos','no llegue','no llegué','quede corto','quedé corto',
+    'me quede corto','me quedé corto','quede lejos','quedé lejos',
+    'no llego','no llegó','se quedo corto','se quedó corto',
+    'no alcance','no alcancé','quede muy lejos','quedé muy lejos',
+    'no puse','no lo puse','no meti','no metí al green'
+  ],
+
   resultado_castigo: [
     'castigo','agua','al agua','en el agua','lago','al lago','en el lago',
     'ob','fuera de limites','fuera de límites','fuera','out of bounds',
@@ -1949,6 +1957,7 @@ function interpretarHoyo(txt) {
   if (DICT.resultado_castigo.some(function(p){ return n.includes(norm(p)); })) resApp = 'castigo';
   else if (DICT.resultado_trampa.some(function(p){ return n.includes(norm(p)); })) resApp = 'trampa';
   else if (DICT.resultado_barbas.some(function(p){ return n.includes(norm(p)); })) resApp = 'barbas';
+  else if (DICT.resultado_lejos.some(function(p){ return n.includes(norm(p)); })) resApp = 'lejos';
   else if (DICT.resultado_green.some(function(p){ return n.includes(norm(p)); })) resApp = 'green';
 
   // Frases que indican distancia restante (NO hierro):
@@ -2027,9 +2036,11 @@ function interpretarHoyo(txt) {
     // El approach al green es un tiro adicional
     r.approach = 'green';
   } else if (r.hierros.length > 0) {
+    // NO adivinar el resultado — solo asignar si se dijo explícitamente
     r.hierros = r.hierros.sort(function(a,b){ return b.dist-a.dist; })
-      .map(function(h){ return {dist:h.dist, resultado:resApp||'green'}; });
-    r.approach = resApp || 'green';
+      .map(function(h){ return {dist:h.dist, resultado:resApp||null}; });
+    if (resApp) r.approach = resApp;
+    // Si no hay resultado, dejar null — se pedirá en la tarjeta
   } else if (resApp) {
     r.approach = resApp;
   }
@@ -2177,11 +2188,11 @@ function mostrarConfirmacion(textoOriginal, datos) {
     var hierros = (datos.hierros||[]).slice().sort(function(a,b){ return b.dist - a.dist; });
     for (var i=0; i<hierros.length; i++) {
       var h = hierros[i];
-      var texR = {green:'Al green ✅', barbas:'Barbas', trampa:'Trampa / Bunker', castigo:'Castigo'};
+      var texR = {green:'Al green ✅', barbas:'Barbas', trampa:'Trampa / Bunker', castigo:'Castigo', lejos:'Lejos del green'};
       lista.innerHTML += '<div class="conf-tiro ct-hierro">' +
         '<span style="font-size:16px">🔨</span>' +
         '<div class="tiro-info"><div class="tiro-subtipo">' + h.dist + ' yardas</div>' +
-        '<div class="tiro-val">' + (texR[h.resultado]||'Al green ✅') + '</div></div></div>';
+        '<div class="tiro-val">' + (texR[h.resultado]||(h.resultado?h.resultado:'❓ ¿Dónde quedó?')) + '</div></div></div>';
     }
 
     // Approach — mostrar si:
@@ -2234,11 +2245,29 @@ function mostrarConfirmacion(textoOriginal, datos) {
     }
   }
 
-  // Putt corto
+  // Putt corto — solo preguntar si:
+  // 1. Hay putts
+  // 2. No se detectó puttCorto por voz
+  // 3. No es hoyo en uno
+  // 4. El menor paso mencionado es <= 2 (o no se mencionaron pasos)
   var faltante = document.getElementById('conf-faltante');
   if (faltante) {
-    var mostrar = datos.putts && datos.putts > 0 && !datos.puttCorto && !datos.metidaFuera;
-    faltante.style.display = mostrar ? 'block' : 'none';
+    var pasosMinimos = datos.pasos; // pasos del primer putt
+    // Si hay dos putts y el menor paso es > 2, obviamente no hubo corto
+    var todosSonLargos = pasosMinimos && pasosMinimos > 2 && datos.putts <= 1;
+    // Si hay múltiples putts con pasos conocidos, revisar si alguno es <= 2
+    // (ya lo detectamos automáticamente en interpretarHoyo, así que si puttCorto
+    // sigue null aquí, es porque ninguno fue <= 2 o no se mencionaron pasos)
+    var necesitaPreguntar = datos.putts && datos.putts > 0 &&
+                            !datos.puttCorto &&
+                            !datos.metidaFuera &&
+                            !todosSonLargos;
+    // Si hay pasos y todos son > 2, no preguntar
+    if (necesitaPreguntar && pasosMinimos && pasosMinimos > 2) {
+      necesitaPreguntar = false;
+      if (E.ultimosDatos) E.ultimosDatos.puttCorto = 'no-hubo';
+    }
+    faltante.style.display = necesitaPreguntar ? 'block' : 'none';
   }
 
   // Abrir modal
@@ -2345,23 +2374,41 @@ function leerNotas() {
 
 
 function pedirScore() {
-  // Mostrar selector de score en la tarjeta de confirmación
   var lista = document.querySelector('.conf-tiros');
   if (!lista) return;
-
-  // Quitar selector anterior si existe
   var viejo = document.getElementById('selector-score');
   if (viejo) viejo.remove();
 
   var div = document.createElement('div');
   div.id = 'selector-score';
-  div.style.cssText = 'margin:8px 0;padding:12px;background:rgba(217,119,6,.1);border:1.5px solid rgba(217,119,6,.3);border-radius:14px;';
-  div.innerHTML = '<div style="color:var(--amber-light);font-size:11px;font-weight:700;text-transform:uppercase;margin-bottom:10px">⚠️ ¿Cuánto hiciste en este hoyo?</div>' +
-    '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">' +
-    [[-2,'🦅-2'],[-1,'Verdi -1'],[0,'Par'],[1,'Bogi +1'],[2,'Sopi +2'],[3,'Triple +3'],[4,'+4'],[5,'+5']].map(function(s){
-      return '<div onclick="guardarScore('+s[0]+')" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:8px 4px;text-align:center;cursor:pointer;font-size:12px;font-weight:700;color:white">'+s[1]+'</div>';
-    }).join('') +
-    '</div>';
+  div.style.cssText = 'margin:8px 0;padding:14px;background:rgba(217,119,6,.1);border:1.5px solid rgba(217,119,6,.4);border-radius:14px;';
+
+  // Scores principales en botones grandes
+  var scores = [
+    {v:-2, label:'🦅 Águila', sub:'-2', color:'#818cf8'},
+    {v:-1, label:'Verdi', sub:'-1', color:'#818cf8'},
+    {v:0,  label:'Par', sub:'E', color:'var(--green-light)'},
+    {v:1,  label:'Bogey', sub:'+1', color:'var(--amber-light)'},
+    {v:2,  label:'Sopi', sub:'+2', color:'#fb923c'},
+    {v:3,  label:'Triple', sub:'+3', color:'var(--red-light)'}
+  ];
+
+  var html = '<div style="color:var(--amber-light);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px">¿Cuánto hiciste en este hoyo?</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px">';
+  scores.forEach(function(s) {
+    html += '<div onclick="guardarScore('+s.v+')" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 4px;text-align:center;cursor:pointer;">' +
+      '<div style="color:'+s.color+';font-size:13px;font-weight:700">'+s.label+'</div>' +
+      '<div style="color:rgba(255,255,255,.4);font-size:10px;margin-top:2px">'+s.sub+'</div></div>';
+  });
+  html += '</div>';
+  // Otros scores en fila pequeña
+  html += '<div style="display:flex;gap:6px">';
+  [{v:4,l:'+4'},{v:5,l:'+5'},{v:6,l:'+6'}].forEach(function(s){
+    html += '<div onclick="guardarScore('+s.v+')" style="flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:7px;text-align:center;cursor:pointer;color:rgba(255,255,255,.5);font-size:12px;font-weight:700">'+s.l+'</div>';
+  });
+  html += '</div>';
+
+  div.innerHTML = html;
   lista.appendChild(div);
 }
 
@@ -2376,6 +2423,8 @@ function guardarScore(score) {
     badge.className = 'badge-res badge-' + sc;
     badge.textContent = scoreTexto[sc] || '';
   }
+  // Confirmar automáticamente
+  confirmarHoyo();
 }
 
 function selPuttCorto(val, el) {
