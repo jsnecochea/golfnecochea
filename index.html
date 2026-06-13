@@ -173,14 +173,14 @@ body {
 .dictar-hint { color:var(--text-dim); font-size:10px; }
 
 /* ── BOTTOM BAR ── */
-.bottom-bar { padding:8px 16px 28px; display:flex; gap:8px; align-items:center; background:var(--bg); margin-top:auto; }
-.btn-atras { background:rgba(255,255,255,.06); border:1px solid var(--border); border-radius:14px; padding:13px 14px; display:flex; align-items:center; gap:6px; cursor:pointer; }
-.btn-atras .lbl { color:var(--text-muted); font-size:12px; font-weight:600; }
-.btn-notas { background:rgba(217,119,6,.1); border:1px solid rgba(217,119,6,.2); border-radius:14px; width:46px; height:46px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:22px; }
-.btn-fin { background:rgba(220,38,38,.1); border:1px solid rgba(220,38,38,.2); border-radius:14px; width:46px; height:46px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--red-light); font-size:13px; font-weight:700; }
-.btn-sig { flex:1; background:var(--green); border-radius:14px; padding:13px; display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer; border:none; color:white; font-size:13px; font-weight:700; transition:transform .15s; }
-.btn-sig:active { transform:scale(.97); }
-.btn-terminar-vuelta { flex:1; background:linear-gradient(135deg,var(--green),var(--blue)); border-radius:14px; padding:13px; display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer; color:white; font-size:12px; font-weight:700; border:none; }
+
+
+
+
+
+
+
+
 
 /* ── OVERLAY / SHEET / MODAL ── */
 .overlay { display:none; position:fixed; inset:0; z-index:100; background:rgba(0,0,0,.7); backdrop-filter:blur(4px); align-items:flex-end; }
@@ -420,6 +420,35 @@ body {
 .btn-salir   { padding:8px; display:flex; align-items:center; justify-content:center; color:var(--text-dim); font-size:12px; font-weight:600; cursor:pointer; }
 
 .hidden { display:none !important; }
+
+/* Menú hamburguesa */
+.menu-ham {
+  display:flex; flex-direction:column; justify-content:center; gap:5px;
+  width:36px; height:36px; border-radius:10px;
+  background:rgba(255,255,255,.12); cursor:pointer;
+  align-items:center; flex-shrink:0;
+  transition:background .15s;
+}
+.menu-ham:active { background:rgba(255,255,255,.2); }
+.menu-ham span {
+  display:block; width:18px; height:2px;
+  background:white; border-radius:1px;
+}
+.menu-dropdown {
+  background:rgba(13,17,23,.97); border:1px solid rgba(255,255,255,.12);
+  border-radius:16px; margin:8px 0 0; overflow:hidden;
+  box-shadow:0 8px 32px rgba(0,0,0,.6);
+  animation:fadeIn .15s ease;
+}
+.menu-item {
+  padding:14px 18px; color:white; font-size:14px; font-weight:600;
+  cursor:pointer; display:flex; align-items:center; gap:10px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  transition:background .1s;
+}
+.menu-item:last-child { border-bottom:none; }
+.menu-item:active { background:rgba(255,255,255,.08); }
+.menu-item-danger { color:var(--red-light); }
 </style>
 </head>
 <body>
@@ -476,9 +505,31 @@ body {
           <div class="jugador-cambiar">Cambiar ▾</div>
         </div>
       </div>
-      <div class="acumulado-wrap">
-        <div class="acumulado-label">Acumulado</div>
-        <div class="acumulado-num" id="acumulado">+3</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="acumulado-wrap">
+          <div class="acumulado-label">Acumulado</div>
+          <div class="acumulado-num" id="acumulado">+3</div>
+        </div>
+        <!-- Menú hamburguesa -->
+        <div class="menu-ham" onclick="toggleMenu()">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Menú desplegable -->
+    <div class="menu-dropdown hidden" id="menu-dropdown">
+      <div class="menu-item" onclick="abrirNotas();cerrarMenu()">
+        📋 Notas
+      </div>
+      <div class="menu-item" onclick="abrirFin();cerrarMenu()">
+        🏁 Fin de ronda
+      </div>
+      <div class="menu-item" onclick="abrirModal('modal-reset');cerrarMenu()">
+        ↺ Reset
+      </div>
+      <div class="menu-item menu-item-danger" onclick="irA('view-selector');cerrarMenu()">
+        ← Cambiar jugador
       </div>
     </div>
 
@@ -490,9 +541,6 @@ body {
       </div>
       <div class="ctrl-btn ctrl-botones" id="btn-bot" onclick="setModo('botones')">
         <span style="font-size:8px">●</span><span>Botones</span>
-      </div>
-      <div class="ctrl-btn ctrl-reset" onclick="abrirModal('modal-reset')">
-        ↺ Reset
       </div>
       <div class="ctrl-btn ctrl-torneo" id="btn-torneo" onclick="toggleTorneo()">
         🏆 Torneo
@@ -562,7 +610,7 @@ body {
     <div class="btn-corregir" onclick="abrirModal('modal-conf')">
       <span style="font-size:15px;line-height:1">⏺</span>&nbsp;&nbsp;Corregir por voz
     </div>
-    <div class="btn-borrar" onclick="borrarHoyo()">
+    <div class="btn-borrar" onclick="abrirModal('modal-reset')">
       <span style="font-size:15px;line-height:1;color:rgba(248,113,113,.6)">⊗</span>&nbsp;&nbsp;Borrar hoyo
     </div>
   </div>
@@ -579,17 +627,7 @@ body {
     </div>
   </div>
 
-  <!-- Bottom bar -->
-  <div class="bottom-bar">
-    <div class="btn-atras" onclick="hoyoAnterior()">
-      ← <span class="lbl">Atrás</span>
-    </div>
-    <div class="btn-notas" onclick="abrirNotas()" style="font-size:20px;letter-spacing:-1px;font-weight:300">≡</div>
-    <div class="btn-fin" onclick="abrirFin()">Fin</div>
-    <button class="btn-sig" id="btn-sig" onclick="hoyoSiguiente()">
-      Siguiente →
-    </button>
-  </div>
+  <!-- Bottom bar eliminado — navegación por hoyos en el selector de arriba -->
 </div>
 
 <!-- ================================================
@@ -1205,7 +1243,11 @@ function renderHoyos(){
   });
 }
 
-function cambiarHoyo(n){ E.hoyoActual=n; renderHoyos(); actualizarHoyo(); }
+function cambiarHoyo(n){
+  // Limpiar parcial al cambiar de hoyo manualmente
+  tiroParcial = { drive:null, hierros:[], approach:null, putts:null, pasos:null, puttCorto:null, score:null, metidaFuera:false };
+  E.hoyoActual=n; renderHoyos(); actualizarHoyo();
+}
 
 function actualizarHoyo(){
   const h=E.hoyos.find(x=>x.num===E.hoyoActual);
@@ -1248,6 +1290,24 @@ function setModo(m){
   document.getElementById('btn-voz').className='ctrl-btn ctrl-voz'+(m==='voz'?' ':'  inactive');
   document.getElementById('btn-bot').className='ctrl-btn ctrl-botones'+(m==='botones'?' active':'');
 }
+
+function toggleMenu() {
+  var menu = document.getElementById('menu-dropdown');
+  if (menu) menu.classList.toggle('hidden');
+}
+function cerrarMenu() {
+  var menu = document.getElementById('menu-dropdown');
+  if (menu) menu.classList.add('hidden');
+}
+
+// Cerrar menú al tocar fuera
+document.addEventListener('click', function(e) {
+  var menu = document.getElementById('menu-dropdown');
+  var ham = document.querySelector('.menu-ham');
+  if (menu && ham && !menu.contains(e.target) && !ham.contains(e.target)) {
+    menu.classList.add('hidden');
+  }
+});
 
 function toggleTorneo(){
   if(!E.torneoActivo){ abrirModal('modal-torneo'); }
@@ -1376,6 +1436,13 @@ let reconocimiento = null;
 let modoGrabando = false;
 let textoAcumulado = '';
 
+// Tiros parciales del hoyo en curso (se van acumulando dictado a dictado)
+let tiroParcial = {
+  drive: null, hierros: [], approach: null,
+  putts: null, pasos: null, puttCorto: null,
+  score: null, metidaFuera: false
+};
+
 // ===================================================
 // BOTÓN MICRÓFONO — UN TOQUE INICIA, OTRO PARA
 // ===================================================
@@ -1445,6 +1512,8 @@ function toggleVoz() {
       editando = false;
       datosAnteriores = null;
     }
+    // Combinar con tiros parciales acumulados del hoyo
+    datos = combinarConParcial(datos, tiroParcial);
     E.ultimosDatos = datos;
     E.ultimoTextoVoz = texto;
     mostrarConfirmacion(texto, datos);
@@ -1506,12 +1575,20 @@ const DICT = {
 
   // ── RESULTADO CUALQUIER TIRO ───────────────────
   resultado_green: [
-    'green','al green','en green','en el green','subi','subí',
-    'arriba','llegue','llegué','en regulacion','en regulación',
-    'regulation','green en regla','puse en green','lo puse en green',
-    'meti al green','metí al green','lo meti','lo metí',
+    'green','al green','en green','en el green',
+    'subi','subí','me subi','me subí',
+    'subi al green','subí al green','me subi al green','me subí al green',
+    'subi desde barbas','subí desde barbas',
+    'me subi desde barbas','me subí desde barbas',
+    'arriba','llegue','llegué','llego','llegó',
+    'en regulacion','en regulación','regulation','green en regla',
+    'puse en green','lo puse en green','meti al green','metí al green',
+    'lo meti','lo metí','la subi','la subí','la meti','la metí',
+    'entre','entré','entre al green','entré al green',
+    'saque','saqué','sali','salí',
     'al pin','cerca del pin','cerca del hoyo','junto al pin',
-    'lo mande al green','lo mandé al green'
+    'lo mande al green','lo mandé al green','chip al green','chip',
+    'me fui al green','me fui arriba'
   ],
   resultado_barbas: [
     'barbas','en barbas','barbitas','collar','en el collar',
@@ -1630,37 +1707,96 @@ function interpretarHoyo(txt) {
   }
 
   // Drive
-  if (DICT.drive_fairway.some(function(p){ return n.includes(norm(p)); })) r.drive = 'fairway';
-  else if (DICT.drive_sintiro.some(function(p){ return n.includes(norm(p)); })) r.drive = 'sin-tiro';
-  else if (DICT.resultado_castigo.some(function(p){ return n.includes(norm(p)); }) && !n.match(/\d+\s*(yardas?|yards?)/)) r.drive = 'castigo';
-
-  // Yardas
-  var regY = /(\d{2,3})\s*(yardas?|yards?)/gi;
-  var mY;
-  while ((mY = regY.exec(txt)) !== null) {
-    var y = parseInt(mY[1]);
-    if (y >= 10 && y <= 320 && !r.hierros.find(function(h){ return h.dist===y; })) r.hierros.push({dist:y, resultado:null});
-  }
-  // Palabras + yardas
-  var yardasPal = Object.entries(DICT.numeros).sort(function(a,b){ return b[0].length-a[0].length; });
-  for (var j=0; j<yardasPal.length; j++) {
-    var pal = norm(yardasPal[j][0]);
-    if (n.includes(pal+' yardas') || n.includes(pal+' yards')) {
-      var dist = yardasPal[j][1];
-      if (dist>=10 && !r.hierros.find(function(h){ return h.dist===dist; })) r.hierros.push({dist:dist, resultado:null});
-    }
+  // Regla: si dicen "drive", siempre hay drive.
+  // - Si mencionan fairway/calle/centro → fairway
+  // - Si mencionan árboles/rough        → sin-tiro
+  // - Si mencionan castigo/agua/ob      → castigo
+  // - Si solo dicen "drive" + yardas    → fairway por default
+  //   (las yardas son distancia restante al hoyo, no el hierro)
+  var mencionaDrive = n.includes('drive') || n.includes('salida') || n.includes('tee');
+  if (DICT.drive_sintiro.some(function(p){ return n.includes(norm(p)); })) {
+    r.drive = 'sin-tiro';
+  } else if (DICT.resultado_castigo.some(function(p){ return n.includes(norm(p)); }) &&
+             !DICT.resultado_green.some(function(p){ return n.includes(norm(p)); }) &&
+             !DICT.resultado_barbas.some(function(p){ return n.includes(norm(p)); }) &&
+             !DICT.resultado_trampa.some(function(p){ return n.includes(norm(p)); })) {
+    r.drive = 'castigo';
+  } else if (DICT.drive_fairway.some(function(p){ return n.includes(norm(p)); }) || mencionaDrive) {
+    r.drive = 'fairway'; // fairway por default cuando se menciona drive
   }
 
-  // Resultado approach
+  // ── YARDAS ──────────────────────────────────────────────────────
+  // Regla clave: si mencionan yardas DESPUÉS del drive (quedé a X yardas),
+  // esas yardas son la distancia restante, NO un hierro.
+  // Solo son hierro si hay un resultado de approach (green/barbas/trampa/castigo)
+  // O si no hay drive mencionado (están dictando el hierro directamente)
+
+  // Detectar resultado de approach PRIMERO
   var resApp = null;
   if (DICT.resultado_castigo.some(function(p){ return n.includes(norm(p)); })) resApp = 'castigo';
   else if (DICT.resultado_trampa.some(function(p){ return n.includes(norm(p)); })) resApp = 'trampa';
   else if (DICT.resultado_barbas.some(function(p){ return n.includes(norm(p)); })) resApp = 'barbas';
   else if (DICT.resultado_green.some(function(p){ return n.includes(norm(p)); })) resApp = 'green';
-  if (n.includes('fairway') && resApp === 'castigo' && r.hierros.length > 0) { r.drive = 'fairway'; }
+
+  // Frases que indican distancia restante (NO hierro):
+  // "quedé a X yardas", "me quedaron X yardas", "estoy a X yardas",
+  // "a X yardas del hoyo/pin/bandera", "me quedan X yardas"
+  var esDistanciaRestante = /(?:quede|quedé|me quedaron|me quedan|estoy a|a)\s+(?:a\s+)?(\d+)\s*(yardas?|yards?)/i.test(txt) ||
+    /(\d+)\s*(yardas?|yards?)\s+(?:del hoyo|del pin|de la bandera|al hoyo|al pin)/i.test(txt);
+
+  // Extraer yardas — pero solo registrar como hierro si:
+  // 1. Hay resultado de approach (green/barbas/trampa) EN ESTE dictado
+  // 2. O no hay drive (están dictando el hierro solo)
+  // 3. O usan frases de hierro: "tiré de X", "desde X yardas", "de X yardas al green"
+  // Si hay drive Y yardas pero SIN resultado de approach
+  // → las yardas son distancia restante, no hierro
+  // Si hay resultado de approach → las yardas SÍ son el hierro
+  var esTiroHierro = resApp !== null ||
+    /(?:tirando?|tiro|tiré)\s+(?:de|desde)?\s*\d+/i.test(txt) ||
+    /(?:de|desde)\s+\d+\s*(yardas?|yards?)/i.test(txt) ||
+    (!r.drive && !esDistanciaRestante);
+
+  // Excepción: si hay drive, las yardas sin resultado son distancia restante
+  if (r.drive && !resApp && !esDistanciaRestante) {
+    esTiroHierro = false;
+  }
+
+  if (esTiroHierro) {
+    // Registrar yardas como hierro
+    var regY = /(\d{2,3})\s*(yardas?|yards?)/gi;
+    var mY;
+    while ((mY = regY.exec(txt)) !== null) {
+      var y = parseInt(mY[1]);
+      if (y >= 10 && y <= 320 && !r.hierros.find(function(h){ return h.dist===y; })) {
+        r.hierros.push({dist:y, resultado:null});
+      }
+    }
+    // Palabras + yardas
+    var yardasPal = Object.entries(DICT.numeros).sort(function(a,b){ return b[0].length-a[0].length; });
+    for (var j=0; j<yardasPal.length; j++) {
+      var pal = norm(yardasPal[j][0]);
+      if (n.includes(pal+' yardas') || n.includes(pal+' yards')) {
+        var dist = yardasPal[j][1];
+        if (dist>=10 && !r.hierros.find(function(h){ return h.dist===dist; })) {
+          r.hierros.push({dist:dist, resultado:null});
+        }
+      }
+    }
+  } else if (esDistanciaRestante) {
+    // Solo guardar la distancia restante para referencia (no como hierro)
+    // Esto se usará en el siguiente dictado cuando digan el resultado
+    var mDist = txt.match(/(\d{2,3})\s*(yardas?|yards?)/i);
+    if (mDist) r.distanciaRestante = parseInt(mDist[1]);
+  }
+
+  // Corrección: si fairway + castigo con yardas → fairway fue el drive
+  if (n.includes('fairway') && resApp === 'castigo' && r.hierros.length > 0) {
+    r.drive = 'fairway';
+  }
 
   if (r.hierros.length > 0) {
-    r.hierros = r.hierros.sort(function(a,b){ return b.dist-a.dist; }).map(function(h){ return {dist:h.dist, resultado:resApp||'green'}; });
+    r.hierros = r.hierros.sort(function(a,b){ return b.dist-a.dist; })
+      .map(function(h){ return {dist:h.dist, resultado:resApp||'green'}; });
     r.approach = resApp || 'green';
   } else if (resApp) {
     r.approach = resApp;
@@ -1961,14 +2097,14 @@ body {
 .dictar-hint { color:var(--text-dim); font-size:10px; }
 
 /* ── BOTTOM BAR ── */
-.bottom-bar { padding:8px 16px 28px; display:flex; gap:8px; align-items:center; background:var(--bg); margin-top:auto; }
-.btn-atras { background:rgba(255,255,255,.06); border:1px solid var(--border); border-radius:14px; padding:13px 14px; display:flex; align-items:center; gap:6px; cursor:pointer; }
-.btn-atras .lbl { color:var(--text-muted); font-size:12px; font-weight:600; }
-.btn-notas { background:rgba(217,119,6,.1); border:1px solid rgba(217,119,6,.2); border-radius:14px; width:46px; height:46px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:22px; }
-.btn-fin { background:rgba(220,38,38,.1); border:1px solid rgba(220,38,38,.2); border-radius:14px; width:46px; height:46px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--red-light); font-size:13px; font-weight:700; }
-.btn-sig { flex:1; background:var(--green); border-radius:14px; padding:13px; display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer; border:none; color:white; font-size:13px; font-weight:700; transition:transform .15s; }
-.btn-sig:active { transform:scale(.97); }
-.btn-terminar-vuelta { flex:1; background:linear-gradient(135deg,var(--green),var(--blue)); border-radius:14px; padding:13px; display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer; color:white; font-size:12px; font-weight:700; border:none; }
+
+
+
+
+
+
+
+
 
 /* ── OVERLAY / SHEET / MODAL ── */
 .overlay { display:none; position:fixed; inset:0; z-index:100; background:rgba(0,0,0,.7); backdrop-filter:blur(4px); align-items:flex-end; }
@@ -2208,6 +2344,35 @@ body {
 .btn-salir   { padding:8px; display:flex; align-items:center; justify-content:center; color:var(--text-dim); font-size:12px; font-weight:600; cursor:pointer; }
 
 .hidden { display:none !important; }
+
+/* Menú hamburguesa */
+.menu-ham {
+  display:flex; flex-direction:column; justify-content:center; gap:5px;
+  width:36px; height:36px; border-radius:10px;
+  background:rgba(255,255,255,.12); cursor:pointer;
+  align-items:center; flex-shrink:0;
+  transition:background .15s;
+}
+.menu-ham:active { background:rgba(255,255,255,.2); }
+.menu-ham span {
+  display:block; width:18px; height:2px;
+  background:white; border-radius:1px;
+}
+.menu-dropdown {
+  background:rgba(13,17,23,.97); border:1px solid rgba(255,255,255,.12);
+  border-radius:16px; margin:8px 0 0; overflow:hidden;
+  box-shadow:0 8px 32px rgba(0,0,0,.6);
+  animation:fadeIn .15s ease;
+}
+.menu-item {
+  padding:14px 18px; color:white; font-size:14px; font-weight:600;
+  cursor:pointer; display:flex; align-items:center; gap:10px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  transition:background .1s;
+}
+.menu-item:last-child { border-bottom:none; }
+.menu-item:active { background:rgba(255,255,255,.08); }
+.menu-item-danger { color:var(--red-light); }
 </style>
 </head>
 <body>
@@ -2264,9 +2429,31 @@ body {
           <div class="jugador-cambiar">Cambiar ▾</div>
         </div>
       </div>
-      <div class="acumulado-wrap">
-        <div class="acumulado-label">Acumulado</div>
-        <div class="acumulado-num" id="acumulado">+3</div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="acumulado-wrap">
+          <div class="acumulado-label">Acumulado</div>
+          <div class="acumulado-num" id="acumulado">+3</div>
+        </div>
+        <!-- Menú hamburguesa -->
+        <div class="menu-ham" onclick="toggleMenu()">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Menú desplegable -->
+    <div class="menu-dropdown hidden" id="menu-dropdown">
+      <div class="menu-item" onclick="abrirNotas();cerrarMenu()">
+        📋 Notas
+      </div>
+      <div class="menu-item" onclick="abrirFin();cerrarMenu()">
+        🏁 Fin de ronda
+      </div>
+      <div class="menu-item" onclick="abrirModal('modal-reset');cerrarMenu()">
+        ↺ Reset
+      </div>
+      <div class="menu-item menu-item-danger" onclick="irA('view-selector');cerrarMenu()">
+        ← Cambiar jugador
       </div>
     </div>
 
@@ -2278,9 +2465,6 @@ body {
       </div>
       <div class="ctrl-btn ctrl-botones" id="btn-bot" onclick="setModo('botones')">
         <span style="font-size:8px">●</span><span>Botones</span>
-      </div>
-      <div class="ctrl-btn ctrl-reset" onclick="abrirModal('modal-reset')">
-        ↺ Reset
       </div>
       <div class="ctrl-btn ctrl-torneo" id="btn-torneo" onclick="toggleTorneo()">
         🏆 Torneo
@@ -2367,17 +2551,7 @@ body {
     </div>
   </div>
 
-  <!-- Bottom bar -->
-  <div class="bottom-bar">
-    <div class="btn-atras" onclick="hoyoAnterior()">
-      ← <span class="lbl">Atrás</span>
-    </div>
-    <div class="btn-notas" onclick="abrirNotas()" style="font-size:20px;letter-spacing:-1px;font-weight:300">≡</div>
-    <div class="btn-fin" onclick="abrirFin()">Fin</div>
-    <button class="btn-sig" id="btn-sig" onclick="hoyoSiguiente()">
-      Siguiente →
-    </button>
-  </div>
+  <!-- Bottom bar eliminado — navegación por hoyos en el selector de arriba -->
 </div>
 
 <!-- ================================================
@@ -2951,26 +3125,91 @@ body {
 
 <script>
 function confirmarHoyo() {
+  var datos = E.ultimosDatos || {};
+
+  // Si no hay putts todavía, guardar como parcial y seguir en el mismo hoyo
+  if (datos.putts === null || datos.putts === undefined) {
+    // Guardar tiros parciales
+    tiroParcial = combinarConParcial(datos, tiroParcial);
+    cerrarModal('modal-conf');
+    // Mostrar tiros parciales en la pantalla del hoyo
+    mostrarTirosParciales(tiroParcial);
+    return; // NO avanzar al siguiente hoyo
+  }
+
+  // Hay putts — hoyo completo
   var h = E.hoyos.find(function(x){ return x.num === E.hoyoActual; });
   if (h) {
     h.ok = true;
-    if (E.ultimosDatos && E.ultimosDatos.score !== null && E.ultimosDatos.score !== undefined) {
-      h.res = E.ultimosDatos.score;
-    } else if (E.ultimosDatos) {
-      var tiros = (E.ultimosDatos.drive ? 1 : 0) +
-        Math.max((E.ultimosDatos.hierros||[]).length, E.ultimosDatos.approach ? 1 : 0) +
-        (E.ultimosDatos.putts || 2);
-      h.res = tiros - 4;
+    if (datos.score !== null && datos.score !== undefined) {
+      h.res = datos.score;
     } else {
-      h.res = 0;
+      var numTiros = (datos.drive ? 1 : 0) +
+        Math.max((datos.hierros||[]).length, datos.approach ? 1 : 0) +
+        (datos.putts || 2);
+      h.res = numTiros - 4;
     }
-    h.tiros = E.ultimosDatos ? JSON.parse(JSON.stringify(E.ultimosDatos)) : {};
+    h.tiros = JSON.parse(JSON.stringify(datos));
   }
+
+  // Limpiar parcial para el siguiente hoyo
+  tiroParcial = { drive:null, hierros:[], approach:null, putts:null, pasos:null, puttCorto:null, score:null, metidaFuera:false };
   E.ultimosDatos = null;
+
   cerrarModal('modal-conf');
   renderHoyos();
   actualizarHoyo();
   if (E.hoyoActual < E.totalHoyos) setTimeout(function(){ hoyoSiguiente(); }, 400);
+}
+
+// Mostrar tiros parciales encima del micrófono mientras el hoyo no termina
+function mostrarTirosParciales(parcial) {
+  var lista = document.getElementById('tiros-list');
+  var actions = document.getElementById('hoyo-actions');
+  var dictar = document.getElementById('dictar-wrap');
+  if (!lista) return;
+
+  lista.innerHTML = '';
+  var hayAlgo = false;
+
+  if (parcial.drive) {
+    hayAlgo = true;
+    var texD = {fairway:'Fairway', 'sin-tiro':'Rough / Sin tiro', castigo:'Castigo'};
+    lista.innerHTML += '<div class="tiro-card tc-drive"><span class="tiro-emoji">🏌️</span>' +
+      '<div class="tiro-info"><div class="tiro-subtipo">Drive</div>' +
+      '<div class="tiro-val">' + (texD[parcial.drive]||parcial.drive) + '</div></div>' +
+      '<span style="color:rgba(255,255,255,.2);font-size:11px">✓</span></div>';
+  }
+
+  var hierros = (parcial.hierros||[]).slice().sort(function(a,b){ return b.dist-a.dist; });
+  hierros.forEach(function(h) {
+    hayAlgo = true;
+    var texR = {green:'Al green', barbas:'Barbas', trampa:'Trampa', castigo:'Castigo'};
+    lista.innerHTML += '<div class="tiro-card tc-hierro"><span class="tiro-emoji">🔨</span>' +
+      '<div class="tiro-info"><div class="tiro-subtipo">' + h.dist + ' yardas</div>' +
+      '<div class="tiro-val">' + (texR[h.resultado]||'Al green') + '</div></div>' +
+      '<span style="color:rgba(255,255,255,.2);font-size:11px">✓</span></div>';
+  });
+
+  if (parcial.approach && (!parcial.hierros || parcial.hierros.length === 0)) {
+    hayAlgo = true;
+    var texA = {green:'Al green', barbas:'Barbas', trampa:'Trampa', castigo:'Castigo'};
+    lista.innerHTML += '<div class="tiro-card tc-approach"><span class="tiro-emoji">🎯</span>' +
+      '<div class="tiro-info"><div class="tiro-subtipo">Approach</div>' +
+      '<div class="tiro-val">' + (texA[parcial.approach]||parcial.approach) + '</div></div>' +
+      '<span style="color:rgba(255,255,255,.2);font-size:11px">✓</span></div>';
+  }
+
+  if (hayAlgo) {
+    // Mostrar tiros parciales + micrófono abajo
+    lista.classList.remove('hidden');
+    if (actions) actions.classList.add('hidden');
+    if (dictar) dictar.classList.remove('hidden');
+
+    // Hint especial indicando que faltan los putts
+    var hint = document.getElementById('mic-hint');
+    if (hint) hint.textContent = 'Faltan putts — toca para continuar';
+  }
 }
 
 </script>
