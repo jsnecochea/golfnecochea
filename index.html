@@ -1499,17 +1499,20 @@ function toggleVoz() {
     if (dbg) dbg.textContent = '';
 
     // 4. Procesar y mostrar tarjeta
-    var datos = interpretarHoyo(texto);
-    if (editando && datosAnteriores) {
-      datos = combinarDatos(datos, datosAnteriores);
-      editando = false;
-      datosAnteriores = null;
+    try {
+      var datos = interpretarHoyo(texto);
+      if (editando && datosAnteriores) {
+        datos = combinarDatos(datos, datosAnteriores);
+        editando = false;
+        datosAnteriores = null;
+      }
+      datos = combinarConParcial(datos, tiroParcial);
+      E.ultimosDatos = datos;
+      E.ultimoTextoVoz = texto;
+      mostrarConfirmacion(texto, datos);
+    } catch(err) {
+      alert('Error: ' + err.message);
     }
-    // Combinar con tiros parciales acumulados del hoyo
-    datos = combinarConParcial(datos, tiroParcial);
-    E.ultimosDatos = datos;
-    E.ultimoTextoVoz = texto;
-    mostrarConfirmacion(texto, datos);
   }
 }
 
