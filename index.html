@@ -1836,23 +1836,39 @@ function interpretarHoyo(txt) {
   }
 
   // Putts — vocabulario real de voz en español
-  // El microfono transcribe: puts, pots, putts, pot, putt, potier, tripotier
+  // Variantes que transcribe el micrófono:
+  // putt, put, pot, pod, poco, pote, pots, puts, pods, pocos
+  // tripotier, tripottier, triputtie, cuadrupotier
+  var rxPut = /p(?:u[tsd]|o[tdsckg]|oco)s?/i;
 
-  if (/trip[ou]t|tripotier|tripottier|triputtie|triple.p[ou]t/i.test(txt)) {
+  // Triple y cuádruple primero (más específicos)
+  if (/tri(?:p(?:u[tsd]|o[tdsckg]|oco)s?|potier|pottier|puttie)|triple\s+p/i.test(txt)) {
     r.putts = 3;
-  } else if (/cuadrup[ou]t|cuadrupotier|cuadruple.p[ou]t/i.test(txt)) {
+  } else if (/cuadru(?:p(?:u[tsd]|o[tdsckg]|oco)s?|potier)|cuadruple\s+p/i.test(txt)) {
     r.putts = 4;
   } else {
-    var mHice = txt.match(/(?:hice|meti|metí|tire|tiré|di)\s+(\w+)\s+p[ou]t/i);
+    // "hice X puts/pots/pods/pocos"
+    var mHice = txt.match(/(?:hice|hizo|tire|tiré|di|meti|metí)\s+(\w+)\s+p(?:u[tsd]|o[tdsckg]|oco)/i);
     if (mHice) { var nh = extraerNum(mHice[1]); if (nh && nh<=8) r.putts = nh; }
-    if (!r.putts) { var mNP2 = txt.match(/\b([1-8])\s*p[ou]t/i); if (mNP2) r.putts = parseInt(mNP2[1]); }
-    if (!r.putts) { var mP2 = txt.match(/(\w+)\s+p[ou]t/i); if (mP2) { var np2 = extraerNum(mP2[1]); if (np2 && np2>=1 && np2<=8) r.putts = np2; } }
-    if (!r.putts && /\bun\s+p[ou]t/i.test(txt)) r.putts = 1;
-    if (!r.putts && /\bdos\s+p[ou]t/i.test(txt)) r.putts = 2;
-    if (!r.putts && /\btres\s+p[ou]t/i.test(txt)) r.putts = 3;
+    // Número directo: "2 puts", "1 pod", "3 pocos"
+    if (!r.putts) {
+      var mNP2 = txt.match(/([1-8])\s*p(?:u[tsd]|o[tdsckg]|oco)/i);
+      if (mNP2) r.putts = parseInt(mNP2[1]);
+    }
+    // Palabra + put: "dos puts", "un pod", "tres pocos"
+    if (!r.putts) {
+      var mP2 = txt.match(/(\w+)\s+p(?:u[tsd]|o[tdsckg]|oco)/i);
+      if (mP2) { var np2 = extraerNum(mP2[1]); if (np2 && np2>=1 && np2<=8) r.putts = np2; }
+    }
+    if (!r.putts && /un\s+p(?:u[tsd]|o[tdsckg]|oco)/i.test(txt)) r.putts = 1;
+    if (!r.putts && /dos\s+p(?:u[tsd]|o[tdsckg]|oco)/i.test(txt)) r.putts = 2;
+    if (!r.putts && /tres\s+p(?:u[tsd]|o[tdsckg]|oco)/i.test(txt)) r.putts = 3;
   }
-  if (!r.putts && /met[ií]\s+(?:el|la|un)\s+p[ou]t/i.test(txt)) r.putts = 1;
+  // "metí el pot/pod/poco" = 1 putt
+  if (!r.putts && /met[ií]\s+(?:el|la|un)\s+p(?:u[tsd]|o[tdsckg]|oco)/i.test(txt)) r.putts = 1;
   if (!r.putts && /la\s+met[ií]\s+de\s+uno/i.test(txt)) r.putts = 1;
+  // "un poco" solo como putt (cuando no hay contexto de cantidad)
+  if (!r.putts && /un\s+poco/i.test(txt) && /green|arriba|subi|barbas/i.test(txt)) r.putts = 1;
 
   // Pasos
   var mPasos = txt.match(/(\w+)\s+pasos?/i);
@@ -1946,16 +1962,27 @@ function mostrarConfirmacion(textoOriginal, datos) {
         '<div class="tiro-val">' + (texA[datos.approach]||datos.approach) + '</div></div></div>';
     }
 
-    // Putts
+    // Putts — mostrar con todos sus datos
     if (datos.putts !== null && datos.putts !== undefined) {
-      var pasosStr = datos.pasos === 0 ? ' — dado (menos de 1 paso)' :
-                     datos.pasos ? ' — ' + datos.pasos + ' pasos' : '';
-      var pStr = datos.putts === 0 ? 'Entró directo' :
-                 datos.putts + ' putt' + (datos.putts > 1 ? 's' : '') + pasosStr;
+      var pasosStr = datos.pasos === 0 ? 'dado — menos de 1 paso' :
+                     datos.pasos ? datos.pasos + ' pasos al hoyo' : '? pasos';
+      var pStr = datos.putts === 0 ? 'Entró directo ⛳' :
+                 datos.putts + ' putt' + (datos.putts > 1 ? 's' : '');
+
+      // Putt corto
+      var cortoStr = '';
+      if (datos.puttCorto === 'lo-meti') cortoStr = '✅ Corto metido';
+      else if (datos.puttCorto === 'lo-falle') cortoStr = '❌ Corto fallado';
+      else if (datos.puttCorto === 'no-hubo') cortoStr = '— Sin putt corto';
+
       lista.innerHTML += '<div class="conf-tiro ct-putt">' +
         '<span style="font-size:16px">⛳</span>' +
-        '<div class="tiro-info"><div class="tiro-subtipo">Putting</div>' +
-        '<div style="color:white;font-size:16px;font-weight:700">' + pStr + '</div></div></div>';
+        '<div class="tiro-info">' +
+        '<div class="tiro-subtipo">Putting</div>' +
+        '<div style="color:white;font-size:17px;font-weight:700;margin-bottom:2px">' + pStr + '</div>' +
+        '<div style="color:rgba(255,255,255,.6);font-size:13px;font-weight:600">' + pasosStr + '</div>' +
+        (cortoStr ? '<div style="font-size:12px;font-weight:700;margin-top:3px;color:rgba(255,255,255,.5)">' + cortoStr + '</div>' : '') +
+        '</div></div>';
     }
 
     // Si no detectó nada
