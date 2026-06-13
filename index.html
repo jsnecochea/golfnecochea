@@ -1355,8 +1355,8 @@ function reconstruirTiros(lista, d) {
     var texA={green:'Al green',barbas:'Barbas',trampa:'Trampa',castigo:'Castigo'};
     var prevR2 = hierrosEnBarbasR ?
       ((d.hierros||[]).find(function(h){return h.resultado==='trampa';}) ? 'trampa' : 'barbas') : null;
-    var subR2 = prevR2==='barbas' ? 'Chip desde barbas (0–30y)' :
-                prevR2==='trampa' ? 'Chip desde trampa (0–30y)' : 'Tiro al green';
+    var subR2 = prevR2==='barbas' ? 'Chip desde barbas (0–25y)' :
+                prevR2==='trampa' ? 'Chip desde trampa (0–25y)' : 'Tiro al green';
     lista.innerHTML+='<div class="tiro-card tc-approach"><span class="tiro-emoji">🎯</span>'+
       '<div class="tiro-info"><div class="tiro-subtipo">'+subR2+'</div>'+
       '<div class="tiro-val">'+(d.approach==='green'?'Al green':(texA[d.approach]||d.approach))+'</div></div></div>';
@@ -1598,7 +1598,18 @@ function combinarConParcial(nuevo, parcial) {
   else if (r.hierros && r.hierros.length>0 && parcial.hierros && parcial.hierros.length>0) {
     parcial.hierros.forEach(function(h){ if(!r.hierros.find(function(x){return x.dist===h.dist;})) r.hierros.push(h); });
   }
+  // Si el parcial tenía hierros en barbas/trampa y el nuevo approach es green
+  // → agregar chip de 25y automáticamente
   if (!r.approach && parcial.approach) r.approach = parcial.approach;
+  var parcialEnBarbas = (parcial.hierros||[]).some(function(h){ return h.resultado==='barbas'||h.resultado==='trampa'; });
+  if (r.approach === 'green' && parcialEnBarbas) {
+    var yaHayChip = r.hierros && r.hierros.some(function(h){ return h.esChip; });
+    if (!yaHayChip) {
+      var tipoChip = (parcial.hierros||[]).some(function(h){ return h.resultado==='trampa'; }) ? 'trampa' : 'barbas';
+      if (!r.hierros) r.hierros = [];
+      r.hierros.push({dist:25, resultado:'green', esChip:true, desdeChip:tipoChip});
+    }
+  }
   if (r.putts===null && parcial.putts!==null) r.putts = parcial.putts;
   if (r.pasos===null && parcial.pasos!==null) r.pasos = parcial.pasos;
   if (!r.puttCorto && parcial.puttCorto) r.puttCorto = parcial.puttCorto;
@@ -2051,12 +2062,26 @@ function interpretarHoyo(txt) {
 
   if (esTiroHierro) {
     // Registrar yardas como hierro
+    // Números con "yardas" explícito
     var regY = /(\d{2,3})\s*(yardas?|yards?)/gi;
     var mY;
     while ((mY = regY.exec(txt)) !== null) {
       var y = parseInt(mY[1]);
       if (y >= 10 && y <= 320 && !r.hierros.find(function(h){ return h.dist===y; })) {
         r.hierros.push({dist:y, resultado:null});
+      }
+    }
+    // Números solos entre 10-320 que sean tiros (sin "yardas")
+    // Solo si hay un resultado de approach detectado Y no hay pasos de ese número
+    if (r.hierros.length === 0 && resApp !== null) {
+      var regNumSolo = /\b(\d{2,3})\b/g;
+      var mNS;
+      while ((mNS = regNumSolo.exec(txt)) !== null) {
+        var ns = parseInt(mNS[1]);
+        // Rango de yardas (10-320) y que no sea un número de pasos
+        if (ns >= 10 && ns <= 320) {
+          r.hierros.push({dist:ns, resultado:null});
+        }
       }
     }
     // Palabras + yardas
@@ -2097,7 +2122,8 @@ function interpretarHoyo(txt) {
     var resHierro = resBarbas ? 'barbas' : 'trampa';
     r.hierros = r.hierros.sort(function(a,b){ return b.dist-a.dist; })
       .map(function(h){ return {dist:h.dist, resultado:resHierro}; });
-    // El approach al green es un tiro adicional
+    // El chip desde barbas/trampa al green = 25 yardas (rango estándar 0-25y)
+    r.hierros.push({dist:25, resultado:'green', esChip:true});
     r.approach = 'green';
   } else if (r.hierros.length > 0) {
     // NO adivinar el resultado — solo asignar si se dijo explícitamente
@@ -2263,10 +2289,11 @@ function mostrarConfirmacion(textoOriginal, datos) {
     if (datos.drive) {
       var texDrive = {fairway:'Fairway ✅', 'sin-tiro':'Rough / Sin tiro', castigo:'Castigo / OB / Agua'};
       var clsDrive = {fairway:'ct-drive', 'sin-tiro':'ct-hierro', castigo:'ct-putt'};
-      lista.innerHTML += '<div class="conf-tiro ' + (clsDrive[datos.drive]||'ct-drive') + '">' +
+      lista.innerHTML += '<div class="conf-tiro ' + (clsDrive[datos.drive]||'ct-drive') + '" data-tipo="drive">' +
         '<span style="font-size:16px">🏌️</span>' +
         '<div class="tiro-info"><div class="tiro-subtipo">Drive</div>' +
-        '<div class="tiro-val">' + (texDrive[datos.drive]||datos.drive) + '</div></div></div>';
+        '<div class="tiro-val">' + (texDrive[datos.drive]||datos.drive) + '</div></div>' +
+        '<button class="btn-borrar-tiro" data-tipo="drive" style="background:none;border:none;cursor:pointer;font-size:16px;opacity:.4;padding:4px;flex-shrink:0">🗑️</button></div>';
     }
 
     // Hierros ordenados mayor a menor
@@ -2274,10 +2301,16 @@ function mostrarConfirmacion(textoOriginal, datos) {
     for (var i=0; i<hierros.length; i++) {
       var h = hierros[i];
       var texR = {green:'Al green ✅', barbas:'Barbas', trampa:'Trampa / Bunker', castigo:'Castigo', lejos:'Lejos del green'};
-      lista.innerHTML += '<div class="conf-tiro ct-hierro">' +
-        '<span style="font-size:16px">🔨</span>' +
-        '<div class="tiro-info"><div class="tiro-subtipo">' + h.dist + ' yardas</div>' +
-        '<div class="tiro-val">' + (texR[h.resultado]||(h.resultado?h.resultado:'❓ ¿Dónde quedó?')) + '</div></div></div>';
+      var subtipoHierro = h.esChip ?
+        ('Chip desde ' + (h.desdeChip||'barbas') + ' (0–25y)') :
+        (h.dist + ' yardas');
+      var emojiHierro = h.esChip ? '🎯' : '🔨';
+      var distKey = h.esChip ? 'chip' : String(h.dist);
+      lista.innerHTML += '<div class="conf-tiro ct-hierro" data-tipo="hierro" data-dist="' + distKey + '">' +
+        '<span style="font-size:16px">' + emojiHierro + '</span>' +
+        '<div class="tiro-info"><div class="tiro-subtipo">' + subtipoHierro + '</div>' +
+        '<div class="tiro-val">' + (texR[h.resultado]||(h.resultado?h.resultado:'❓ ¿Dónde quedó?')) + '</div></div>' +
+        '<button class="btn-borrar-tiro" data-tipo="hierro" data-dist="' + distKey + '" style="background:none;border:none;cursor:pointer;font-size:16px;opacity:.4;padding:4px;flex-shrink:0">🗑️</button></div>';
     }
 
     // Approach — mostrar si:
@@ -2291,13 +2324,14 @@ function mostrarConfirmacion(textoOriginal, datos) {
       var resultado_prev = hierrosEnBarbas ?
         (datos.hierros.find(function(h){ return h.resultado==='trampa'; }) ? 'trampa' : 'barbas') :
         null;
-      if (resultado_prev === 'barbas') subtipoApp = 'Chip desde barbas (0–30y)';
-      else if (resultado_prev === 'trampa') subtipoApp = 'Chip desde trampa (0–30y)';
+      if (resultado_prev === 'barbas') subtipoApp = 'Chip desde barbas (0–25y)';
+      else if (resultado_prev === 'trampa') subtipoApp = 'Chip desde trampa (0–25y)';
       var texA = {green:'Al green ✅', barbas:'Barbas', trampa:'Trampa / Bunker', castigo:'Castigo'};
-      lista.innerHTML += '<div class="conf-tiro ct-approach">' +
+      lista.innerHTML += '<div class="conf-tiro ct-approach" data-tipo="approach">' +
         '<span style="font-size:16px">🎯</span>' +
         '<div class="tiro-info"><div class="tiro-subtipo">' + subtipoApp + '</div>' +
-        '<div class="tiro-val">' + (datos.approach === 'green' ? 'Al green ✅' : (texA[datos.approach]||datos.approach)) + '</div></div></div>';
+        '<div class="tiro-val">' + (datos.approach === 'green' ? 'Al green ✅' : (texA[datos.approach]||datos.approach)) + '</div></div>' +
+        '<button class="btn-borrar-tiro" data-tipo="approach" style="background:none;border:none;cursor:pointer;font-size:16px;opacity:.4;padding:4px;flex-shrink:0">🗑️</button></div>';
     }
 
     // Putts — mostrar con todos sus datos
@@ -2313,14 +2347,15 @@ function mostrarConfirmacion(textoOriginal, datos) {
       else if (datos.puttCorto === 'lo-falle') cortoStr = '❌ Corto fallado';
       else if (datos.puttCorto === 'no-hubo') cortoStr = '— Sin putt corto';
 
-      lista.innerHTML += '<div class="conf-tiro ct-putt">' +
+      lista.innerHTML += '<div class="conf-tiro ct-putt" data-tipo="putts">' +
         '<span style="font-size:16px">⛳</span>' +
         '<div class="tiro-info">' +
         '<div class="tiro-subtipo">Putting</div>' +
         '<div style="color:white;font-size:17px;font-weight:700;margin-bottom:2px">' + pStr + '</div>' +
         '<div style="color:rgba(255,255,255,.6);font-size:13px;font-weight:600">' + pasosStr + '</div>' +
         (cortoStr ? '<div style="font-size:12px;font-weight:700;margin-top:3px;color:rgba(255,255,255,.5)">' + cortoStr + '</div>' : '') +
-        '</div></div>';
+        '</div>' +
+        '<button class="btn-borrar-tiro" data-tipo="putts" style="background:none;border:none;cursor:pointer;font-size:16px;opacity:.4;padding:4px;flex-shrink:0">🗑️</button></div>';
     }
 
     // Si no detectó nada
@@ -2519,6 +2554,40 @@ function leerNotas() {
 
 
 // pedirScore movido arriba
+
+function borrarTiroConf(btn, tipo, dist) {
+  var tiroEl = btn.closest ? btn.closest('.conf-tiro') : btn.parentElement;
+  if (tiroEl) tiroEl.remove();
+  if (!E.ultimosDatos) return;
+  if (tipo === 'drive') {
+    E.ultimosDatos.drive = null;
+  } else if (tipo === 'hierro') {
+    if (dist === 'chip') {
+      E.ultimosDatos.hierros = (E.ultimosDatos.hierros||[]).filter(function(h){ return !h.esChip; });
+      E.ultimosDatos.approach = null;
+    } else {
+      var distNum = parseInt(dist);
+      E.ultimosDatos.hierros = (E.ultimosDatos.hierros||[]).filter(function(h){ return h.dist !== distNum; });
+    }
+  } else if (tipo === 'approach') {
+    E.ultimosDatos.approach = null;
+  } else if (tipo === 'putts') {
+    E.ultimosDatos.putts = null;
+    E.ultimosDatos.pasos = null;
+    E.ultimosDatos.puttCorto = null;
+    var faltante = document.getElementById('conf-faltante');
+    if (faltante) faltante.style.display = 'none';
+  }
+}
+
+// Event delegation para botones de borrar tiro
+document.addEventListener('click', function(e) {
+  var btn = e.target.closest ? e.target.closest('.btn-borrar-tiro') : null;
+  if (!btn) return;
+  var tipo = btn.getAttribute('data-tipo');
+  var dist = btn.getAttribute('data-dist') || null;
+  borrarTiroConf(btn, tipo, dist);
+});
 
 function selPuttCorto(val, el) {
   // Marcar visualmente
