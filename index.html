@@ -1712,113 +1712,116 @@ function setBtnEstado(grabando) {
 }
 
 // ===================================================
-// TOGGLE: un toque inicia, otro toque finaliza
+// VOZ — CONTROL SIMPLIFICADO Y ROBUSTO
 // ===================================================
+let modoGrabando = false;
+let textoFinalLocal = '';
+
 function toggleVoz() {
-  if (!escuchando) iniciarVoz();
-  else finalizarVoz();
+  if (!modoGrabando) {
+    iniciarGrabacion();
+  } else {
+    detenerYProcesar();
+  }
 }
 
-// ===================================================
-// INICIAR VOZ
-// ===================================================
-function iniciarVoz() {
+function iniciarGrabacion() {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) {
-    alert('Reconocimiento de voz no disponible. Usa Chrome en Android.');
+    alert('Reconocimiento de voz no disponible. Usa Chrome en Android o Safari en iPhone.');
     return;
   }
+
+  modoGrabando = true;
   textoAcumulado = '';
-  escuchando = true;
-  reiniciandoVoz = false;
+  textoFinalLocal = '';
   setBtnEstado(true);
-  mostrarEscuchando();
-  arrancarReconocimiento();
+
+  crearYArrancar();
 }
 
-function arrancarReconocimiento() {
+function crearYArrancar() {
+  if (!modoGrabando) return;
+
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   reconocimiento = new SR();
   reconocimiento.lang = 'es-MX';
-  reconocimiento.continuous = true;
-  reconocimiento.interimResults = true;
+  reconocimiento.continuous = false; // más compatible en iOS/Android
+  reconocimiento.interimResults = false;
   reconocimiento.maxAlternatives = 1;
 
   reconocimiento.onresult = (event) => {
-    for (let i = event.resultIndex; i < event.results.length; i++) {
-      const t = event.results[i][0].transcript;
+    for (let i = 0; i < event.results.length; i++) {
       if (event.results[i].isFinal) {
-        textoAcumulado += (textoAcumulado ? ' ' : '') + t.trim();
+        const t = event.results[i][0].transcript.trim();
+        textoAcumulado += (textoAcumulado ? ' ' : '') + t;
       }
-      actualizarTextoEscucha((textoAcumulado + ' ' + (event.results[i].isFinal ? '' : t)).trim());
     }
   };
 
   reconocimiento.onerror = (ev) => {
     if (ev.error === 'not-allowed') {
-      escuchando = false;
+      modoGrabando = false;
       setBtnEstado(false);
-      ocultarEscuchando();
-      alert('Permiso de micrófono denegado. Ve a Configuración de tu navegador y permite el micrófono para este sitio.');
+      alert('Permiso de micrófono denegado. En Chrome, ve a Configuración → Privacidad → Micrófono y permite este sitio.');
     }
-    // Otros errores los ignoramos — el onend reiniciará
+    // no-speech, aborted, network → ignorar, onend reiniciará
   };
 
   reconocimiento.onend = () => {
-    // Si el usuario NO picó Listo, reiniciar automáticamente
-    if (escuchando && !reiniciandoVoz) {
-      reiniciandoVoz = true;
+    // Si el usuario sigue grabando, reiniciar inmediatamente
+    if (modoGrabando) {
       setTimeout(() => {
-        reiniciandoVoz = false;
-        if (escuchando) {
-          try { arrancarReconocimiento(); } catch(e){}
-        }
-      }, 150);
+        if (modoGrabando) crearYArrancar();
+      }, 100);
     }
   };
 
-  try { reconocimiento.start(); } catch(e) { console.warn(e); }
+  try {
+    reconocimiento.start();
+  } catch(e) {
+    // Si falla el start, reintentar en 300ms
+    setTimeout(() => { if (modoGrabando) crearYArrancar(); }, 300);
+  }
 }
 
-// ===================================================
-// FINALIZAR: usuario tocó LISTO
-// ===================================================
-let finalizando = false;
+function detenerYProcesar() {
+  modoGrabando = false;
+  setBtnEstado(false);
 
-function finalizarVoz() {
-  if (finalizando) return; // evitar doble ejecución
-  finalizando = true;
-  escuchando = false;
-  reiniciandoVoz = true; // bloquear reinicio automático en onend
-
+  // Detener el reconocimiento actual
   if (reconocimiento) {
-    try { reconocimiento.stop(); } catch(e){}
+    try { reconocimiento.stop(); } catch(e) {}
     reconocimiento = null;
   }
 
-  setBtnEstado(false);
-  ocultarEscuchando();
+  // Procesar después de un pequeño delay para que llegue el último resultado
+  setTimeout(() => {
+    const texto = textoAcumulado.trim();
+    textoAcumulado = '';
 
-  const texto = textoAcumulado.trim();
-  textoAcumulado = '';
-  finalizando = false;
-
-  if (texto) {
-    const datos = interpretarHoyo(texto);
-    E.ultimosDatos = datos;
-    E.ultimoTextoVoz = texto;
-    mostrarConfirmacion(texto, datos);
-  } else {
-    mostrarConfirmacion('', {score:null,drive:null,hierros:[],approach:null,putts:null,pasos:null,puttCorto:null,metidaFuera:false});
-  }
+    if (texto) {
+      const datos = interpretarHoyo(texto);
+      E.ultimosDatos = datos;
+      E.ultimoTextoVoz = texto;
+      mostrarConfirmacion(texto, datos);
+    } else {
+      // Nada detectado — abrir tarjeta vacía para entrada manual
+      mostrarConfirmacion('', {
+        score:null, drive:null, hierros:[], approach:null,
+        putts:null, pasos:null, puttCorto:null, metidaFuera:false
+      });
+    }
+  }, 300);
 }
 
+// Alias para compatibilidad
+function iniciarVoz() { iniciarGrabacion(); }
+function finalizarVoz() { detenerYProcesar(); }
 function cancelarVoz() {
-  escuchando = false;
-  reiniciandoVoz = true; // bloquear reinicio en onend
-  if (reconocimiento) { try { reconocimiento.stop(); } catch(e){} reconocimiento = null; }
+  modoGrabando = false;
   setBtnEstado(false);
-  ocultarEscuchando();
+  if (reconocimiento) { try { reconocimiento.stop(); } catch(e){} reconocimiento = null; }
   textoAcumulado = '';
 }
 
