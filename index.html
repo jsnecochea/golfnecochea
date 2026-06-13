@@ -1701,307 +1701,1278 @@ function interpretarHoyo(txt) {
 // MOSTRAR TARJETA DE CONFIRMACIÓN
 // ===================================================
 function mostrarConfirmacion(textoOriginal, datos) {
-  // Actualizar título
+  // Título
   document.getElementById('conf-titulo').textContent = 'Hoyo ' + E.hoyoActual;
 
-  // Calcular score
-  const scoreVal = datos.score;
-  const badge = document.querySelector('#modal-conf .badge-res');
-  if (scoreVal !== null) {
-    const sc = scoreClass(scoreVal);
-    badge.className = 'badge-res badge-' + sc;
-    badge.textContent = scoreTexto[sc] || '';
-  } else {
-    badge.className = 'badge-res badge-par';
-    badge.textContent = 'Detectando...';
+  // Badge score
+  var badge = document.querySelector('#modal-conf .badge-res');
+  if (badge) {
+    if (datos.score !== null && datos.score !== undefined) {
+      var sc = scoreClass(datos.score);
+      badge.className = 'badge-res badge-' + sc;
+      badge.textContent = scoreTexto[sc] || '';
+    } else {
+      badge.className = 'badge-res badge-par';
+      badge.textContent = '¿Cuánto hiciste?';
+    }
   }
 
-  // Construir lista de tiros
-  const lista = document.querySelector('.conf-tiros');
-  lista.innerHTML = '';
+  // Lista de tiros
+  var lista = document.querySelector('.conf-tiros');
+  if (lista) {
+    lista.innerHTML = '';
 
-  // Drive
-  if (datos.drive) {
-    const texDrive = {fairway:'Fairway ✅', 'sin-tiro':'Sin tiro (rough)', castigo:'Castigo / OB / Agua'};
-    const clsDrive = {fairway:'ct-drive', 'sin-tiro':'ct-hierro', castigo:'ct-putt'};
-    lista.innerHTML += `
-      <div class="conf-tiro ${clsDrive[datos.drive] || 'ct-drive'}">
-        <span style="font-size:16px">🏌️</span>
-        <div class="tiro-info">
-          <div class="tiro-subtipo">Drive</div>
-          <div class="tiro-val">${texDrive[datos.drive] || datos.drive}</div>
+    // Drive
+    if (datos.drive) {
+      var texDrive = {fairway:'Fairway ✅', 'sin-tiro':'Rough / Sin tiro', castigo:'Castigo / OB / Agua'};
+      var clsDrive = {fairway:'ct-drive', 'sin-tiro':'ct-hierro', castigo:'ct-putt'};
+      lista.innerHTML += '<div class="conf-tiro ' + (clsDrive[datos.drive]||'ct-drive') + '">' +
+        '<span style="font-size:16px">🏌️</span>' +
+        '<div class="tiro-info"><div class="tiro-subtipo">Drive</div>' +
+        '<div class="tiro-val">' + (texDrive[datos.drive]||datos.drive) + '</div></div></div>';
+    }
+
+    // Hierros ordenados mayor a menor
+    var hierros = (datos.hierros||[]).slice().sort(function(a,b){ return b.dist - a.dist; });
+    for (var i=0; i<hierros.length; i++) {
+      var h = hierros[i];
+      var texR = {green:'Al green ✅', barbas:'Barbas', trampa:'Trampa / Bunker', castigo:'Castigo'};
+      lista.innerHTML += '<div class="conf-tiro ct-hierro">' +
+        '<span style="font-size:16px">🔨</span>' +
+        '<div class="tiro-info"><div class="tiro-subtipo">' + h.dist + ' yardas</div>' +
+        '<div class="tiro-val">' + (texR[h.resultado]||'Al green ✅') + '</div></div></div>';
+    }
+
+    // Approach (si no hubo hierros)
+    if (datos.approach && (!datos.hierros || datos.hierros.length === 0)) {
+      var texA = {green:'Al green ✅', barbas:'Barbas', trampa:'Trampa / Bunker', castigo:'Castigo'};
+      lista.innerHTML += '<div class="conf-tiro ct-approach">' +
+        '<span style="font-size:16px">🎯</span>' +
+        '<div class="tiro-info"><div class="tiro-subtipo">Tiro al green</div>' +
+        '<div class="tiro-val">' + (texA[datos.approach]||datos.approach) + '</div></div></div>';
+    }
+
+    // Putts
+    if (datos.putts !== null && datos.putts !== undefined) {
+      var pasosStr = datos.pasos === 0 ? ' — dado (menos de 1 paso)' :
+                     datos.pasos ? ' — ' + datos.pasos + ' pasos' : '';
+      var pStr = datos.putts === 0 ? 'Entró directo' :
+                 datos.putts + ' putt' + (datos.putts > 1 ? 's' : '') + pasosStr;
+      lista.innerHTML += '<div class="conf-tiro ct-putt">' +
+        '<span style="font-size:16px">⛳</span>' +
+        '<div class="tiro-info"><div class="tiro-subtipo">Putting</div>' +
+        '<div style="color:white;font-size:16px;font-weight:700">' + pStr + '</div></div></div>';
+    }
+
+    // Si no detectó nada
+    if (!datos.drive && !datos.approach && datos.putts === null && (!datos.hierros || datos.hierros.length === 0) && datos.score === null) {
+      lista.innerHTML = '<div style="padding:16px;text-align:center;color:rgba(255,255,255,.5);font-size:13px;line-height:1.6">' +
+        'No entendí bien. Intenta:<br><br>' +
+        '<span style="color:white;font-weight:600">"Bogey, fairway, 120 yardas green, dos putts a 8 pasos"</span></div>';
+    }
+
+    // Texto transcrito al fondo
+    if (textoOriginal) {
+      lista.innerHTML += '<div style="margin-top:8px;padding:8px 12px;background:rgba(255,255,255,.04);border-radius:10px;color:rgba(255,255,255,.35);font-size:11px">' +
+        '🎤 "' + textoOriginal + '"</div>';
+    }
+  }
+
+  // Putt corto
+  var faltante = document.getElementById('conf-faltante');
+  if (faltante) {
+    var mostrar = datos.putts && datos.putts > 0 && !datos.puttCorto && !datos.metidaFuera;
+    faltante.style.display = mostrar ? 'block' : 'none';
+  }
+
+  // Abrir modal
+  abrirModal('modal-conf');
+}"es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Golf Necochea</title>
+<style>
+:root {
+  --green: #0F6E56;
+  --green-light: #34d399;
+  --blue: #185FA5;
+  --blue-light: #60a5fa;
+  --amber: #D97706;
+  --amber-light: #fbbf24;
+  --red: #DC2626;
+  --red-light: #f87171;
+  --purple: #6D28D9;
+  --purple-light: #a78bfa;
+  --bg: #0d1117;
+  --surface: #1c1c2e;
+  --border: rgba(255,255,255,0.08);
+  --text-muted: rgba(255,255,255,0.4);
+  --text-dim: rgba(255,255,255,0.25);
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', sans-serif;
+  background: var(--bg); color: white;
+  min-height: 100vh; display: flex; justify-content: center;
+}
+.app { width:100%; max-width:430px; min-height:100vh; position:relative; overflow:hidden; }
+.view { display:none; flex-direction:column; min-height:100vh; animation: fadeIn .2s ease; }
+.view.active { display:flex; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── SELECTOR JUGADOR ── */
+#view-selector { align-items:center; justify-content:center; padding:40px 20px 32px; gap:32px; }
+.logo-icon { width:72px; height:72px; border-radius:24px; background:rgba(15,110,86,.2); border:1.5px solid rgba(15,110,86,.3); display:flex; align-items:center; justify-content:center; font-size:36px; margin:0 auto 10px; }
+.logo-title { font-size:26px; font-weight:700; letter-spacing:-.5px; text-align:center; }
+.logo-badge { display:inline-flex; align-items:center; gap:6px; background:rgba(15,110,86,.2); border:1px solid rgba(15,110,86,.3); border-radius:20px; padding:4px 14px; margin-top:8px; color:var(--green-light); font-size:12px; font-weight:700; }
+.players-label { color:var(--text-muted); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1.2px; text-align:center; }
+.players-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; }
+.player-card { border-radius:20px; padding:20px 14px; display:flex; flex-direction:column; align-items:center; gap:10px; cursor:pointer; border:1.5px solid; transition:transform .15s; }
+.player-card:active { transform:scale(.97); }
+.player-card[data-p="constanza"] { background:rgba(109,40,217,.12); border-color:rgba(109,40,217,.3); }
+.player-card[data-p="salvador"]  { background:rgba(15,110,86,.12);  border-color:rgba(15,110,86,.4); box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--green); }
+.player-card[data-p="elisa"]     { background:rgba(190,24,93,.12);  border-color:rgba(190,24,93,.3); }
+.player-card[data-p="papa"]      { background:rgba(24,95,165,.12);  border-color:rgba(24,95,165,.3); }
+.player-avatar { font-size:28px; }
+.player-name { font-size:16px; font-weight:700; }
+.player-status { border-radius:20px; padding:3px 10px; font-size:10px; font-weight:700; }
+.s-active { background:rgba(109,40,217,.25); color:#a78bfa; }
+.s-last   { background:rgba(15,110,86,.3);   color:var(--green-light); }
+.s-none   { background:rgba(255,255,255,.06); color:var(--text-dim); }
+.add-player-btn { display:flex; align-items:center; justify-content:center; gap:8px; padding:14px; border-radius:16px; border:1.5px dashed rgba(255,255,255,.1); background:rgba(255,255,255,.02); color:var(--text-dim); font-size:13px; font-weight:600; cursor:pointer; width:100%; }
+
+/* ── HEADER VERDE ── */
+.header-green { background:var(--green); border-radius:0 0 28px 28px; padding:16px 18px 14px; }
+.header-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.jugador-pill { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.12); border-radius:20px; padding:7px 14px 7px 8px; cursor:pointer; }
+.jugador-nombre { color:white; font-size:14px; font-weight:600; }
+.jugador-cambiar { color:rgba(255,255,255,.45); font-size:10px; }
+.acumulado-wrap { text-align:right; }
+.acumulado-label { color:rgba(255,255,255,.45); font-size:9px; text-transform:uppercase; letter-spacing:.8px; }
+.acumulado-num { color:white; font-size:36px; font-weight:700; letter-spacing:-1px; line-height:1; }
+
+/* ── BARRA CONTROLES ── */
+.controles-bar { display:flex; background:rgba(0,0,0,.25); border-radius:14px; padding:3px; gap:2px; }
+.ctrl-btn { border-radius:11px; padding:7px 6px; display:flex; align-items:center; justify-content:center; gap:5px; cursor:pointer; font-size:11px; font-weight:700; transition:opacity .15s; }
+.ctrl-btn:active { opacity:.7; }
+.ctrl-voz { flex:2; background:white; color:var(--green); }
+.ctrl-voz.inactive { background:transparent; color:rgba(255,255,255,.4); }
+.ctrl-botones { flex:2; color:rgba(255,255,255,.4); }
+.ctrl-botones.active { background:white; color:var(--green); }
+.ctrl-reset  { flex:1.2; background:rgba(220,38,38,.3); color:#fca5a5; border:1px solid rgba(220,38,38,.25); }
+.ctrl-torneo { flex:1.2; background:rgba(217,119,6,.2); color:var(--amber-light); }
+.ctrl-torneo.on { background:rgba(217,119,6,.4); border:1px solid rgba(217,119,6,.5); }
+
+/* Ondas de voz */
+.ondas { display:flex; align-items:center; gap:2px; height:14px; }
+.onda { width:2px; border-radius:1px; background:currentColor; animation:onda .8s ease infinite; }
+.onda:nth-child(1){height:4px;animation-delay:0s}
+.onda:nth-child(2){height:8px;animation-delay:.1s}
+.onda:nth-child(3){height:12px;animation-delay:.2s}
+.onda:nth-child(4){height:8px;animation-delay:.3s}
+.onda:nth-child(5){height:4px;animation-delay:.4s}
+@keyframes onda{0%,100%{transform:scaleY(1)}50%{transform:scaleY(1.6)}}
+
+/* Rivales torneo */
+.rivales-row { display:none; margin-top:10px; padding-bottom:2px; }
+.rivales-row.on { display:flex; justify-content:space-around; align-items:center; }
+.rival-chip { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; cursor:pointer; padding:6px 4px; border-radius:10px; transition:background .15s; }
+.rival-chip:active { background:rgba(255,255,255,.08); }
+.rival-chip .rn { color:rgba(255,255,255,.65); font-size:11px; font-weight:600; text-align:center; }
+.rival-chip .rs { font-size:20px; font-weight:700; }
+.rs.par { color:var(--green-light); }
+.rs.bogey { color:var(--amber-light); }
+.rs.doble { color:var(--red-light); }
+
+/* ── HOYOS SELECTOR ── */
+.hoyos-selector { padding:16px 12px 8px; display:grid; grid-template-columns:repeat(9,1fr); gap:4px; }
+.hoyo-btn { display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer; }
+.hoyo-num { width:100%; border-radius:10px; padding:10px 0; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:700; min-height:40px; transition:all .15s; }
+.hoyo-num.completado { background:var(--blue); color:white; }
+.hoyo-num.activo { background:var(--green); color:white; box-shadow:0 0 0 2px var(--bg),0 0 0 4px white; }
+.hoyo-num.vacio { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); color:rgba(255,255,255,.2); }
+.hoyo-res { font-size:14px; font-weight:800; min-height:18px; }
+.res-birdie { color:#818cf8; }
+.res-par    { color:var(--green-light); }
+.res-bogey  { color:var(--amber-light); }
+.res-doble  { color:#fb923c; }
+.res-triple { color:var(--red-light); }
+.res-vacio  { color:transparent; }
+
+/* ── ÁREA CENTRAL ── */
+.hoyo-central { padding:18px 16px 8px; text-align:center; }
+.hoyo-subtitulo { color:var(--text-muted); font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; margin-bottom:4px; }
+.hoyo-titulo-row { display:flex; align-items:center; justify-content:center; gap:10px; }
+.hoyo-titulo { color:white; font-size:42px; font-weight:700; letter-spacing:-1px; line-height:1; }
+.badge-res { border-radius:20px; padding:5px 12px; font-size:14px; font-weight:700; }
+.badge-eagle  { background:rgba(129,140,248,.2); color:#818cf8; }
+.badge-birdie { background:rgba(129,140,248,.15); color:#818cf8; }
+.badge-par    { background:rgba(52,211,153,.15); color:var(--green-light); }
+.badge-bogey  { background:rgba(251,191,36,.15); color:var(--amber-light); }
+.badge-doble  { background:rgba(251,146,60,.15); color:#fb923c; }
+.badge-triple { background:rgba(248,113,113,.15); color:var(--red-light); }
+
+/* ── TIROS REGISTRADOS ── */
+.tiros-list { padding:0 16px; display:flex; flex-direction:column; gap:7px; margin:8px 0; }
+.tiro-card { display:flex; align-items:center; gap:10px; padding:11px 14px; border-radius:14px; border-left:3px solid; }
+.tc-drive    { border-color:var(--green); background:rgba(15,110,86,.12); }
+.tc-hierro   { border-color:var(--amber); background:rgba(217,119,6,.12); }
+.tc-approach { border-color:var(--green); background:rgba(15,110,86,.12); }
+.tc-putt     { border-color:var(--red);   background:rgba(220,38,38,.12); }
+.tiro-emoji  { font-size:16px; flex-shrink:0; }
+.tiro-info   { flex:1; }
+.tiro-subtipo { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.8px; opacity:.6; margin-bottom:1px; }
+.tc-drive .tiro-subtipo,.tc-approach .tiro-subtipo { color:var(--green-light); }
+.tc-hierro   .tiro-subtipo { color:var(--amber-light); }
+.tc-putt     .tiro-subtipo { color:var(--red-light); }
+.tiro-val { font-size:14px; font-weight:700; }
+.tiro-putts { font-size:22px; font-weight:700; line-height:1; }
+.tiro-putts-sub { font-size:13px; font-weight:600; opacity:.7; }
+
+/* Botones discretos hoyo completado */
+.hoyo-actions { padding:0 16px; display:flex; gap:8px; margin-bottom:8px; }
+.btn-corregir { flex:1; background:rgba(255,255,255,.05); border:1px solid var(--border); border-radius:12px; padding:10px; color:var(--text-muted); font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; }
+.btn-borrar   { flex:1; background:rgba(220,38,38,.08); border:1px solid rgba(220,38,38,.15); border-radius:12px; padding:10px; color:rgba(248,113,113,.6); font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; }
+
+/* ── BOTÓN DICTAR ── */
+.dictar-wrap { padding:0; display:flex; flex-direction:column; align-items:center; flex:1; }
+.btn-mic-circulo {
+  width:190px; height:190px; border-radius:50%;
+  background:var(--green);
+  border:none; cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
+  box-shadow:0 0 0 10px rgba(15,110,86,.2), 0 0 0 20px rgba(15,110,86,.08);
+  transition:transform .15s, background .2s, box-shadow .2s;
+}
+.btn-mic-circulo:active { transform:scale(.93); }
+.btn-mic-circulo.grabando {
+  background:#CC0000;
+  box-shadow:
+    0 0 0 8px rgba(204,0,0,.5),
+    0 0 0 18px rgba(204,0,0,.3),
+    0 0 0 30px rgba(204,0,0,.12);
+  animation:pulso-rojo 1s ease infinite;
+}
+@keyframes pulso-rojo {
+  0%,100%{box-shadow:0 0 0 8px rgba(204,0,0,.5),0 0 0 18px rgba(204,0,0,.3),0 0 0 30px rgba(204,0,0,.1)}
+  50%{box-shadow:0 0 0 12px rgba(204,0,0,.6),0 0 0 26px rgba(204,0,0,.25),0 0 0 42px rgba(204,0,0,.06)}
+}
+.dictar-hint { color:var(--text-dim); font-size:10px; }
+
+/* ── BOTTOM BAR ── */
+.bottom-bar { padding:8px 16px 28px; display:flex; gap:8px; align-items:center; background:var(--bg); margin-top:auto; }
+.btn-atras { background:rgba(255,255,255,.06); border:1px solid var(--border); border-radius:14px; padding:13px 14px; display:flex; align-items:center; gap:6px; cursor:pointer; }
+.btn-atras .lbl { color:var(--text-muted); font-size:12px; font-weight:600; }
+.btn-notas { background:rgba(217,119,6,.1); border:1px solid rgba(217,119,6,.2); border-radius:14px; width:46px; height:46px; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:22px; }
+.btn-fin { background:rgba(220,38,38,.1); border:1px solid rgba(220,38,38,.2); border-radius:14px; width:46px; height:46px; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--red-light); font-size:13px; font-weight:700; }
+.btn-sig { flex:1; background:var(--green); border-radius:14px; padding:13px; display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer; border:none; color:white; font-size:13px; font-weight:700; transition:transform .15s; }
+.btn-sig:active { transform:scale(.97); }
+.btn-terminar-vuelta { flex:1; background:linear-gradient(135deg,var(--green),var(--blue)); border-radius:14px; padding:13px; display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer; color:white; font-size:12px; font-weight:700; border:none; }
+
+/* ── OVERLAY / SHEET / MODAL ── */
+.overlay { display:none; position:fixed; inset:0; z-index:100; background:rgba(0,0,0,.7); backdrop-filter:blur(4px); align-items:flex-end; }
+.overlay.active { display:flex; }
+.sheet { width:100%; max-width:430px; margin:0 auto; background:var(--surface); border-radius:24px 24px 0 0; border:1px solid rgba(255,255,255,.1); box-shadow:0 -8px 40px rgba(0,0,0,.6); overflow:hidden; animation:slideUp .25s ease; }
+@keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
+.sheet-handle { display:flex; justify-content:center; padding:12px 0 0; }
+.sheet-handle span { width:36px; height:4px; background:rgba(255,255,255,.15); border-radius:2px; }
+
+/* ── OVERLAY NOTAS ── */
+#overlay-notas { position:fixed; inset:0; z-index:200; background:#050708; display:none; flex-direction:column; }
+#overlay-notas.active { display:flex; }
+.notas-header { padding:20px 18px 14px; display:flex; align-items:center; gap:12px; border-bottom:1px solid rgba(255,255,255,.06); }
+.notas-cat-icon { width:44px; height:44px; border-radius:14px; background:rgba(217,119,6,.2); display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+.notas-title-wrap { flex:1; }
+.notas-pre  { color:var(--text-dim); font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:2px; }
+.notas-cat  { color:white; font-size:20px; font-weight:700; }
+.btn-cerrar-notas { width:36px; height:36px; border-radius:50%; background:rgba(255,255,255,.07); display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:20px; color:var(--text-muted); }
+.btn-leer-notas { margin:12px 16px 10px; display:flex; align-items:center; gap:12px; background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:12px 14px; cursor:pointer; }
+.notas-cats { padding:0 16px 12px; display:flex; gap:6px; overflow-x:auto; }
+.cat-btn { flex-shrink:0; padding:7px 12px; border-radius:20px; font-size:11px; font-weight:700; cursor:pointer; border:1px solid rgba(255,255,255,.1); background:rgba(255,255,255,.05); color:rgba(255,255,255,.45); transition:all .15s; }
+.cat-btn.active { background:var(--amber); border-color:var(--amber); color:white; }
+.notas-list { flex:1; padding:0 16px; display:flex; flex-direction:column; gap:8px; overflow-y:auto; }
+.nota-item { display:flex; gap:10px; align-items:flex-start; padding:14px; border-radius:16px; border-left:3px solid var(--amber); background:rgba(217,119,6,.1); }
+.nota-texto { color:white; font-size:15px; font-weight:600; flex:1; line-height:1.5; }
+.btn-borrar-nota { width:30px; height:30px; border-radius:10px; background:rgba(255,255,255,.06); border:none; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; font-size:16px; }
+.notas-footer { padding:14px 16px 28px; border-top:1px solid rgba(255,255,255,.06); }
+.btn-dictar-nota { display:flex; align-items:center; gap:12px; background:rgba(255,255,255,.04); border:1.5px dashed rgba(255,255,255,.12); border-radius:14px; padding:13px 16px; cursor:pointer; }
+.mic-sm { width:36px; height:36px; border-radius:50%; background:var(--green); display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0; }
+
+/* ── CONFIRMACIÓN ── */
+.conf-header { padding:14px 20px 12px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,.06); }
+.conf-pre   { color:var(--text-dim); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.8px; margin-bottom:2px; }
+.conf-titulo { color:white; font-size:16px; font-weight:700; }
+.conf-tiros { padding:14px 16px; display:flex; flex-direction:column; gap:7px; }
+.conf-tiro  { display:flex; align-items:center; gap:10px; padding:11px 14px; border-radius:14px; border-left:3px solid; }
+.ct-drive    { border-color:var(--green); background:rgba(15,110,86,.12); }
+.ct-hierro   { border-color:var(--amber); background:rgba(217,119,6,.12); }
+.ct-approach { border-color:var(--green); background:rgba(15,110,86,.12); }
+.ct-putt     { border-color:var(--red); background:rgba(220,38,38,.12); }
+.ct-check    { font-size:16px; margin-left:auto; }
+.conf-faltante { margin:0 16px 12px; background:rgba(220,38,38,.1); border:1.5px solid rgba(220,38,38,.3); border-radius:14px; padding:12px 14px; }
+.conf-falt-hdr { display:flex; align-items:center; gap:8px; margin-bottom:10px; color:var(--red-light); font-size:11px; font-weight:700; text-transform:uppercase; }
+.conf-pregunta { color:white; font-size:13px; font-weight:600; margin-bottom:10px; line-height:1.4; }
+.conf-opciones { display:flex; gap:6px; }
+.conf-opcion { flex:1; border-radius:10px; padding:8px; text-align:center; font-size:12px; font-weight:700; cursor:pointer; border:1px solid; }
+.op-no-hubo { background:rgba(24,95,165,.3); border-color:rgba(24,95,165,.4); color:#60a5fa; }
+.op-lo-meti { background:rgba(15,110,86,.3); border-color:rgba(15,110,86,.4); color:var(--green-light); }
+.op-lo-falle { background:rgba(220,38,38,.3); border-color:rgba(220,38,38,.4); color:var(--red-light); }
+.conf-botones { padding:4px 16px 24px; display:flex; gap:8px; }
+.btn-editar  { flex:1; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:14px; padding:13px; display:flex; align-items:center; justify-content:center; gap:6px; color:var(--text-muted); font-size:13px; font-weight:600; cursor:pointer; }
+.btn-correcto { flex:2; background:var(--green); border-radius:14px; padding:13px; display:flex; align-items:center; justify-content:center; gap:6px; color:white; font-size:14px; font-weight:700; cursor:pointer; border:none; }
+
+/* ── FIN RONDA ── */
+.fin-franja-roja { background:rgba(220,38,38,.15); border-bottom:1px solid rgba(220,38,38,.2); padding:14px 20px; display:flex; align-items:center; gap:10px; }
+.fin-franja-verde { background:rgba(15,110,86,.2); border-bottom:1px solid rgba(15,110,86,.3); padding:14px 20px; display:flex; align-items:center; gap:10px; }
+.fin-conteo { padding:16px 20px; display:flex; gap:8px; }
+.fin-box { flex:1; border-radius:14px; padding:12px; text-align:center; }
+.fin-box-c { background:rgba(24,95,165,.15); border:1px solid rgba(24,95,165,.25); }
+.fin-box-f { background:rgba(220,38,38,.1); border:1px solid rgba(220,38,38,.2); }
+.fin-box .pre { color:var(--text-dim); font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.5px; margin-bottom:4px; }
+.fin-box .num { font-size:26px; font-weight:700; margin-bottom:2px; }
+.fin-box-c .num { color:#60a5fa; }
+.fin-box-f .num { color:var(--red-light); }
+.fin-box .sub { color:var(--text-dim); font-size:10px; }
+.fin-mensaje { margin:0 20px 16px; background:rgba(255,255,255,.04); border-radius:14px; padding:14px; color:rgba(255,255,255,.6); font-size:13px; line-height:1.6; text-align:center; }
+.fin-resultado-box { margin:0 20px 16px; background:rgba(255,255,255,.04); border-radius:14px; padding:16px; text-align:center; }
+.fin-botones { padding:0 20px 24px; display:flex; flex-direction:column; gap:8px; }
+.btn-si-terminar    { background:rgba(220,38,38,.2); border:1.5px solid rgba(220,38,38,.4); border-radius:14px; padding:14px; display:flex; align-items:center; justify-content:center; color:var(--red-light); font-size:14px; font-weight:700; cursor:pointer; }
+.btn-seguir-jugando { background:var(--green); border-radius:14px; padding:14px; display:flex; align-items:center; justify-content:center; gap:8px; color:white; font-size:14px; font-weight:700; cursor:pointer; border:none; }
+.btn-continuar-vuelta { background:linear-gradient(135deg,var(--green),var(--blue)); border-radius:14px; padding:14px; display:flex; align-items:center; justify-content:center; gap:8px; color:white; font-size:14px; font-weight:700; cursor:pointer; border:none; }
+.btn-guardar-terminar { background:rgba(220,38,38,.15); border:1.5px solid rgba(220,38,38,.3); border-radius:14px; padding:14px; display:flex; align-items:center; justify-content:center; gap:8px; color:var(--red-light); font-size:14px; font-weight:700; cursor:pointer; }
+
+/* ── RESET ── */
+.reset-header { background:rgba(220,38,38,.15); border-bottom:1px solid rgba(220,38,38,.2); padding:14px 20px; display:flex; align-items:center; gap:10px; color:var(--red-light); font-size:12px; font-weight:700; }
+.reset-body { padding:20px; }
+.reset-pregunta { color:white; font-size:16px; font-weight:700; margin-bottom:8px; }
+.reset-sub { color:var(--text-muted); font-size:13px; line-height:1.5; }
+.reset-botones { padding:0 20px 24px; display:flex; flex-direction:column; gap:8px; }
+.btn-confirmar-reset { background:var(--red); border-radius:14px; padding:14px; display:flex; align-items:center; justify-content:center; gap:8px; color:white; font-size:14px; font-weight:700; cursor:pointer; border:none; }
+.btn-cancelar-reset  { background:rgba(255,255,255,.06); border:1px solid var(--border); border-radius:14px; padding:14px; display:flex; align-items:center; justify-content:center; color:var(--text-muted); font-size:14px; font-weight:600; cursor:pointer; }
+
+/* ── TORNEO ── */
+.torneo-header { padding:14px 20px 12px; border-bottom:1px solid rgba(255,255,255,.06); color:white; font-size:16px; font-weight:700; }
+.torneo-jugador-fijo { margin:14px 16px 0; background:rgba(15,110,86,.1); border:1px solid rgba(15,110,86,.3); border-radius:14px; padding:14px; display:flex; align-items:center; justify-content:space-between; }
+.torneo-rivales { padding:12px 16px; display:flex; flex-direction:column; gap:8px; }
+.torneo-slot { background:rgba(255,255,255,.04); border:1.5px solid rgba(24,95,165,.3); border-radius:14px; padding:12px 16px; display:flex; align-items:center; gap:10px; }
+.torneo-slot.op { border-style:dashed; border-color:rgba(255,255,255,.1); }
+.torneo-input { background:none; border:none; outline:none; color:white; font-size:14px; font-weight:600; flex:1; font-family:inherit; text-transform:capitalize; }
+.torneo-input::placeholder { color:var(--text-muted); font-weight:400; }
+.torneo-botones { padding:0 16px 24px; display:flex; gap:8px; }
+.btn-cancelar-torneo { flex:1; background:rgba(255,255,255,.06); border:1px solid var(--border); border-radius:14px; padding:13px; color:var(--text-muted); font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+.btn-activar-torneo  { flex:2; background:var(--amber); border-radius:14px; padding:13px; color:white; font-size:13px; font-weight:700; cursor:pointer; border:none; display:flex; align-items:center; justify-content:center; gap:6px; }
+
+/* ── DESGLOSE RIVAL ── */
+.rival-header { padding:14px 20px 12px; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid rgba(255,255,255,.06); }
+.rival-scorecard { padding:14px 16px; }
+.sc-grid { display:grid; grid-template-columns:repeat(9,1fr); gap:4px; margin-bottom:8px; }
+.sc-cell { display:flex; flex-direction:column; align-items:center; gap:3px; }
+.sc-num  { font-size:9px; color:var(--text-dim); font-weight:600; }
+.sc-score { width:100%; min-height:28px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; }
+.sc-par   { background:rgba(52,211,153,.15); color:var(--green-light); }
+.sc-bogey { background:rgba(251,191,36,.15); color:var(--amber-light); }
+.sc-doble { background:rgba(248,113,113,.15); color:var(--red-light); }
+.sc-vacio { background:rgba(255,255,255,.04); color:var(--text-dim); }
+.btn-corregir-rival { margin:0 16px 20px; background:rgba(24,95,165,.2); border:1px solid rgba(24,95,165,.3); border-radius:14px; padding:13px; color:#60a5fa; font-size:13px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:6px; cursor:pointer; }
+
+/* ── RESUMEN FINAL ── */
+#view-resumen { background:var(--bg); overflow-y:auto; }
+.resumen-header { background:var(--green); padding:20px 20px 18px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:6px; }
+.resumen-body { padding:14px 14px 0; display:flex; flex-direction:column; gap:10px; }
+.stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+.stat-card { background:rgba(255,255,255,.04); border-radius:12px; padding:10px 12px; }
+.stat-lbl { color:var(--text-muted); font-size:10px; font-weight:600; margin-bottom:3px; }
+.stat-val { color:white; font-size:18px; font-weight:700; line-height:1.1; }
+.stat-sub { font-size:10px; font-weight:700; margin-top:1px; }
+.sub-good { color:var(--green-light); }
+.sub-neutral { color:var(--text-dim); }
+
+/* Putting estilo Apple */
+.putting-section { background:rgba(255,255,255,.05); border-radius:16px; overflow:hidden; border:1px solid rgba(255,255,255,.08); }
+.putting-header { padding:12px 14px 8px; display:flex; justify-content:space-between; align-items:center; }
+.putting-divider { height:1px; background:rgba(255,255,255,.07); margin:0 14px; }
+.putting-row { padding:11px 14px; display:flex; align-items:center; gap:12px; }
+.pr-icon { width:40px; height:40px; border-radius:11px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.pr-icon.rojo    { background:rgba(220,38,38,.2); font-size:20px; }
+.pr-icon.rojo-sm { background:rgba(220,38,38,.12); color:var(--red-light); font-size:14px; font-weight:800; }
+.pr-icon.amr     { background:rgba(217,119,6,.15); color:var(--amber-light); font-size:14px; font-weight:800; }
+.pr-info { flex:1; }
+.pr-lbl  { color:rgba(255,255,255,.45); font-size:10px; font-weight:600; margin-bottom:3px; }
+.pr-num  { font-size:19px; font-weight:700; line-height:1; }
+.pr-num.rojo { color:var(--red-light); }
+.pr-num.amr  { color:var(--amber-light); }
+.pr-de   { font-size:11px; font-weight:500; color:rgba(255,255,255,.3); }
+.pr-pct  { text-align:right; flex-shrink:0; }
+.pr-pct .pct   { color:var(--green-light); font-size:18px; font-weight:700; line-height:1; }
+.pr-pct .pct-l { color:var(--text-dim); font-size:9px; margin-top:2px; }
+
+/* Tabla con scroll */
+.tabla-hierros { background:rgba(24,95,165,.08); border:1px solid rgba(24,95,165,.2); border-radius:14px; overflow:hidden; }
+.tabla-header  { padding:12px 14px 10px; border-bottom:1px solid rgba(255,255,255,.06); display:flex; justify-content:space-between; align-items:center; }
+.tabla-tit     { display:flex; align-items:center; gap:8px; color:#60a5fa; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.8px; }
+.tabla-hint    { color:var(--text-dim); font-size:10px; }
+.tabla-wrap    { display:flex; overflow:hidden; }
+.col-fija      { flex-shrink:0; width:84px; border-right:1px solid rgba(255,255,255,.08); }
+.col-scroll    { overflow-x:auto; flex:1; }
+.cols-inner    { display:flex; min-width:370px; }
+.t-th          { height:34px; display:flex; align-items:center; border-bottom:1px solid rgba(255,255,255,.06); }
+.col-fija .t-th { padding:0 10px; }
+.t-th-lbl      { font-size:9px; font-weight:700; color:rgba(255,255,255,.25); }
+.t-th-c        { width:100%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; }
+.t-rango       { height:58px; padding:0 10px; border-bottom:1px solid rgba(255,255,255,.04); display:flex; align-items:center; }
+.t-rango.pc    { background:rgba(255,179,0,.04); }
+.t-rango.dim   { opacity:.5; }
+.t-rango.drv   { background:rgba(15,110,86,.08); border-left:2px solid var(--green); }
+.t-rango-txt   { color:rgba(255,255,255,.65); font-size:12px; font-weight:700; white-space:nowrap; }
+.t-rango-txt.drv-txt { color:var(--green-light); }
+.t-dato        { height:58px; border-bottom:1px solid rgba(255,255,255,.04); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; }
+.t-dato.pc     { background:rgba(255,179,0,.04); }
+.t-dato.dim    { opacity:.5; }
+.t-dato.drv    { background:rgba(15,110,86,.08); }
+.t-pct         { font-size:19px; font-weight:700; }
+.t-cnt         { font-size:12px; font-weight:600; opacity:.7; }
+.t-prox        { font-size:19px; font-weight:700; }
+.tabla-leyenda { padding:8px 14px; border-top:1px solid rgba(255,255,255,.06); color:rgba(255,255,255,.2); font-size:8px; }
+
+/* Comparativa */
+.tabla-comp { background:rgba(109,40,217,.08); border:1px solid rgba(109,40,217,.25); border-radius:12px; overflow:hidden; }
+.comp-header { padding:10px 14px 8px; border-bottom:1px solid rgba(255,255,255,.06); }
+.comp-tit { display:flex; align-items:center; gap:7px; color:var(--purple-light); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.8px; margin-bottom:8px; }
+.sel-bench { display:flex; gap:3px; overflow-x:auto; padding-bottom:2px; }
+.b-btn { flex-shrink:0; border-radius:20px; padding:3px 9px; font-size:8px; font-weight:700; cursor:pointer; border:1px solid rgba(255,255,255,.1); background:rgba(255,255,255,.04); color:rgba(255,255,255,.4); transition:all .15s; }
+.b-btn.active { background:rgba(109,40,217,.4); border-color:var(--purple); color:white; }
+.comp-body { padding:7px 10px 9px; }
+.comp-sec-lbl { color:rgba(255,255,255,.2); font-size:7px; font-weight:700; text-transform:uppercase; letter-spacing:.8px; margin:0 4px 4px; }
+.comp-hdr { display:grid; gap:2px; padding:2px 4px; margin-bottom:3px; }
+.c-lbl  { text-align:center; font-size:6px; font-weight:700; color:rgba(255,255,255,.3); }
+.c-lbl.obj { color:var(--purple-light); }
+.comp-fila { display:grid; gap:2px; padding:4px; background:rgba(255,255,255,.03); border-radius:6px; margin-bottom:2px; align-items:center; }
+.comp-fila.drv { background:rgba(15,110,86,.08); border-left:2px solid var(--green); }
+.comp-fila.dim { opacity:.6; }
+.c-rng  { color:rgba(255,255,255,.45); font-size:8px; font-weight:700; }
+.c-val  { font-size:11px; font-weight:700; text-align:center; }
+.c-tu   { color:#60a5fa; }
+.c-obj  { color:var(--purple-light); }
+.c-good { color:var(--green-light); }
+.c-mid  { color:var(--amber-light); }
+.c-bad  { color:var(--red-light); }
+.c-div  { height:1px; background:rgba(255,255,255,.08); margin:4px; }
+.c-put-hdr  { display:grid; gap:4px; padding:2px 4px; margin-bottom:3px; }
+.c-put-fila { display:grid; gap:4px; padding:5px 4px; background:rgba(255,255,255,.03); border-radius:6px; margin-bottom:2px; align-items:center; }
+.c-put-lbl  { color:rgba(255,255,255,.45); font-size:8px; font-weight:700; }
+.c-put-val  { font-size:12px; font-weight:700; text-align:center; }
+.c-legend   { display:flex; gap:8px; margin-top:6px; padding:0 4px; }
+.c-leg-item { display:flex; align-items:center; gap:3px; }
+.c-leg-dot  { width:6px; height:6px; border-radius:50%; }
+.c-leg-txt  { color:rgba(255,255,255,.25); font-size:7px; }
+
+/* Golpes ganados */
+.sg-section { background:rgba(109,40,217,.08); border:1px solid rgba(109,40,217,.25); border-radius:14px; padding:12px 14px; display:flex; flex-direction:column; gap:10px; }
+.sg-tit { display:flex; align-items:center; gap:7px; color:var(--purple-light); font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.8px; }
+.sg-resumen { display:flex; justify-content:space-between; align-items:center; }
+.sg-total-lbl { color:rgba(255,255,255,.35); font-size:9px; font-weight:600; margin-bottom:2px; }
+.sg-total { color:var(--red-light); font-size:26px; font-weight:700; letter-spacing:-1px; }
+.sg-sc-wrap { text-align:right; }
+.sg-sc-lbl { color:rgba(255,255,255,.4); font-size:9px; font-weight:600; margin-bottom:1px; }
+.sg-sc     { color:white; font-size:24px; font-weight:700; line-height:1; }
+.sg-sc-sub { color:rgba(255,255,255,.3); font-size:9px; margin-top:2px; }
+.sg-barras { display:flex; flex-direction:column; gap:8px; }
+.sg-barra  {}
+.sg-b-lbl  { display:flex; justify-content:space-between; margin-bottom:3px; }
+.sg-b-nom  { color:white; font-size:11px; font-weight:700; }
+.sg-b-val  { font-size:11px; font-weight:700; }
+.sg-b-val.neg { color:var(--red-light); }
+.sg-b-val.pos { color:var(--green-light); }
+.sg-b-val.mid { color:var(--amber-light); }
+.sg-track  { background:rgba(255,255,255,.06); border-radius:6px; height:7px; overflow:hidden; position:relative; }
+.sg-fill   { height:100%; border-radius:6px; }
+.sg-fill.neg { background:linear-gradient(90deg,#DC2626,#f87171); }
+.sg-fill.mid { background:linear-gradient(90deg,#D97706,#fbbf24); }
+.sg-fill.pos { position:absolute; right:0; background:linear-gradient(270deg,#0F6E56,#34d399); }
+.sg-det    { display:flex; gap:6px; margin-top:5px; }
+.sg-det-box { flex:1; border-radius:8px; padding:5px 8px; border-left:2px solid; }
+.sg-det-box.r1 { background:rgba(220,38,38,.08); border-color:rgba(220,38,38,.4); }
+.sg-det-box.r2 { background:rgba(220,38,38,.12); border-color:#DC2626; }
+.sg-det-rng  { color:rgba(255,255,255,.5); font-size:8px; font-weight:700; margin-bottom:1px; }
+.sg-det-dato { color:var(--red-light); font-size:10px; font-weight:700; }
+.sg-det-ben  { color:rgba(255,255,255,.2); font-size:8px; }
+.sg-msg    { background:rgba(220,38,38,.1); border-radius:10px; padding:8px 10px; }
+.sg-msg-t  { color:white; font-size:11px; font-weight:700; margin-bottom:2px; }
+.sg-msg-s  { color:rgba(255,255,255,.35); font-size:9px; }
+
+/* Botones resumen */
+.res-botones { padding:14px 14px 28px; display:flex; flex-direction:column; gap:8px; }
+.btn-guardar { background:var(--green); border-radius:14px; padding:14px; display:flex; align-items:center; justify-content:center; gap:10px; color:white; font-size:14px; font-weight:700; cursor:pointer; border:none; }
+.btn-cont-10 { background:rgba(24,95,165,.2); border:1.5px solid rgba(24,95,165,.3); border-radius:14px; padding:13px; display:flex; align-items:center; justify-content:center; gap:8px; color:#60a5fa; font-size:13px; font-weight:700; cursor:pointer; }
+.btn-salir   { padding:8px; display:flex; align-items:center; justify-content:center; color:var(--text-dim); font-size:12px; font-weight:600; cursor:pointer; }
+
+.hidden { display:none !important; }
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ================================================
+     VISTA 1: SELECTOR JUGADOR
+================================================ -->
+<div class="view active" id="view-selector">
+  <div class="logo-icon">⛳</div>
+  <div class="logo-title">Golf Necochea</div>
+  <div style="text-align:center"><span class="logo-badge">⛳ Registrar ronda</span></div>
+
+  <div style="width:100%;display:flex;flex-direction:column;gap:14px">
+    <div class="players-label">¿Quién está jugando?</div>
+    <div class="players-grid">
+      <div class="player-card" data-p="constanza" onclick="selJugador('constanza','👧','Constanza')">
+        <div class="player-avatar">👧</div>
+        <div class="player-name">Constanza</div>
+        <div class="player-status s-active">Ronda activa</div>
+      </div>
+      <div class="player-card" data-p="salvador" onclick="selJugador('salvador','👦','Salvador')">
+        <div class="player-avatar">👦</div>
+        <div class="player-name">Salvador</div>
+        <div class="player-status s-last">Última sesión</div>
+      </div>
+      <div class="player-card" data-p="elisa" onclick="selJugador('elisa','👩‍🦰','Elisa')">
+        <div class="player-avatar">👩‍🦰</div>
+        <div class="player-name">Elisa</div>
+        <div class="player-status s-none">Sin rondas</div>
+      </div>
+      <div class="player-card" data-p="papa" onclick="selJugador('papa','👨','Papá')">
+        <div class="player-avatar">👨</div>
+        <div class="player-name">Papá</div>
+        <div class="player-status s-none">Hace 3 días</div>
+      </div>
+    </div>
+    <div class="add-player-btn">➕ Agregar jugador</div>
+  </div>
+</div>
+
+<!-- ================================================
+     VISTA 2: HOYO EN CURSO
+================================================ -->
+<div class="view" id="view-hoyo">
+
+  <!-- Header verde -->
+  <div class="header-green">
+    <div class="header-top">
+      <div class="jugador-pill" onclick="irA('view-selector')">
+        <span id="jug-avatar" style="font-size:18px">👦</span>
+        <div>
+          <div class="jugador-nombre" id="jug-nombre">Salvador</div>
+          <div class="jugador-cambiar">Cambiar ▾</div>
         </div>
-      </div>`;
-  }
+      </div>
+      <div class="acumulado-wrap">
+        <div class="acumulado-label">Acumulado</div>
+        <div class="acumulado-num" id="acumulado">+3</div>
+      </div>
+    </div>
 
-  // Hierros/yardas
-  datos.hierros.forEach(h => {
-    lista.innerHTML += `
+    <!-- Barra controles -->
+    <div class="controles-bar">
+      <div class="ctrl-btn ctrl-voz" id="btn-voz" onclick="setModo('voz')">
+        <div class="ondas"><span class="onda"></span><span class="onda"></span><span class="onda"></span><span class="onda"></span><span class="onda"></span></div>
+        <span>Voz</span>
+      </div>
+      <div class="ctrl-btn ctrl-botones" id="btn-bot" onclick="setModo('botones')">
+        <span style="font-size:8px">●</span><span>Botones</span>
+      </div>
+      <div class="ctrl-btn ctrl-reset" onclick="abrirModal('modal-reset')">
+        ↺ Reset
+      </div>
+      <div class="ctrl-btn ctrl-torneo" id="btn-torneo" onclick="toggleTorneo()">
+        🏆 Torneo
+      </div>
+    </div>
+
+    <!-- Rivales torneo -->
+    <div class="rivales-row" id="rivales-row">
+      <div class="rival-chip" onclick="abrirDesglose('Luis')">
+        <span class="rn">Luis</span><span class="rs bogey">+4</span>
+      </div>
+      <div class="rival-chip" onclick="abrirDesglose('Carlos')">
+        <span class="rn">Carlos</span><span class="rs par">E</span>
+      </div>
+      <div class="rival-chip" onclick="abrirDesglose('Memo')">
+        <span class="rn">Memo</span><span class="rs doble">+7</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Selector 9 hoyos -->
+  <div class="hoyos-selector" id="hoyos-selector"></div>
+
+  <!-- Área central -->
+  <div class="hoyo-central">
+    <div class="hoyo-subtitulo" id="h-subtitulo">En curso</div>
+    <div class="hoyo-titulo-row">
+      <div class="hoyo-titulo" id="h-titulo">Hoyo 4</div>
+      <div class="badge-res hidden" id="h-badge"></div>
+    </div>
+  </div>
+
+  <!-- Tiros registrados (hoyo completado) -->
+  <div class="tiros-list hidden" id="tiros-list">
+    <div class="tiro-card tc-drive">
+      <span class="tiro-emoji">🏌️</span>
+      <div class="tiro-info">
+        <div class="tiro-subtipo">Drive</div>
+        <div class="tiro-val">Fairway</div>
+      </div>
+    </div>
+    <div class="tiro-card tc-hierro">
+      <span class="tiro-emoji">🔨</span>
+      <div class="tiro-info">
+        <div class="tiro-subtipo">140 yardas</div>
+        <div class="tiro-val">Barbas</div>
+      </div>
+    </div>
+    <div class="tiro-card tc-approach">
+      <span class="tiro-emoji">🎯</span>
+      <div class="tiro-info">
+        <div class="tiro-subtipo">30 yardas</div>
+        <div class="tiro-val">Al green</div>
+      </div>
+    </div>
+    <div class="tiro-card tc-putt">
+      <span class="tiro-emoji">⛳</span>
+      <div class="tiro-info">
+        <div class="tiro-subtipo">Putts · sin corto</div>
+        <div style="color:white;font-size:16px;font-weight:700">3 putts — 8 pasos</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botones hoyo completado -->
+  <div class="hoyo-actions hidden" id="hoyo-actions">
+    <div class="btn-corregir" onclick="abrirModal('modal-conf')">
+      <span style="font-size:15px;line-height:1">⏺</span>&nbsp;&nbsp;Corregir por voz
+    </div>
+    <div class="btn-borrar" onclick="borrarHoyo()">
+      <span style="font-size:15px;line-height:1;color:rgba(248,113,113,.6)">⊗</span>&nbsp;&nbsp;Borrar hoyo
+    </div>
+  </div>
+
+  <!-- Botón dictar -->
+  <div class="dictar-wrap" id="dictar-wrap">
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:20px 0">
+      <button class="btn-mic-circulo" id="btn-mic" onclick="toggleVoz()">
+        <span id="mic-emoji" style="font-size:52px;line-height:1">🎤</span>
+        <span id="mic-label" style="color:white;font-size:22px;font-weight:700;letter-spacing:1px;display:none">LISTO</span>
+      </button>
+      <span class="dictar-hint" style="font-size:12px" id="mic-hint">Toca para hablar</span>
+      <div id="debug-voz" style="color:#34d399;font-size:12px;text-align:center;padding:0 20px;min-height:20px;line-height:1.5;max-width:320px"></div>
+    </div>
+  </div>
+
+  <!-- Bottom bar -->
+  <div class="bottom-bar">
+    <div class="btn-atras" onclick="hoyoAnterior()">
+      ← <span class="lbl">Atrás</span>
+    </div>
+    <div class="btn-notas" onclick="abrirNotas()" style="font-size:20px;letter-spacing:-1px;font-weight:300">≡</div>
+    <div class="btn-fin" onclick="abrirFin()">Fin</div>
+    <button class="btn-sig" id="btn-sig" onclick="hoyoSiguiente()">
+      Siguiente →
+    </button>
+  </div>
+</div>
+
+<!-- ================================================
+     VISTA 3: RESUMEN FINAL
+================================================ -->
+<div class="view" id="view-resumen">
+  <div class="resumen-header">
+    <div style="font-size:44px">🏆</div>
+    <div style="color:white;font-size:22px;font-weight:700">¡Ronda completada!</div>
+    <div style="color:rgba(255,255,255,.5);font-size:11px" id="res-jugador">Salvador · 9 hoyos</div>
+    <div style="color:white;font-size:38px;font-weight:700;letter-spacing:-1px" id="res-score">+3</div>
+  </div>
+
+  <div class="resumen-body">
+    <!-- 4 stats -->
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-lbl">🌿 Fairways</div><div class="stat-val">5/7</div><div class="stat-sub sub-good">71%</div></div>
+      <div class="stat-card"><div class="stat-lbl">🏆 Up & Down</div><div class="stat-val">2/4</div><div class="stat-sub sub-good">50%</div></div>
+      <div class="stat-card"><div class="stat-lbl">🏜️ Trampas</div><div class="stat-val">1</div><div class="stat-sub sub-neutral">esta ronda</div></div>
+      <div class="stat-card"><div class="stat-lbl">💧 Castigos</div><div class="stat-val">2</div><div class="stat-sub sub-neutral">esta ronda</div></div>
+    </div>
+
+    <!-- Putting estilo Apple -->
+    <div class="putting-section">
+      <div class="putting-header">
+        <span style="color:white;font-size:13px;font-weight:700">⛳ Putting</span>
+        <span style="color:var(--text-muted);font-size:11px;font-weight:600">18 total</span>
+      </div>
+      <div class="putting-divider"></div>
+      <div class="putting-row">
+        <div class="pr-icon rojo">❌</div>
+        <div class="pr-info">
+          <div class="pr-lbl">Cortos fallados menos de 2 pasos</div>
+          <div class="pr-num rojo">1 <span class="pr-de">fallado de 5</span></div>
+        </div>
+        <div class="pr-pct"><div class="pct">80%</div><div class="pct-l">acierto</div></div>
+      </div>
+      <div class="putting-divider"></div>
+      <div class="putting-row">
+        <div class="pr-icon rojo-sm">3p</div>
+        <div class="pr-info">
+          <div class="pr-lbl">3-Putts menos de 12 pasos</div>
+          <div class="pr-num rojo">1 <span class="pr-de">triple de 4</span></div>
+        </div>
+        <div class="pr-pct"><div class="pct">75%</div><div class="pct-l">acierto</div></div>
+      </div>
+      <div class="putting-divider"></div>
+      <div class="putting-row">
+        <div class="pr-icon amr">3p</div>
+        <div class="pr-info">
+          <div class="pr-lbl">3-Putts más de 12 pasos</div>
+          <div class="pr-num amr">2 <span class="pr-de">triples de 7</span></div>
+        </div>
+        <div class="pr-pct"><div class="pct">71%</div><div class="pct-l">acierto</div></div>
+      </div>
+    </div>
+
+    <!-- Tabla hierros con scroll -->
+    <div class="tabla-hierros">
+      <div class="tabla-header">
+        <div class="tabla-tit">🎯 Tiros al green</div>
+        <div class="tabla-hint">← desliza →</div>
+      </div>
+      <div class="tabla-wrap">
+        <!-- Columna fija -->
+        <div class="col-fija">
+          <div class="t-th"><span class="t-th-lbl" style="padding-left:10px">Rango</span></div>
+          <div class="t-rango">     <span class="t-rango-txt">0 – 30y</span></div>
+          <div class="t-rango pc"> <span class="t-rango-txt">30 – 60y</span></div>
+          <div class="t-rango">     <span class="t-rango-txt">60 – 90y</span></div>
+          <div class="t-rango">     <span class="t-rango-txt">90 – 120y</span></div>
+          <div class="t-rango pc"> <span class="t-rango-txt">120 – 150y</span></div>
+          <div class="t-rango dim"><span class="t-rango-txt">+ 150y</span></div>
+          <div class="t-rango drv"><span class="t-rango-txt drv-txt">Drive</span></div>
+        </div>
+        <!-- Columnas scroll -->
+        <div class="col-scroll">
+          <div class="cols-inner">
+            <!-- 📍 -->
+            <div style="flex-shrink:0;width:68px;border-right:1px solid rgba(255,255,255,.05)">
+              <div class="t-th" style="width:68px"><div class="t-th-c" style="color:#60a5fa">📍 prom.</div></div>
+              <div class="t-dato">     <span class="t-prox" style="color:#60a5fa">3p</span></div>
+              <div class="t-dato pc"> <span class="t-prox" style="color:#60a5fa">6p</span></div>
+              <div class="t-dato">     <span class="t-prox" style="color:#60a5fa">8p</span></div>
+              <div class="t-dato">     <span class="t-prox" style="color:#60a5fa">11p</span></div>
+              <div class="t-dato pc"> <span class="t-prox" style="color:#60a5fa">14p</span></div>
+              <div class="t-dato dim"><span class="t-prox" style="color:#60a5fa">17p</span></div>
+              <div class="t-dato drv"><span style="color:rgba(255,255,255,.2);font-size:15px;font-weight:700">—</span></div>
+            </div>
+            <!-- Green -->
+            <div style="flex-shrink:0;width:74px;border-right:1px solid rgba(255,255,255,.05)">
+              <div class="t-th" style="width:74px"><div class="t-th-c" style="color:#34d399">Green</div></div>
+              <div class="t-dato">    <span class="t-pct" style="color:#34d399">80%</span><span class="t-cnt" style="color:#34d399">4/5</span></div>
+              <div class="t-dato pc"><span class="t-pct" style="color:#34d399">60%</span><span class="t-cnt" style="color:#34d399">2/3</span></div>
+              <div class="t-dato">    <span class="t-pct" style="color:#fbbf24">50%</span><span class="t-cnt" style="color:#fbbf24">6/12</span></div>
+              <div class="t-dato">    <span class="t-pct" style="color:#f87171">40%</span><span class="t-cnt" style="color:#f87171">3/8</span></div>
+              <div class="t-dato pc"><span class="t-pct" style="color:#f87171">25%</span><span class="t-cnt" style="color:#f87171">1/4</span></div>
+              <div class="t-dato dim"><span class="t-pct" style="color:#f87171">20%</span><span class="t-cnt" style="color:#f87171">1/2</span></div>
+              <div class="t-dato drv"><span class="t-pct" style="color:#34d399">57%</span><span class="t-cnt" style="color:#34d399">4/7</span></div>
+            </div>
+            <!-- Barbas -->
+            <div style="flex-shrink:0;width:74px;border-right:1px solid rgba(255,255,255,.05)">
+              <div class="t-th" style="width:74px"><div class="t-th-c" style="color:#fbbf24">Barbas</div></div>
+              <div class="t-dato">    <span class="t-pct" style="color:#fbbf24">20%</span><span class="t-cnt" style="color:#fbbf24">1/5</span></div>
+              <div class="t-dato pc"><span class="t-pct" style="color:#fbbf24">30%</span><span class="t-cnt" style="color:#fbbf24">1/3</span></div>
+              <div class="t-dato">    <span class="t-pct" style="color:#fbbf24">33%</span><span class="t-cnt" style="color:#fbbf24">4/12</span></div>
+              <div class="t-dato">    <span class="t-pct" style="color:#fbbf24">40%</span><span class="t-cnt" style="color:#fbbf24">3/8</span></div>
+              <div class="t-dato pc"><span class="t-pct" style="color:#fbbf24">50%</span><span class="t-cnt" style="color:#fbbf24">2/4</span></div>
+              <div class="t-dato dim"><span class="t-pct" style="color:#fbbf24">40%</span><span class="t-cnt" style="color:#fbbf24">1/2</span></div>
+              <div class="t-dato drv"><span style="color:rgba(255,255,255,.15);font-size:15px;font-weight:700">—</span></div>
+            </div>
+            <!-- Trampa -->
+            <div style="flex-shrink:0;width:74px;border-right:1px solid rgba(255,255,255,.05)">
+              <div class="t-th" style="width:74px"><div class="t-th-c" style="color:#f87171">Trampa</div></div>
+              <div class="t-dato">    <span class="t-pct" style="color:rgba(255,255,255,.2)">0%</span><span class="t-cnt" style="color:rgba(255,255,255,.15)">0/5</span></div>
+              <div class="t-dato pc"><span class="t-pct" style="color:#f87171">10%</span><span class="t-cnt" style="color:#f87171">1/3</span></div>
+              <div class="t-dato">    <span class="t-pct" style="color:#f87171">17%</span><span class="t-cnt" style="color:#f87171">2/12</span></div>
+              <div class="t-dato">    <span class="t-pct" style="color:#f87171">20%</span><span class="t-cnt" style="color:#f87171">2/8</span></div>
+              <div class="t-dato pc"><span class="t-pct" style="color:#f87171">15%</span><span class="t-cnt" style="color:#f87171">1/4</span></div>
+              <div class="t-dato dim"><span class="t-pct" style="color:#f87171">20%</span><span class="t-cnt" style="color:#f87171">1/2</span></div>
+              <div class="t-dato drv"><span style="color:rgba(255,255,255,.15);font-size:15px;font-weight:700">—</span></div>
+            </div>
+            <!-- Castigo -->
+            <div style="flex-shrink:0;width:74px">
+              <div class="t-th" style="width:74px"><div class="t-th-c" style="color:rgba(248,113,113,.6)">Castigo</div></div>
+              <div class="t-dato">    <span class="t-pct" style="color:rgba(255,255,255,.2)">0%</span><span class="t-cnt" style="color:rgba(255,255,255,.15)">0/5</span></div>
+              <div class="t-dato pc"><span class="t-pct" style="color:rgba(255,255,255,.2)">0%</span><span class="t-cnt" style="color:rgba(255,255,255,.15)">0/3</span></div>
+              <div class="t-dato">    <span class="t-pct" style="color:rgba(255,255,255,.2)">0%</span><span class="t-cnt" style="color:rgba(255,255,255,.15)">0/12</span></div>
+              <div class="t-dato">    <span class="t-pct" style="color:rgba(255,255,255,.2)">0%</span><span class="t-cnt" style="color:rgba(255,255,255,.15)">0/8</span></div>
+              <div class="t-dato pc"><span class="t-pct" style="color:rgba(248,113,113,.7)">10%</span><span class="t-cnt" style="color:rgba(248,113,113,.6)">1/4</span></div>
+              <div class="t-dato dim"><span class="t-pct" style="color:rgba(248,113,113,.7)">20%</span><span class="t-cnt" style="color:rgba(248,113,113,.6)">1/2</span></div>
+              <div class="t-dato drv"><span class="t-pct" style="color:#f87171">15%</span><span class="t-cnt" style="color:#f87171">1/7</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="tabla-leyenda">Filas sombreadas = pocos datos · 📍 pasos prom. a la bandera · Drive: Green=Fairway</div>
+    </div>
+
+    <!-- Comparativa -->
+    <div class="tabla-comp">
+      <div class="comp-header">
+        <div class="comp-tit">🏆 Comparativa vs objetivo</div>
+        <div class="sel-bench">
+          <div class="b-btn active" onclick="selBench(this,'PGA')">PGA</div>
+          <div class="b-btn" onclick="selBench(this,'H0')">H0</div>
+          <div class="b-btn" onclick="selBench(this,'H5')">H5</div>
+          <div class="b-btn" onclick="selBench(this,'H10')">H10</div>
+          <div class="b-btn" onclick="selBench(this,'H15')">H15</div>
+          <div class="b-btn" onclick="selBench(this,'H20')">H20</div>
+          <div class="b-btn" onclick="selBench(this,'H25')">H25</div>
+        </div>
+      </div>
+
+      <!-- Tabla con scroll igual que hierros -->
+      <div class="comp-sec-lbl" style="padding:8px 14px 4px">Tiros al green</div>
+      <div style="display:flex;overflow:hidden">
+
+        <!-- Columna fija: rangos -->
+        <div style="flex-shrink:0;width:84px;border-right:1px solid rgba(255,255,255,.08)">
+          <div class="t-th" style="height:40px;padding:0 10px"><span style="font-size:9px;font-weight:700;color:rgba(255,255,255,.25)">Rango</span></div>
+          <div class="t-rango">     <span class="t-rango-txt">0 – 30y</span></div>
+          <div class="t-rango pc"> <span class="t-rango-txt">30 – 60y</span></div>
+          <div class="t-rango">     <span class="t-rango-txt">60 – 90y</span></div>
+          <div class="t-rango">     <span class="t-rango-txt">90 – 120y</span></div>
+          <div class="t-rango pc"> <span class="t-rango-txt">120 – 150y</span></div>
+          <div class="t-rango dim"><span class="t-rango-txt">+ 150y</span></div>
+          <div class="t-rango drv"><span class="t-rango-txt drv-txt">Drive</span></div>
+        </div>
+
+        <!-- Columnas scroll: 📍Tú · 📍Obj · Green Tú · Green Obj -->
+        <div style="overflow-x:auto;flex:1">
+          <div style="display:flex;min-width:280px">
+
+            <!-- 📍 Tú -->
+            <div style="flex-shrink:0;width:70px;border-right:1px solid rgba(255,255,255,.05)">
+              <div class="t-th" style="height:40px;width:70px"><div class="t-th-c" style="color:#60a5fa;font-size:10px">📍 Tú</div></div>
+              <div class="t-dato"><span class="t-prox" style="color:#60a5fa;font-size:20px">3p</span></div>
+              <div class="t-dato pc"><span class="t-prox" style="color:#60a5fa;font-size:20px">6p</span></div>
+              <div class="t-dato"><span class="t-prox" style="color:#60a5fa;font-size:20px">8p</span></div>
+              <div class="t-dato"><span class="t-prox" style="color:#60a5fa;font-size:20px">11p</span></div>
+              <div class="t-dato pc"><span class="t-prox" style="color:#60a5fa;font-size:20px">14p</span></div>
+              <div class="t-dato dim"><span class="t-prox" style="color:#60a5fa;font-size:20px">17p</span></div>
+              <div class="t-dato drv"><span style="color:rgba(255,255,255,.2);font-size:17px;font-weight:700">—</span></div>
+            </div>
+
+            <!-- 📍 Objetivo -->
+            <div style="flex-shrink:0;width:70px;border-right:1px solid rgba(255,255,255,.05)">
+              <div class="t-th" style="height:40px;width:70px"><div class="t-th-c" style="color:var(--purple-light);font-size:10px" id="bl-prox">📍 PGA</div></div>
+              <div class="t-dato"><span class="t-prox c-obj" style="font-size:20px" data-b='{"PGA":"2p","H0":"3p","H5":"4p","H10":"5p","H15":"6p","H20":"8p","H25":"10p"}'>2p</span></div>
+              <div class="t-dato pc"><span class="t-prox c-obj" style="font-size:20px" data-b='{"PGA":"3p","H0":"4p","H5":"5p","H10":"7p","H15":"9p","H20":"11p","H25":"13p"}'>3p</span></div>
+              <div class="t-dato"><span class="t-prox c-obj" style="font-size:20px" data-b='{"PGA":"4p","H0":"6p","H5":"8p","H10":"10p","H15":"12p","H20":"15p","H25":"18p"}'>4p</span></div>
+              <div class="t-dato"><span class="t-prox c-obj" style="font-size:20px" data-b='{"PGA":"5p","H0":"8p","H5":"11p","H10":"14p","H15":"17p","H20":"21p","H25":"25p"}'>5p</span></div>
+              <div class="t-dato pc"><span class="t-prox c-obj" style="font-size:20px" data-b='{"PGA":"7p","H0":"11p","H5":"14p","H10":"17p","H15":"21p","H20":"26p","H25":"30p"}'>7p</span></div>
+              <div class="t-dato dim"><span class="t-prox c-obj" style="font-size:20px" data-b='{"PGA":"9p","H0":"14p","H5":"18p","H10":"23p","H15":"28p","H20":"34p","H25":"40p"}'>9p</span></div>
+              <div class="t-dato drv"><span style="color:rgba(255,255,255,.2);font-size:17px;font-weight:700">—</span></div>
+            </div>
+
+            <!-- Green% Tú -->
+            <div style="flex-shrink:0;width:76px;border-right:1px solid rgba(255,255,255,.05)">
+              <div class="t-th" style="height:40px;width:76px"><div class="t-th-c" style="color:#34d399;font-size:10px">Green Tú</div></div>
+              <div class="t-dato"><span class="t-pct" style="color:#34d399;font-size:20px">80%</span></div>
+              <div class="t-dato pc"><span class="t-pct" style="color:#34d399;font-size:20px">60%</span></div>
+              <div class="t-dato"><span class="t-pct" style="color:#fbbf24;font-size:20px">50%</span></div>
+              <div class="t-dato"><span class="t-pct" style="color:#f87171;font-size:20px">40%</span></div>
+              <div class="t-dato pc"><span class="t-pct" style="color:#f87171;font-size:20px">25%</span></div>
+              <div class="t-dato dim"><span class="t-pct" style="color:#f87171;font-size:20px">20%</span></div>
+              <div class="t-dato drv"><span class="t-pct" style="color:#34d399;font-size:20px">57%</span></div>
+            </div>
+
+            <!-- Green% Objetivo -->
+            <div style="flex-shrink:0;width:76px">
+              <div class="t-th" style="height:40px;width:76px"><div class="t-th-c" style="color:var(--purple-light);font-size:10px" id="bl-green">Green PGA</div></div>
+              <div class="t-dato"><span class="t-pct c-obj" style="font-size:20px" data-b='{"PGA":"81%","H0":"75%","H5":"70%","H10":"62%","H15":"52%","H20":"42%","H25":"35%"}'>81%</span></div>
+              <div class="t-dato pc"><span class="t-pct c-obj" style="font-size:20px" data-b='{"PGA":"81%","H0":"72%","H5":"64%","H10":"55%","H15":"44%","H20":"35%","H25":"28%"}'>81%</span></div>
+              <div class="t-dato"><span class="t-pct c-obj" style="font-size:20px" data-b='{"PGA":"81%","H0":"70%","H5":"58%","H10":"48%","H15":"37%","H20":"29%","H25":"22%"}'>81%</span></div>
+              <div class="t-dato"><span class="t-pct c-obj" style="font-size:20px" data-b='{"PGA":"74%","H0":"62%","H5":"52%","H10":"42%","H15":"32%","H20":"24%","H25":"18%"}'>74%</span></div>
+              <div class="t-dato pc"><span class="t-pct c-obj" style="font-size:20px" data-b='{"PGA":"69%","H0":"56%","H5":"46%","H10":"37%","H15":"27%","H20":"20%","H25":"15%"}'>69%</span></div>
+              <div class="t-dato dim"><span class="t-pct c-obj" style="font-size:20px" data-b='{"PGA":"63%","H0":"50%","H5":"40%","H10":"30%","H15":"21%","H20":"15%","H25":"10%"}'>63%</span></div>
+              <div class="t-dato drv"><span class="t-pct c-obj" style="font-size:20px" data-b='{"PGA":"61%","H0":"57%","H5":"51%","H10":"49%","H15":"48%","H20":"43%","H25":"43%"}'>61%</span></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="tabla-leyenda">← desliza · 📍 pasos prom. a la bandera · Drive: Green=Fairway · Filas sombreadas = pocos datos</div>
+
+      <!-- Putting comparativa -->
+      <div class="comp-sec-lbl" style="padding:10px 14px 6px;border-top:1px solid rgba(255,255,255,.06)">Putting</div>
+      <div style="padding:0 14px 16px;display:flex;flex-direction:column;gap:6px">
+
+        <!-- Header -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:0 4px;margin-bottom:2px">
+          <span style="color:rgba(255,255,255,.25);font-size:10px;font-weight:700"></span>
+          <div style="text-align:center;color:#60a5fa;font-size:11px;font-weight:700">Tú</div>
+          <div style="text-align:center;color:var(--purple-light);font-size:11px;font-weight:700" id="bl-put">PGA</div>
+        </div>
+
+        <!-- Putts/ronda -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:10px 12px;background:rgba(255,255,255,.03);border-radius:10px;align-items:center">
+          <span style="color:rgba(255,255,255,.5);font-size:12px;font-weight:700">Putts/ronda</span>
+          <span style="color:#60a5fa;font-size:22px;font-weight:700;text-align:center">18</span>
+          <span style="color:var(--purple-light);font-size:22px;font-weight:700;text-align:center" data-b='{"PGA":"14.5","H0":"15.7","H5":"16.3","H10":"17","H15":"17.4","H20":"18.1","H25":"18.5"}'>14.5</span>
+        </div>
+
+        <!-- 3-Putts/ronda -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:10px 12px;background:rgba(255,255,255,.03);border-radius:10px;align-items:center">
+          <span style="color:rgba(255,255,255,.5);font-size:12px;font-weight:700">3-Putts/ronda</span>
+          <span style="color:#f87171;font-size:22px;font-weight:700;text-align:center">3</span>
+          <span style="color:var(--purple-light);font-size:22px;font-weight:700;text-align:center" data-b='{"PGA":"0.25","H0":"0.85","H5":"1.15","H10":"1.4","H15":"1.75","H20":"2","H25":"2.9"}'>0.25</span>
+        </div>
+
+        <!-- 1-Putts/ronda -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:10px 12px;background:rgba(255,255,255,.03);border-radius:10px;align-items:center">
+          <span style="color:rgba(255,255,255,.5);font-size:12px;font-weight:700">1-Putts/ronda</span>
+          <span style="color:#34d399;font-size:22px;font-weight:700;text-align:center">5</span>
+          <span style="color:var(--purple-light);font-size:22px;font-weight:700;text-align:center" data-b='{"PGA":"3.55","H0":"2.6","H5":"2.25","H10":"2","H15":"1.75","H20":"1.5","H25":"1.25"}'>3.55</span>
+        </div>
+
+        <!-- Acierto <2 pasos -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:10px 12px;background:rgba(255,255,255,.03);border-radius:10px;align-items:center">
+          <span style="color:rgba(255,255,255,.5);font-size:12px;font-weight:700">Acierto &lt;2 pasos</span>
+          <span style="color:#fbbf24;font-size:22px;font-weight:700;text-align:center">80%</span>
+          <span style="color:var(--purple-light);font-size:22px;font-weight:700;text-align:center" data-b='{"PGA":"83%","H0":"76%","H5":"70%","H10":"65%","H15":"57%","H20":"52%","H25":"45%"}'>83%</span>
+        </div>
+
+        <!-- Leyenda -->
+        <div style="display:flex;gap:10px;margin-top:4px;padding:0 4px">
+          <div style="display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:#60a5fa"></div><span style="color:rgba(255,255,255,.25);font-size:9px">Tú (ajustado 9h)</span></div>
+          <div style="display:flex;align-items:center;gap:4px"><div style="width:7px;height:7px;border-radius:50%;background:var(--purple-light)"></div><span style="color:rgba(255,255,255,.25);font-size:9px" id="bench-leg">PGA Tour</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Golpes ganados/perdidos -->
+    <div class="sg-section">
+      <div class="sg-tit">📊 Golpes ganados / perdidos vs PGA</div>
+      <div class="sg-resumen">
+        <div>
+          <div class="sg-total-lbl">Total golpes perdidos</div>
+          <div class="sg-total">-4.8</div>
+        </div>
+        <div class="sg-sc-wrap">
+          <div class="sg-sc-lbl">Tu score</div>
+          <div class="sg-sc">+12</div>
+          <div class="sg-sc-sub">+6 en 9 hoyos</div>
+        </div>
+      </div>
+      <div class="sg-barras">
+
+        <!-- Approaches -->
+        <div class="sg-barra" style="padding-bottom:4px">
+          <div class="sg-b-lbl" style="margin-bottom:6px">
+            <span class="sg-b-nom" style="font-size:14px">🎯 Approaches</span>
+            <span class="sg-b-val neg" style="font-size:22px;font-weight:700;letter-spacing:-.5px">-2.1</span>
+          </div>
+          <div class="sg-track" style="height:9px"><div class="sg-fill neg" style="width:87%"></div></div>
+          <div class="sg-det" style="margin-top:8px">
+            <div class="sg-det-box r1">
+              <div class="sg-det-rng" style="font-size:10px">90–120y</div>
+              <div class="sg-det-dato" style="font-size:13px;margin:3px 0">11p · GIR 40%</div>
+              <div class="sg-det-ben" style="font-size:10px">PGA: 5p · 74%</div>
+            </div>
+            <div class="sg-det-box r2">
+              <div class="sg-det-rng" style="font-size:10px">120–150y</div>
+              <div class="sg-det-dato" style="font-size:13px;margin:3px 0">14p · GIR 25%</div>
+              <div class="sg-det-ben" style="font-size:10px">PGA: 7p · 69%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Putting -->
+        <div class="sg-barra" style="padding:4px 0">
+          <div class="sg-b-lbl" style="margin-bottom:6px">
+            <span class="sg-b-nom" style="font-size:14px">⛳ Putting</span>
+            <span class="sg-b-val neg" style="font-size:22px;font-weight:700;letter-spacing:-.5px">-1.6</span>
+          </div>
+          <div class="sg-track" style="height:9px"><div class="sg-fill neg" style="width:67%"></div></div>
+        </div>
+
+        <!-- Up & Down -->
+        <div class="sg-barra" style="padding:4px 0">
+          <div class="sg-b-lbl" style="margin-bottom:6px">
+            <span class="sg-b-nom" style="font-size:14px">🏆 Up & Down</span>
+            <span class="sg-b-val mid" style="font-size:22px;font-weight:700;letter-spacing:-.5px">-0.8</span>
+          </div>
+          <div class="sg-track" style="height:9px"><div class="sg-fill mid" style="width:33%"></div></div>
+        </div>
+
+        <!-- Drive -->
+        <div class="sg-barra" style="padding:4px 0">
+          <div class="sg-b-lbl" style="margin-bottom:6px">
+            <span class="sg-b-nom" style="font-size:14px">🏌️ Drive / Tee</span>
+            <span class="sg-b-val pos" style="font-size:22px;font-weight:700;letter-spacing:-.5px">+0.7</span>
+          </div>
+          <div class="sg-track" style="height:9px"><div class="sg-fill pos" style="width:29%"></div></div>
+        </div>
+
+      </div>
+      <div class="sg-msg">
+        <div class="sg-msg-t">🎯 120–150y — pierdes ~1.2 golpes</div>
+        <div class="sg-msg-s">14p promedio vs 7p PGA. Tu mayor área de mejora.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="res-botones">
+    <button class="btn-guardar" onclick="guardarEnSheets()">☁️ Guardar en Google Sheets</button>
+    <div class="btn-cont-10" onclick="continuarSegundaVuelta()">↻ Continuar — hoyos 10 al 18</div>
+    <div class="btn-salir" onclick="irA('view-selector')">Salir sin guardar</div>
+  </div>
+</div>
+
+<!-- ================================================
+     OVERLAY: NOTAS
+================================================ -->
+<div id="overlay-notas">
+  <div class="notas-header">
+    <div class="notas-cat-icon" id="notas-icon">🎯</div>
+    <div class="notas-title-wrap">
+      <div class="notas-pre">Notas de</div>
+      <div class="notas-cat" id="notas-cat">Approach</div>
+    </div>
+    <div class="btn-cerrar-notas" onclick="cerrarNotas()">✕</div>
+  </div>
+  <div class="btn-leer-notas" onclick="leerNotas()">
+    <span style="font-size:20px;color:var(--amber-light)">🔊</span>
+    <span style="color:white;font-size:13px;font-weight:600;flex:1">Leerme las notas en voz alta</span>
+    <span style="color:var(--text-dim)">›</span>
+  </div>
+  <div class="notas-cats">
+    <div class="cat-btn active" onclick="cambiarCat(this,'Approach','🎯')">🎯 Approach</div>
+    <div class="cat-btn" onclick="cambiarCat(this,'Drive','🏌️')">🏌️ Drive</div>
+    <div class="cat-btn" onclick="cambiarCat(this,'Hierros','🔨')">🔨 Hierros</div>
+    <div class="cat-btn" onclick="cambiarCat(this,'Putt','⛳')">⛳ Putt</div>
+    <div class="cat-btn" onclick="cambiarCat(this,'Greens','📋')">📋 Greens</div>
+  </div>
+  <div class="notas-list">
+    <div class="nota-item">
+      <span class="nota-texto">Apuntar siempre al centro del green, no a la bandera</span>
+      <button class="btn-borrar-nota">🗑️</button>
+    </div>
+    <div class="nota-item">
+      <span class="nota-texto">Girar hombros completo en el backswing, no solo brazos</span>
+      <button class="btn-borrar-nota">🗑️</button>
+    </div>
+    <div class="nota-item">
+      <span class="nota-texto">Respirar profundo antes de cada tiro de approach</span>
+      <button class="btn-borrar-nota">🗑️</button>
+    </div>
+  </div>
+  <div class="notas-footer">
+    <div class="btn-dictar-nota">
+      <div class="mic-sm">🎤</div>
+      <span style="color:var(--text-muted);font-size:13px;font-weight:600">Dictar nueva nota...</span>
+    </div>
+  </div>
+</div>
+
+<!-- ================================================
+     MODAL: CONFIRMACIÓN
+================================================ -->
+<div class="overlay" id="modal-conf">
+  <div class="sheet">
+    <div class="sheet-handle"><span></span></div>
+    <div class="conf-header">
+      <div>
+        <div class="conf-pre">¿Correcto?</div>
+        <div class="conf-titulo" id="conf-titulo">Hoyo 4</div>
+      </div>
+      <div class="badge-res badge-doble">Doble +2</div>
+    </div>
+    <div class="conf-tiros">
+      <div class="conf-tiro ct-drive">
+        <span style="font-size:16px">🏌️</span>
+        <div class="tiro-info"><div class="tiro-subtipo">Drive</div><div class="tiro-val">Fairway</div></div>
+        <span class="ct-check">✅</span>
+      </div>
       <div class="conf-tiro ct-hierro">
         <span style="font-size:16px">🔨</span>
-        <div class="tiro-info">
-          <div class="tiro-subtipo">${h.dist} yardas</div>
-          <div class="tiro-val">${h.resultado === 'green' ? 'Al green ✅' : h.resultado === 'barbas' ? 'Barbas' : h.resultado === 'trampa' ? 'Trampa' : 'Castigo'}</div>
-        </div>
-      </div>`;
-  });
-
-  // Approach (si no viene de hierros)
-  if (datos.approach && datos.hierros.length === 0) {
-    const texApp = {green:'Al green ✅', barbas:'Barbas', trampa:'Trampa / Bunker', castigo:'Castigo / Agua'};
-    lista.innerHTML += `
+        <div class="tiro-info"><div class="tiro-subtipo">140 yardas</div><div class="tiro-val">Barbas</div></div>
+        <span class="ct-check">✅</span>
+      </div>
       <div class="conf-tiro ct-approach">
         <span style="font-size:16px">🎯</span>
-        <div class="tiro-info">
-          <div class="tiro-subtipo">Tiro al green</div>
-          <div class="tiro-val">${texApp[datos.approach] || datos.approach}</div>
-        </div>
-      </div>`;
-  }
-
-  // Putts
-  if (datos.putts !== null) {
-    const puttStr = datos.putts === 0 ? 'Entró directo' :
-      datos.putts + ' putt' + (datos.putts > 1 ? 's' : '') +
-      (datos.pasos ? ' — ' + datos.pasos + ' pasos' : '');
-    lista.innerHTML += `
+        <div class="tiro-info"><div class="tiro-subtipo">30 yardas</div><div class="tiro-val">Al green</div></div>
+        <span class="ct-check">✅</span>
+      </div>
       <div class="conf-tiro ct-putt">
         <span style="font-size:16px">⛳</span>
         <div class="tiro-info">
-          <div class="tiro-subtipo">Putting</div>
-          <div style="color:white;font-size:16px;font-weight:700">${puttStr}</div>
+          <div class="tiro-subtipo">Putts · sin corto</div>
+          <div style="color:white;font-size:16px;font-weight:700">3 putts — 8 pasos</div>
         </div>
-      </div>`;
-  }
+        <span class="ct-check">✅</span>
+      </div>
+    </div>
+    <div class="conf-faltante" id="conf-faltante">
+      <div class="conf-falt-hdr">❓ Falta un dato</div>
+      <div class="conf-pregunta">¿Tuviste un putt de menos de 2 pasos?</div>
+      <div class="conf-opciones">
+        <div class="conf-opcion op-no-hubo">No hubo</div>
+        <div class="conf-opcion op-lo-meti">Lo metí</div>
+        <div class="conf-opcion op-lo-falle">Lo fallé</div>
+      </div>
+    </div>
+    <div class="conf-botones">
+      <div class="btn-editar" onclick="editarPorVoz()">⏺  Editar por voz</div>
+      <button class="btn-correcto" onclick="confirmarHoyo()">✓ Correcto</button>
+    </div>
+  </div>
+</div>
 
-  // Si no detectó nada claro
-  if (!datos.drive && !datos.approach && datos.putts === null && datos.hierros.length === 0) {
-    lista.innerHTML = `
-      <div style="padding:16px;text-align:center;color:rgba(255,255,255,.5);font-size:13px">
-        No entendí bien. Intenta de nuevo con:<br><br>
-        <span style="color:white">"Birdie, fairway, 120 yardas green, un putt a 8 pasos"</span>
-      </div>`;
-  }
+<!-- ================================================
+     MODAL: FIN - FALTAN HOYOS
+================================================ -->
+<div class="overlay" id="modal-fin-faltan">
+  <div class="sheet">
+    <div class="sheet-handle"><span></span></div>
+    <div class="fin-franja-roja">
+      <span style="font-size:20px">⚠️</span>
+      <span style="color:var(--red-light);font-size:12px;font-weight:700" id="fin-adv-txt">Faltan 5 hoyos por completar</span>
+    </div>
+    <div class="fin-conteo">
+      <div class="fin-box fin-box-c">
+        <div class="pre">Completos</div>
+        <div class="num" id="fin-completos">4</div>
+        <div class="sub">de 9 hoyos</div>
+      </div>
+      <div class="fin-box fin-box-f">
+        <div class="pre">Faltantes</div>
+        <div class="num" id="fin-faltantes">5</div>
+        <div class="sub">sin registrar</div>
+      </div>
+    </div>
+    <div class="fin-mensaje">
+      Si terminas ahora, <strong>solo se guardarán los tiros</strong> para estadísticas. El resultado de esta vuelta no quedará registrado.
+    </div>
+    <div class="fin-botones">
+      <div class="btn-si-terminar" onclick="terminarRonda()">Sí, terminar de todas formas</div>
+      <button class="btn-seguir-jugando" onclick="cerrarModal('modal-fin-faltan')">← Seguir jugando</button>
+    </div>
+  </div>
+</div>
 
-  // Sección faltante — putt corto
-  var faltante = document.getElementById('conf-faltante');
-  if (faltante) {
-    var necesitaPuttCorto = datos.putts && datos.putts > 0 &&
-                            datos.puttCorto === null &&
-                            !datos.metidaFuera;
-    faltante.style.display = necesitaPuttCorto ? 'block' : 'none';
-    if (necesitaPuttCorto) {
-      var pregunta = document.querySelector('.conf-pregunta');
-      if (pregunta) pregunta.textContent = '¿Tuviste un putt de menos de 2 pasos?';
-    }
-  }
+<!-- ================================================
+     MODAL: FIN - TODO COMPLETO
+================================================ -->
+<div class="overlay" id="modal-fin-ok">
+  <div class="sheet">
+    <div class="sheet-handle"><span></span></div>
+    <div class="fin-franja-verde">
+      <span style="font-size:20px">✅</span>
+      <span style="color:var(--green-light);font-size:12px;font-weight:700" id="fin-ok-txt">¡Todos los 9 hoyos completados!</span>
+    </div>
+    <div class="fin-resultado-box">
+      <div style="color:var(--text-dim);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Resultado vuelta 1</div>
+      <div style="font-size:40px;font-weight:700;letter-spacing:-1px;line-height:1" id="fin-res-num">+3</div>
+      <div style="color:var(--text-dim);font-size:11px;margin-top:4px" id="fin-res-jug">Salvador · 9 hoyos</div>
+    </div>
+    <div class="fin-botones">
+      <button class="btn-continuar-vuelta" onclick="continuarSegundaVuelta()">↻ Continuar — hoyos 10 al 18</button>
+      <div class="btn-guardar-terminar" onclick="irAResumen()">💾 Guardar y terminar aquí</div>
+    </div>
+  </div>
+</div>
 
-  // Guardar texto original para posible corrección
-  E.ultimoTextoVoz = textoOriginal;
-  E.ultimosDatos = datos;
+<!-- ================================================
+     MODAL: RESET
+================================================ -->
+<div class="overlay" id="modal-reset">
+  <div class="sheet">
+    <div class="sheet-handle"><span></span></div>
+    <div class="reset-header">↺ Borrar tiros del hoyo actual</div>
+    <div class="reset-body">
+      <div class="reset-pregunta">¿Qué quieres borrar?</div>
+      <div class="reset-sub">Puedes borrar solo este hoyo o empezar la ronda desde cero.</div>
+    </div>
+    <div class="reset-botones">
+      <button class="btn-confirmar-reset" onclick="confirmarReset()">↺ Borrar hoyo <span id="reset-num">4</span></button>
+      <button class="btn-confirmar-reset" style="background:rgba(220,38,38,.6);margin-top:4px" onclick="resetearRonda()">⊗ Empezar ronda desde cero</button>
+      <div class="btn-cancelar-reset" onclick="cerrarModal('modal-reset')">Cancelar</div>
+    </div>
+  </div>
+</div>
 
-  abrirModal('modal-conf');
-}
+<!-- ================================================
+     MODAL: ALTA TORNEO
+================================================ -->
+<div class="overlay" id="modal-torneo">
+  <div class="sheet">
+    <div class="sheet-handle"><span></span></div>
+    <div class="torneo-header">🏆 Configurar torneo</div>
+    <div class="torneo-jugador-fijo">
+      <div>
+        <div style="color:white;font-size:14px;font-weight:700" id="torneo-mi">👦 Salvador</div>
+        <div style="color:var(--text-dim);font-size:11px">Tu jugador — no editable</div>
+      </div>
+      <span style="color:var(--text-dim);font-size:18px">🔒</span>
+    </div>
+    <div class="torneo-rivales">
+      <div class="torneo-slot"><span style="font-size:14px;color:rgba(96,165,250,.5)">👤</span><input class="torneo-input" placeholder="Rival 1" type="text"></div>
+      <div class="torneo-slot"><span style="font-size:14px;color:rgba(96,165,250,.5)">👤</span><input class="torneo-input" placeholder="Rival 2" type="text"></div>
+      <div class="torneo-slot"><span style="font-size:14px;color:rgba(96,165,250,.5)">👤</span><input class="torneo-input" placeholder="Rival 3" type="text"></div>
+      <div class="torneo-slot op"><span style="font-size:14px;color:rgba(255,255,255,.2)">＋</span><input class="torneo-input" placeholder="Rival 4 (opcional)" type="text"></div>
+    </div>
+    <div class="torneo-botones">
+      <div class="btn-cancelar-torneo" onclick="cerrarModal('modal-torneo')">Cancelar</div>
+      <button class="btn-activar-torneo" onclick="activarTorneo()">🚩 Activar torneo</button>
+    </div>
+  </div>
+</div>
 
-// ===================================================
-// LEER NOTAS EN VOZ ALTA (TTS)
-// ===================================================
-function leerNotas() {
-  const notas = [...document.querySelectorAll('.nota-texto')].map(n => n.textContent);
-  if (notas.length === 0) { return; }
-  const utterance = new SpeechSynthesisUtterance(notas.join('. '));
-  utterance.lang = 'es-MX';
-  utterance.rate = 0.9;
-  window.speechSynthesis.speak(utterance);
-}
+<!-- ================================================
+     MODAL: DESGLOSE RIVAL
+================================================ -->
+<div class="overlay" id="modal-desglose">
+  <div class="sheet">
+    <div class="sheet-handle"><span></span></div>
+    <div class="rival-header">
+      <div style="color:white;font-size:16px;font-weight:700" id="des-nombre">Luis</div>
+      <div style="font-size:24px;font-weight:700;color:var(--amber-light)" id="des-acum">+4</div>
+    </div>
+    <div class="rival-scorecard">
+      <div class="sc-grid" id="des-grid"></div>
+      <div style="color:var(--text-muted);font-size:11px;margin-bottom:8px">Vuelta 1 — en curso</div>
+    </div>
+    <button class="btn-corregir-rival" onclick="cerrarModal('modal-desglose')">◉  Corregir por voz</button>
+  </div>
+</div>
 
-// ===================================================
-// CONFIRMAR HOYO CON DATOS REALES
-// ===================================================
+<script>
 function confirmarHoyo() {
-  const h = E.hoyos.find(x => x.num === E.hoyoActual);
+  var h = E.hoyos.find(function(x){ return x.num === E.hoyoActual; });
   if (h) {
-    // Marcar como completado
     h.ok = true;
-
-    // Score: usar el detectado por voz
-    if (E.ultimosDatos && E.ultimosDatos.score !== null) {
+    if (E.ultimosDatos && E.ultimosDatos.score !== null && E.ultimosDatos.score !== undefined) {
       h.res = E.ultimosDatos.score;
     } else if (E.ultimosDatos) {
-      // Calcular score desde tiros si no se dijo explícitamente
-      const numTiros = (E.ultimosDatos.drive ? 1 : 0) +
-        Math.max(E.ultimosDatos.hierros ? E.ultimosDatos.hierros.length : 0,
-                 E.ultimosDatos.approach ? 1 : 0) +
+      var tiros = (E.ultimosDatos.drive ? 1 : 0) +
+        Math.max((E.ultimosDatos.hierros||[]).length, E.ultimosDatos.approach ? 1 : 0) +
         (E.ultimosDatos.putts || 2);
-      h.res = numTiros - 4; // asumiendo par 4
+      h.res = tiros - 4;
     } else {
       h.res = 0;
     }
-
-    // Guardar tiros del hoyo
-    h.tiros = E.ultimosDatos ? {...E.ultimosDatos} : {};
-
-    // Actualizar lista de tiros visible en pantalla
-    actualizarTirosHoyo(h);
+    h.tiros = E.ultimosDatos ? JSON.parse(JSON.stringify(E.ultimosDatos)) : {};
   }
-
-  // Limpiar estado de voz
   E.ultimosDatos = null;
-  E.ultimoTextoVoz = null;
-
   cerrarModal('modal-conf');
   renderHoyos();
   actualizarHoyo();
-
-  // Avanzar al siguiente hoyo automáticamente
-  if (E.hoyoActual < E.totalHoyos) {
-    setTimeout(() => hoyoSiguiente(), 400);
-  }
+  if (E.hoyoActual < E.totalHoyos) setTimeout(function(){ hoyoSiguiente(); }, 400);
 }
 
-// ===================================================
-// ACTUALIZAR LISTA DE TIROS VISIBLE EN EL HOYO
-// ===================================================
-function actualizarTirosHoyo(h) {
-  const lista = document.getElementById('tiros-list');
-  if (!h.tiros) return;
-  const d = h.tiros;
-  let html = '';
-
-  if (d.drive) {
-    const texDrive = {fairway:'Fairway', 'sin-tiro':'Sin tiro (rough)', castigo:'Castigo / OB'};
-    html += `<div class="tiro-card tc-drive"><span class="tiro-emoji">🏌️</span><div class="tiro-info"><div class="tiro-subtipo">Drive</div><div class="tiro-val">${texDrive[d.drive]||d.drive}</div></div></div>`;
-  }
-
-  const hierrosOrd = [...(d.hierros||[])].sort((a,b) => b.dist - a.dist);
-  hierrosOrd.forEach(hi => {
-    html += `<div class="tiro-card tc-hierro"><span class="tiro-emoji">🔨</span><div class="tiro-info"><div class="tiro-subtipo">${hi.dist} yardas</div><div class="tiro-val">${hi.resultado==='green'?'Al green':hi.resultado==='barbas'?'Barbas':hi.resultado==='trampa'?'Trampa':'Castigo'}</div></div></div>`;
-  });
-
-  if (d.approach && (!d.hierros || d.hierros.length===0)) {
-    const texApp = {green:'Al green', barbas:'Barbas', trampa:'Trampa', castigo:'Castigo'};
-    html += `<div class="tiro-card tc-approach"><span class="tiro-emoji">🎯</span><div class="tiro-info"><div class="tiro-subtipo">Tiro al green</div><div class="tiro-val">${texApp[d.approach]||d.approach}</div></div></div>`;
-  }
-
-  if (d.putts !== null) {
-    const puttStr = d.putts===0?'Entró directo':d.putts+' putt'+(d.putts>1?'s':'')+(d.pasos?' — '+d.pasos+' pasos':'');
-    html += `<div class="tiro-card tc-putt"><span class="tiro-emoji">⛳</span><div class="tiro-info"><div class="tiro-subtipo">Putting</div><div style="color:white;font-size:16px;font-weight:700">${puttStr}</div></div></div>`;
-  }
-
-  lista.innerHTML = html || lista.innerHTML;
-}
-
-// ===================================================
-// REEMPLAZAR BOTÓN DICTAR CON VOZ REAL
-// ===================================================
-document.addEventListener('DOMContentLoaded', () => {
-  // Reasignar botón dictar
-  const btnDictar = document.querySelector('.btn-dictar');
-  if (btnDictar) {
-    btnDictar.onclick = iniciarVoz;
-  }
-
-  // Botón leer notas
-  const btnLeer = document.querySelector('.btn-leer-notas');
-  if (btnLeer) {
-    btnLeer.onclick = leerNotas;
-  }
-
-  // Opciones de putt corto
-  document.querySelectorAll('.conf-opcion').forEach(op => {
-    op.addEventListener('click', () => {
-      document.querySelectorAll('.conf-opcion').forEach(o => o.style.opacity = '0.5');
-      op.style.opacity = '1';
-      op.style.outline = '2px solid currentColor';
-      if (op.classList.contains('op-no-hubo')) tirosHoyo.puttCorto = 'no-hubo';
-      if (op.classList.contains('op-lo-meti')) tirosHoyo.puttCorto = 'lo-meti';
-      if (op.classList.contains('op-lo-falle')) tirosHoyo.puttCorto = 'lo-falle';
-      if (E.ultimosDatos) E.ultimosDatos.puttCorto = tirosHoyo.puttCorto;
-    });
-  });
-});
-
-
-// ── Guardar en Google Sheets (placeholder — se conectará con Sheets) ──────
-function guardarEnSheets() {
-  // Por ahora muestra confirmación visual
-  const btn = document.querySelector('.btn-guardar');
-  if (btn) {
-    btn.textContent = '✅ Guardado correctamente';
-    btn.style.background = '#185FA5';
-    setTimeout(() => {
-      btn.innerHTML = '☁️ Guardar en Google Sheets';
-      btn.style.background = '';
-    }, 2500);
-  }
-  // TODO: conectar con Google Sheets API
-}
-
-// ── Resetear ronda completa ────────────────────────────────────────────────
-function resetearRonda() {
-  // Resetear todos los hoyos a vacío
-  E.hoyos = [];
-  for (let i = 1; i <= 9; i++) E.hoyos.push({num:i, ok:false, res:null, tiros:{}});
-  E.hoyoActual = 1;
-  E.totalHoyos = 9;
-  E.ultimosDatos = null;
-  E.ultimoTextoVoz = null;
-  E.torneoActivo = false;
-  // Limpiar tiros visibles
-  const tirosList = document.getElementById('tiros-list');
-  if (tirosList) tirosList.innerHTML = '';
-  // Quitar modo torneo si estaba activo
-  const btnTorneo = document.getElementById('btn-torneo');
-  if (btnTorneo) btnTorneo.classList.remove('on');
-  const riverasRow = document.getElementById('rivales-row');
-  if (riverasRow) { riverasRow.classList.remove('on'); riverasRow.innerHTML = ''; }
-  cerrarModal('modal-reset');
-  renderHoyos();
-  actualizarHoyo();
-}
-
-// ── Editar por voz ─────────────────────────────────────────────────────────
-// Al editar, el nuevo dictado SOBREESCRIBE el dato que se diga
-// y CONSERVA lo que no se mencione del dictado anterior
-var editando = false;
-var datosAnteriores = null;
-
-function editarPorVoz() {
-  // Guardar datos actuales para combinar después
-  datosAnteriores = E.ultimosDatos ? JSON.parse(JSON.stringify(E.ultimosDatos)) : null;
-  editando = true;
-  cerrarModal('modal-conf');
-  // Limpiar texto y abrir micrófono
-  textoAcumulado = '';
-  setTimeout(function() { toggleVoz(); }, 300);
-}
-
-function combinarDatos(nuevos, anteriores) {
-  if (!anteriores) return nuevos;
-  // Conservar del anterior lo que no se detectó en el nuevo
-  var r = JSON.parse(JSON.stringify(nuevos));
-  if (r.score === null && anteriores.score !== null) r.score = anteriores.score;
-  if (!r.drive && anteriores.drive) r.drive = anteriores.drive;
-  if (r.hierros.length === 0 && anteriores.hierros && anteriores.hierros.length > 0) r.hierros = anteriores.hierros;
-  if (!r.approach && anteriores.approach) r.approach = anteriores.approach;
-  if (r.putts === null && anteriores.putts !== null) r.putts = anteriores.putts;
-  if (r.pasos === null && anteriores.pasos !== null) r.pasos = anteriores.pasos;
-  if (r.puttCorto === null && anteriores.puttCorto !== null) r.puttCorto = anteriores.puttCorto;
-  return r;
-}
-
-// ── Borrar nota ────────────────────────────────────────────────────────────
-document.addEventListener('click', e => {
-  if (e.target.classList.contains('btn-borrar-nota') || e.target.closest('.btn-borrar-nota')) {
-    const nota = e.target.closest('.nota-item');
-    if (nota) nota.remove();
-  }
-});
-
-document.querySelectorAll('.overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('active');}));
-
-renderHoyos();
-actualizarHoyo();
 </script>
 </body>
 </html>
