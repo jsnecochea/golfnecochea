@@ -1591,6 +1591,24 @@ function getTiroParcial(num) {
 // Alias para compatibilidad — apunta al hoyo actual
 var tiroParcial = getTiroParcial(1);
 
+// Agrega hierro de 30y al green si hay hierros en barbas/trampa y approach=green
+// Se llama UNA SOLA VEZ justo antes de mostrar la tarjeta
+function calcularChipSiBarbas(datos) {
+  if (datos.approach !== 'green') return datos;
+  // Quitar cualquier 30y previo para recalcular limpio
+  datos.hierros = (datos.hierros||[]).filter(function(h){
+    return !(h.dist === 30 && h.resultado === 'green');
+  });
+  // Buscar hierro en barbas o trampa
+  var enBarbas = datos.hierros.find(function(h){
+    return h.resultado === 'barbas' || h.resultado === 'trampa';
+  });
+  if (enBarbas) {
+    datos.hierros.push({dist:30, resultado:'green', desdeChip:enBarbas.resultado});
+  }
+  return datos;
+}
+
 function combinarConParcial(nuevo, parcial) {
   var r = JSON.parse(JSON.stringify(nuevo));
   if (!r.drive && parcial.drive) r.drive = parcial.drive;
@@ -1731,19 +1749,8 @@ function toggleVoz() {
       }
       datos = combinarConParcial(datos, tiroParcial);
 
-      // Si hay approach=green y hierros en barbas (de dictados separados)
-      // agregar el hierro de 30y al green — pero solo si no existe ya
-      if (datos.approach === 'green') {
-        var hierroEnBarbas = (datos.hierros||[]).find(function(h){
-          return h.resultado==='barbas' || h.resultado==='trampa';
-        });
-        var ya30y = (datos.hierros||[]).some(function(h){
-          return h.dist===30 && h.resultado==='green';
-        });
-        if (hierroEnBarbas && !ya30y) {
-          datos.hierros.push({dist:30, resultado:'green', desdeChip:hierroEnBarbas.resultado});
-        }
-      }
+      // Calcular hierro de 30y UNA SOLA VEZ justo antes de mostrar
+      datos = calcularChipSiBarbas(datos);
 
       E.ultimosDatos = datos;
       E.ultimoTextoVoz = texto;
@@ -2126,11 +2133,9 @@ function interpretarHoyo(txt) {
 
   if (hayDosResultados) {
     var resHierro = resBarbas ? 'barbas' : 'trampa';
-    // El hierro mayor quedó en barbas/trampa
-    // Agregar hierro de 30y al green (el chip desde barbas)
-    var hierrosOrdenados = r.hierros.sort(function(a,b){ return b.dist-a.dist; });
-    r.hierros = hierrosOrdenados.map(function(h){ return {dist:h.dist, resultado:resHierro}; });
-    r.hierros.push({dist:30, resultado:'green', desdeChip:resHierro});
+    r.hierros = r.hierros.sort(function(a,b){ return b.dist-a.dist; })
+      .map(function(h){ return {dist:h.dist, resultado:resHierro}; });
+    // NO agregar 30y aquí — se agrega una sola vez antes de mostrar
     r.approach = 'green';
   } else if (r.hierros.length > 0) {
     // NO adivinar el resultado — solo asignar si se dijo explícitamente
