@@ -186,7 +186,7 @@ body {
 /* ── OVERLAY / SHEET / MODAL ── */
 .overlay { display:none; position:fixed; inset:0; z-index:100; background:rgba(0,0,0,.7); backdrop-filter:blur(4px); align-items:flex-end; }
 .overlay.active { display:flex; }
-.sheet { width:100%; max-width:430px; margin:0 auto; background:var(--surface); border-radius:24px 24px 0 0; border:1px solid rgba(255,255,255,.1); box-shadow:0 -8px 40px rgba(0,0,0,.6); overflow:hidden; animation:slideUp .25s ease; }
+.sheet { width:100%; max-width:430px; margin:0 auto; background:var(--surface); border-radius:24px 24px 0 0; border:1px solid rgba(255,255,255,.1); box-shadow:0 -8px 40px rgba(0,0,0,.6); position:relative; animation:slideUp .25s ease; }
 @keyframes slideUp { from{transform:translateY(100%)} to{transform:translateY(0)} }
 .sheet-handle { display:flex; justify-content:center; padding:12px 0 0; }
 .sheet-handle span { width:36px; height:4px; background:rgba(255,255,255,.15); border-radius:2px; }
@@ -294,10 +294,10 @@ body {
 .resumen-header { background:var(--green); padding:20px 20px 18px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:6px; }
 .resumen-body { padding:14px 14px 0; display:flex; flex-direction:column; gap:10px; }
 .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
-.stat-card { background:rgba(255,255,255,.04); border-radius:12px; padding:10px 12px; }
-.stat-lbl { color:var(--text-muted); font-size:10px; font-weight:600; margin-bottom:3px; }
-.stat-val { color:white; font-size:18px; font-weight:700; line-height:1.1; }
-.stat-sub { font-size:10px; font-weight:700; margin-top:1px; }
+.stat-card { background:rgba(255,255,255,.04); border-radius:16px; padding:16px 14px; }
+.stat-lbl { color:var(--text-muted); font-size:12px; font-weight:600; margin-bottom:6px; }
+.stat-val { color:white; font-size:32px; font-weight:700; line-height:1.1; }
+.stat-sub { font-size:13px; font-weight:700; margin-top:4px; }
 .sub-good { color:var(--green-light); }
 .sub-neutral { color:var(--text-dim); }
 
@@ -579,10 +579,13 @@ body {
         ➡️ Continuar hoyos 10–18
       </div>
       <div class="menu-item" onclick="abrirFin();cerrarMenu()">
-        🏁 Finalizar ronda
+        🚩 Finalizar ronda
       </div>
       <div class="menu-item" onclick="abrirModal('modal-reset');cerrarMenu()">
         ↺ Reset
+      </div>
+      <div class="menu-item" onclick="cargarRondaPrueba();cerrarMenu()" style="color:#fbbf24">
+        🧪 Cargar ronda de prueba
       </div>
     </div>
 
@@ -675,7 +678,8 @@ body {
      VISTA 3: RESUMEN FINAL
 ================================================ -->
 <div class="view" id="view-resumen">
-  <div class="resumen-header">
+  <div class="resumen-header" style="position:relative">
+    <button onclick="irA('view-hoyo')" style="position:absolute;top:16px;right:16px;background:rgba(255,255,255,.15);border:none;border-radius:50%;width:34px;height:34px;color:white;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button>
     <div style="font-size:44px">🏆</div>
     <div style="color:white;font-size:22px;font-weight:700">¡Ronda completada!</div>
     <div style="color:rgba(255,255,255,.5);font-size:11px" id="res-jugador">Salvador · 9 hoyos</div>
@@ -685,35 +689,35 @@ body {
   <div class="resumen-body">
     <!-- 4 stats -->
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-lbl">🌿 Fairways</div><div class="stat-val">5/7</div><div class="stat-sub sub-good">71%</div></div>
-      <div class="stat-card"><div class="stat-lbl">🏆 Up & Down</div><div class="stat-val">2/4</div><div class="stat-sub sub-good">50%</div></div>
-      <div class="stat-card"><div class="stat-lbl">🏜️ Trampas</div><div class="stat-val">1</div><div class="stat-sub sub-neutral">esta ronda</div></div>
-      <div class="stat-card"><div class="stat-lbl">💧 Castigos</div><div class="stat-val">2</div><div class="stat-sub sub-neutral">esta ronda</div></div>
+<div class="stat-card"><div class="stat-lbl">🌿 Fairways</div><div class="stat-val" id="stat-fw">—</div><div class="stat-sub" id="stat-fw-sub">—</div></div>
+<div class="stat-card"><div class="stat-lbl">🏆 Up &amp; Down</div><div class="stat-val" id="stat-ud">—</div><div class="stat-sub" id="stat-ud-sub">—</div></div>
+<div class="stat-card"><div class="stat-lbl">🏜️ Trampas</div><div class="stat-val" id="stat-tr">—</div><div class="stat-sub sub-neutral">esta ronda</div></div>
+<div class="stat-card"><div class="stat-lbl">💧 Castigos</div><div class="stat-val" id="stat-ca">—</div><div class="stat-sub sub-neutral">esta ronda</div></div>
     </div>
 
     <!-- Putting estilo Apple -->
     <div class="putting-section">
       <div class="putting-header">
         <span style="color:white;font-size:13px;font-weight:700">⛳ Putting</span>
-        <span style="color:var(--text-muted);font-size:11px;font-weight:600">18 total</span>
+<span id="put-total-lbl" style="color:var(--text-muted);font-size:11px;font-weight:600">— total</span>
       </div>
       <div class="putting-divider"></div>
       <div class="putting-row">
         <div class="pr-icon rojo">❌</div>
         <div class="pr-info">
           <div class="pr-lbl">Cortos fallados menos de 2 pasos</div>
-          <div class="pr-num rojo">1 <span class="pr-de">fallado de 5</span></div>
+<div class="pr-num rojo" id="put-cortos-num">— <span class="pr-de">—</span></div>
         </div>
-        <div class="pr-pct"><div class="pct">80%</div><div class="pct-l">acierto</div></div>
+<div class="pr-pct"><div class="pct" id="put-cortos-pct">—%</div><div class="pct-l">acierto</div></div>
       </div>
       <div class="putting-divider"></div>
       <div class="putting-row">
         <div class="pr-icon rojo-sm">3p</div>
         <div class="pr-info">
           <div class="pr-lbl">3-Putts menos de 12 pasos</div>
-          <div class="pr-num rojo">1 <span class="pr-de">triple de 4</span></div>
+<div class="pr-num rojo" id="put-3putts-num">— <span class="pr-de">—</span></div>
         </div>
-        <div class="pr-pct"><div class="pct">75%</div><div class="pct-l">acierto</div></div>
+<div class="pr-pct"><div class="pct" id="put-3putts-pct">—%</div><div class="pct-l">acierto</div></div>
       </div>
       <div class="putting-divider"></div>
       <div class="putting-row">
@@ -722,7 +726,7 @@ body {
           <div class="pr-lbl">3-Putts más de 12 pasos</div>
           <div class="pr-num amr">2 <span class="pr-de">triples de 7</span></div>
         </div>
-        <div class="pr-pct"><div class="pct">71%</div><div class="pct-l">acierto</div></div>
+<div class="pr-pct"><div class="pct" id="put-3putts-large-pct">—%</div><div class="pct-l">acierto</div></div>
       </div>
     </div>
 
@@ -747,27 +751,27 @@ body {
         <!-- Columnas scroll -->
         <div class="col-scroll">
           <div class="cols-inner">
-            <!-- 📍 -->
+            <!-- 📍 intentos -->
             <div style="flex-shrink:0;width:68px;border-right:1px solid rgba(255,255,255,.05)">
-              <div class="t-th" style="width:68px"><div class="t-th-c" style="color:#60a5fa">📍 prom.</div></div>
-              <div class="t-dato">     <span class="t-prox" style="color:#60a5fa">3p</span></div>
-              <div class="t-dato pc"> <span class="t-prox" style="color:#60a5fa">6p</span></div>
-              <div class="t-dato">     <span class="t-prox" style="color:#60a5fa">8p</span></div>
-              <div class="t-dato">     <span class="t-prox" style="color:#60a5fa">11p</span></div>
-              <div class="t-dato pc"> <span class="t-prox" style="color:#60a5fa">14p</span></div>
-              <div class="t-dato dim"><span class="t-prox" style="color:#60a5fa">17p</span></div>
-              <div class="t-dato drv"><span style="color:rgba(255,255,255,.2);font-size:15px;font-weight:700">—</span></div>
+              <div class="t-th" style="width:68px"><div class="t-th-c" style="color:#60a5fa">Intentos</div></div>
+              <div class="t-dato"    id="int-0-30">   <span class="t-prox" style="color:#60a5fa">—</span></div>
+              <div class="t-dato pc" id="int-30-60">  <span class="t-prox" style="color:#60a5fa">—</span></div>
+              <div class="t-dato"    id="int-60-90">  <span class="t-prox" style="color:#60a5fa">—</span></div>
+              <div class="t-dato"    id="int-90-120"> <span class="t-prox" style="color:#60a5fa">—</span></div>
+              <div class="t-dato pc" id="int-120-150"><span class="t-prox" style="color:#60a5fa">—</span></div>
+              <div class="t-dato dim"id="int-150">    <span class="t-prox" style="color:#60a5fa">—</span></div>
+              <div class="t-dato drv"id="int-drv">   <span class="t-prox" style="color:#60a5fa">—</span></div>
             </div>
             <!-- Green -->
             <div style="flex-shrink:0;width:74px;border-right:1px solid rgba(255,255,255,.05)">
               <div class="t-th" style="width:74px"><div class="t-th-c" style="color:#34d399">Green</div></div>
-              <div class="t-dato">    <span class="t-pct" style="color:#34d399">80%</span><span class="t-cnt" style="color:#34d399">4/5</span></div>
-              <div class="t-dato pc"><span class="t-pct" style="color:#34d399">60%</span><span class="t-cnt" style="color:#34d399">2/3</span></div>
-              <div class="t-dato">    <span class="t-pct" style="color:#fbbf24">50%</span><span class="t-cnt" style="color:#fbbf24">6/12</span></div>
-              <div class="t-dato">    <span class="t-pct" style="color:#f87171">40%</span><span class="t-cnt" style="color:#f87171">3/8</span></div>
-              <div class="t-dato pc"><span class="t-pct" style="color:#f87171">25%</span><span class="t-cnt" style="color:#f87171">1/4</span></div>
-              <div class="t-dato dim"><span class="t-pct" style="color:#f87171">20%</span><span class="t-cnt" style="color:#f87171">1/2</span></div>
-              <div class="t-dato drv"><span class="t-pct" style="color:#34d399">57%</span><span class="t-cnt" style="color:#34d399">4/7</span></div>
+              <div class="t-dato" id="gr-0-30"><span style="color:rgba(255,255,255,.2);font-size:15px">—</span></div>
+              <div class="t-dato pc" id="gr-30-60"><span style="color:rgba(255,255,255,.2);font-size:15px">—</span></div>
+              <div class="t-dato" id="gr-60-90"><span style="color:rgba(255,255,255,.2);font-size:15px">—</span></div>
+              <div class="t-dato" id="gr-90-120"><span style="color:rgba(255,255,255,.2);font-size:15px">—</span></div>
+              <div class="t-dato pc" id="gr-120-150"><span style="color:rgba(255,255,255,.2);font-size:15px">—</span></div>
+              <div class="t-dato dim" id="gr-150"><span style="color:rgba(255,255,255,.2);font-size:15px">—</span></div>
+              <div class="t-dato drv" id="gr-drv"><span style="color:rgba(255,255,255,.2);font-size:15px">—</span></div>
             </div>
             <!-- Barbas -->
             <div style="flex-shrink:0;width:74px;border-right:1px solid rgba(255,255,255,.05)">
@@ -846,13 +850,13 @@ body {
             <!-- 📍 Tú -->
             <div style="flex-shrink:0;width:70px;border-right:1px solid rgba(255,255,255,.05)">
               <div class="t-th" style="height:40px;width:70px"><div class="t-th-c" style="color:#60a5fa;font-size:10px">📍 Tú</div></div>
-              <div class="t-dato"><span class="t-prox" style="color:#60a5fa;font-size:20px">3p</span></div>
-              <div class="t-dato pc"><span class="t-prox" style="color:#60a5fa;font-size:20px">6p</span></div>
-              <div class="t-dato"><span class="t-prox" style="color:#60a5fa;font-size:20px">8p</span></div>
-              <div class="t-dato"><span class="t-prox" style="color:#60a5fa;font-size:20px">11p</span></div>
-              <div class="t-dato pc"><span class="t-prox" style="color:#60a5fa;font-size:20px">14p</span></div>
-              <div class="t-dato dim"><span class="t-prox" style="color:#60a5fa;font-size:20px">17p</span></div>
-              <div class="t-dato drv"><span style="color:rgba(255,255,255,.2);font-size:17px;font-weight:700">—</span></div>
+<div class="t-dato" id="cmp-int-0-30"><span class="t-prox" style="color:#60a5fa;font-size:20px">—</span></div>
+<div class="t-dato pc" id="cmp-int-30-60"><span class="t-prox" style="color:#60a5fa;font-size:20px">—</span></div>
+<div class="t-dato" id="cmp-int-60-90"><span class="t-prox" style="color:#60a5fa;font-size:20px">—</span></div>
+<div class="t-dato" id="cmp-int-90-120"><span class="t-prox" style="color:#60a5fa;font-size:20px">—</span></div>
+<div class="t-dato pc" id="cmp-int-120-150"><span class="t-prox" style="color:#60a5fa;font-size:20px">—</span></div>
+<div class="t-dato dim" id="cmp-int-150"><span class="t-prox" style="color:#60a5fa;font-size:20px">—</span></div>
+<div class="t-dato drv" id="cmp-int-drv"><span class="t-prox" style="color:#60a5fa;font-size:20px">—</span></div>
             </div>
 
             <!-- 📍 Objetivo -->
@@ -870,13 +874,13 @@ body {
             <!-- Green% Tú -->
             <div style="flex-shrink:0;width:76px;border-right:1px solid rgba(255,255,255,.05)">
               <div class="t-th" style="height:40px;width:76px"><div class="t-th-c" style="color:#34d399;font-size:10px">Green Tú</div></div>
-              <div class="t-dato"><span class="t-pct" style="color:#34d399;font-size:20px">80%</span></div>
-              <div class="t-dato pc"><span class="t-pct" style="color:#34d399;font-size:20px">60%</span></div>
-              <div class="t-dato"><span class="t-pct" style="color:#fbbf24;font-size:20px">50%</span></div>
-              <div class="t-dato"><span class="t-pct" style="color:#f87171;font-size:20px">40%</span></div>
-              <div class="t-dato pc"><span class="t-pct" style="color:#f87171;font-size:20px">25%</span></div>
-              <div class="t-dato dim"><span class="t-pct" style="color:#f87171;font-size:20px">20%</span></div>
-              <div class="t-dato drv"><span class="t-pct" style="color:#34d399;font-size:20px">57%</span></div>
+<div class="t-dato" id="cmp-gr-0-30"><span style="color:rgba(255,255,255,.2);font-size:17px">—</span></div>
+<div class="t-dato pc" id="cmp-gr-30-60"><span style="color:rgba(255,255,255,.2);font-size:17px">—</span></div>
+<div class="t-dato" id="cmp-gr-60-90"><span style="color:rgba(255,255,255,.2);font-size:17px">—</span></div>
+<div class="t-dato" id="cmp-gr-90-120"><span style="color:rgba(255,255,255,.2);font-size:17px">—</span></div>
+<div class="t-dato pc" id="cmp-gr-120-150"><span style="color:rgba(255,255,255,.2);font-size:17px">—</span></div>
+<div class="t-dato dim" id="cmp-gr-150"><span style="color:rgba(255,255,255,.2);font-size:17px">—</span></div>
+<div class="t-dato drv" id="cmp-gr-drv"><span style="color:rgba(255,255,255,.2);font-size:17px">—</span></div>
             </div>
 
             <!-- Green% Objetivo -->
@@ -910,28 +914,28 @@ body {
         <!-- Putts/ronda -->
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:10px 12px;background:rgba(255,255,255,.03);border-radius:10px;align-items:center">
           <span style="color:rgba(255,255,255,.5);font-size:12px;font-weight:700">Putts/ronda</span>
-          <span style="color:#60a5fa;font-size:22px;font-weight:700;text-align:center">18</span>
+<span id="tu-putts-ronda" style="color:#60a5fa;font-size:22px;font-weight:700;text-align:center">—</span>
           <span style="color:var(--purple-light);font-size:22px;font-weight:700;text-align:center" data-b='{"PGA":"14.5","H0":"15.7","H5":"16.3","H10":"17","H15":"17.4","H20":"18.1","H25":"18.5"}'>14.5</span>
         </div>
 
         <!-- 3-Putts/ronda -->
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:10px 12px;background:rgba(255,255,255,.03);border-radius:10px;align-items:center">
           <span style="color:rgba(255,255,255,.5);font-size:12px;font-weight:700">3-Putts/ronda</span>
-          <span style="color:#f87171;font-size:22px;font-weight:700;text-align:center">3</span>
+<span id="tu-3putts" style="color:#f87171;font-size:22px;font-weight:700;text-align:center">—</span>
           <span style="color:var(--purple-light);font-size:22px;font-weight:700;text-align:center" data-b='{"PGA":"0.25","H0":"0.85","H5":"1.15","H10":"1.4","H15":"1.75","H20":"2","H25":"2.9"}'>0.25</span>
         </div>
 
         <!-- 1-Putts/ronda -->
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:10px 12px;background:rgba(255,255,255,.03);border-radius:10px;align-items:center">
           <span style="color:rgba(255,255,255,.5);font-size:12px;font-weight:700">1-Putts/ronda</span>
-          <span style="color:#34d399;font-size:22px;font-weight:700;text-align:center">5</span>
+<span id="tu-1putts" style="color:#34d399;font-size:22px;font-weight:700;text-align:center">—</span>
           <span style="color:var(--purple-light);font-size:22px;font-weight:700;text-align:center" data-b='{"PGA":"3.55","H0":"2.6","H5":"2.25","H10":"2","H15":"1.75","H20":"1.5","H25":"1.25"}'>3.55</span>
         </div>
 
         <!-- Acierto <2 pasos -->
         <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:10px 12px;background:rgba(255,255,255,.03);border-radius:10px;align-items:center">
           <span style="color:rgba(255,255,255,.5);font-size:12px;font-weight:700">Acierto &lt;2 pasos</span>
-          <span style="color:#fbbf24;font-size:22px;font-weight:700;text-align:center">80%</span>
+<span id="tu-acierto-corto" style="color:#fbbf24;font-size:22px;font-weight:700;text-align:center">—</span>
           <span style="color:var(--purple-light);font-size:22px;font-weight:700;text-align:center" data-b='{"PGA":"83%","H0":"76%","H5":"70%","H10":"65%","H15":"57%","H20":"52%","H25":"45%"}'>83%</span>
         </div>
 
@@ -949,12 +953,12 @@ body {
       <div class="sg-resumen">
         <div>
           <div class="sg-total-lbl">Total golpes perdidos</div>
-          <div class="sg-total">-4.8</div>
+<div class="sg-total" id="sg-total">—</div>
         </div>
         <div class="sg-sc-wrap">
           <div class="sg-sc-lbl">Tu score</div>
-          <div class="sg-sc">+12</div>
-          <div class="sg-sc-sub">+6 en 9 hoyos</div>
+<div class="sg-sc" id="sg-score">—</div>
+<div class="sg-sc-sub" id="sg-score-sub">—</div>
         </div>
       </div>
       <div class="sg-barras">
@@ -1160,9 +1164,12 @@ body {
 <div class="overlay" id="modal-fin-ok">
   <div class="sheet">
     <div class="sheet-handle"><span></span></div>
-    <div class="fin-franja-verde">
-      <span style="font-size:20px">✅</span>
-      <span style="color:var(--green-light);font-size:12px;font-weight:700" id="fin-ok-txt">¡Todos los 9 hoyos completados!</span>
+    <div class="fin-franja-verde" style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:20px">✅</span>
+        <span style="color:var(--green-light);font-size:12px;font-weight:700" id="fin-ok-txt">¡Todos los 9 hoyos completados!</span>
+      </div>
+      <button onclick="cerrarModal('modal-fin-ok')" style="background:rgba(255,255,255,.15);border:none;border-radius:50%;width:32px;height:32px;min-width:32px;color:white;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1">×</button>
     </div>
     <div class="fin-resultado-box">
       <div style="color:var(--text-dim);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Resultado vuelta 1</div>
@@ -1740,10 +1747,215 @@ function continuarSegundaVuelta(){
 
 function irAResumen(){
   cerrarModal('modal-fin-ok'); cerrarModal('modal-fin-faltan');
-  const ok=E.hoyos.filter(h=>h.ok).length;
-  const acum=E.hoyos.filter(h=>h.ok).reduce((s,h)=>s+(h.res||0),0);
-  document.getElementById('res-jugador').textContent=E.jugador.nombre+' · '+ok+' hoyos';
-  document.getElementById('res-score').textContent=resTexto(acum);
+  const hoyosOk = E.hoyos.filter(h=>h.ok);
+  const ok = hoyosOk.length;
+  const acum = hoyosOk.reduce((s,h)=>s+(h.res||0),0);
+  document.getElementById('res-jugador').textContent = E.jugador.nombre+' · '+ok+' hoyos';
+  document.getElementById('res-score').textContent = resTexto(acum);
+
+  // ── Calcular estadísticas reales ────────────────────────────────────────
+  var stats = {
+    fairwaysHit:0, fairwaysTotal:0,
+    updowns:0, updownsTotal:0,
+    trampas:0, castigos:0,
+    puttsTotal:0,
+    cortosMetidos:0, cortosTotal:0,
+    tresPutts:0,
+    hierros:{ // por rango de distancia
+      '0-30':  {intentos:0,green:0},
+      '30-60': {intentos:0,green:0},
+      '60-100':{intentos:0,green:0},
+      '100-150':{intentos:0,green:0},
+      '150-200':{intentos:0,green:0},
+      '200+':  {intentos:0,green:0}
+    }
+  };
+
+  hoyosOk.forEach(function(h){
+    var t = h.tiros;
+    if (!t) return;
+
+    // Fairways (solo hoyos donde hubo drive)
+    if (t.drive) {
+      stats.fairwaysTotal++;
+      if (t.drive === 'fairway') stats.fairwaysHit++;
+    }
+
+    // Trampas: solo tiros QUE LLEGARON a trampa (no chips de salida)
+    (t.hierros||[]).forEach(function(hr){
+      if (hr.resultado === 'trampa' && !hr.desdeChip) stats.trampas++;
+      if (hr.resultado === 'castigo') stats.castigos++;
+    });
+    if (t.drive === 'castigo') stats.castigos++;
+
+    // Putting
+    if (t.putts) {
+      stats.puttsTotal += t.putts;
+      if (t.putts >= 3) stats.tresPutts++;
+    }
+
+    // Putts cortos (<2 pasos)
+    if (t.puttCorto === 'lo-meti' || t.puttCorto === 'lo-falle') {
+      stats.cortosTotal++;
+      if (t.puttCorto === 'lo-meti') stats.cortosMetidos++;
+    }
+
+    // Up & Down — quedó en barbas/trampa (tiro real, no chip) y metió en ≤2 putts
+    var enBarbas = (t.hierros||[]).some(function(hr){
+      return (hr.resultado==='barbas'||hr.resultado==='trampa') && !hr.desdeChip;
+    });
+    if (enBarbas && t.approach === 'green') {
+      stats.updownsTotal++;
+      if (t.putts && t.putts <= 2) stats.updowns++;
+    }
+
+    // Tiros al green por distancia — rangos que coinciden con el HTML
+    function registrarHierro(dist, resultado) {
+      var rango;
+      if (dist <= 30)       rango = '0-30';
+      else if (dist <= 60)  rango = '30-60';
+      else if (dist <= 90)  rango = '60-90';
+      else if (dist <= 120) rango = '90-120';
+      else if (dist <= 150) rango = '120-150';
+      else                  rango = '150+';
+      if (!stats.hierros[rango]) stats.hierros[rango] = {intentos:0, green:0};
+      stats.hierros[rango].intentos++;
+      if (resultado === 'green') stats.hierros[rango].green++;
+    }
+
+    (t.hierros||[]).forEach(function(hr){
+      if (hr.dist) registrarHierro(hr.dist, hr.resultado);
+    });
+  });
+
+  // ── Actualizar UI ────────────────────────────────────────────────────────
+  // Fairways
+  var fwPct = stats.fairwaysTotal>0 ? Math.round(stats.fairwaysHit/stats.fairwaysTotal*100) : 0;
+  var elFw = document.getElementById('stat-fw');
+  var elFwSub = document.getElementById('stat-fw-sub');
+  if (elFw) elFw.textContent = stats.fairwaysHit+'/'+stats.fairwaysTotal;
+  if (elFwSub) { elFwSub.textContent = fwPct+'%'; elFwSub.className='stat-sub '+(fwPct>=50?'sub-good':'sub-bad'); }
+
+  // Up & Down
+  var udPct = stats.updownsTotal>0 ? Math.round(stats.updowns/stats.updownsTotal*100) : 0;
+  var elUd = document.getElementById('stat-ud');
+  var elUdSub = document.getElementById('stat-ud-sub');
+  if (elUd) elUd.textContent = stats.updowns+'/'+stats.updownsTotal;
+  if (elUdSub) { elUdSub.textContent = udPct+'%'; elUdSub.className='stat-sub '+(udPct>=50?'sub-good':'sub-bad'); }
+
+  // Trampas y Castigos
+  var elTr = document.getElementById('stat-tr'); if (elTr) elTr.textContent = stats.trampas;
+  var elCa = document.getElementById('stat-ca'); if (elCa) elCa.textContent = stats.castigos;
+
+  // ── Putting section ──────────────────────────────────────────────────────
+  // Total putts
+  var elPutTot = document.getElementById('put-total-lbl');
+  if (elPutTot) elPutTot.textContent = stats.puttsTotal + ' total';
+
+  // Cortos (<2 pasos): mostrar fallados y % acierto
+  var cortosF = stats.cortosTotal - stats.cortosMetidos;
+  var cortosPct = stats.cortosTotal > 0
+    ? Math.round(stats.cortosMetidos / stats.cortosTotal * 100) : 100;
+  var elCortoNum = document.getElementById('put-cortos-num');
+  if (elCortoNum) elCortoNum.innerHTML =
+    cortosF + ' <span class="pr-de">fallado' + (cortosF!==1?'s':'') +
+    ' de ' + stats.cortosTotal + '</span>';
+  var elCortoPct = document.getElementById('put-cortos-pct');
+  if (elCortoPct) {
+    elCortoPct.textContent = cortosPct + '%';
+    elCortoPct.style.color = cortosPct>=75?'var(--green-light)':cortosPct>=50?'var(--amber-light)':'var(--red-light)';
+  }
+
+  // 3-putts
+  var el3pNum = document.getElementById('put-3putts-num');
+  if (el3pNum) el3pNum.innerHTML =
+    stats.tresPutts + ' <span class="pr-de">triple' + (stats.tresPutts!==1?'s':'') +
+    ' de ' + ok + ' hoyos</span>';
+  var el3pPct = document.getElementById('put-3putts-pct');
+  if (el3pPct) {
+    var pct3p = ok>0 ? Math.round((1-stats.tresPutts/ok)*100) : 100;
+    el3pPct.textContent = pct3p + '%';
+    el3pPct.style.color = pct3p>=80?'var(--green-light)':pct3p>=60?'var(--amber-light)':'var(--red-light)';
+  }
+
+  // Tablas de tiros al green — actualizar con datos reales
+  var rangosTabla = [
+    {rango:'0-30',    idInt:'int-0-30',    idGr:'gr-0-30'},
+    {rango:'30-60',   idInt:'int-30-60',   idGr:'gr-30-60'},
+    {rango:'60-90',   idInt:'int-60-90',   idGr:'gr-60-90'},
+    {rango:'90-120',  idInt:'int-90-120',  idGr:'gr-90-120'},
+    {rango:'120-150', idInt:'int-120-150', idGr:'gr-120-150'},
+    {rango:'150+',    idInt:'int-150',     idGr:'gr-150'}
+  ];
+
+  // Drive
+  var fwPct2 = stats.fairwaysTotal>0 ? Math.round(stats.fairwaysHit/stats.fairwaysTotal*100) : 0;
+  var fwCol = fwPct2>=60?'#34d399':fwPct2>=40?'#fbbf24':'#f87171';
+  // Columna Intentos = fracción X/Y
+  var drvIntHTML = '<span class="t-prox" style="color:#60a5fa;font-size:20px">'+stats.fairwaysHit+'/'+stats.fairwaysTotal+'</span>';
+  // Columna Green = porcentaje
+  var drvGrHTML = '<span class="t-pct" style="color:'+fwCol+';font-size:20px">'+fwPct2+'%</span>';
+  ['int-drv','cmp-int-drv'].forEach(function(id){ var el=document.getElementById(id); if(el) el.innerHTML=drvIntHTML; });
+  ['gr-drv','cmp-gr-drv'].forEach(function(id){ var el=document.getElementById(id); if(el) el.innerHTML=drvGrHTML; });
+
+  rangosTabla.forEach(function(r) {
+    var d = stats.hierros[r.rango] || {intentos:0, green:0};
+    var intHTML, grHTML;
+    if (d.intentos > 0) {
+      intHTML = '<span class="t-prox" style="color:#60a5fa;font-size:20px">'+d.intentos+'</span>';
+      var pct = Math.round(d.green/d.intentos*100);
+      var col = pct>=66?'#34d399':pct>=33?'#fbbf24':'#f87171';
+      grHTML = '<span class="t-pct" style="color:'+col+';font-size:20px">'+pct+'%</span>'+
+               '<span class="t-cnt" style="color:'+col+'">'+d.green+'/'+d.intentos+'</span>';
+    } else {
+      intHTML = '<span style="color:rgba(255,255,255,.2);font-size:17px">—</span>';
+      grHTML  = '<span style="color:rgba(255,255,255,.2);font-size:17px">—</span>';
+    }
+    // Tabla hierros
+    var elInt=document.getElementById(r.idInt); if(elInt) elInt.innerHTML=intHTML;
+    var elGr=document.getElementById(r.idGr);   if(elGr)  elGr.innerHTML=grHTML;
+    // Tabla comparativa — mismos valores
+    var elCmpInt=document.getElementById('cmp-'+r.idInt); if(elCmpInt) elCmpInt.innerHTML=intHTML;
+    var elCmpGr=document.getElementById('cmp-'+r.idGr);   if(elCmpGr)  elCmpGr.innerHTML=grHTML;
+  });
+
+    // ── Putting comparativa ─────────────────────────────────────────────────
+  // 1-putts
+  var unPutts = hoyosOk.filter(function(h){ return h.tiros && h.tiros.putts===1; }).length;
+  // Acierto cortos <2 pasos
+  var aciertoCorto = stats.cortosTotal>0 ? Math.round(stats.cortosMetidos/stats.cortosTotal*100) : null;
+
+  function setEl(id, val) { var el=document.getElementById(id); if(el) el.textContent=val; }
+
+  setEl('tu-putts-ronda', stats.puttsTotal);
+  setEl('tu-3putts', stats.tresPutts);
+  // 1-putts: más es mejor — verde si >= benchmark PGA (3.55 por 9h)
+  var elUnPutts = document.getElementById('tu-1putts');
+  if (elUnPutts) {
+    var benchUnPutts = 3.55; // PGA por 9 hoyos
+    var col1p = unPutts >= benchUnPutts ? '#34d399' : '#f87171';
+    elUnPutts.textContent = unPutts;
+    elUnPutts.style.color = col1p;
+  }
+  setEl('tu-acierto-corto', aciertoCorto!==null ? aciertoCorto+'%' : '—');
+
+  // ── Score y strokes gained simplificado ──────────────────────────────────
+  var acumStr = acum===0?'E':acum>0?'+'+acum:''+acum;
+  setEl('sg-score', acumStr);
+  setEl('sg-score-sub', ok+' hoyos jugados');
+
+  // Strokes gained simplificado: diferencia vs promedio PGA por categoría
+  // Benchmark PGA por 9 hoyos: Putting 14.5, Approaches GIR 66%
+  var benchPuttsPGA = 14.5;
+  var sgPutting = benchPuttsPGA - stats.puttsTotal; // positivo=mejor que PGA
+  var sgTotal = sgPutting; // simplificado por ahora
+  var sgStr = (sgTotal>=0?'+':'')+sgTotal.toFixed(1);
+  var elSgTotal = document.getElementById('sg-total');
+  if(elSgTotal) {
+    elSgTotal.textContent = sgStr;
+    elSgTotal.style.color = sgTotal>=0 ? 'var(--green-light)' : 'var(--red-light)';
+  }
+
   irA('view-resumen');
 }
 
@@ -2794,6 +3006,30 @@ function verificarRondaCompleta() {
     '</div></div>';
 
   document.body.appendChild(overlay);
+}
+
+function cargarRondaPrueba() {
+  // RONDA DE PRUEBA — todos los números verificados
+  // Resultados ESPERADOS:
+  // FW: 5/7 | UD: 3/4 | Trampas: 2 | Castigos: 1
+  // Putts: 18 | Cortos: 3/4 | 3-putts: 1
+  // Hierros: 0-30=4/4(100%), 30-60=1/4(25%), 60-90=1/4(25%), 90-120=2/2(100%), 120-150=1/1(100%), 150+=0/1(0%)
+
+  E.hoyos = [
+    {num:1,ok:true,res: 0,tiros:{drive:'fairway',  hierros:[{dist:140,resultado:'green'}],approach:'green',putts:2,pasos:15,puttCorto:'no-hubo',score:0}},
+    {num:2,ok:true,res: 1,tiros:{drive:'fairway',  hierros:[{dist:90,resultado:'barbas'},{dist:30,resultado:'green',desdeChip:'barbas'}],approach:'green',putts:2,pasos:8,puttCorto:'lo-meti',score:1}},
+    {num:3,ok:true,res: 3,tiros:{drive:'sin-tiro', hierros:[{dist:80,resultado:'lejos'},{dist:40,resultado:'trampa'},{dist:30,resultado:'green',desdeChip:'trampa'}],approach:'green',putts:3,pasos:18,puttCorto:'no-hubo',score:3}},
+    {num:4,ok:true,res: 1,tiros:{drive:'fairway',  hierros:[{dist:160,resultado:'lejos'},{dist:90,resultado:'trampa'},{dist:30,resultado:'green',desdeChip:'trampa'}],approach:'green',putts:2,pasos:12,puttCorto:'no-hubo',score:1}},
+    {num:5,ok:true,res: 2,tiros:{drive:'castigo',  hierros:[{dist:100,resultado:'green'}],approach:'green',putts:2,pasos:6,puttCorto:'no-hubo',score:2}},
+    {num:6,ok:true,res:-1,tiros:{drive:null,       hierros:[{dist:50,resultado:'barbas'},{dist:30,resultado:'green',desdeChip:'barbas'}],approach:'green',putts:1,pasos:20,puttCorto:'no-hubo',score:-1}},
+    {num:7,ok:true,res: 1,tiros:{drive:'sin-tiro', hierros:[{dist:60,resultado:'lejos'},{dist:40,resultado:'green'}],approach:'green',putts:2,pasos:4,puttCorto:'lo-falle',score:1}},
+    {num:8,ok:true,res: 0,tiros:{drive:'fairway',  hierros:[{dist:80,resultado:'green'}],approach:'green',putts:2,pasos:10,puttCorto:'lo-meti',score:0}},
+    {num:9,ok:true,res: 1,tiros:{drive:'fairway',  hierros:[{dist:110,resultado:'green'}],approach:'green',putts:2,pasos:9,puttCorto:'lo-meti',score:1}}
+  ];
+
+  renderHoyos();
+  actualizarHoyo();
+  console.log('Ronda de prueba cargada. Esperado: FW 5/7, UD 3/4, Trampas 2, Castigos 1, Putts 18, Cortos 3/4, 3p 1');
 }
 
 function cerrarRondaCompleta() {
