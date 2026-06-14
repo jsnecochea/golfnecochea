@@ -575,8 +575,11 @@ body {
       <div class="menu-item" onclick="abrirNotas();cerrarMenu()">
         📋 Notas
       </div>
+      <div class="menu-item" onclick="continuarSegundaVuelta();cerrarMenu()">
+        ➡️ Continuar hoyos 10–18
+      </div>
       <div class="menu-item" onclick="abrirFin();cerrarMenu()">
-        🏁 Fin de ronda
+        🏁 Finalizar ronda
       </div>
       <div class="menu-item" onclick="abrirModal('modal-reset');cerrarMenu()">
         ↺ Reset
@@ -2449,22 +2452,27 @@ function interpretarHoyo(txt) {
 
   // 3. Usar los números encontrados
   if (todosLosNums.length >= 1) {
-    // Usar Math.max y Math.min para evitar bugs de sort
     var mayorPaso = Math.max.apply(null, todosLosNums);
     var menorPaso = Math.min.apply(null, todosLosNums);
-    r.pasos = mayorPaso; // El MAYOR = primer putt (el más largo)
+    r.pasos = mayorPaso; // El MAYOR = primer putt
+
     if (todosLosNums.length >= 2) {
+      // Múltiples putts con pasos declarados
       if (menorPaso > 2) {
+        // Todos los putts son largos — sin putt corto
         r.puttCorto = 'no-hubo';
       } else if (!DICT.puttCorto.lofalle.some(function(p){ return n.includes(norm(p)); })) {
         r.puttCorto = 'lo-meti';
       }
     } else {
-      if (mayorPaso > 2) {
+      // Un solo número de pasos — solo asignar no-hubo si es 1 putt
+      // Si son 2+ putts y solo dijo un número, dejar puttCorto=null para preguntar
+      if (r.putts === 1 && mayorPaso > 2) {
         r.puttCorto = 'no-hubo';
-      } else if (!DICT.puttCorto.lofalle.some(function(p){ return n.includes(norm(p)); })) {
+      } else if (mayorPaso <= 2 && !DICT.puttCorto.lofalle.some(function(p){ return n.includes(norm(p)); })) {
         r.puttCorto = 'lo-meti';
       }
+      // Si putts >= 2 y solo un paso declarado → dejar null para preguntar
     }
   }
 
@@ -2762,6 +2770,37 @@ function guardarScore(score) {
   guardarHoyo(E.ultimosDatos);
 }
 
+function verificarRondaCompleta() {
+  var completados = E.hoyos.filter(function(h){ return h.ok; }).length;
+  if (completados < E.totalHoyos) return; // No están todos
+
+  // Todos los hoyos completados — preguntar qué hacer
+  var overlay = document.createElement('div');
+  overlay.id = 'overlay-ronda-completa';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:999;padding:20px';
+
+  var acum = E.hoyos.reduce(function(s,h){ return s+(h.res||0); }, 0);
+  var acumStr = acum===0?'E':acum>0?'+'+acum:''+acum;
+
+  overlay.innerHTML = '<div style="background:#1a1f2e;border-radius:24px;padding:28px 20px;width:100%;max-width:380px;text-align:center">' +
+    '<div style="font-size:40px;margin-bottom:12px">🏆</div>' +
+    '<div style="color:white;font-size:22px;font-weight:700;margin-bottom:6px">¡Ronda completada!</div>' +
+    '<div style="color:rgba(255,255,255,.5);font-size:14px;margin-bottom:8px">Hoyos 1–9 terminados</div>' +
+    '<div style="color:var(--player-light,#34d399);font-size:32px;font-weight:700;margin-bottom:24px">' + acumStr + '</div>' +
+    '<div style="display:flex;flex-direction:column;gap:10px">' +
+    '<button onclick="cerrarRondaCompleta();continuarSegundaVuelta()" style="background:var(--player-main,var(--green));border:none;border-radius:14px;padding:16px;color:white;font-size:15px;font-weight:700;cursor:pointer">➡️ Continuar hoyos 10–18</button>' +
+    '<button onclick="cerrarRondaCompleta();abrirFin()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:16px;color:white;font-size:15px;font-weight:600;cursor:pointer">🏁 Finalizar y ver resumen</button>' +
+    '<button onclick="cerrarRondaCompleta()" style="background:none;border:none;padding:10px;color:rgba(255,255,255,.3);font-size:13px;cursor:pointer">Seguir revisando</button>' +
+    '</div></div>';
+
+  document.body.appendChild(overlay);
+}
+
+function cerrarRondaCompleta() {
+  var o = document.getElementById('overlay-ronda-completa');
+  if (o) o.remove();
+}
+
 function limpiarTranscript() {
   var dbgEl = document.getElementById('debug-voz');
   if (dbgEl) dbgEl.textContent = '';
@@ -2770,6 +2809,8 @@ function limpiarTranscript() {
 
 function guardarHoyo(datos) {
   limpiarTranscript();
+  // Verificar DESPUÉS de guardar si se completaron los 9 hoyos
+  setTimeout(function(){ verificarRondaCompleta(); }, 500);
   var h = E.hoyos.find(function(x){ return x.num === E.hoyoActual; });
   if (h) {
     h.ok = true;
