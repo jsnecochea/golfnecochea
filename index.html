@@ -1599,18 +1599,9 @@ function combinarConParcial(nuevo, parcial) {
     parcial.hierros.forEach(function(h){ if(!r.hierros.find(function(x){return x.dist===h.dist;})) r.hierros.push(h); });
   }
   // Si el parcial tenía hierros en barbas/trampa y el nuevo approach es green
-  // → agregar chip de 25y automáticamente, SOLO si no viene ya en r.hierros
+  // → el chip ya se agrega en interpretarHoyo via hayDosResultados
+  // Aquí solo heredamos el approach si el nuevo no lo tiene
   if (!r.approach && parcial.approach) r.approach = parcial.approach;
-  var parcialEnBarbas = (parcial.hierros||[]).some(function(h){ return h.resultado==='barbas'||h.resultado==='trampa'; });
-  if (r.approach === 'green' && parcialEnBarbas) {
-    var yaHayChip = r.hierros && r.hierros.some(function(h){ return h.esChip; });
-    // Solo agregar si no hay chip ya (evitar duplicado cuando viene en el mismo dictado)
-    if (!yaHayChip) {
-      var tipoChip = (parcial.hierros||[]).some(function(h){ return h.resultado==='trampa'; }) ? 'trampa' : 'barbas';
-      if (!r.hierros) r.hierros = [];
-      r.hierros.push({dist:30, resultado:'green', esChip:true, desdeChip:tipoChip});
-    }
-  }
   if (r.putts===null && parcial.putts!==null) r.putts = parcial.putts;
   if (r.pasos===null && parcial.pasos!==null) r.pasos = parcial.pasos;
   if (!r.puttCorto && parcial.puttCorto) r.puttCorto = parcial.puttCorto;
@@ -1739,6 +1730,22 @@ function toggleVoz() {
         datosAnteriores = null;
       }
       datos = combinarConParcial(datos, tiroParcial);
+
+      // Si el nuevo dictado trae approach=green y los hierros del parcial
+      // tenían barbas/trampa → agregar chip de 30y (solo si no hay ya)
+      var parcialActual = getTiroParcial(E.hoyoActual);
+      var parcialEnBarbas2 = (parcialActual.hierros||[]).some(function(h){
+        return h.resultado==='barbas' || h.resultado==='trampa';
+      });
+      if (datos.approach === 'green' && parcialEnBarbas2) {
+        var yaChip = (datos.hierros||[]).some(function(h){ return h.esChip; });
+        if (!yaChip) {
+          var tipoChip2 = (parcialActual.hierros||[]).some(function(h){ return h.resultado==='trampa'; }) ? 'trampa' : 'barbas';
+          if (!datos.hierros) datos.hierros = [];
+          datos.hierros.push({dist:30, resultado:'green', esChip:true, desdeChip:tipoChip2});
+        }
+      }
+
       E.ultimosDatos = datos;
       E.ultimoTextoVoz = texto;
       mostrarConfirmacion(texto, datos);
