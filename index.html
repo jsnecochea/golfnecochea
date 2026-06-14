@@ -42,9 +42,9 @@ body {
 .players-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; }
 .player-card { border-radius:20px; padding:20px 14px; display:flex; flex-direction:column; align-items:center; gap:10px; cursor:pointer; border:1.5px solid; transition:transform .15s; }
 .player-card:active { transform:scale(.97); }
-.player-card[data-p="constanza"] { background:rgba(109,40,217,.12); border-color:rgba(109,40,217,.3); }
+.player-card[data-p="constanza"] { background:rgba(219,39,119,.12); border-color:rgba(244,114,182,.3); }
 .player-card[data-p="salvador"]  { background:rgba(15,110,86,.12);  border-color:rgba(15,110,86,.4); box-shadow:0 0 0 2px var(--bg),0 0 0 4px var(--green); }
-.player-card[data-p="elisa"]     { background:rgba(190,24,93,.12);  border-color:rgba(190,24,93,.3); }
+.player-card[data-p="elisa"]     { background:rgba(147,51,234,.12); border-color:rgba(192,132,252,.3); }
 .player-card[data-p="papa"]      { background:rgba(24,95,165,.12);  border-color:rgba(24,95,165,.3); }
 .player-avatar { font-size:28px; }
 .player-name { font-size:16px; font-weight:700; }
@@ -55,7 +55,7 @@ body {
 .add-player-btn { display:flex; align-items:center; justify-content:center; gap:8px; padding:14px; border-radius:16px; border:1.5px dashed rgba(255,255,255,.1); background:rgba(255,255,255,.02); color:var(--text-dim); font-size:13px; font-weight:600; cursor:pointer; width:100%; }
 
 /* ── HEADER VERDE ── */
-.header-green { background:var(--green); border-radius:0 0 28px 28px; padding:16px 18px 14px; }
+.header-green { background:var(--player-main, var(--green)); border-radius:0 0 28px 28px; padding:16px 18px 14px; }
 .header-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
 .jugador-pill { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.12); border-radius:20px; padding:7px 14px 7px 8px; cursor:pointer; }
 .jugador-nombre { color:white; font-size:14px; font-weight:600; }
@@ -101,8 +101,8 @@ body {
 .hoyos-selector { padding:16px 12px 8px; display:grid; grid-template-columns:repeat(9,1fr); gap:4px; }
 .hoyo-btn { display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer; }
 .hoyo-num { width:100%; border-radius:10px; padding:10px 0; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:700; min-height:40px; transition:all .15s; }
-.hoyo-num.completado { background:var(--blue); color:white; }
-.hoyo-num.activo { background:var(--green); color:white; box-shadow:0 0 0 2px var(--bg),0 0 0 4px white; }
+.hoyo-num.completado { background:var(--player-main,var(--blue)); color:white; opacity:.7; }
+.hoyo-num.activo { background:var(--player-main,var(--green)); color:white; box-shadow:0 0 0 2px var(--bg),0 0 0 4px white; }
 .hoyo-num.vacio { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); color:rgba(255,255,255,.2); }
 .hoyo-res { font-size:14px; font-weight:800; min-height:18px; }
 .res-birdie { color:#818cf8; }
@@ -127,15 +127,15 @@ body {
 
 /* ── TIROS REGISTRADOS ── */
 .tiros-list { padding:0 16px; display:flex; flex-direction:column; gap:7px; margin:8px 0; }
-.tiro-card { display:flex; align-items:center; gap:10px; padding:11px 14px; border-radius:14px; border-left:3px solid; }
-.tc-drive    { border-color:var(--green); background:rgba(15,110,86,.12); }
+.tiro-card { display:flex; align-items:center; gap:10px; padding:11px 14px; border-radius:14px; border-left:3px solid; flex-wrap:nowrap; }
+.tc-drive    { border-color:var(--player-main,var(--green)); background:var(--player-bg,rgba(15,110,86,.12)); }
 .tc-hierro   { border-color:var(--amber); background:rgba(217,119,6,.12); }
-.tc-approach { border-color:var(--green); background:rgba(15,110,86,.12); }
+.tc-approach { border-color:var(--player-main,var(--green)); background:var(--player-bg,rgba(15,110,86,.12)); }
 .tc-putt     { border-color:var(--red);   background:rgba(220,38,38,.12); }
 .tiro-emoji  { font-size:16px; flex-shrink:0; }
-.tiro-info   { flex:1; }
+.tiro-info   { flex:1; min-width:0; overflow:hidden; }
 .tiro-subtipo { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.8px; opacity:.6; margin-bottom:1px; }
-.tc-drive .tiro-subtipo,.tc-approach .tiro-subtipo { color:var(--green-light); }
+.tc-drive .tiro-subtipo,.tc-approach .tiro-subtipo { color:var(--player-light,var(--green-light)); }
 .tc-hierro   .tiro-subtipo { color:var(--amber-light); }
 .tc-putt     .tiro-subtipo { color:var(--red-light); }
 .tiro-val { font-size:14px; font-weight:700; }
@@ -144,17 +144,17 @@ body {
 
 /* Botones discretos hoyo completado */
 .hoyo-actions { padding:0 16px; display:flex; gap:8px; margin-bottom:8px; }
-.btn-corregir { flex:1; background:rgba(255,255,255,.05); border:1px solid var(--border); border-radius:12px; padding:10px; color:var(--text-muted); font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; }
+.btn-corregir { flex:1; background:var(--player-bg,rgba(255,255,255,.05)); border:1px solid var(--player-border,var(--border)); border-radius:12px; padding:10px; color:var(--player-light,var(--text-muted)); font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; }
 .btn-borrar   { flex:1; background:rgba(220,38,38,.08); border:1px solid rgba(220,38,38,.15); border-radius:12px; padding:10px; color:rgba(248,113,113,.6); font-size:12px; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px; }
 
 /* ── BOTÓN DICTAR ── */
 .dictar-wrap { padding:0; display:flex; flex-direction:column; align-items:center; flex:1; }
 .btn-mic-circulo {
   width:190px; height:190px; border-radius:50%;
-  background:var(--green);
+  background:var(--player-main,var(--green));
   border:none; cursor:pointer;
   display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
-  box-shadow:0 0 0 10px rgba(15,110,86,.2), 0 0 0 20px rgba(15,110,86,.08);
+  box-shadow:0 0 0 10px var(--player-bg,rgba(15,110,86,.2)), 0 0 0 20px var(--player-bg,rgba(15,110,86,.08));
   transition:transform .15s, background .2s, box-shadow .2s;
 }
 .btn-mic-circulo:active { transform:scale(.93); }
@@ -231,8 +231,8 @@ body {
 .op-lo-meti { background:rgba(15,110,86,.3); border-color:rgba(15,110,86,.4); color:var(--green-light); }
 .op-lo-falle { background:rgba(220,38,38,.3); border-color:rgba(220,38,38,.4); color:var(--red-light); }
 .conf-botones { padding:4px 16px 24px; display:flex; gap:8px; }
-.btn-editar  { flex:1; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1); border-radius:14px; padding:13px; display:flex; align-items:center; justify-content:center; gap:6px; color:var(--text-muted); font-size:13px; font-weight:600; cursor:pointer; }
-.btn-correcto { flex:2; background:var(--green); border-radius:14px; padding:13px; display:flex; align-items:center; justify-content:center; gap:6px; color:white; font-size:14px; font-weight:700; cursor:pointer; border:none; }
+.btn-editar  { flex:1; background:rgba(24,95,165,.25); border:1px solid rgba(96,165,250,.4); border-radius:14px; padding:13px; display:flex; align-items:center; justify-content:center; gap:6px; color:#60a5fa; font-size:13px; font-weight:600; cursor:pointer; }
+.btn-correcto { flex:2; background:var(--player-main,var(--green)); border-radius:14px; padding:13px; display:flex; align-items:center; justify-content:center; gap:6px; color:white; font-size:14px; font-weight:700; cursor:pointer; border:none; }
 
 /* ── FIN RONDA ── */
 .fin-franja-roja { background:rgba(220,38,38,.15); border-bottom:1px solid rgba(220,38,38,.2); padding:14px 20px; display:flex; align-items:center; gap:10px; }
@@ -421,6 +421,51 @@ body {
 
 .hidden { display:none !important; }
 
+/* Botón basura en tiro-card */
+.btn-trash-tiro {
+  background:none; border:none; cursor:pointer;
+  font-size:15px; padding:6px; opacity:.4;
+  flex-shrink:0; align-self:center;
+  border-radius:8px; transition:opacity .15s, background .15s;
+}
+.btn-trash-tiro:active { opacity:1; background:rgba(220,38,38,.15); }
+
+/* Modal confirmación borrar */
+.modal-borrar-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.7);
+  display:flex; align-items:flex-end; justify-content:center;
+  z-index:999; animation:fadeIn .15s ease;
+}
+.modal-borrar-card {
+  background:#1a1f2e; border-radius:24px 24px 0 0;
+  padding:24px 20px 36px; width:100%; max-width:430px;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+.modal-borrar-titulo {
+  font-size:18px; font-weight:700; color:white;
+  text-align:center; margin-bottom:6px;
+}
+.modal-borrar-sub {
+  font-size:13px; color:rgba(255,255,255,.4);
+  text-align:center; margin-bottom:24px;
+}
+.modal-borrar-tiro {
+  background:rgba(220,38,38,.1); border:1px solid rgba(220,38,38,.25);
+  border-radius:14px; padding:14px 16px; margin-bottom:20px;
+  display:flex; align-items:center; gap:12px;
+}
+.modal-borrar-btns { display:flex; gap:10px; }
+.btn-borrar-cancel {
+  flex:1; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1);
+  border-radius:14px; padding:14px; color:rgba(255,255,255,.6);
+  font-size:14px; font-weight:600; cursor:pointer;
+}
+.btn-borrar-confirm {
+  flex:1; background:rgba(220,38,38,.8); border:none;
+  border-radius:14px; padding:14px; color:white;
+  font-size:14px; font-weight:700; cursor:pointer;
+}
+
 /* Menú hamburguesa */
 .menu-ham {
   display:flex; flex-direction:column; justify-content:center; gap:5px;
@@ -604,8 +649,8 @@ body {
 
   <!-- Botones hoyo completado -->
   <div class="hoyo-actions hidden" id="hoyo-actions">
-    <div class="btn-corregir" onclick="editarPorVoz()">
-      <span style="font-size:15px;line-height:1">⏺</span>&nbsp;&nbsp;Corregir por voz
+    <div class="btn-corregir" onclick="agregarTiroPorVoz()" style="background:rgba(24,95,165,.25);border-color:rgba(96,165,250,.4);color:#60a5fa">
+      <span style="font-size:15px;line-height:1">＋</span>&nbsp;&nbsp;Agregar tiro
     </div>
     <div class="btn-borrar" onclick="abrirModal('modal-reset')">
       <span style="font-size:15px;line-height:1;color:rgba(248,113,113,.6)">⊗</span>&nbsp;&nbsp;Borrar hoyo
@@ -1072,7 +1117,7 @@ body {
       </div>
     </div>
     <div class="conf-botones">
-      <div class="btn-editar" onclick="editarPorVoz()">⏺  Editar por voz</div>
+      <div class="btn-editar" onclick="agregarTiroPorVoz()">＋ Agregar tiro</div>
       <button class="btn-correcto" onclick="confirmarHoyo()">✓ Correcto</button>
     </div>
   </div>
@@ -1221,11 +1266,28 @@ function cerrarModal(id){ document.getElementById(id).classList.remove('active')
 function abrirNotas(){ document.getElementById('overlay-notas').classList.add('active'); }
 function cerrarNotas(){ document.getElementById('overlay-notas').classList.remove('active'); }
 
+var COLORES_JUGADOR = {
+  'constanza': { main:'#db2777', light:'#f472b6', bg:'rgba(219,39,119,.15)', border:'rgba(244,114,182,.4)' },
+  'salvador':  { main:'#0F6E56', light:'#34d399', bg:'rgba(15,110,86,.15)',  border:'rgba(52,211,153,.4)'  },
+  'elisa':     { main:'#9333ea', light:'#c084fc', bg:'rgba(147,51,234,.15)', border:'rgba(192,132,252,.4)' },
+  'papa':      { main:'#185FA5', light:'#60a5fa', bg:'rgba(24,95,165,.15)',  border:'rgba(96,165,250,.4)'  }
+};
+
+function aplicarColorJugador(id) {
+  var c = COLORES_JUGADOR[id] || COLORES_JUGADOR['salvador'];
+  var r = document.documentElement;
+  r.style.setProperty('--player-main',   c.main);
+  r.style.setProperty('--player-light',  c.light);
+  r.style.setProperty('--player-bg',     c.bg);
+  r.style.setProperty('--player-border', c.border);
+}
+
 function selJugador(id,av,nom){
   E.jugador={id,avatar:av,nombre:nom};
   document.getElementById('jug-avatar').textContent=av;
   document.getElementById('jug-nombre').textContent=nom;
   document.getElementById('torneo-mi').textContent=av+' '+nom;
+  aplicarColorJugador(id);
   tiroParcialPorHoyo = {};
   tiroParcial = getTiroParcial(1);
   renderHoyos(); actualizarHoyo(); irA('view-hoyo');
@@ -1332,48 +1394,135 @@ function reconstruirTiros(lista, d) {
   lista.innerHTML='';
   if(!d) return;
 
-  // Drive
-  if(d.drive){
-    var texD={fairway:'Fairway',  'sin-tiro':'Sin tiro / Árboles', castigo:'Castigo / OB / Agua'};
-    lista.innerHTML+='<div class="tiro-card tc-drive"><span class="tiro-emoji">🏌️</span>'+
-      '<div class="tiro-info"><div class="tiro-subtipo">Drive</div>'+
-      '<div class="tiro-val">'+(texD[d.drive]||d.drive)+'</div></div></div>';
+  function btnBasura(tipo, extra, label) {
+    var extraStr = extra ? "'" + extra + "'" : 'null';
+    var labelStr = label || 'este tiro';
+    return '<button class="btn-trash-tiro" onclick="confirmarBorrarTiro(\'' + tipo + '\',' + extraStr + ',\'' + labelStr + '\')" title="Borrar">🗑️</button>';
   }
 
-  // Hierros ordenados mayor a menor
+  // Drive
+  if(d.drive){
+    var texD={fairway:'Fairway','sin-tiro':'Sin tiro / Árboles',castigo:'Castigo / OB / Agua'};
+    lista.innerHTML+='<div class="tiro-card tc-drive" data-tipo="drive">'+
+      '<span class="tiro-emoji">🏌️</span>'+
+      '<div class="tiro-info"><div class="tiro-subtipo">Drive</div>'+
+      '<div class="tiro-val">'+(texD[d.drive]||d.drive)+'</div></div>'+
+      btnBasura('drive',null,'Drive')+'</div>';
+  }
+
+  // Hierros
   var hierros=(d.hierros||[]).slice().sort(function(a,b){return b.dist-a.dist;});
   hierros.forEach(function(h){
     var texR={green:'Al green',barbas:'Barbas',trampa:'Trampa',castigo:'Castigo',lejos:'Lejos del green'};
-    lista.innerHTML+='<div class="tiro-card tc-hierro"><span class="tiro-emoji">🔨</span>'+
-      '<div class="tiro-info"><div class="tiro-subtipo">'+h.dist+' yardas</div>'+
-      '<div class="tiro-val" style="'+(h.resultado?'':'color:rgba(255,165,0,.8)')+'">'+(texR[h.resultado]||(h.resultado||'❓ ¿Dónde quedó?'))+'</div></div></div>';
+    var esChip = h.desdeChip || (h.dist===30 && h.resultado==='green');
+    var subtipo = esChip ? 'Chip desde '+(h.desdeChip||'barbas')+' (0–30y)' : h.dist+' yardas';
+    var emoji = esChip ? '🎯' : '🔨';
+    var distKey = esChip ? 'chip' : String(h.dist);
+    lista.innerHTML+='<div class="tiro-card tc-hierro" data-tipo="hierro" data-dist="'+distKey+'">'+
+      '<span class="tiro-emoji">'+emoji+'</span>'+
+      '<div class="tiro-info"><div class="tiro-subtipo">'+subtipo+'</div>'+
+      '<div class="tiro-val">'+(texR[h.resultado]||(h.resultado||'❓ ¿Dónde quedó?'))+'</div></div>'+
+      btnBasura('hierro', distKey, subtipo)+'</div>';
   });
 
-  // Approach — mostrar si no hay hierros, O si hierros quedaron en barbas/trampa
-  var hierrosEnBarbasR = (d.hierros||[]).some(function(h){return h.resultado==='barbas'||h.resultado==='trampa';});
-  if(d.approach && ((!d.hierros||d.hierros.length===0) || (d.approach==='green' && hierrosEnBarbasR))){
+  // Approach
+  var hayChip30R = (d.hierros||[]).some(function(h){return h.dist===30 && h.resultado==='green';});
+  if(d.approach && (!d.hierros||d.hierros.length===0) && !hayChip30R){
     var texA={green:'Al green',barbas:'Barbas',trampa:'Trampa',castigo:'Castigo'};
-    var prevR2 = hierrosEnBarbasR ?
-      ((d.hierros||[]).find(function(h){return h.resultado==='trampa';}) ? 'trampa' : 'barbas') : null;
-    var subR2 = prevR2==='barbas' ? 'Chip desde barbas (0–30y)' :
-                prevR2==='trampa' ? 'Chip desde trampa (0–30y)' : 'Tiro al green';
-    lista.innerHTML+='<div class="tiro-card tc-approach"><span class="tiro-emoji">🎯</span>'+
-      '<div class="tiro-info"><div class="tiro-subtipo">'+subR2+'</div>'+
-      '<div class="tiro-val">'+(d.approach==='green'?'Al green':(texA[d.approach]||d.approach))+'</div></div></div>';
+    lista.innerHTML+='<div class="tiro-card tc-approach" data-tipo="approach">'+
+      '<span class="tiro-emoji">🎯</span>'+
+      '<div class="tiro-info"><div class="tiro-subtipo">Tiro al green</div>'+
+      '<div class="tiro-val">'+(texA[d.approach]||d.approach)+'</div></div>'+
+      btnBasura('approach',null,'Tiro al green')+'</div>';
   }
 
   // Putts
   if(d.putts!==null && d.putts!==undefined){
-    var pasosStr=d.pasos===0?' — dado (menos de 1 paso)':d.pasos?' — '+d.pasos+' pasos':'';
-    var pStr=d.putts===0?'Entró directo':d.putts+' putt'+(d.putts>1?'s':'')+pasosStr;
+    var pasosStr = d.pasos===0?' — dado':d.pasos?' — '+d.pasos+' pasos':'';
+    var pStr = d.putts===0?'Entró directo':d.putts+' putt'+(d.putts>1?'s':'')+pasosStr;
     var cortoStr='';
     if(d.puttCorto==='lo-meti') cortoStr='<div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:3px">✅ Corto metido</div>';
     else if(d.puttCorto==='lo-falle') cortoStr='<div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:3px">❌ Corto fallado</div>';
     else if(d.puttCorto==='no-hubo') cortoStr='<div style="font-size:12px;color:rgba(255,255,255,.5);margin-top:3px">— Sin putt corto</div>';
-    lista.innerHTML+='<div class="tiro-card tc-putt"><span class="tiro-emoji">⛳</span>'+
+    lista.innerHTML+='<div class="tiro-card tc-putt" data-tipo="putts">'+
+      '<span class="tiro-emoji">⛳</span>'+
       '<div class="tiro-info"><div class="tiro-subtipo">Putting</div>'+
-      '<div style="color:white;font-size:16px;font-weight:700">'+pStr+'</div>'+cortoStr+'</div></div>';
+      '<div style="color:white;font-size:16px;font-weight:700">'+pStr+'</div>'+cortoStr+'</div>'+
+      btnBasura('putts',null,'Putting')+'</div>';
   }
+}
+
+// Mostrar modal bonito de confirmación antes de borrar
+function confirmarBorrarTiro(tipo, dist, label) {
+  // Crear overlay
+  var overlay = document.createElement('div');
+  overlay.className = 'modal-borrar-overlay';
+  overlay.id = 'modal-borrar-tiro';
+
+  var emojiMap = {drive:'🏌️', hierro:'🔨', approach:'🎯', putts:'⛳'};
+  var emoji = emojiMap[tipo] || '🗑️';
+
+  overlay.innerHTML =
+    '<div class="modal-borrar-card">' +
+    '<div class="modal-borrar-titulo">¿Borrar este tiro?</div>' +
+    '<div class="modal-borrar-sub">Esta acción no se puede deshacer</div>' +
+    '<div class="modal-borrar-tiro">' +
+    '<span style="font-size:24px">' + emoji + '</span>' +
+    '<div><div style="color:white;font-size:15px;font-weight:700">' + label + '</div>' +
+    '<div style="color:rgba(255,255,255,.4);font-size:12px;margin-top:2px">Hoyo ' + E.hoyoActual + '</div></div>' +
+    '</div>' +
+    '<div class="modal-borrar-btns">' +
+    '<button class="btn-borrar-cancel" onclick="cerrarModalBorrar()">Cancelar</button>' +
+    '<button class="btn-borrar-confirm" id="btn-confirm-borrar">🗑️ Borrar</button>' +
+    '</div></div>';
+
+  document.body.appendChild(overlay);
+
+  // Asignar onclick después de insertar en el DOM
+  var btnConf = document.getElementById('btn-confirm-borrar');
+  if (btnConf) {
+    var _tipo = tipo; var _dist = dist;
+    btnConf.onclick = function(){ ejecutarBorrarTiro(_tipo, _dist); };
+  }
+  overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.remove(); });
+  return; // Evitar doble appendChild abajo
+
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.remove(); });
+}
+
+function cerrarModalBorrar() {
+  var overlay = document.getElementById('modal-borrar-tiro');
+  if (overlay) overlay.remove();
+}
+
+function ejecutarBorrarTiro(tipo, dist) {
+  var overlay = document.getElementById('modal-borrar-tiro');
+  if (overlay) overlay.remove();
+
+  var h = E.hoyos.find(function(x){ return x.num === E.hoyoActual; });
+  if (!h || !h.tiros) return;
+
+  if (tipo === 'drive') {
+    h.tiros.drive = null;
+  } else if (tipo === 'hierro') {
+    if (dist === 'chip') {
+      h.tiros.hierros = (h.tiros.hierros||[]).filter(function(x){ return !(x.dist===30 && x.resultado==='green'); });
+      h.tiros.approach = null;
+    } else {
+      var dn = parseInt(dist);
+      h.tiros.hierros = (h.tiros.hierros||[]).filter(function(x){ return x.dist !== dn; });
+    }
+  } else if (tipo === 'approach') {
+    h.tiros.approach = null;
+  } else if (tipo === 'putts') {
+    h.tiros.putts = null;
+    h.tiros.pasos = null;
+    h.tiros.puttCorto = null;
+  }
+
+  var tirosList = document.getElementById('tiros-list');
+  if (tirosList) reconstruirTiros(tirosList, h.tiros);
 }
 
 function hoyoSiguiente(){
@@ -1752,10 +1901,6 @@ function toggleVoz() {
       // Calcular hierro de 30y UNA SOLA VEZ justo antes de mostrar
       datos = calcularChipSiBarbas(datos);
 
-      // DEBUG
-      console.log('HIERROS:', JSON.stringify(datos.hierros));
-      console.log('APPROACH:', datos.approach);
-
       E.ultimosDatos = datos;
       E.ultimoTextoVoz = texto;
       mostrarConfirmacion(texto, datos);
@@ -1935,7 +2080,13 @@ const DICT = {
     'veinte':20,'veintiuno':21,'veintidos':22,'veintitres':23,
     'veinticuatro':24,'veinticinco':25,'veintiseis':26,
     'veintisiete':27,'veintiocho':28,'veintinueve':29,
-    'treinta':30,'cuarenta':40,'cincuenta':50,'sesenta':60,
+    'treinta':30,'treinta y uno':31,'treinta y dos':32,'treinta y tres':33,
+    'treinta y cuatro':34,'treinta y cinco':35,'treinta y seis':36,
+    'treinta y siete':37,'treinta y ocho':38,'treinta y nueve':39,
+    'cuarenta':40,'cuarenta y uno':41,'cuarenta y dos':42,'cuarenta y tres':43,
+    'cuarenta y cuatro':44,'cuarenta y cinco':45,'cuarenta y seis':46,
+    'cuarenta y siete':47,'cuarenta y ocho':48,'cuarenta y nueve':49,
+    'cincuenta':50,'sesenta':60,
     'setenta':70,'ochenta':80,'noventa':90,'cien':100,
     'ciento diez':110,'ciento veinte':120,'ciento treinta':130,
     'ciento cuarenta':140,'ciento cincuenta':150,
@@ -1961,10 +2112,12 @@ function norm(txt) {
 
 function extraerNum(txt) {
   var n = norm(txt);
-  var m = n.match(/(\d+)/);
+  var m = n.match(/(\d+)/);
   if (m) return parseInt(m[1]);
-  for (var pal in DICT.numeros) {
-    if (n.includes(pal)) return DICT.numeros[pal];
+  // Ordenar por longitud desc para evitar que "un" matchee "veintiuno"
+  var pals = Object.keys(DICT.numeros).sort(function(a,b){ return b.length - a.length; });
+  for (var i=0; i<pals.length; i++) {
+    if (n.includes(pals[i])) return DICT.numeros[pals[i]];
   }
   return null;
 }
@@ -2049,8 +2202,8 @@ function interpretarHoyo(txt) {
   var resApp = null;
   if (DICT.resultado_castigo.some(function(p){ return n.includes(norm(p)); })) resApp = 'castigo';
   else if (DICT.resultado_trampa.some(function(p){ return n.includes(norm(p)); })) resApp = 'trampa';
-  else if (DICT.resultado_barbas.some(function(p){ return n.includes(norm(p)); })) resApp = 'barbas';
   else if (DICT.resultado_lejos.some(function(p){ return n.includes(norm(p)); })) resApp = 'lejos';
+  else if (DICT.resultado_barbas.some(function(p){ return n.includes(norm(p)); })) resApp = 'barbas';
   else if (DICT.resultado_green.some(function(p){ return n.includes(norm(p)); })) resApp = 'green';
 
   // Frases que indican distancia restante (NO hierro):
@@ -2176,6 +2329,17 @@ function interpretarHoyo(txt) {
       var mP2 = txt.match(/(\w+)\s+p(?:u[tsd]|o[tdsckg]|oco)/i);
       if (mP2) { var np2 = extraerNum(mP2[1]); if (np2 && np2>=1 && np2<=8) r.putts = np2; }
     }
+    // "pots" al inicio sin número — inferir por cuántos "uno de X" hay
+    if (!r.putts && /^\s*p(?:u[tsd]|o[tdsckg]|oco)s?\s*,?\s*uno/i.test(txt)) {
+      var contUno = (txt.match(/uno\s+de\s+\w+/gi) || []).length;
+      if (contUno >= 1) r.putts = contUno;
+    }
+    // Cualquier mención de put/pot/pod/pots sin número = al menos 1
+    if (!r.putts && /p(?:u[tsd]|o[tdsckg]|oco)s?/i.test(txt)) {
+      // Contar "uno de X" como número de putts
+      var contUno2 = (txt.match(/uno\s+de\s+\w+/gi) || []).length;
+      r.putts = contUno2 >= 2 ? contUno2 : 1;
+    }
     if (!r.putts && /un\s+p(?:u[tsd]|o[tdsckg]|oco)/i.test(txt)) r.putts = 1;
     if (!r.putts && /dos\s+p(?:u[tsd]|o[tdsckg]|oco)/i.test(txt)) r.putts = 2;
     if (!r.putts && /tres\s+p(?:u[tsd]|o[tdsckg]|oco)/i.test(txt)) r.putts = 3;
@@ -2223,29 +2387,30 @@ function interpretarHoyo(txt) {
   }
 
   // 3. Usar los números encontrados
-  if (todosLosNums.length >= 2) {
-    todosLosNums.sort(function(a,b){ return b-a; });
-    r.pasos = todosLosNums[0]; // Mayor = primer putt
-    var menorP = todosLosNums[todosLosNums.length-1];
-    if (menorP > 2) {
-      // Todos los putts son largos → no hubo putt corto
-      r.puttCorto = 'no-hubo';
-    } else if (!DICT.puttCorto.lofalle.some(function(p){ return n.includes(norm(p)); })) {
-      r.puttCorto = 'lo-meti';
-    }
-  } else if (todosLosNums.length === 1) {
-    r.pasos = todosLosNums[0];
-    if (todosLosNums[0] > 2) {
-      r.puttCorto = 'no-hubo';
-    } else if (!DICT.puttCorto.lofalle.some(function(p){ return n.includes(norm(p)); })) {
-      r.puttCorto = 'lo-meti';
+  if (todosLosNums.length >= 1) {
+    // Usar Math.max y Math.min para evitar bugs de sort
+    var mayorPaso = Math.max.apply(null, todosLosNums);
+    var menorPaso = Math.min.apply(null, todosLosNums);
+    r.pasos = mayorPaso; // El MAYOR = primer putt (el más largo)
+    if (todosLosNums.length >= 2) {
+      if (menorPaso > 2) {
+        r.puttCorto = 'no-hubo';
+      } else if (!DICT.puttCorto.lofalle.some(function(p){ return n.includes(norm(p)); })) {
+        r.puttCorto = 'lo-meti';
+      }
+    } else {
+      if (mayorPaso > 2) {
+        r.puttCorto = 'no-hubo';
+      } else if (!DICT.puttCorto.lofalle.some(function(p){ return n.includes(norm(p)); })) {
+        r.puttCorto = 'lo-meti';
+      }
     }
   }
 
-  // 4. Fallback
+  // 4. Fallback — "quedé a X pasos", "primer put a X", "a X pasos"
   if (!r.pasos) {
-    var mA2 = txt.match(/(?:a|estoy a|quede a|quedé a|son)\s+(\w+)\s*(?:pasos?)?/i);
-    if (mA2) { var pa = extraerNum(mA2[1]); if (pa && pa<=80) r.pasos = pa; }
+    var mA2 = txt.match(/(?:quede a|quedé a|estoy a|primer p[ou]t a|a)\s+(\w+)\s*(?:pasos?)?/i);
+    if (mA2) { var pa = extraerNum(mA2[1]); if (pa && pa >= 1 && pa <= 80) r.pasos = pa; }
   }
 
   // Dado/dada = menos de 1 paso = lo meti
@@ -2330,12 +2495,11 @@ function mostrarConfirmacion(textoOriginal, datos) {
         '<button class="btn-borrar-tiro" data-tipo="hierro" data-dist="' + distKey + '" style="background:none;border:none;cursor:pointer;font-size:16px;opacity:.4;padding:4px;flex-shrink:0">🗑️</button></div>';
     }
 
-    // Approach — mostrar si:
-    // a) No hubo hierros (approach directo)
-    // b) Hubo hierros en barbas/trampa Y hay approach al green adicional
+    // Approach — mostrar solo si no hay hierros (approach directo sin yardas)
+    // Si hay hierros de barbas → el chip de 30y ya está en hierros, no mostrar approach aparte
     var hierrosEnBarbas = datos.hierros && datos.hierros.some(function(h){ return h.resultado==='barbas'||h.resultado==='trampa'; });
-    var hayApproachAdicional = datos.approach === 'green' && hierrosEnBarbas;
-    if (datos.approach && ((!datos.hierros || datos.hierros.length === 0) || hayApproachAdicional)) {
+    var hayChip30 = datos.hierros && datos.hierros.some(function(h){ return h.dist===30 && h.resultado==='green'; });
+    if (datos.approach && (!datos.hierros || datos.hierros.length === 0) && !hayChip30) {
       // Subtipo muestra la distancia estimada según de dónde viene
       var subtipoApp = 'Tiro al green';
       var resultado_prev = hierrosEnBarbas ?
@@ -2424,14 +2588,60 @@ function confirmarHoyo() {
     return;
   }
 
-  // Hay putts — si no hay score, mostrar selector en el modal
+  // Hay putts — verificar pasos (distancia primer putt)
+  if (datos.pasos === null || datos.pasos === undefined) {
+    mostrarSelectorPasos();
+    return;
+  }
+
+  // Verificar score
   if (datos.score === null || datos.score === undefined) {
     mostrarSelectorScore();
     return;
   }
 
-  // Hay putts Y score — guardar hoyo
+  // Hay putts Y pasos Y score — guardar hoyo
   guardarHoyo(datos);
+}
+
+function mostrarSelectorPasos() {
+  var modalConf = document.getElementById('modal-conf');
+  if (!modalConf) return;
+  var viejo = document.getElementById('selector-pasos');
+  if (viejo) viejo.remove();
+
+  var div = document.createElement('div');
+  div.id = 'selector-pasos';
+  div.style.cssText = [
+    'position:absolute','top:0','left:0','right:0','bottom:0',
+    'background:var(--bg)','border-radius:28px','padding:24px 16px',
+    'display:flex','flex-direction:column','justify-content:center','z-index:10'
+  ].join(';');
+
+  var pasos = [1,2,3,4,5,6,7,8,10,12,15,20,25,30];
+  var html = '<div style="color:#fbbf24;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;text-align:center;margin-bottom:20px">📏 ¿A cuántos pasos fue el primer putt?</div>';
+  html += '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px">';
+  pasos.forEach(function(p) {
+    html += '<div onclick="guardarPasos('+p+')" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:14px 4px;text-align:center;cursor:pointer;color:white;font-size:16px;font-weight:700">'+p+'</div>';
+  });
+  html += '</div>';
+  html += '<div style="color:rgba(255,255,255,.3);font-size:11px;text-align:center">Toca el número de pasos</div>';
+
+  div.innerHTML = html;
+  var sheet = modalConf.querySelector('.sheet');
+  var inner = sheet || modalConf.firstElementChild;
+  if (inner) { inner.style.position = 'relative'; inner.appendChild(div); }
+}
+
+function guardarPasos(pasos) {
+  var viejo = document.getElementById('selector-pasos');
+  if (viejo) viejo.remove();
+  if (E.ultimosDatos) {
+    E.ultimosDatos.pasos = pasos;
+    // Si un solo put y pasos > 2, poner no-hubo automático
+    if (E.ultimosDatos.putts === 1 && pasos > 2) E.ultimosDatos.puttCorto = 'no-hubo';
+  }
+  confirmarHoyo();
 }
 
 function mostrarSelectorScore() {
@@ -2624,28 +2834,36 @@ function selPuttCorto(val, el) {
   if (faltante) setTimeout(function(){ faltante.style.display='none'; }, 300);
 }
 
-function editarPorVoz() {
-  // Guardar datos actuales del hoyo para combinar después
-  var hoyoActual = E.hoyos.find(function(x){ return x.num === E.hoyoActual; });
-  if (hoyoActual && hoyoActual.tiros) {
-    // Si viene de un hoyo ya guardado, cargar sus datos
-    E.ultimosDatos = JSON.parse(JSON.stringify(hoyoActual.tiros));
-    // Reabrirlo como no-completado para que se pueda re-grabar
-    hoyoActual.ok = false;
-    hoyoActual.res = null;
+function agregarTiroPorVoz() {
+  // Guardar datos actuales como parcial para que el nuevo tiro se SUME
+  if (E.ultimosDatos) {
+    // Si venimos de tarjeta de confirmación, guardar en tiroParcial
+    tiroParcial = combinarConParcial(E.ultimosDatos, tiroParcial);
+    tiroParcial.score = null; // Score no se hereda
+  } else {
+    // Si venimos de hoyo completado, cargar sus tiros en el parcial
+    var hoyoActual = E.hoyos.find(function(x){ return x.num === E.hoyoActual; });
+    if (hoyoActual && hoyoActual.tiros) {
+      tiroParcial = JSON.parse(JSON.stringify(hoyoActual.tiros));
+      tiroParcial.score = null;
+      // Reabrirlo como en curso
+      hoyoActual.ok = false;
+      hoyoActual.res = null;
+      renderHoyos();
+    }
   }
-  datosAnteriores = E.ultimosDatos ? JSON.parse(JSON.stringify(E.ultimosDatos)) : null;
-  editando = true;
-  // Cerrar cualquier modal abierto
+  E.ultimosDatos = null;
+  editando = false; // No estamos editando, estamos AGREGANDO
   cerrarModal('modal-conf');
   textoAcumulado = '';
-  // Abrir micrófono directo sin pasos intermedios
   setTimeout(function() {
-    renderHoyos();
     actualizarHoyo();
     toggleVoz();
   }, 200);
 }
+
+// Mantener editarPorVoz como alias por si se usa en otro lado
+function editarPorVoz() { agregarTiroPorVoz(); }
 
 function agregarNota(texto) {
   var lista = document.getElementById('notas-list');
