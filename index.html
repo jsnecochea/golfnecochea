@@ -604,7 +604,7 @@ body {
 
   <!-- Botones hoyo completado -->
   <div class="hoyo-actions hidden" id="hoyo-actions">
-    <div class="btn-corregir" onclick="abrirModal('modal-conf')">
+    <div class="btn-corregir" onclick="editarPorVoz()">
       <span style="font-size:15px;line-height:1">⏺</span>&nbsp;&nbsp;Corregir por voz
     </div>
     <div class="btn-borrar" onclick="abrirModal('modal-reset')">
@@ -1731,18 +1731,27 @@ function toggleVoz() {
       }
       datos = combinarConParcial(datos, tiroParcial);
 
-      // Si el nuevo dictado trae approach=green y los hierros del parcial
-      // tenían barbas/trampa → agregar chip de 30y (solo si no hay ya)
-      var parcialActual = getTiroParcial(E.hoyoActual);
-      var parcialEnBarbas2 = (parcialActual.hierros||[]).some(function(h){
-        return h.resultado==='barbas' || h.resultado==='trampa';
-      });
-      if (datos.approach === 'green' && parcialEnBarbas2) {
+      // Agregar chip de 30y si hay approach=green con hierros en barbas/trampa
+      // Buscar barbas/trampa en los hierros actuales O en el parcial anterior
+      if (datos.approach === 'green') {
         var yaChip = (datos.hierros||[]).some(function(h){ return h.esChip; });
         if (!yaChip) {
-          var tipoChip2 = (parcialActual.hierros||[]).some(function(h){ return h.resultado==='trampa'; }) ? 'trampa' : 'barbas';
-          if (!datos.hierros) datos.hierros = [];
-          datos.hierros.push({dist:30, resultado:'green', esChip:true, desdeChip:tipoChip2});
+          // ¿Hay hierros en barbas en este dictado?
+          var hierrosEnBarbasNuevo = (datos.hierros||[]).some(function(h){
+            return h.resultado==='barbas' || h.resultado==='trampa';
+          });
+          // ¿O en el parcial guardado?
+          var parcialActual = getTiroParcial(E.hoyoActual);
+          var hierrosEnBarbasParcial = (parcialActual.hierros||[]).some(function(h){
+            return h.resultado==='barbas' || h.resultado==='trampa';
+          });
+          if (hierrosEnBarbasNuevo || hierrosEnBarbasParcial) {
+            var fuenteChip = (datos.hierros||[]).find(function(h){ return h.resultado==='trampa'; }) ||
+                             (parcialActual.hierros||[]).find(function(h){ return h.resultado==='trampa'; });
+            var tipoChipFinal = fuenteChip ? 'trampa' : 'barbas';
+            if (!datos.hierros) datos.hierros = [];
+            datos.hierros.push({dist:30, resultado:'green', esChip:true, desdeChip:tipoChipFinal});
+          }
         }
       }
 
@@ -2126,13 +2135,11 @@ function interpretarHoyo(txt) {
   var hayDosResultados = (resBarbas || resTrampa) && resGreen && r.hierros.length > 0;
 
   if (hayDosResultados) {
-    // El hierro quedó en barbas o trampa
     var resHierro = resBarbas ? 'barbas' : 'trampa';
-    r.hierros = r.hierros.filter(function(h){ return !h.esChip; }) // quitar chips previos
+    r.hierros = r.hierros.filter(function(h){ return !h.esChip; })
       .sort(function(a,b){ return b.dist-a.dist; })
       .map(function(h){ return {dist:h.dist, resultado:resHierro}; });
-    // Agregar chip de 25y solo una vez
-    r.hierros.push({dist:30, resultado:'green', esChip:true, desdeChip:resHierro});
+    // NO agregar chip aquí — se agrega en el bloque post-combinar de toggleVoz
     r.approach = 'green';
   } else if (r.hierros.length > 0) {
     // NO adivinar el resultado — solo asignar si se dijo explícitamente
@@ -2614,12 +2621,26 @@ function selPuttCorto(val, el) {
 }
 
 function editarPorVoz() {
-  // Guardar datos actuales para combinar después
+  // Guardar datos actuales del hoyo para combinar después
+  var hoyoActual = E.hoyos.find(function(x){ return x.num === E.hoyoActual; });
+  if (hoyoActual && hoyoActual.tiros) {
+    // Si viene de un hoyo ya guardado, cargar sus datos
+    E.ultimosDatos = JSON.parse(JSON.stringify(hoyoActual.tiros));
+    // Reabrirlo como no-completado para que se pueda re-grabar
+    hoyoActual.ok = false;
+    hoyoActual.res = null;
+  }
   datosAnteriores = E.ultimosDatos ? JSON.parse(JSON.stringify(E.ultimosDatos)) : null;
   editando = true;
+  // Cerrar cualquier modal abierto
   cerrarModal('modal-conf');
   textoAcumulado = '';
-  setTimeout(function() { toggleVoz(); }, 200);
+  // Abrir micrófono directo sin pasos intermedios
+  setTimeout(function() {
+    renderHoyos();
+    actualizarHoyo();
+    toggleVoz();
+  }, 200);
 }
 
 function agregarNota(texto) {
