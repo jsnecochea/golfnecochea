@@ -1752,6 +1752,10 @@ function toggleVoz() {
       // Calcular hierro de 30y UNA SOLA VEZ justo antes de mostrar
       datos = calcularChipSiBarbas(datos);
 
+      // DEBUG
+      console.log('HIERROS:', JSON.stringify(datos.hierros));
+      console.log('APPROACH:', datos.approach);
+
       E.ultimosDatos = datos;
       E.ultimoTextoVoz = texto;
       mostrarConfirmacion(texto, datos);
