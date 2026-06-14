@@ -1731,27 +1731,17 @@ function toggleVoz() {
       }
       datos = combinarConParcial(datos, tiroParcial);
 
-      // Agregar chip de 30y si hay approach=green con hierros en barbas/trampa
-      // Buscar barbas/trampa en los hierros actuales O en el parcial anterior
+      // Si hay approach=green y hierros en barbas (de dictados separados)
+      // agregar el hierro de 30y al green — pero solo si no existe ya
       if (datos.approach === 'green') {
-        var yaChip = (datos.hierros||[]).some(function(h){ return h.esChip; });
-        if (!yaChip) {
-          // ¿Hay hierros en barbas en este dictado?
-          var hierrosEnBarbasNuevo = (datos.hierros||[]).some(function(h){
-            return h.resultado==='barbas' || h.resultado==='trampa';
-          });
-          // ¿O en el parcial guardado?
-          var parcialActual = getTiroParcial(E.hoyoActual);
-          var hierrosEnBarbasParcial = (parcialActual.hierros||[]).some(function(h){
-            return h.resultado==='barbas' || h.resultado==='trampa';
-          });
-          if (hierrosEnBarbasNuevo || hierrosEnBarbasParcial) {
-            var fuenteChip = (datos.hierros||[]).find(function(h){ return h.resultado==='trampa'; }) ||
-                             (parcialActual.hierros||[]).find(function(h){ return h.resultado==='trampa'; });
-            var tipoChipFinal = fuenteChip ? 'trampa' : 'barbas';
-            if (!datos.hierros) datos.hierros = [];
-            datos.hierros.push({dist:30, resultado:'green', esChip:true, desdeChip:tipoChipFinal});
-          }
+        var hierroEnBarbas = (datos.hierros||[]).find(function(h){
+          return h.resultado==='barbas' || h.resultado==='trampa';
+        });
+        var ya30y = (datos.hierros||[]).some(function(h){
+          return h.dist===30 && h.resultado==='green';
+        });
+        if (hierroEnBarbas && !ya30y) {
+          datos.hierros.push({dist:30, resultado:'green', desdeChip:hierroEnBarbas.resultado});
         }
       }
 
@@ -2136,10 +2126,11 @@ function interpretarHoyo(txt) {
 
   if (hayDosResultados) {
     var resHierro = resBarbas ? 'barbas' : 'trampa';
-    r.hierros = r.hierros.filter(function(h){ return !h.esChip; })
-      .sort(function(a,b){ return b.dist-a.dist; })
-      .map(function(h){ return {dist:h.dist, resultado:resHierro}; });
-    // NO agregar chip aquí — se agrega en el bloque post-combinar de toggleVoz
+    // El hierro mayor quedó en barbas/trampa
+    // Agregar hierro de 30y al green (el chip desde barbas)
+    var hierrosOrdenados = r.hierros.sort(function(a,b){ return b.dist-a.dist; });
+    r.hierros = hierrosOrdenados.map(function(h){ return {dist:h.dist, resultado:resHierro}; });
+    r.hierros.push({dist:30, resultado:'green', desdeChip:resHierro});
     r.approach = 'green';
   } else if (r.hierros.length > 0) {
     // NO adivinar el resultado — solo asignar si se dijo explícitamente
@@ -2317,11 +2308,12 @@ function mostrarConfirmacion(textoOriginal, datos) {
     for (var i=0; i<hierros.length; i++) {
       var h = hierros[i];
       var texR = {green:'Al green ✅', barbas:'Barbas', trampa:'Trampa / Bunker', castigo:'Castigo', lejos:'Lejos del green'};
-      var subtipoHierro = h.esChip ?
+      var esChip = h.desdeChip || (h.dist===30 && h.resultado==='green');
+      var subtipoHierro = esChip ?
         ('Chip desde ' + (h.desdeChip||'barbas') + ' (0–30y)') :
         (h.dist + ' yardas');
-      var emojiHierro = h.esChip ? '🎯' : '🔨';
-      var distKey = h.esChip ? 'chip' : String(h.dist);
+      var emojiHierro = esChip ? '🎯' : '🔨';
+      var distKey = esChip ? 'chip-'+h.dist : String(h.dist);
       lista.innerHTML += '<div class="conf-tiro ct-hierro" data-tipo="hierro" data-dist="' + distKey + '">' +
         '<span style="font-size:16px">' + emojiHierro + '</span>' +
         '<div class="tiro-info"><div class="tiro-subtipo">' + subtipoHierro + '</div>' +
@@ -2413,8 +2405,11 @@ function confirmarHoyo() {
   // Sin putts → guardar parcial y esperar más tiros
   if (datos.putts === null || datos.putts === undefined) {
     datos.score = null;
+    // Nunca guardar chips en el parcial — se recalculan al mostrar
+    datos.hierros = (datos.hierros||[]).filter(function(h){ return !h.esChip; });
     tiroParcial = combinarConParcial(datos, tiroParcial);
     tiroParcial.score = null;
+    tiroParcial.hierros = (tiroParcial.hierros||[]).filter(function(h){ return !h.esChip; });
     cerrarModal('modal-conf');
     mostrarTirosParciales(tiroParcial);
     return;
