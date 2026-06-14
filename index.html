@@ -117,7 +117,8 @@ body {
 .hoyo-subtitulo { color:var(--text-muted); font-size:11px; font-weight:600; letter-spacing:2px; text-transform:uppercase; margin-bottom:4px; }
 .hoyo-titulo-row { display:flex; align-items:center; justify-content:center; gap:10px; }
 .hoyo-titulo { color:white; font-size:42px; font-weight:700; letter-spacing:-1px; line-height:1; }
-.badge-res { border-radius:20px; padding:5px 12px; font-size:14px; font-weight:700; }
+.badge-res { border-radius:14px; padding:10px 20px; font-size:18px; font-weight:700; cursor:pointer; transition:opacity .15s; border:2px solid rgba(255,255,255,.15); display:inline-flex; align-items:center; justify-content:center; min-width:120px; }
+.badge-res:active { opacity:.7; transform:scale(.97); }
 .badge-eagle  { background:rgba(129,140,248,.2); color:#818cf8; }
 .badge-birdie { background:rgba(129,140,248,.15); color:#818cf8; }
 .badge-par    { background:rgba(52,211,153,.15); color:var(--green-light); }
@@ -551,10 +552,17 @@ body {
             <div class="jugador-cambiar">Cambiar ▾</div>
           </div>
         </div>
-        <!-- Menú hamburguesa junto al nombre -->
+        <!-- Menú hamburguesa -->
         <div class="menu-ham" onclick="toggleMenu()">
           <span></span><span></span><span></span>
         </div>
+        <!-- Torneo -->
+        <div id="btn-torneo" onclick="toggleTorneo()" style="
+          display:flex;flex-direction:column;align-items:center;justify-content:center;
+          gap:2px;width:36px;height:36px;border-radius:10px;
+          background:rgba(255,255,255,.12);cursor:pointer;flex-shrink:0;
+          transition:background .15s;font-size:18px;
+        ">🏆</div>
       </div>
       <div class="acumulado-wrap">
         <div class="acumulado-label">Acumulado</div>
@@ -575,19 +583,7 @@ body {
       </div>
     </div>
 
-    <!-- Barra controles -->
-    <div class="controles-bar">
-      <div class="ctrl-btn ctrl-voz" id="btn-voz" onclick="setModo('voz')">
-        <div class="ondas"><span class="onda"></span><span class="onda"></span><span class="onda"></span><span class="onda"></span><span class="onda"></span></div>
-        <span>Voz</span>
-      </div>
-      <div class="ctrl-btn ctrl-botones" id="btn-bot" onclick="setModo('botones')">
-        <span style="font-size:8px">●</span><span>Botones</span>
-      </div>
-      <div class="ctrl-btn ctrl-torneo" id="btn-torneo" onclick="toggleTorneo()">
-        🏆 Torneo
-      </div>
-    </div>
+
 
     <!-- Rivales torneo -->
     <div class="rivales-row" id="rivales-row">
@@ -611,7 +607,7 @@ body {
     <div class="hoyo-subtitulo" id="h-subtitulo">En curso</div>
     <div class="hoyo-titulo-row">
       <div class="hoyo-titulo" id="h-titulo">Hoyo 4</div>
-      <div class="badge-res hidden" id="h-badge"></div>
+      <div class="badge-res hidden" id="h-badge" onclick="cambiarScore()" title="Toca para cambiar el score"></div>
     </div>
   </div>
 
@@ -1491,6 +1487,72 @@ function confirmarBorrarTiro(tipo, dist, label) {
   overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.remove(); });
 }
 
+// Cambiar score desde badge en vista de hoyo completado
+function cambiarScore() {
+  // Crear overlay de selector de score
+  var overlay = document.createElement('div');
+  overlay.id = 'overlay-score-hoyo';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:flex-end;justify-content:center;z-index:999;animation:fadeIn .15s ease';
+
+  var scores = [
+    {v:-2,label:'🦅 Águila',sub:'-2',color:'#818cf8'},
+    {v:-1,label:'Verdi',sub:'-1',color:'#818cf8'},
+    {v:0, label:'Par',sub:'E',color:'#34d399'},
+    {v:1, label:'Bogey',sub:'+1',color:'#fbbf24'},
+    {v:2, label:'Sopi',sub:'+2',color:'#fb923c'},
+    {v:3, label:'Triple',sub:'+3',color:'#f87171'}
+  ];
+
+  var html = '<div style="background:#1a1f2e;border-radius:24px 24px 0 0;padding:24px 16px 36px;width:100%;max-width:430px;border-top:1px solid rgba(255,255,255,.08)">' +
+    '<div style="color:white;font-size:17px;font-weight:700;text-align:center;margin-bottom:4px">¿Cuánto hiciste?</div>' +
+    '<div style="color:rgba(255,255,255,.4);font-size:12px;text-align:center;margin-bottom:20px">Hoyo ' + E.hoyoActual + '</div>' +
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px">';
+
+  scores.forEach(function(s) {
+    html += '<div onclick="aplicarScoreHoyo(' + s.v + ')" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:14px 4px;text-align:center;cursor:pointer">' +
+      '<div style="color:' + s.color + ';font-size:14px;font-weight:700">' + s.label + '</div>' +
+      '<div style="color:rgba(255,255,255,.3);font-size:11px;margin-top:2px">' + s.sub + '</div></div>';
+  });
+
+  html += '</div><div style="display:flex;gap:6px;margin-bottom:12px">';
+  [{v:4,l:'+4'},{v:5,l:'+5'},{v:6,l:'+6'}].forEach(function(s){
+    html += '<div onclick="aplicarScoreHoyo(' + s.v + ')" style="flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:10px;text-align:center;cursor:pointer;color:rgba(255,255,255,.4);font-size:14px;font-weight:700">' + s.l + '</div>';
+  });
+  html += '</div>' +
+    '<button onclick="cerrarOverlayScore()" style="width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:13px;color:rgba(255,255,255,.5);font-size:14px;font-weight:600;cursor:pointer">Cancelar</button>' +
+    '</div>';
+
+  overlay.innerHTML = html;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', function(e){ if(e.target===overlay) overlay.remove(); });
+}
+
+function cerrarOverlayScore() {
+  var o = document.getElementById('overlay-score-hoyo');
+  if (o) o.remove();
+}
+
+function aplicarScoreHoyo(score) {
+  var overlay = document.getElementById('overlay-score-hoyo');
+  if (overlay) overlay.remove();
+  // Guardar en el hoyo
+  var h = E.hoyos.find(function(x){ return x.num === E.hoyoActual; });
+  if (h) { h.res = score; h.ok = true; }
+  // Actualizar badge visible
+  var badge = document.getElementById('h-badge');
+  if (badge) {
+    var sc = scoreClass(score);
+    badge.className = 'badge-res badge-' + sc;
+    badge.textContent = scoreTexto[sc] || '';
+    badge.classList.remove('hidden');
+  }
+  // Actualizar selector de hoyos
+  renderHoyos();
+  // Actualizar acumulado
+  var acum = E.hoyos.reduce(function(s,x){ return s+(x.res||0); }, 0);
+  document.getElementById('acumulado').textContent = acum===0?'E':acum>0?'+'+acum:''+acum;
+}
+
 function cerrarModalBorrar() {
   var overlay = document.getElementById('modal-borrar-tiro');
   if (overlay) overlay.remove();
@@ -1534,8 +1596,7 @@ function hoyoSiguiente(){
 function hoyoAnterior(){ if(E.hoyoActual>1){E.hoyoActual--; renderHoyos(); actualizarHoyo();} }
 
 function setModo(m){
-  document.getElementById('btn-voz').className='ctrl-btn ctrl-voz'+(m==='voz'?' ':'  inactive');
-  document.getElementById('btn-bot').className='ctrl-btn ctrl-botones'+(m==='botones'?' active':'');
+  // Voz/Botones unificado — solo voz
 }
 
 var modoGrabandoNota = false;
@@ -1597,7 +1658,7 @@ function toggleTorneo(){
   if(!E.torneoActivo){ abrirModal('modal-torneo'); }
   else {
     E.torneoActivo=false;
-    document.getElementById('btn-torneo').classList.remove('on');
+    // torneo off
     document.getElementById('rivales-row').classList.remove('on'); document.getElementById('rivales-row').innerHTML='';
   }
 }
@@ -1607,7 +1668,7 @@ function formatNombre(n){
 
 function activarTorneo(){
   E.torneoActivo=true;
-  document.getElementById('btn-torneo').classList.add('on');
+  // torneo on
 
   const inputs=[...document.querySelectorAll('.torneo-input')];
   const rivales=inputs.map(i=>formatNombre(i.value)).filter(n=>n.length>0);
@@ -2457,8 +2518,10 @@ function mostrarConfirmacion(textoOriginal, datos) {
       badge.textContent = scoreTexto[sc] || '';
     } else {
       badge.className = 'badge-res badge-par';
-      badge.textContent = '¿Cuánto hiciste?';
+      badge.textContent = '¿Cuánto hiciste? ▾';
     }
+    badge.onclick = function(){ mostrarSelectorScore(); };
+    badge.title = 'Toca para cambiar el score';
   }
 
   // Lista de tiros
@@ -2583,6 +2646,7 @@ function confirmarHoyo() {
     tiroParcial = combinarConParcial(datos, tiroParcial);
     tiroParcial.score = null;
     tiroParcial.hierros = (tiroParcial.hierros||[]).filter(function(h){ return !h.esChip; });
+    limpiarTranscript();
     cerrarModal('modal-conf');
     mostrarTirosParciales(tiroParcial);
     return;
@@ -2645,68 +2709,67 @@ function guardarPasos(pasos) {
 }
 
 function mostrarSelectorScore() {
-  // Ocultar los tiros y mostrar el selector de score
-  var modalConf = document.getElementById('modal-conf');
-  if (!modalConf) return;
+  // Cerrar modal de confirmación si está abierto
+  cerrarModal('modal-conf');
 
-  // Quitar selector anterior
-  var viejo = document.getElementById('selector-score');
+  // Overlay independiente — siempre visible
+  var viejo = document.getElementById('overlay-selector-score');
   if (viejo) viejo.remove();
 
-  // Crear selector
-  var div = document.createElement('div');
-  div.id = 'selector-score';
-  div.style.cssText = [
-    'position:absolute','top:0','left:0','right:0','bottom:0',
-    'background:var(--bg)','border-radius:28px','padding:24px 16px',
-    'display:flex','flex-direction:column','justify-content:center',
-    'z-index:10'
-  ].join(';');
+  var overlay = document.createElement('div');
+  overlay.id = 'overlay-selector-score';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:flex-end;justify-content:center;z-index:999;animation:fadeIn .15s ease';
 
   var scores = [
-    {v:-2, label:'🦅 Águila', sub:'-2', color:'#818cf8'},
-    {v:-1, label:'Verdi',     sub:'-1', color:'#818cf8'},
-    {v:0,  label:'Par',       sub:'E',  color:'#34d399'},
-    {v:1,  label:'Bogey',     sub:'+1', color:'#fbbf24'},
-    {v:2,  label:'Sopi',      sub:'+2', color:'#fb923c'},
-    {v:3,  label:'Triple',    sub:'+3', color:'#f87171'}
+    {v:-2,label:'🦅 Águila',sub:'-2',color:'#818cf8'},
+    {v:-1,label:'Verdi',    sub:'-1',color:'#818cf8'},
+    {v:0, label:'Par',      sub:'E', color:'#34d399'},
+    {v:1, label:'Bogey',    sub:'+1',color:'#fbbf24'},
+    {v:2, label:'Sopi',     sub:'+2',color:'#fb923c'},
+    {v:3, label:'Triple',   sub:'+3',color:'#f87171'}
   ];
 
-  var html = '<div style="color:#fbbf24;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;text-align:center;margin-bottom:20px">¿Cuánto hiciste en el hoyo ' + E.hoyoActual + '?</div>';
-  html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:10px">';
+  var html = '<div style="background:#1a1f2e;border-radius:24px 24px 0 0;padding:24px 16px 36px;width:100%;max-width:430px;border-top:1px solid rgba(255,255,255,.08)">' +
+    '<div style="color:#fbbf24;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;text-align:center;margin-bottom:6px">⚠️ ¿Cuánto hiciste en el hoyo ' + E.hoyoActual + '?</div>' +
+    '<div style="color:rgba(255,255,255,.35);font-size:12px;text-align:center;margin-bottom:20px">Toca tu resultado para guardar el hoyo</div>' +
+    '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px">';
+
   scores.forEach(function(s) {
     html += '<div onclick="guardarScore(' + s.v + ')" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:16px 4px;text-align:center;cursor:pointer">' +
       '<div style="color:' + s.color + ';font-size:15px;font-weight:700">' + s.label + '</div>' +
       '<div style="color:rgba(255,255,255,.3);font-size:11px;margin-top:3px">' + s.sub + '</div></div>';
   });
-  html += '</div>';
-  html += '<div style="display:flex;gap:8px">';
+
+  html += '</div><div style="display:flex;gap:8px">';
   [{v:4,l:'+4'},{v:5,l:'+5'},{v:6,l:'+6'}].forEach(function(s){
-    html += '<div onclick="guardarScore(' + s.v + ')" style="flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:10px;text-align:center;cursor:pointer;color:rgba(255,255,255,.4);font-size:14px;font-weight:700">' + s.l + '</div>';
+    html += '<div onclick="guardarScore(' + s.v + ')" style="flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px;text-align:center;cursor:pointer;color:rgba(255,255,255,.4);font-size:14px;font-weight:700">' + s.l + '</div>';
   });
-  html += '</div>';
+  html += '</div></div>';
 
-  div.innerHTML = html;
-
-  // Insertar en el modal con position:relative
-  var sheet = modalConf.querySelector('.sheet');
-  var inner = sheet || modalConf.firstElementChild;
-  if (inner) {
-    inner.style.position = 'relative';
-    inner.appendChild(div);
-  }
+  overlay.innerHTML = html;
+  document.body.appendChild(overlay);
 }
 
+
 function guardarScore(score) {
-  // Quitar selector
+  // Quitar cualquier selector de score visible
   var viejo = document.getElementById('selector-score');
   if (viejo) viejo.remove();
+  var viejo2 = document.getElementById('overlay-selector-score');
+  if (viejo2) viejo2.remove();
   // Guardar score y confirmar
   if (E.ultimosDatos) E.ultimosDatos.score = score;
   guardarHoyo(E.ultimosDatos);
 }
 
+function limpiarTranscript() {
+  var dbgEl = document.getElementById('debug-voz');
+  if (dbgEl) dbgEl.textContent = '';
+  textoAcumulado = '';
+}
+
 function guardarHoyo(datos) {
+  limpiarTranscript();
   var h = E.hoyos.find(function(x){ return x.num === E.hoyoActual; });
   if (h) {
     h.ok = true;
@@ -2853,9 +2916,9 @@ function agregarTiroPorVoz() {
     }
   }
   E.ultimosDatos = null;
-  editando = false; // No estamos editando, estamos AGREGANDO
+  editando = false;
+  limpiarTranscript();
   cerrarModal('modal-conf');
-  textoAcumulado = '';
   setTimeout(function() {
     actualizarHoyo();
     toggleVoz();
