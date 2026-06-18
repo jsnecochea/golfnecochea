@@ -44,10 +44,10 @@
   .stat-sub { font-size: 9px; color: var(--text-muted); margin-top: 3px; }
 
   /* WEEK DOTS */
-  .week-dot { width: 34px; height: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+  .week-dot { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
 
   /* BOTTOM NAV */
-  .action-btns { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; margin-top: 4px; }
+  .action-btns { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; margin-top: 4px; }
   .action-btn-primary { background: var(--green-dark); border-radius: 14px; padding: 13px 8px; text-align: center; cursor: pointer; }
   .action-btn-secondary { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 14px; padding: 13px 8px; text-align: center; cursor: pointer; }
   .action-btn-lbl { font-size: 10px; font-weight: 700; margin-top: 5px; }
@@ -61,9 +61,9 @@
 
   /* ANILLOS SVG */
   .rings-wrap { display: flex; align-items: center; gap: 16px; }
-  .rings-legend { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .rings-legend { flex: 1; display: flex; flex-direction: column; gap: 14px; }
   .ring-row { display: flex; align-items: center; justify-content: space-between; }
-  .ring-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .ring-dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; }
 
   /* BARRAS GIR */
   .gir-row { display: grid; grid-template-columns: 36px 1fr 48px 42px 32px; gap: 4px; align-items: center; margin-bottom: 8px; }
@@ -679,9 +679,8 @@
           <div style="color:#4a4a6a;font-size:11px">Hcp actual: <span id="home-hcp">—</span> <span style="color:#1D9E75;font-size:9px">▾</span></div>
         </div>
       </div>
-      <div class="hcp-badge" onclick="abrirBenchmark()" style="cursor:pointer">
-        <div style="color:var(--text-muted);font-size:9px;font-weight:700;letter-spacing:.8px">OBJETIVO</div>
-        <div class="hcp-num" style="font-size:20px;color:var(--green)" id="home-objetivo">Sin meta</div>
+      <div onclick="abrirMenuPro()" style="width:40px;height:40px;border-radius:11px;background:var(--bg2);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e8e8f0" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
       </div>
     </div>
 
@@ -689,8 +688,8 @@
     <div class="section-label">Semana en curso</div>
     <div class="card">
       <div class="rings-wrap">
-        <div style="position:relative;width:90px;height:90px;flex-shrink:0">
-          <svg viewBox="0 0 90 90" width="90" height="90" id="svg-anillos">
+        <div style="position:relative;width:120px;height:120px;flex-shrink:0">
+          <svg viewBox="0 0 90 90" width="120" height="120" id="svg-anillos">
             <!-- Horas -->
             <circle cx="45" cy="45" r="38" fill="none" stroke="var(--bg3)" stroke-width="8"/>
             <circle cx="45" cy="45" r="38" fill="none" stroke="var(--green-dark)" stroke-width="8" stroke-dasharray="238.8" stroke-dashoffset="71.6" stroke-linecap="round" transform="rotate(-90 45 45)" id="ring-horas"/>
@@ -706,23 +705,23 @@
           <div class="ring-row">
             <div style="display:flex;align-items:center;gap:6px">
               <div class="ring-dot" style="background:var(--green-dark)"></div>
-              <span style="color:var(--text-muted);font-size:11px">Horas</span>
+              <span style="color:var(--text-muted);font-size:14px;font-weight:600">Horas</span>
             </div>
-            <span style="color:var(--text);font-size:12px;font-weight:700"><span id="ring-h-val">6.5</span> <span style="color:var(--text-muted);font-weight:400">/ 10</span></span>
+            <div style="display:flex;align-items:baseline;justify-content:flex-end"><span style="color:var(--text);font-size:26px;font-weight:800;text-align:right;min-width:44px"><span id="ring-h-val">6.5</span></span><span style="color:var(--text-muted);font-weight:400;font-size:13px;min-width:34px;text-align:left"> / 10</span></div>
           </div>
           <div class="ring-row">
             <div style="display:flex;align-items:center;gap:6px">
               <div class="ring-dot" style="background:var(--amber)"></div>
-              <span style="color:var(--text-muted);font-size:11px">Retos</span>
+              <span style="color:var(--text-muted);font-size:14px;font-weight:600">Retos</span>
             </div>
-            <span style="color:var(--text);font-size:12px;font-weight:700"><span id="ring-r-val">3</span> <span style="color:var(--text-muted);font-weight:400">/ 4</span></span>
+            <div style="display:flex;align-items:baseline;justify-content:flex-end"><span style="color:var(--text);font-size:26px;font-weight:800;text-align:right;min-width:44px"><span id="ring-r-val">3</span></span><span style="color:var(--text-muted);font-weight:400;font-size:13px;min-width:34px;text-align:left"> / 4</span></div>
           </div>
           <div class="ring-row">
             <div style="display:flex;align-items:center;gap:6px">
               <div class="ring-dot" style="background:var(--purple)"></div>
-              <span style="color:var(--text-muted);font-size:11px">Rondas</span>
+              <span style="color:var(--text-muted);font-size:14px;font-weight:600">Rondas</span>
             </div>
-            <span style="color:var(--text);font-size:12px;font-weight:700"><span id="ring-ro-val">1.5</span> <span style="color:var(--text-muted);font-weight:400">/ 2</span></span>
+            <div style="display:flex;align-items:baseline;justify-content:flex-end"><span style="color:var(--text);font-size:26px;font-weight:800;text-align:right;min-width:44px"><span id="ring-ro-val">1.5</span></span><span style="color:var(--text-muted);font-weight:400;font-size:13px;min-width:34px;text-align:left"> / 2</span></div>
           </div>
         </div>
       </div>
@@ -743,203 +742,6 @@
       <div style="color:#1D9E75;font-size:11px;font-weight:700;text-align:center;margin-top:10px" id="racha-texto">4 días seguidos entrenando</div>
     </div>
 
-    <!-- OP 27 -->
-    <div class="section-label">Métricas destacadas</div>
-    <div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-        <div>
-          <div style="color:var(--text);font-size:13px;font-weight:700">OP 27 · 25y</div>
-          <div style="color:var(--text-muted);font-size:10px">9 hoyos · golpes totales</div>
-        </div>
-        <div style="background:var(--green-dark);border-radius:8px;padding:3px 10px"><span style="color:var(--green-light);font-size:9px;font-weight:700">RETO</span></div>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:10px">
-        <div style="text-align:center">
-          <div style="color:var(--text-muted);font-size:8px;font-weight:700;margin-bottom:4px">ÚLTIMO</div>
-          <div style="color:var(--text);font-size:26px;font-weight:700;line-height:1" id="op36-ultimo">—</div>
-        </div>
-        <div style="text-align:center;border-left:0.5px solid var(--border);border-right:0.5px solid var(--border)">
-          <div style="color:var(--text-muted);font-size:8px;font-weight:700;margin-bottom:4px">RÉCORD</div>
-          <div style="color:var(--green);font-size:26px;font-weight:700;line-height:1" id="op36-record">—</div>
-        </div>
-        <div style="text-align:center">
-          <div style="color:var(--text-muted);font-size:8px;font-weight:700;margin-bottom:4px">META</div>
-          <div style="color:var(--purple);font-size:26px;font-weight:700;line-height:1" id="op36-meta">-5</div>
-        </div>
-      </div>
-      <div style="display:flex;justify-content:space-between">
-        <span style="color:var(--text-muted);font-size:10px" id="op36-fecha">Sin intentos aún</span>
-        <span style="color:var(--amber);font-size:10px;font-weight:700" id="op36-diff"></span>
-      </div>
-    </div>
-
-    <!-- Up and Down -->
-    <div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-        <div>
-          <div style="color:var(--text);font-size:13px;font-weight:700">Up and Down</div>
-          <div style="color:var(--text-muted);font-size:10px">Ronda · Reto · Ejercicio</div>
-        </div>
-        <div style="background:#412402;border-radius:8px;padding:3px 10px"><span style="color:var(--amber);font-size:9px;font-weight:700">U&D</span></div>
-      </div>
-      <div style="display:grid;grid-template-columns:42px 1fr 48px 42px 32px;gap:4px;margin-bottom:6px;padding-bottom:5px;border-bottom:0.5px solid var(--border)">
-        <div></div><div></div>
-        <div style="color:var(--text-muted);font-size:8px;font-weight:700;text-align:center">U&D</div>
-        <div style="color:var(--text-muted);font-size:8px;font-weight:700;text-align:center">+B</div>
-        <div style="color:var(--purple);font-size:8px;font-weight:700;text-align:center">Ideal</div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px" id="ud-rows"></div>
-      <div style="height:0.5px;background:var(--border);margin-bottom:10px"></div>
-      <div style="display:flex;align-items:center;justify-content:space-between">
-        <div>
-          <div style="color:var(--text-muted);font-size:11px">Ejercicio · esta semana</div>
-          <div style="color:var(--text-muted);font-size:10px;margin-top:2px" id="ud-ej-sub">esta semana</div>
-        </div>
-        <div style="text-align:right">
-          <div style="font-size:22px;font-weight:700;line-height:1"><span id="ud-ej-pts" style="color:var(--text)">0</span> <span style="color:var(--text-muted);font-size:11px;font-weight:400">pts</span></div>
-          <div style="color:var(--amber);font-size:10px;margin-top:2px" id="ud-ej-falta"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Reto Putt Medio -->
-    <div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-        <div>
-          <div style="color:var(--text);font-size:13px;font-weight:700">Reto Putt Medio</div>
-          <div style="color:var(--text-muted);font-size:10px">Hoyos consecutivos en par</div>
-        </div>
-        <div style="background:var(--blue);border-radius:8px;padding:3px 10px"><span style="color:var(--blue-light);font-size:9px;font-weight:700">PUTT</span></div>
-      </div>
-      <div style="display:flex;align-items:center;gap:16px;margin-bottom:10px">
-        <div style="text-align:center;flex-shrink:0">
-          <div style="color:var(--text-muted);font-size:8px;font-weight:700;margin-bottom:3px">NIVEL</div>
-          <div style="color:var(--text);font-size:40px;font-weight:700;line-height:1" id="putt-nivel">3</div>
-          <div style="color:var(--text-muted);font-size:9px;margin-top:3px" id="putt-hoyos">4 hoyos</div>
-        </div>
-        <div style="flex:1">
-          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
-            <span style="color:var(--text-muted);font-size:10px" id="putt-para">Para nivel 5</span>
-            <span style="color:var(--green);font-size:10px;font-weight:700" id="putt-prog">0 / 10</span>
-          </div>
-          <div class="nivel-bars" id="putt-bars"></div>
-          <div style="color:var(--text-muted);font-size:9px;margin-top:5px" id="putt-falta">10 más para nivel 4</div>
-        </div>
-      </div>
-      <div style="display:flex;justify-content:space-between">
-        <span style="color:var(--text-muted);font-size:10px" id="putt-fecha">Sin intentos aún</span>
-        <span style="color:var(--green);font-size:10px;font-weight:700" id="putt-racha">racha 7</span>
-      </div>
-    </div>
-
-    <!-- Triputts -->
-    <div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-        <div>
-          <div style="color:var(--text);font-size:13px;font-weight:700">Triputts &lt; 12 pasos</div>
-          <div style="color:var(--text-muted);font-size:10px">Meta: 0%</div>
-        </div>
-        <div style="background:#791F1F;border-radius:8px;padding:3px 10px"><span style="color:#F7C1C1;font-size:9px;font-weight:700">PUTT</span></div>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:10px">
-        <div style="background:rgba(0,0,0,.2);border:0.5px solid var(--border);border-radius:10px;padding:10px;text-align:center">
-          <div style="color:var(--text-muted);font-size:8px;font-weight:700;margin-bottom:4px">30 DÍAS</div>
-          <div style="font-size:24px;font-weight:700;line-height:1" id="trip-30-pct" style="color:var(--green)">10%</div>
-          <div style="color:var(--text-muted);font-size:9px;margin-top:3px" id="trip-30-n">1 de 10</div>
-        </div>
-        <div style="background:rgba(0,0,0,.2);border:0.5px solid var(--border);border-radius:10px;padding:10px;text-align:center">
-          <div style="color:var(--text-muted);font-size:8px;font-weight:700;margin-bottom:4px">31-90 DÍAS</div>
-          <div style="font-size:24px;font-weight:700;line-height:1" id="trip-90-pct" style="color:var(--red)">28%</div>
-          <div style="color:var(--text-muted);font-size:9px;margin-top:3px" id="trip-90-n">5 de 18</div>
-        </div>
-      </div>
-      <div style="text-align:center" id="trip-tend">
-        <span style="color:var(--green);font-size:11px;font-weight:700">↓ Mejorando — bajaste 18 puntos</span>
-      </div>
-    </div>
-
-    <!-- GIR por distancia -->
-    <div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-        <div>
-          <div style="color:var(--text);font-size:13px;font-weight:700">Approach por distancia</div>
-          <div style="color:var(--text-muted);font-size:10px">Últimos 30 días</div>
-        </div>
-        <div style="background:#0C447C;border-radius:8px;padding:3px 10px"><span style="color:var(--blue-light);font-size:9px;font-weight:700">GIR</span></div>
-      </div>
-      <div style="display:grid;grid-template-columns:36px 1fr 50px 44px 32px;gap:4px;margin-bottom:6px;padding-bottom:5px;border-bottom:0.5px solid var(--border)">
-        <div></div><div></div>
-        <div style="color:var(--text-muted);font-size:8px;font-weight:700;text-align:center">GIR</div>
-        <div style="color:var(--text-muted);font-size:8px;font-weight:700;text-align:center">+Barbas</div>
-        <div style="color:var(--purple);font-size:8px;font-weight:700;text-align:center">Ideal</div>
-      </div>
-      <div id="gir-rows" style="display:flex;flex-direction:column;gap:9px"></div>
-      <div style="color:var(--text-muted);font-size:9px;text-align:center;margin-top:10px">Toca para ver todas las distancias</div>
-    </div>
-
-    <!-- Drive -->
-    <div class="card">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
-        <div>
-          <div style="color:var(--text);font-size:13px;font-weight:700">Drive</div>
-          <div style="color:var(--text-muted);font-size:10px">Últimos 30 días</div>
-        </div>
-        <div style="background:#3B6D11;border-radius:8px;padding:3px 10px"><span style="color:#C0DD97;font-size:9px;font-weight:700">TEE</span></div>
-      </div>
-      <div class="donut-wrap">
-        <svg width="90" height="90" viewBox="0 0 100 100" style="flex-shrink:0">
-          <circle cx="50" cy="50" r="40" fill="none" stroke="var(--bg3)" stroke-width="16"/>
-          <circle cx="50" cy="50" r="40" fill="none" stroke="var(--red)" stroke-width="16" stroke-dasharray="20.1 231.2" stroke-dashoffset="0" transform="rotate(-90 50 50)" id="drive-castigo-arc"/>
-          <circle cx="50" cy="50" r="40" fill="none" stroke="var(--amber)" stroke-width="16" stroke-dasharray="70.4 181.0" stroke-dashoffset="-20.1" transform="rotate(-90 50 50)" id="drive-arboles-arc"/>
-          <circle cx="50" cy="50" r="40" fill="none" stroke="var(--green)" stroke-width="16" stroke-dasharray="160.8 90.4" stroke-dashoffset="-90.5" transform="rotate(-90 50 50)" id="drive-fairway-arc"/>
-          <circle cx="50" cy="50" r="28" fill="var(--bg2)"/>
-          <text x="50" y="46" text-anchor="middle" fill="var(--text)" font-size="16" font-weight="700" font-family="-apple-system,sans-serif" id="drive-center-num">64%</text>
-          <text x="50" y="58" text-anchor="middle" fill="var(--text-muted)" font-size="8" font-family="-apple-system,sans-serif">fairway</text>
-        </svg>
-        <div style="flex:1;display:flex;flex-direction:column;gap:10px">
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div style="display:flex;align-items:center;gap:7px">
-              <div style="width:9px;height:9px;border-radius:2px;background:var(--green)"></div>
-              <span style="color:var(--text-muted);font-size:11px">Fairway</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:4px">
-              <span style="font-size:15px;font-weight:700" id="drive-fw-pct" style="color:var(--green)">64%</span>
-              <span style="font-size:10px" id="drive-fw-tend">↑</span>
-            </div>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div style="display:flex;align-items:center;gap:7px">
-              <div style="width:9px;height:9px;border-radius:2px;background:var(--amber)"></div>
-              <span style="color:var(--text-muted);font-size:11px">Árboles</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:4px">
-              <span style="font-size:15px;font-weight:700" id="drive-arb-pct" style="color:var(--amber)">28%</span>
-              <span style="font-size:10px" id="drive-arb-tend">↓</span>
-            </div>
-          </div>
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div style="display:flex;align-items:center;gap:7px">
-              <div style="width:9px;height:9px;border-radius:2px;background:var(--red)"></div>
-              <span style="color:var(--text-muted);font-size:11px">Castigo</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:4px">
-              <span style="font-size:15px;font-weight:700" id="drive-cast-pct" style="color:var(--red)">8%</span>
-              <span style="font-size:10px" id="drive-cast-tend">↑</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div style="background:rgba(0,0,0,.2);border:0.5px solid var(--border);border-radius:10px;padding:8px 14px;margin-top:12px">
-        <div style="color:var(--text-muted);font-size:8px;font-weight:700;margin-bottom:6px;letter-spacing:.6px">BENCHMARK · HCP 8</div>
-        <div style="display:flex;justify-content:space-between">
-          <div style="text-align:center"><div style="color:var(--purple);font-size:14px;font-weight:700">72%</div><div style="color:var(--text-muted);font-size:8px">fairway</div></div>
-          <div style="text-align:center"><div style="color:var(--purple);font-size:14px;font-weight:700">22%</div><div style="color:var(--text-muted);font-size:8px">árboles</div></div>
-          <div style="text-align:center"><div style="color:var(--purple);font-size:14px;font-weight:700">6%</div><div style="color:var(--text-muted);font-size:8px">castigo</div></div>
-        </div>
-      </div>
-    </div>
-
-  </div>
 
   <!-- Bottom Nav -->
   <div style="padding: 0 16px 40px;">
@@ -952,11 +754,8 @@
         <i class="ti ti-barbell" style="color:#888;font-size:20px" aria-hidden="true"></i>
         <div class="action-btn-lbl" style="color:#888">Entrenar</div>
       </div>
-      <div class="action-btn-secondary" onclick="irVista('view-stats')">
-        <i class="ti ti-chart-bar" style="color:#888;font-size:20px" aria-hidden="true"></i>
-        <div class="action-btn-lbl" style="color:#888">Estadísticas</div>
-      </div>
     </div>
+  </div>
   </div><!-- /home-view-pro -->
 
   <!-- VISTA LIGHT -->
@@ -971,6 +770,9 @@
           <div style="color:#888;font-size:11px">Hcp actual: <span id="light-hcp">—</span></div>
         </div>
       </div>
+      <div onclick="abrirMenuLight()" style="width:40px;height:40px;border-radius:11px;background:white;border:0.5px solid #e8e8e0;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4a4a6a" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </div>
     </div>
 
     <!-- Selector período -->
@@ -984,17 +786,13 @@
     <div style="font-size:9px;font-weight:700;letter-spacing:1.2px;color:#888;text-transform:uppercase;margin-bottom:8px">Rondas jugadas</div>
     <div id="light-rondas-card" style="background:white;border:0.5px solid #e8e8e0;border-radius:16px;padding:14px 16px;margin-bottom:10px"></div>
 
-    <!-- Greens por rango -->
-    <div style="font-size:9px;font-weight:700;letter-spacing:1.2px;color:#888;text-transform:uppercase;margin-bottom:8px">Greens alcanzados</div>
-    <div id="light-greens-card" style="background:white;border:0.5px solid #e8e8e0;border-radius:16px;padding:14px 16px;margin-bottom:10px"></div>
-
-    <!-- Juego corto -->
-    <div style="font-size:9px;font-weight:700;letter-spacing:1.2px;color:#888;text-transform:uppercase;margin-bottom:8px">Juego corto</div>
-    <div id="light-corto-card" style="background:white;border:0.5px solid #e8e8e0;border-radius:16px;padding:14px 16px;margin-bottom:10px"></div>
-
     <!-- Drive -->
     <div style="font-size:9px;font-weight:700;letter-spacing:1.2px;color:#888;text-transform:uppercase;margin-bottom:8px">Drive</div>
-    <div id="light-drive-card" style="background:white;border:0.5px solid #e8e8e0;border-radius:16px;padding:14px 16px;margin-bottom:16px"></div>
+    <div id="light-drive-card" style="background:white;border:0.5px solid #e8e8e0;border-radius:16px;padding:14px 16px;margin-bottom:10px"></div>
+
+    <!-- Putt -->
+    <div style="font-size:9px;font-weight:700;letter-spacing:1.2px;color:#888;text-transform:uppercase;margin-bottom:8px">Putt</div>
+    <div id="light-putt-card" style="background:white;border:0.5px solid #e8e8e0;border-radius:16px;padding:14px 16px;margin-bottom:16px"></div>
 
     <!-- Botón Ronda -->
     <div onclick="iniciarRondaPerfilActivo()" style="background:#1D9E75;border-radius:14px;padding:15px;text-align:center;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px">
@@ -1022,6 +820,9 @@
       </div>
       <div style="color:var(--text-muted);font-size:12px" id="entreno-fecha">Lun 15 jun</div>
     </div>
+
+    <!-- Sección de entrenamiento pendiente (se llena solo si hay uno) -->
+    <div id="entreno-pendiente-card" style="display:none"></div>
 
     <!-- Pregunta de tiempo (recuadro verde) -->
     <div class="frase-card" id="frase-card" style="background:var(--green-dark);text-align:center">
@@ -1072,7 +873,7 @@
 
     <!-- Header -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-      <div style="color:#4a4a6a;font-size:22px;cursor:pointer;padding:0 4px" onclick="confirmarSalirEntrenamiento()">←</div>
+      <div style="color:#4a4a6a;font-size:22px;cursor:pointer;padding:0 4px" onclick="regresarAHoras()">←</div>
       <div style="background:#13131f;border:0.5px solid rgba(255,255,255,.08);border-radius:20px;padding:5px 14px">
         <span style="color:#1D9E75;font-size:11px;font-weight:700" id="prog-tiempo-badge">⏱ 1 hora</span>
       </div>
@@ -1312,8 +1113,9 @@
      OVERLAY: SELECTOR DE PERFIL
 ================================================ -->
 <div class="overlay" id="overlay-perfiles" style="display:none" onclick="cerrarOverlay('overlay-perfiles')">
-  <div class="sheet" onclick="event.stopPropagation()" style="max-height:90vh;overflow-y:auto">
+  <div class="sheet" onclick="event.stopPropagation()" style="max-height:90vh;overflow-y:auto;position:relative">
     <div class="sheet-handle"><span></span></div>
+    <div onclick="cerrarOverlay('overlay-perfiles')" style="position:absolute;top:14px;right:16px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:5"><span style="color:#888;font-size:19px;line-height:1">&times;</span></div>
 
     <!-- Perfil activo grande -->
     <div style="padding:16px 20px 14px;border-bottom:0.5px solid rgba(255,255,255,.07)">
@@ -1480,8 +1282,6 @@
 
 
 <!-- VISTAS RONDA -->
-<div onclick="confirmarSalirRonda()" style="position:fixed;top:14px;left:14px;z-index:50;width:38px;height:38px;border-radius:12px;background:rgba(0,0,0,.45);border:0.5px solid rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;cursor:pointer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.85)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg></div>
-
 <div class="app">
 
 <!-- ================================================
@@ -1529,11 +1329,13 @@
   <div class="header-green">
     <div class="header-top">
       <div style="display:flex;align-items:center;gap:8px">
+        <div onclick="confirmarSalirRonda()" style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>
+        </div>
         <div class="jugador-pill">
           <span id="jug-avatar" style="font-size:18px">👦</span>
           <div>
             <div class="jugador-nombre" id="jug-nombre">Salvador</div>
-            <div class="jugador-cambiar">Cambiar ▾</div>
           </div>
         </div>
         <!-- Menú hamburguesa -->
@@ -1655,6 +1457,10 @@
       </button>
       <span class="dictar-hint" style="font-size:12px" id="mic-hint">Toca para hablar</span>
       <div id="debug-voz" style="color:#34d399;font-size:12px;text-align:center;padding:0 20px;min-height:20px;line-height:1.5;max-width:320px"></div>
+      <div onclick="mostrarDiagnosticoRonda()" style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);border:0.5px solid rgba(255,255,255,.12);border-radius:20px;padding:7px 14px;cursor:pointer">
+        <span style="font-size:13px">🔍</span>
+        <span style="color:#9a9ab0;font-size:12px;font-weight:600">Ver qué entendí</span>
+      </div>
     </div>
   </div>
 
@@ -2422,6 +2228,10 @@
     </button>
     <span id="op36-mic-hint" style="color:#4a4a6a;font-size:13px">Toca para dictar tus golpes</span>
     <div id="op36-mic-debug" style="color:#34d399;font-size:12px;text-align:center;padding:0 20px;min-height:18px;max-width:300px"></div>
+    <div onclick="mostrarDiagnosticoDictado()" style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.05);border:0.5px solid rgba(255,255,255,.12);border-radius:20px;padding:7px 14px;cursor:pointer;margin-top:2px">
+      <span style="font-size:13px">🔍</span>
+      <span style="color:#9a9ab0;font-size:12px;font-weight:600">Ver qué entendí</span>
+    </div>
   </div>
 
   <!-- SECCIÓN DISTANCIA -->
@@ -2488,12 +2298,12 @@ var EJERCICIOS_DEF = {
   'reloj6': { nom: 'Reloj 6 pies', cat: 'putt', color: '#185FA5', colorTxt: '#B5D4F4', instrucciones: ['Pon 4 tees alrededor del hoyo a 6 pies', 'Mete las 4 seguidas sin fallar', '¡Eso es 1 ejecución!'] },
   'tobogan': { nom: 'Tobogán clásico', cat: 'putt', color: '#378ADD', colorTxt: '#B5D4F4', instrucciones: ['Distancias: 6, 9, 12, 15, 18 pasos', 'Mete en 2 tiros o menos cada distancia', 'Si fallas, regresa al inicio'] },
   'escalera': { nom: 'Escalera clásica', cat: 'putt', color: '#378ADD', colorTxt: '#B5D4F4', instrucciones: ['Distancias: 6, 9, 12, 15, 18 pasos', '3 veces seguidas en 2 tiros para avanzar', 'Si fallas, te quedas en esa distancia'] },
-  'retoMedio': { nom: 'Reto Putt Medio', cat: 'putt', color: '#0F6E56', colorTxt: '#9FE1CB', instrucciones: ['Hoyos consecutivos en par desde ~8 pasos', 'Cada ejecución = progreso hacia siguiente nivel', '¡Intenta subir de nivel!'], esReto: true },
+  'retoMedio': { nom: 'Reto Putt Medio', cat: 'putt', color: '#0F6E56', colorTxt: '#9FE1CB', instrucciones: ['Elige hoyos a ~8-10 pasos de distancia', 'Emboca cada hoyo en 2 golpes (acercas y metes)', 'Logra varios hoyos seguidos de 2 golpes sin fallar', '__NIVEL_MEDIO__'], esReto: true, retoTipo: 'medio' },
   'escalera-ap': { nom: 'Escalera approach', cat: 'approach', color: '#854F0B', colorTxt: '#FAC775', instrucciones: ['Distancias: 10, 15, 20, 25, 30, 35 yardas', '3 tiros consecutivos al green para avanzar', 'Si fallas, te quedas en esa distancia'] },
   'ud2d3': { nom: 'Up and Down 2d3', cat: 'approach', color: '#BA7517', colorTxt: '#FAC775', instrucciones: ['Desde 20-40 yardas, tira 3 bolas', '2 de 3 en up and down = 1 punto', 'Approach + 1 putt = up and down'] },
   'hierros': { nom: 'Escalera hierros', cat: 'hierros', color: '#3B6D11', colorTxt: '#C0DD97', instrucciones: ['Palos: 9H → 8H → 7H → 6H', '5 bolas consecutivas en ±10y del objetivo', 'Si fallas, reinicia el contador en ese palo'], distancias: ['9H', '8H', '7H', '6H'] },
   'drive': { nom: 'Drive', cat: 'drive', color: '#0F6E56', colorTxt: '#9FE1CB', instrucciones: ['5 tiros consecutivos en zona objetivo', '1 ejecución = 5 tiros seguidos en zona', 'Cuenta madera 3 y drive por separado'] },
-  'retoMedioReto': { nom: 'Reto Putt Largo', cat: 'putt', color: '#0C447C', colorTxt: '#B5D4F4', instrucciones: ['Hoyos consecutivos en par desde ~14-16 pasos', 'Cada ejecución = progreso hacia siguiente nivel'], esReto: true },
+  'retoMedioReto': { nom: 'Reto Putt Largo', cat: 'putt', color: '#0C447C', colorTxt: '#B5D4F4', instrucciones: ['Elige hoyos a ~14-16 pasos de distancia', 'Emboca cada hoyo en 2 golpes (acercas y metes)', 'Logra varios hoyos seguidos de 2 golpes sin fallar', '__NIVEL_LARGO__'], esReto: true, retoTipo: 'largo' },
 };
 
 var PROGRAMAS = {
@@ -2681,14 +2491,9 @@ function renderHomePro() {
   pintarAvatar(document.getElementById('home-avatar'), p);
   document.getElementById('home-nombre').textContent = p.nom;
   document.getElementById('home-hcp').textContent = (p.hcp !== null && p.hcp !== undefined) ? p.hcp : '—';
-  document.getElementById('home-objetivo').textContent = (p.objetivo !== null && p.objetivo !== undefined) ? ('Hcp ' + p.objetivo) : 'Sin meta';
+  var hObj = document.getElementById('home-objetivo'); if (hObj) hObj.textContent = (p.objetivo !== null && p.objetivo !== undefined) ? ('Hcp ' + p.objetivo) : 'Sin meta';
   renderAnillos();
   renderRacha();
-  renderUDRows();
-  renderGIRRows();
-  renderPuttNivel();
-  renderOp36Home();
-  renderUDEjercicioHome();
 
   setTimeout(actualizarStatsPro, 100);
 }
@@ -2805,57 +2610,42 @@ function renderLightStats() {
 
   var s = calcStatsRondas(rondas);
 
-  // ── GREENS POR RANGO ─────────────────────────────────────────
-  var gc = document.getElementById('light-greens-card');
-  if (gc) {
-    var rangos = [['60-90','60–90y',80,'#1D9E75'],['90-120','90–120y',75,'#BA7517'],['120-150','120–150y',63,'#E24B4A']];
-    var gHtml = '<div style="display:flex;flex-direction:column;gap:11px">';
-    var hayG = false;
-    rangos.forEach(function(r) {
-      var d = s.ap[r[0]];
-      if (!d || d.tot === 0) return;
-      hayG = true;
-      var pct = Math.round(d.green/d.tot*100);
-      var col = pct >= 70 ? '#1D9E75' : pct >= 50 ? '#BA7517' : '#E24B4A';
-      gHtml += '<div><div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px">';
-      gHtml += '<span style="color:#555;font-size:11px;font-weight:600">' + r[1] + '</span>';
-      gHtml += '<div style="display:flex;align-items:baseline;gap:6px"><span style="color:#1a1a1a;font-size:14px;font-weight:700">' + pct + '%</span><span style="color:#888;font-size:10px">' + d.green + '/' + d.tot + '</span></div></div>';
-      gHtml += '<div style="height:6px;background:#f0efe8;border-radius:3px"><div style="width:' + pct + '%;height:6px;background:' + col + ';border-radius:3px"></div></div></div>';
-    });
-    gHtml += '</div>';
-    if (!hayG) gHtml = '<div style="text-align:center;padding:14px;color:#888;font-size:11px">Sin datos de greens aún</div>';
-    gc.innerHTML = gHtml;
-  }
-
-  // ── JUEGO CORTO (anillos) ────────────────────────────────────
-  var cc = document.getElementById('light-corto-card');
-  if (cc) {
-    var udPct = pctS(s.ud30.ok, s.ud30.tot);
-    var triPct = pctS(s.triputts.ok, s.triputts.tot);
+  // ── PUTT ─────────────────────────────────────────────────────
+  var pc = document.getElementById('light-putt-card');
+  if (pc) {
     var cortoPct = pctS(s.puttCorto.ok, s.puttCorto.tot);
-    var circ = 2 * Math.PI * 40; // 251.3
-    // anillo: lbl, pct, ok, tot, color, mejorBajo (triputts: menos es mejor)
-    function anillo(lbl, pct, ok, tot, color, mejorBajo) {
-      var val = pct === null ? '—' : pct + '%';
-      var dash = pct === null ? 0 : (circ * pct / 100);
-      var check = (mejorBajo && pct !== null && pct <= 10) ? ' ✓' : '';
-      var sub = tot > 0 ? (ok + '/' + tot + check) : 'sin datos';
-      return '<div style="text-align:center">' +
-        '<div style="position:relative;width:64px;height:64px;margin:0 auto">' +
-          '<svg width="64" height="64" viewBox="0 0 100 100">' +
-            '<circle cx="50" cy="50" r="40" fill="none" stroke="#f0efe8" stroke-width="13"/>' +
-            '<circle cx="50" cy="50" r="40" fill="none" stroke="' + color + '" stroke-width="13" stroke-linecap="round" stroke-dasharray="' + dash.toFixed(1) + ' ' + circ.toFixed(1) + '" transform="rotate(-90 50 50)"/>' +
-          '</svg>' +
-          '<div style="position:absolute;top:0;left:0;width:64px;height:64px;display:flex;align-items:center;justify-content:center;color:#1a1a1a;font-size:16px;font-weight:800">' + val + '</div>' +
-        '</div>' +
-        '<div style="color:#555;font-size:9px;font-weight:700;margin-top:6px">' + lbl + '</div>' +
-        '<div style="color:#bbb;font-size:9px">' + sub + '</div>' +
-      '</div>';
+    var triPct = pctS(s.triputts.ok, s.triputts.tot);
+    // Putts por ronda y por hoyo
+    var totalPutts = 0, totalHoyos = 0;
+    rondas.forEach(function(r) {
+      if (r.hoyos) r.hoyos.forEach(function(h) {
+        if (h && h.tiros && typeof h.tiros.putts === 'number') { totalPutts += h.tiros.putts; totalHoyos++; }
+      });
+    });
+    var puttsRonda = rondas.length > 0 ? Math.round(totalPutts / rondas.length) : null;
+    var puttsHoyo = totalHoyos > 0 ? (totalPutts / totalHoyos).toFixed(1) : null;
+
+    function puttBox(val, sub, lbl, color) {
+      return '<div style="flex:1;background:#f5f4f0;border-radius:12px;padding:12px 6px;text-align:center">' +
+        '<div style="font-size:22px;font-weight:800;color:' + color + '">' + val + '</div>' +
+        '<div style="color:#888;font-size:8px;font-weight:700;margin-top:4px">' + lbl + '</div>' +
+        '<div style="color:#bbb;font-size:8px;margin-top:1px">' + sub + '</div></div>';
     }
-    cc.innerHTML = '<div style="display:flex;justify-content:space-around">' +
-      anillo('UP & DOWN', udPct, s.ud30.ok, s.ud30.tot, '#1D9E75', false) +
-      anillo('PUTT &lt;2P', cortoPct, s.puttCorto.ok, s.puttCorto.tot, '#185FA5', false) +
-      anillo('TRIPUTTS', triPct, s.triputts.ok, s.triputts.tot, '#1D9E75', true) +
+
+    var triCheck = (triPct !== null && triPct <= 10) ? ' ✓' : '';
+    pc.innerHTML = '<div style="display:flex;gap:8px">' +
+      puttBox(
+        cortoPct === null ? '—' : cortoPct + '%',
+        s.puttCorto.tot > 0 ? (s.puttCorto.ok + ' de ' + s.puttCorto.tot) : 'sin datos',
+        'PUTT &lt; 2 PASOS', '#185FA5') +
+      puttBox(
+        triPct === null ? '—' : triPct + '%',
+        s.triputts.tot > 0 ? (s.triputts.ok + ' de ' + s.triputts.tot) : 'sin datos',
+        'TRIPUTTS' + triCheck, '#1D9E75') +
+      puttBox(
+        puttsRonda === null ? '—' : '' + puttsRonda,
+        puttsHoyo === null ? 'sin datos' : puttsHoyo + ' por hoyo',
+        'PUTTS/RONDA', '#1a1a1a') +
       '</div>';
   }
 
@@ -2938,9 +2728,15 @@ function renderAnillos() {
   actualizarAnillo('ring-horas', horas7, metaHoras, 38, 8);
   actualizarAnillo('ring-retos', retos7, metaRetos, 27, 8);
   actualizarAnillo('ring-rondas', rondas7, metaRondas, 16, 8);
-  var h = document.getElementById('ring-h-val'); if (h) h.textContent = horas7;
-  var r = document.getElementById('ring-r-val'); if (r) r.textContent = retos7;
-  var ro = document.getElementById('ring-ro-val'); if (ro) ro.textContent = rondas7;
+  // Quitar el 0 inicial en decimales: 0.3 -> .3, 1.5 -> 1.5, 3 -> 3
+  function fmtVal(v) {
+    var s = '' + v;
+    if (s.charAt(0) === '0' && s.charAt(1) === '.') s = s.substring(1);
+    return s;
+  }
+  var h = document.getElementById('ring-h-val'); if (h) h.textContent = fmtVal(horas7);
+  var r = document.getElementById('ring-r-val'); if (r) r.textContent = fmtVal(retos7);
+  var ro = document.getElementById('ring-ro-val'); if (ro) ro.textContent = fmtVal(rondas7);
 }
 
 function actualizarAnillo(id, val, meta, r, sw) {
@@ -3113,6 +2909,311 @@ function pintarAvatar(el, p) {
 
 function getPerfil() {
   return PERFILES.find(function(p) { return p.id === perfilActivo; }) || PERFILES[0];
+}
+
+function abrirMenuPro() {
+  var ov = document.createElement('div');
+  ov.id = 'overlay-menu-pro';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center';
+  ov.onclick = function(e) { if (e.target === ov) ov.remove(); };
+  ov.innerHTML =
+    '<div style="background:#1a1a2e;border-radius:24px 24px 0 0;width:100%;max-width:430px;padding:8px 0 30px">' +
+      '<div style="display:flex;justify-content:center;padding:10px 0"><div style="width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,.15)"></div></div>' +
+      '<div style="padding:6px 20px 14px"><div style="color:#e8e8f0;font-size:17px;font-weight:700">Menú</div></div>' +
+      '<div onclick="document.getElementById(\'overlay-menu-pro\').remove();irVista(\'view-stats\')" style="display:flex;align-items:center;gap:14px;padding:15px 20px;cursor:pointer">' +
+        '<div style="width:40px;height:40px;border-radius:11px;background:rgba(29,158,117,.15);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg></div>' +
+        '<div><div style="color:#e8e8f0;font-size:15px;font-weight:700">Estadísticas</div><div style="color:#9a9ab0;font-size:11px">Tu juego a detalle</div></div>' +
+      '</div>' +
+      '<div onclick="document.getElementById(\'overlay-menu-pro\').remove();abrirHistorialRondas()" style="display:flex;align-items:center;gap:14px;padding:15px 20px;cursor:pointer">' +
+        '<div style="width:40px;height:40px;border-radius:11px;background:rgba(127,119,221,.15);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#818cf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v4H3zM3 10h18v4H3zM3 17h18v4H3z"/></svg></div>' +
+        '<div><div style="color:#e8e8f0;font-size:15px;font-weight:700">Historial de rondas</div><div style="color:#9a9ab0;font-size:11px">Ver o borrar rondas</div></div>' +
+      '</div>' +
+      '<div onclick="document.getElementById(\'overlay-menu-pro\').remove();abrirBenchmark()" style="display:flex;align-items:center;gap:14px;padding:15px 20px;cursor:pointer">' +
+        '<div style="width:40px;height:40px;border-radius:11px;background:rgba(239,159,39,.15);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EF9F27" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.5" fill="#EF9F27"/></svg></div>' +
+        '<div><div style="color:#e8e8f0;font-size:15px;font-weight:700">Objetivo ideal</div><div style="color:#9a9ab0;font-size:11px">Tu meta y comparativa</div></div>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(ov);
+}
+
+function abrirMenuLight() {
+  var ov = document.createElement('div');
+  ov.id = 'overlay-menu-light';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:800;background:rgba(0,0,0,.4);display:flex;align-items:flex-end;justify-content:center';
+  ov.onclick = function(e) { if (e.target === ov) ov.remove(); };
+  ov.innerHTML =
+    '<div style="background:white;border-radius:24px 24px 0 0;width:100%;max-width:430px;padding:8px 0 30px">' +
+      '<div style="display:flex;justify-content:center;padding:10px 0"><div style="width:36px;height:4px;border-radius:2px;background:#e0dfd8"></div></div>' +
+      '<div style="padding:6px 20px 14px"><div style="color:#1a1a1a;font-size:17px;font-weight:700">Menú</div></div>' +
+      '<div onclick="document.getElementById(\'overlay-menu-light\').remove();irVista(\'view-stats\')" style="display:flex;align-items:center;gap:14px;padding:15px 20px;cursor:pointer">' +
+        '<div style="width:40px;height:40px;border-radius:11px;background:#eafaf2;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F6E56" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg></div>' +
+        '<div><div style="color:#1a1a1a;font-size:15px;font-weight:700">Estadísticas</div><div style="color:#888;font-size:11px">Tu juego a detalle</div></div>' +
+      '</div>' +
+      '<div onclick="document.getElementById(\'overlay-menu-light\').remove();abrirHistorialRondas()" style="display:flex;align-items:center;gap:14px;padding:15px 20px;cursor:pointer">' +
+        '<div style="width:40px;height:40px;border-radius:11px;background:#f0eff7;display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#534AB7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v4H3zM3 10h18v4H3zM3 17h18v4H3z"/></svg></div>' +
+        '<div><div style="color:#1a1a1a;font-size:15px;font-weight:700">Historial de rondas</div><div style="color:#888;font-size:11px">Ver o borrar rondas</div></div>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(ov);
+}
+
+function abrirHistorialRondas() {
+  var p = getPerfil();
+  var rondas = getHistorialRondas(p.id);
+  var entrenos = getHistorialEntreno(p.id);
+
+  // Unir rondas y entrenamientos en una sola lista, marcando el tipo y un timestamp para ordenar
+  var items = [];
+  rondas.forEach(function(r, idx) {
+    var ts = r.timestamp || (r.fecha ? new Date(r.fecha).getTime() : 0);
+    items.push({ tipo: 'ronda', ts: ts, idx: idx, data: r });
+  });
+  entrenos.forEach(function(e, idx) {
+    var ts = e.fecha ? new Date(e.fecha).getTime() : 0;
+    items.push({ tipo: 'entreno', ts: ts, idx: idx, data: e });
+  });
+  // Ordenar de más reciente a más antiguo
+  items.sort(function(a, b) { return b.ts - a.ts; });
+
+  var ov = document.createElement('div');
+  ov.id = 'overlay-historial';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:810;background:#f5f4f0;overflow-y:auto';
+
+  var meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  function fmtFecha(ts) {
+    var d = new Date(ts);
+    if (isNaN(d.getTime())) return '';
+    return d.getDate() + ' ' + meses[d.getMonth()] + ' ' + d.getFullYear();
+  }
+  function fmtScore(v) { return v === null || v === undefined ? '—' : v === 0 ? 'E' : v > 0 ? '+'+v : ''+v; }
+
+  var html =
+    '<div style="max-width:430px;margin:0 auto;padding:52px 16px 40px">' +
+    '<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">' +
+      '<div onclick="document.getElementById(\'overlay-historial\').remove()" style="width:38px;height:38px;border-radius:12px;background:white;border:0.5px solid #e8e8e0;display:flex;align-items:center;justify-content:center;cursor:pointer">' +
+        '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4a4a6a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></div>' +
+      '<div style="color:#1a1a1a;font-size:18px;font-weight:700">Historial</div>' +
+    '</div>';
+
+  if (items.length === 0) {
+    html += '<div style="text-align:center;padding:50px 20px"><div style="font-size:36px;margin-bottom:12px">⛳</div><div style="color:#1a1a1a;font-size:15px;font-weight:700;margin-bottom:6px">Sin actividad aún</div><div style="color:#888;font-size:12px">Tus rondas y entrenamientos aparecerán aquí</div></div>';
+  } else {
+    html += '<div style="color:#888;font-size:11px;margin-bottom:14px">' + items.length + ' registros. Toca uno para ver el detalle.</div>';
+    items.forEach(function(it) {
+      if (it.tipo === 'ronda') {
+        var r = it.data;
+        var nh = r.totalHoyos || (r.hoyos ? r.hoyos.length : 9);
+        html += '<div style="background:white;border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,.04);display:flex;align-items:center;gap:12px">' +
+          '<div onclick="verDetalleRonda(' + it.idx + ')" style="flex:1;cursor:pointer;display:flex;align-items:center;gap:12px">' +
+            '<div style="width:46px;height:46px;border-radius:12px;background:#eafaf2;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0">' +
+              '<div style="color:#0F6E56;font-size:17px;font-weight:800;line-height:1">' + fmtScore(r.scoreTotal) + '</div>' +
+            '</div>' +
+            '<div style="flex:1">' +
+              '<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><span style="background:#eafaf2;color:#0F6E56;font-size:8px;font-weight:800;padding:2px 6px;border-radius:5px;letter-spacing:.5px">RONDA</span></div>' +
+              '<div style="color:#1a1a1a;font-size:14px;font-weight:700">' + fmtFecha(it.ts) + '</div>' +
+              '<div style="color:#888;font-size:11px">' + nh + ' hoyos · score ' + fmtScore(r.scoreTotal) + '</div>' +
+            '</div>' +
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>' +
+          '</div>' +
+          '<div onclick="borrarRondaIndividual(' + it.idx + ')" style="width:36px;height:36px;border-radius:10px;background:rgba(226,75,74,.08);border:1px solid rgba(226,75,74,.25);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">' +
+            '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#E24B4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>' +
+          '</div>' +
+        '</div>';
+      } else {
+        var e = it.data;
+        var nej = e.totalHechos || (e.ejercicios ? e.ejercicios.length : 0);
+        html += '<div style="background:white;border-radius:14px;padding:14px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,.04);display:flex;align-items:center;gap:12px">' +
+          '<div onclick="verDetalleEntreno(' + it.idx + ')" style="flex:1;cursor:pointer;display:flex;align-items:center;gap:12px">' +
+            '<div style="width:46px;height:46px;border-radius:12px;background:#fdf3e2;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0">' +
+              '<div style="color:#BA7517;font-size:17px;font-weight:800;line-height:1">' + nej + '</div>' +
+            '</div>' +
+            '<div style="flex:1">' +
+              '<div style="display:flex;align-items:center;gap:6px;margin-bottom:2px"><span style="background:#fdf3e2;color:#BA7517;font-size:8px;font-weight:800;padding:2px 6px;border-radius:5px;letter-spacing:.5px">ENTRENO</span></div>' +
+              '<div style="color:#1a1a1a;font-size:14px;font-weight:700">' + fmtFecha(it.ts) + '</div>' +
+              '<div style="color:#888;font-size:11px">' + nej + (nej === 1 ? ' ejercicio' : ' ejercicios') + ' completados</div>' +
+            '</div>' +
+            '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>' +
+          '</div>' +
+          '<div onclick="borrarEntrenoIndividual(' + it.idx + ')" style="width:36px;height:36px;border-radius:10px;background:rgba(226,75,74,.08);border:1px solid rgba(226,75,74,.25);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">' +
+            '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#E24B4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>' +
+          '</div>' +
+        '</div>';
+      }
+    });
+  }
+  html += '</div>';
+  ov.innerHTML = html;
+  document.body.appendChild(ov);
+}
+
+function confirmarBorrado(mensaje, onConfirm) {
+  // Modal propio de confirmación (no usar confirm nativo, iPhone lo bloquea)
+  var prev = document.getElementById('overlay-confirmar-borrado');
+  if (prev) prev.remove();
+  window._onConfirmBorrado = onConfirm;
+  var ov = document.createElement('div');
+  ov.id = 'overlay-confirmar-borrado';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:9100;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:24px';
+  ov.onclick = function(e) { if (e.target === ov) ov.remove(); };
+  ov.innerHTML =
+    '<div style="background:white;border-radius:20px;padding:24px;max-width:320px;width:100%;text-align:center">' +
+      '<div style="font-size:30px;margin-bottom:10px">🗑️</div>' +
+      '<div style="color:#1a1a1a;font-size:15px;font-weight:700;line-height:1.4;margin-bottom:20px">' + mensaje + '</div>' +
+      '<div style="display:flex;flex-direction:column;gap:9px">' +
+        '<div onclick="if(window._onConfirmBorrado)window._onConfirmBorrado();document.getElementById(\'overlay-confirmar-borrado\').remove()" style="background:#E24B4A;border-radius:12px;padding:14px;cursor:pointer"><span style="color:white;font-size:14px;font-weight:700">Sí, borrar</span></div>' +
+        '<div onclick="document.getElementById(\'overlay-confirmar-borrado\').remove()" style="background:#f0efe8;border-radius:12px;padding:14px;cursor:pointer"><span style="color:#888;font-size:14px;font-weight:700">Cancelar</span></div>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(ov);
+  return true;
+}
+
+function borrarRondaIndividual(i) {
+  var p = getPerfil();
+  var rondas = getHistorialRondas(p.id);
+  if (i < 0 || i >= rondas.length) return;
+  confirmarBorrado('¿Borrar esta ronda? Dejará de contar en tus estadísticas.', function() {
+    rondas.splice(i, 1);
+    try { localStorage.setItem('historial_' + p.id, JSON.stringify(rondas)); } catch(e) {}
+    var ov = document.getElementById('overlay-historial');
+    if (ov) ov.remove();
+    abrirHistorialRondas();
+    renderHome();
+  });
+}
+
+function borrarEntrenoIndividual(i) {
+  var p = getPerfil();
+  var entrenos = getHistorialEntreno(p.id);
+  if (i < 0 || i >= entrenos.length) return;
+  confirmarBorrado('¿Borrar este entrenamiento? Dejará de contar en tus estadísticas.', function() {
+    entrenos.splice(i, 1);
+    try { localStorage.setItem('entreno_hist_' + p.id, JSON.stringify(entrenos)); } catch(e) {}
+    var ov = document.getElementById('overlay-historial');
+    if (ov) ov.remove();
+    abrirHistorialRondas();
+    renderHome();
+  });
+}
+
+function verDetalleEntreno(i) {
+  var p = getPerfil();
+  var entrenos = getHistorialEntreno(p.id);
+  if (i < 0 || i >= entrenos.length) return;
+  var e = entrenos[i];
+  var meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  function fmtFecha(fechaStr) {
+    var d = new Date(fechaStr);
+    if (isNaN(d.getTime())) return fechaStr || '';
+    return d.getDate() + ' ' + meses[d.getMonth()] + ' ' + d.getFullYear();
+  }
+  // Color por categoría
+  function catColor(cat) {
+    return cat === 'putt' ? '#185FA5' : cat === 'approach' ? '#854F0B' : cat === 'hierros' ? '#3B6D11' : cat === 'drive' ? '#0F6E56' : cat === 'reto' ? '#EF9F27' : '#7F77DD';
+  }
+
+  var ov = document.createElement('div');
+  ov.id = 'overlay-detalle-entreno';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:820;background:#f5f4f0;overflow-y:auto';
+
+  var html =
+    '<div style="max-width:430px;margin:0 auto;padding:52px 16px 40px">' +
+    '<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">' +
+      '<div onclick="document.getElementById(\'overlay-detalle-entreno\').remove()" style="width:38px;height:38px;border-radius:12px;background:white;border:0.5px solid #e8e8e0;display:flex;align-items:center;justify-content:center;cursor:pointer">' +
+        '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4a4a6a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></div>' +
+      '<div><div style="color:#1a1a1a;font-size:18px;font-weight:700">Entrenamiento</div>' +
+      '<div style="color:#888;font-size:11px">' + fmtFecha(e.fecha) + ' · ' + (e.totalHechos||0) + ' de ' + (e.totalProgramados||0) + ' ejercicios</div></div>' +
+    '</div>';
+
+  var ejs = e.ejercicios || [];
+  if (ejs.length === 0) {
+    html += '<div style="background:white;border-radius:14px;padding:20px;text-align:center;color:#888;font-size:12px">Este entrenamiento no tiene ejercicios guardados.</div>';
+  } else {
+    html += '<div style="display:flex;flex-direction:column;gap:8px">';
+    ejs.forEach(function(ej) {
+      var col = catColor(ej.cat);
+      html += '<div style="background:white;border-radius:12px;padding:13px 14px;box-shadow:0 2px 8px rgba(0,0,0,.04);display:flex;align-items:center;gap:12px">' +
+        '<div style="width:8px;height:38px;border-radius:4px;background:' + col + ';flex-shrink:0"></div>' +
+        '<div style="flex:1">' +
+          '<div style="color:#1a1a1a;font-size:14px;font-weight:700">' + (ej.nom || ej.id) + '</div>' +
+          '<div style="color:#888;font-size:11px;text-transform:capitalize">' + (ej.cat || 'ejercicio') + '</div>' +
+        '</div>' +
+        '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>' +
+      '</div>';
+    });
+    html += '</div>';
+  }
+
+  html += '<div onclick="document.getElementById(\'overlay-detalle-entreno\').remove();borrarEntrenoIndividual(' + i + ')" style="background:rgba(226,75,74,.08);border:1px solid rgba(226,75,74,.25);border-radius:14px;padding:14px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;margin-top:16px">' +
+    '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#E24B4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>' +
+    '<span style="color:#E24B4A;font-size:14px;font-weight:700">Borrar este entrenamiento</span></div>';
+
+  html += '</div>';
+  ov.innerHTML = html;
+  document.body.appendChild(ov);
+}
+
+function verDetalleRonda(i) {
+  var p = getPerfil();
+  var rondas = getHistorialRondas(p.id);
+  if (i < 0 || i >= rondas.length) return;
+  var r = rondas[i];
+  var meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  function fmtFecha(ts, fechaStr) {
+    var d = ts ? new Date(ts) : new Date(fechaStr);
+    if (isNaN(d.getTime())) return fechaStr || '';
+    return d.getDate() + ' ' + meses[d.getMonth()] + ' ' + d.getFullYear();
+  }
+  function fmtScore(v) { return v === null || v === undefined ? '—' : v === 0 ? 'E' : v > 0 ? '+'+v : ''+v; }
+
+  var ov = document.createElement('div');
+  ov.id = 'overlay-detalle-ronda';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:820;background:#f5f4f0;overflow-y:auto';
+
+  var html =
+    '<div style="max-width:430px;margin:0 auto;padding:52px 16px 40px">' +
+    '<div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">' +
+      '<div onclick="document.getElementById(\'overlay-detalle-ronda\').remove()" style="width:38px;height:38px;border-radius:12px;background:white;border:0.5px solid #e8e8e0;display:flex;align-items:center;justify-content:center;cursor:pointer">' +
+        '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#4a4a6a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></div>' +
+      '<div><div style="color:#1a1a1a;font-size:18px;font-weight:700">' + fmtFecha(r.timestamp, r.fecha) + '</div>' +
+      '<div style="color:#888;font-size:11px">Score total: ' + fmtScore(r.scoreTotal) + '</div></div>' +
+    '</div>';
+
+  // Tabla de hoyos
+  var hoyos = r.hoyos || [];
+  if (hoyos.length === 0) {
+    html += '<div style="background:white;border-radius:14px;padding:20px;text-align:center;color:#888;font-size:12px">Esta ronda no tiene detalle de hoyos guardado.</div>';
+  } else {
+    html += '<div style="background:white;border-radius:14px;padding:6px;box-shadow:0 2px 8px rgba(0,0,0,.04)">';
+    html += '<div style="display:flex;padding:10px 12px;border-bottom:1px solid #f0efe8">' +
+      '<span style="width:36px;color:#888;font-size:10px;font-weight:700">HOYO</span>' +
+      '<span style="flex:1;color:#888;font-size:10px;font-weight:700">DRIVE</span>' +
+      '<span style="width:54px;text-align:center;color:#888;font-size:10px;font-weight:700">PUTTS</span>' +
+      '<span style="width:46px;text-align:right;color:#888;font-size:10px;font-weight:700">SCORE</span></div>';
+    hoyos.forEach(function(h, idx) {
+      var t = h.tiros || {};
+      var driveTxt = t.drive === 'fairway' ? 'Fairway' : t.drive === 'castigo' ? 'Castigo' : t.drive === 'rough' ? 'Rough' : t.drive === 'arboles' ? 'Árboles' : '—';
+      var driveColor = t.drive === 'fairway' ? '#0F6E56' : t.drive === 'castigo' ? '#E24B4A' : '#888';
+      var putts = (t.putts !== undefined && t.putts !== null) ? t.putts : '—';
+      var res = (h.res !== undefined && h.res !== null) ? fmtScore(h.res) : '—';
+      var resColor = (h.res < 0) ? '#185FA5' : (h.res === 0) ? '#0F6E56' : (h.res === 1) ? '#BA7517' : (h.res > 1) ? '#E24B4A' : '#888';
+      html += '<div style="display:flex;align-items:center;padding:10px 12px;' + (idx < hoyos.length-1 ? 'border-bottom:0.5px solid #f5f4f0' : '') + '">' +
+        '<span style="width:36px;color:#1a1a1a;font-size:13px;font-weight:700">' + (idx+1) + '</span>' +
+        '<span style="flex:1;color:' + driveColor + ';font-size:12px">' + driveTxt + '</span>' +
+        '<span style="width:54px;text-align:center;color:#1a1a1a;font-size:13px">' + putts + '</span>' +
+        '<span style="width:46px;text-align:right;color:' + resColor + ';font-size:13px;font-weight:700">' + res + '</span>' +
+      '</div>';
+    });
+    html += '</div>';
+  }
+
+  html += '<div onclick="document.getElementById(\'overlay-detalle-ronda\').remove();borrarRondaIndividual(' + i + ')" style="background:rgba(226,75,74,.08);border:1px solid rgba(226,75,74,.25);border-radius:14px;padding:14px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;margin-top:16px">' +
+    '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#E24B4A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>' +
+    '<span style="color:#E24B4A;font-size:14px;font-weight:700">Borrar esta ronda</span></div>';
+
+  html += '</div>';
+  ov.innerHTML = html;
+  document.body.appendChild(ov);
 }
 
 function abrirLimpiarDatos() {
@@ -3381,22 +3482,28 @@ function renderNivelPuttSelector() {
   var cont = document.getElementById('pf-nivel-putt');
   if (!cont) return;
   var nivel = p.nivelPutt || 3;
-  var html = '';
-  for (var n = 1; n <= 5; n++) {
-    var activo = n === nivel;
-    var bg = activo ? '#1D9E75' : 'rgba(255,255,255,.06)';
-    var col = activo ? 'white' : '#888';
-    var border = activo ? '#1D9E75' : 'rgba(255,255,255,.12)';
-    html += '<div onclick="selNivelPutt(' + n + ')" style="flex:1;text-align:center;background:' + bg + ';border:1px solid ' + border + ';border-radius:10px;padding:11px 0;cursor:pointer">' +
-      '<div style="color:' + col + ';font-size:18px;font-weight:800;line-height:1">' + n + '</div>' +
-      '<div style="color:' + (activo ? 'rgba(255,255,255,.7)' : '#4a4a6a') + ';font-size:8px;margin-top:2px">nivel</div>' +
-    '</div>';
+  // 10 niveles en 2 filas de 5 (1 es el máximo a alcanzar)
+  function fila(desde, hasta) {
+    var h = '<div style="display:flex;gap:6px;margin-bottom:6px">';
+    for (var n = desde; n <= hasta; n++) {
+      var activo = n === nivel;
+      var bg = activo ? '#1D9E75' : 'rgba(255,255,255,.06)';
+      var col = activo ? 'white' : '#888';
+      var border = activo ? '#1D9E75' : 'rgba(255,255,255,.12)';
+      h += '<div onclick="selNivelPutt(' + n + ')" style="flex:1;text-align:center;background:' + bg + ';border:1px solid ' + border + ';border-radius:9px;padding:9px 0;cursor:pointer">' +
+        '<div style="color:' + col + ';font-size:16px;font-weight:800;line-height:1">' + n + '</div>' +
+      '</div>';
+    }
+    h += '</div>';
+    return h;
   }
-  cont.innerHTML = html;
+  cont.innerHTML = fila(1, 5) + fila(6, 10);
 }
 
 function selNivelPutt(n) {
   var p = getPerfil();
+  if (n < 1) n = 1;
+  if (n > 10) n = 10; // nivel máximo a alcanzar
   p.nivelPutt = n;
   renderNivelPuttSelector();
   guardarPerfilesLocal();
@@ -3622,6 +3729,68 @@ function renderEntrenoInicio() {
   });
 
   renderActividadSemana(cont);
+
+  // ¿Hay una sesión de entrenamiento de hoy sin terminar? Preguntar con modal propio
+  verificarSesionPrevia();
+}
+
+function obtenerSesionPreviaHoy() {
+  try {
+    var raw = localStorage.getItem('entreno_estado');
+    if (!raw) return null;
+    var estado = JSON.parse(raw);
+    if (!estado.programa || estado.programa.length === 0) return null;
+    var fecha = new Date(estado.fecha);
+    var hoy = new Date();
+    // Solo válido el MISMO día. Si es de otro día, borrar el estado vencido.
+    if (fecha.toDateString() !== hoy.toDateString()) {
+      try { localStorage.removeItem('entreno_estado'); } catch(e) {}
+      return null;
+    }
+    var hechos = (estado.completados || []).filter(function(c){ return c !== null; }).length;
+    var total = estado.programa.length;
+    // Solo ofrecer continuar si empezó pero no terminó todo
+    if (hechos === 0 || hechos >= total) return null;
+    return { estado: estado, hechos: hechos, total: total };
+  } catch(e) { return null; }
+}
+
+function verificarSesionPrevia() {
+  var card = document.getElementById('entreno-pendiente-card');
+  if (!card) return;
+  var sesion = obtenerSesionPreviaHoy();
+  if (!sesion) {
+    // No hay sesión pendiente: ocultar la sección
+    card.style.display = 'none';
+    card.innerHTML = '';
+    return;
+  }
+  // Mostrar la sección prioritaria (NO bloquea, deja navegar libre)
+  card.style.display = 'block';
+  card.innerHTML =
+    '<div onclick="continuarSesionPrevia()" style="background:linear-gradient(135deg,#A32D2D,#E24B4A);border-radius:16px;padding:16px;margin-bottom:14px;cursor:pointer;box-shadow:0 4px 16px rgba(226,75,74,.35)">' +
+      '<div style="display:flex;align-items:center;gap:13px">' +
+        '<div style="width:46px;height:46px;border-radius:13px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:24px">🏋️</div>' +
+        '<div style="flex:1">' +
+          '<div style="color:white;font-size:15px;font-weight:800">Entrenamiento en curso</div>' +
+          '<div style="color:rgba(255,255,255,.85);font-size:12px;margin-top:2px">Llevas ' + sesion.hechos + ' de ' + sesion.total + ' ejercicios · toca para continuar</div>' +
+        '</div>' +
+        '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M9 18l6-6-6-6"/></svg>' +
+      '</div>' +
+    '</div>';
+}
+
+function continuarSesionPrevia() {
+  var sesion = obtenerSesionPreviaHoy();
+  var ov = document.getElementById('overlay-sesion-previa');
+  if (ov) ov.remove();
+  if (!sesion) return;
+  estadoSesion.tiempo = sesion.estado.tiempo;
+  estadoSesion.programa = sesion.estado.programa;
+  estadoSesion.completados = sesion.estado.completados;
+  estadoSesion.sesionId = sesion.estado.sesionId || ('ses_' + Date.now());
+  renderSesion();
+  irVista('view-programa');
 }
 
 function renderActividadSemana(cont) {
@@ -3929,6 +4098,7 @@ function elegirCelebracion(esRecord, esUltimo, esPutt) {
 function guardarRegistro() {
   var idx = estadoSesion.ejActivo;
   estadoSesion.completados[idx] = estadoSesion.reg;
+  guardarEstadoSesion();
   var item = estadoSesion.programa[idx];
   var def = item ? EJERCICIOS_DEF[item.id] : null;
 
@@ -4282,18 +4452,7 @@ function irVista(id) {
   document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
   var el = document.getElementById(id);
   if (el) el.classList.add('active');
-  // Botón home flotante para view-selector
-  var homeBtn = document.getElementById('floating-home-selector');
-  if (!homeBtn) {
-    homeBtn = document.createElement('div');
-    homeBtn.id = 'floating-home-selector';
-    homeBtn.onclick = function() { irVista('view-home'); };
-    homeBtn.style.cssText = 'position:fixed;top:18px;left:50%;margin-left:-197px;width:42px;height:42px;border-radius:12px;background:transparent;display:none;align-items:center;justify-content:center;cursor:pointer;z-index:9999';
-    homeBtn.innerHTML = '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#e8e8f0" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l9-9 9 9M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/></svg>';
-    document.body.appendChild(homeBtn);
-  }
-  homeBtn.style.display = (id === 'view-selector') ? 'flex' : 'none';
-  if (id === 'view-home') { renderHome(); try { localStorage.removeItem('entreno_estado'); } catch(e) {} }
+  if (id === 'view-home') { guardarEstadoSesion(); renderHome(); }
   if (id === 'view-entreno-inicio') renderEntrenoInicio();
   if (id === 'view-programa') renderSesion();
   if (id === 'view-stats') renderStats(0);
@@ -4304,16 +4463,35 @@ function irA(id) {
   document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
   var el = document.getElementById(id);
   if (el) el.classList.add('active');
-  var homeBtn = document.getElementById('floating-home-selector');
-  if (homeBtn) homeBtn.style.display = (id === 'view-selector') ? 'flex' : 'none';
   window.scrollTo(0, 0);
 }
 
 function confirmarSalirRonda() {
-  if (confirm('Regresar al home? La ronda se guardara automaticamente.')) {
-    guardarRondaEnStorage();
-    irVista('view-home');
-  }
+  // Modal propio (no usar confirm nativo, que iPhone a veces bloquea)
+  var prev = document.getElementById('overlay-salir-ronda');
+  if (prev) prev.remove();
+  var ov = document.createElement('div');
+  ov.id = 'overlay-salir-ronda';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:24px';
+  ov.onclick = function(e) { if (e.target === ov) ov.remove(); };
+  ov.innerHTML =
+    '<div style="background:#1a1a2e;border-radius:20px;padding:24px;max-width:320px;width:100%;text-align:center">' +
+      '<div style="font-size:34px;margin-bottom:10px">🏌️</div>' +
+      '<div style="color:#e8e8f0;font-size:17px;font-weight:700;margin-bottom:8px">¿Regresar al home?</div>' +
+      '<div style="color:#9a9ab0;font-size:13px;line-height:1.5;margin-bottom:20px">Tu ronda se guardará automáticamente y podrás retomarla después.</div>' +
+      '<div style="display:flex;flex-direction:column;gap:9px">' +
+        '<div onclick="ejecutarSalirRonda()" style="background:#1D9E75;border-radius:12px;padding:14px;cursor:pointer"><span style="color:white;font-size:14px;font-weight:700">Sí, guardar y salir</span></div>' +
+        '<div onclick="document.getElementById(\'overlay-salir-ronda\').remove()" style="background:rgba(255,255,255,.08);border-radius:12px;padding:14px;cursor:pointer"><span style="color:#bbb;font-size:14px;font-weight:700">Seguir jugando</span></div>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(ov);
+}
+
+function ejecutarSalirRonda() {
+  var ov = document.getElementById('overlay-salir-ronda');
+  if (ov) ov.remove();
+  try { guardarRondaEnStorage(); } catch(e) {}
+  irVista('view-home');
 }
 
 // ── ESTADO SESION ────────────────────────────────────────────────────────────
@@ -4327,8 +4505,8 @@ var EJERCICIOS_DEF = {
   'reloj8':     { nom: 'Reloj 8 pies',        cat: 'putt',     instrucciones: ['Pon 3 tees a 8 pies del hoyo','Mete las 3 seguidas sin fallar','1 ejecucion = 3 putts metidos'] },
   'tobogan':    { nom: 'Tobogan clasico',      cat: 'putt',     instrucciones: ['Distancias: 6,9,12,15,18 pasos','Mete en 2 tiros o menos','Si fallas, regresa al inicio'], distancias: ['6 pasos','9 pasos','12 pasos','15 pasos','18 pasos'] },
   'escalera':   { nom: 'Escalera clasica',     cat: 'putt',     instrucciones: ['Distancias: 6,9,12,15,18 pasos','3 veces seguidas en 2 tiros para avanzar','Si fallas, te quedas'], distancias: ['6 pasos','9 pasos','12 pasos','15 pasos','18 pasos'] },
-  'retoMedio':  { nom: 'Reto Putt Medio',      cat: 'putt',     instrucciones: ['Hoyos consecutivos en par desde ~8 pasos','Cada ejecucion = progreso de nivel','Intenta subir de nivel!'], esReto: true },
-  'retoMedioReto': { nom: 'Reto Putt Largo',  cat: 'putt',     instrucciones: ['Hoyos consecutivos en par desde ~14-16 pasos','Cada ejecucion = progreso de nivel','Intenta subir de nivel!'], esReto: true },
+  'retoMedio':  { nom: 'Reto Putt Medio',      cat: 'putt',     instrucciones: ['Elige hoyos a ~8-10 pasos de distancia','Emboca cada hoyo en 2 golpes (acercas y metes)','Logra varios hoyos seguidos de 2 golpes sin fallar','__NIVEL_MEDIO__'], esReto: true, retoTipo: 'medio' },
+  'retoMedioReto': { nom: 'Reto Putt Largo',  cat: 'putt',     instrucciones: ['Elige hoyos a ~14-16 pasos de distancia','Emboca cada hoyo en 2 golpes (acercas y metes)','Logra varios hoyos seguidos de 2 golpes sin fallar','__NIVEL_LARGO__'], esReto: true, retoTipo: 'largo' },
   'tobogan-ap': { nom: 'Tobogan approach',     cat: 'approach', instrucciones: ['Distancias: 10,15,20,25,30,35 yardas','Chip al green para avanzar','Si fallas, regresa al inicio'], distancias: ['10y','15y','20y','25y','30y','35y'] },
   'escalera-ap':{ nom: 'Escalera approach',    cat: 'approach', instrucciones: ['Distancias: 10,15,20,25,30,35 yardas','3 tiros al green para avanzar','Si fallas, te quedas'], distancias: ['10y','15y','20y','25y','30y','35y'] },
   'ud2d3':      { nom: 'Up and Down 2d3',      cat: 'approach', instrucciones: ['Desde 20-40 yardas, tira 3 bolas','2 de 3 en up and down = 1 punto','Approach + 1 putt = up and down'] },
@@ -4351,21 +4529,94 @@ var PROGRAMAS = {
 };
 
 // ── SELECCIONAR TIEMPO ───────────────────────────────────────────────────────
+function guardarEstadoSesion() {
+  try {
+    // Solo guardar si hay un programa activo con al menos un ejercicio
+    if (!estadoSesion.programa || estadoSesion.programa.length === 0) return;
+    var estado = {
+      fecha: new Date().toISOString(),
+      tiempo: estadoSesion.tiempo,
+      programa: estadoSesion.programa,
+      completados: estadoSesion.completados,
+      sesionId: estadoSesion.sesionId || ('ses_' + Date.now())
+    };
+    localStorage.setItem('entreno_estado', JSON.stringify(estado));
+  } catch(e) {}
+}
+
 function seleccionarTiempo(t) {
+  // Si hay un entrenamiento pendiente, avisar antes de empezar uno nuevo
+  if (obtenerSesionPreviaHoy()) {
+    avisarSesionPendiente(function() { arrancarTiempo(t); });
+    return;
+  }
+  arrancarTiempo(t);
+}
+
+function arrancarTiempo(t) {
   estadoSesion.tiempo = t;
   estadoSesion.programa = JSON.parse(JSON.stringify(PROGRAMAS[t]));
   estadoSesion.completados = estadoSesion.programa.map(function() { return null; });
+  estadoSesion.sesionId = 'ses_' + Date.now();
   renderSesion();
   irVista('view-programa');
 }
 
 function crearEntrenamientoManual() {
+  // Si hay un entrenamiento pendiente, avisar antes de empezar uno nuevo
+  if (obtenerSesionPreviaHoy()) {
+    avisarSesionPendiente(function() { arrancarManual(); });
+    return;
+  }
+  arrancarManual();
+}
+
+function arrancarManual() {
   estadoSesion.tiempo = 0;
   estadoSesion.programa = [];
   estadoSesion.completados = [];
+  estadoSesion.sesionId = 'ses_' + Date.now();
   renderSesion();
   irVista('view-programa');
   setTimeout(function() { abrirMenuEjercicios(); }, 300);
+}
+
+// Modal: avisar que hay un entrenamiento pendiente antes de empezar uno nuevo
+function avisarSesionPendiente(onEmpezarNuevo) {
+  var sesion = obtenerSesionPreviaHoy();
+  var prev = document.getElementById('overlay-aviso-pendiente');
+  if (prev) prev.remove();
+  window._onEmpezarNuevoEntreno = onEmpezarNuevo;
+  var hechos = sesion ? sesion.hechos : 0;
+  var total = sesion ? sesion.total : 0;
+  var ov = document.createElement('div');
+  ov.id = 'overlay-aviso-pendiente';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:9300;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;padding:24px';
+  ov.onclick = function(e) { if (e.target === ov) ov.remove(); };
+  ov.innerHTML =
+    '<div style="background:#1a1f2e;border-radius:24px;width:100%;max-width:340px;padding:24px 22px;text-align:center">' +
+      '<div style="font-size:36px;margin-bottom:10px">🏋️</div>' +
+      '<div style="color:#e8e8f0;font-size:18px;font-weight:700;margin-bottom:8px">Ya tienes un entrenamiento sin terminar</div>' +
+      '<div style="color:#9a9ab0;font-size:13px;line-height:1.5;margin-bottom:22px">Llevas ' + hechos + ' de ' + total + ' ejercicios. Si empiezas uno nuevo, el anterior se cerrará (los ejercicios que hiciste ya quedaron guardados en tus estadísticas).</div>' +
+      '<div style="display:flex;flex-direction:column;gap:9px">' +
+        '<div onclick="continuarSesionPrevia();document.getElementById(\'overlay-aviso-pendiente\').remove()" style="background:#0F6E56;border-radius:12px;padding:14px;cursor:pointer"><span style="color:white;font-size:14px;font-weight:700">Continuar el que tengo</span></div>' +
+        '<div onclick="ejecutarEmpezarNuevo()" style="background:rgba(226,75,74,.1);border:1px solid rgba(226,75,74,.35);border-radius:12px;padding:14px;cursor:pointer"><span style="color:#E24B4A;font-size:14px;font-weight:700">Empezar uno nuevo</span></div>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(ov);
+}
+
+function ejecutarEmpezarNuevo() {
+  var ov = document.getElementById('overlay-aviso-pendiente');
+  if (ov) ov.remove();
+  // Cerrar el entrenamiento pendiente (sus ejercicios ya están en el historial)
+  try { localStorage.removeItem('entreno_estado'); } catch(e) {}
+  estadoSesion.sesionId = null;
+  if (window._onEmpezarNuevoEntreno) {
+    var fn = window._onEmpezarNuevoEntreno;
+    window._onEmpezarNuevoEntreno = null;
+    fn();
+  }
 }
 
 // ── RENDER PROGRAMA ──────────────────────────────────────────────────────────
@@ -4479,6 +4730,23 @@ function abrirMenuEjercicios() {
 }
 
 
+function textoNivelReto(ins) {
+  // Convierte los marcadores dinámicos en texto real según el nivel del jugador
+  if (ins !== '__NIVEL_MEDIO__' && ins !== '__NIVEL_LARGO__') return ins;
+  var p = getPerfil();
+  var nivel = (p && p.nivelPutt) ? p.nivelPutt : 3;
+  var necesarios;
+  if (ins === '__NIVEL_MEDIO__') {
+    // Putt medio: hoyos consecutivos = nivel del jugador
+    necesarios = nivel;
+  } else {
+    // Putt largo: hoyos consecutivos = mitad del nivel (redondeado hacia abajo)
+    necesarios = Math.floor(nivel / 2);
+    if (necesarios < 1) necesarios = 1;
+  }
+  return 'Tu nivel es ' + nivel + ': necesitas ' + necesarios + (necesarios === 1 ? ' hoyo seguido' : ' hoyos seguidos') + ' de 2 golpes para completar 1 ejecución';
+}
+
 function mostrarInfoEjercicio(id) {
   var def = EJERCICIOS_DEF[id];
   if (!def) return;
@@ -4491,6 +4759,7 @@ function mostrarInfoEjercicio(id) {
   var instrHtml = '';
   if (def.instrucciones) {
     def.instrucciones.forEach(function(ins, i) {
+      ins = textoNivelReto(ins);
       var esUlt = i === def.instrucciones.length - 1;
       var bg = esUlt ? '#0F6E56' : acento;
       var tc = esUlt ? '#9FE1CB' : acentoTxt;
@@ -4751,6 +5020,61 @@ function salirOp36() {
   renderSesion();
 }
 
+function regresarAHoras() {
+  var total = estadoSesion.programa ? estadoSesion.programa.length : 0;
+  var hechos = estadoSesion.completados ? estadoSesion.completados.filter(function(c){ return c !== null; }).length : 0;
+
+  // Si no hay nada hecho, regresar directo a la pantalla de horas
+  if (hechos === 0) {
+    estadoSesion.programa = [];
+    estadoSesion.completados = [];
+    estadoSesion.tiempo = 0;
+    irVista('view-entreno-inicio');
+    return;
+  }
+
+  // Modal propio (no confirm nativo, que iPhone bloquea y se ve feo)
+  var prev = document.getElementById('overlay-regresar-horas');
+  if (prev) prev.remove();
+  var ov = document.createElement('div');
+  ov.id = 'overlay-regresar-horas';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;padding:24px';
+  ov.onclick = function(e) { if (e.target === ov) ov.remove(); };
+  ov.innerHTML =
+    '<div style="background:#1a1f2e;border-radius:24px;width:100%;max-width:340px;padding:22px;position:relative">' +
+      '<div onclick="document.getElementById(\'overlay-regresar-horas\').remove()" style="position:absolute;top:16px;right:16px;width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer"><span style="color:#888;font-size:18px;line-height:1">×</span></div>' +
+      '<div style="text-align:center;margin-bottom:6px;margin-top:8px"><span style="font-size:40px">🏋️</span></div>' +
+      '<div style="color:#e8e8f0;font-size:19px;font-weight:700;text-align:center;margin-bottom:8px">¿Guardar tu avance?</div>' +
+      '<div style="color:#888;font-size:13px;text-align:center;line-height:1.5;margin-bottom:22px">Llevas ' + hechos + ' de ' + total + ' ejercicios. Si guardas, podrás continuar esta misma sesión después.</div>' +
+      '<div onclick="ejecutarRegresarHoras(true)" style="background:#0F6E56;border-radius:14px;padding:15px;text-align:center;cursor:pointer;margin-bottom:10px"><span style="color:white;font-size:14px;font-weight:700">Guardar y continuar después</span></div>' +
+      '<div onclick="ejecutarRegresarHoras(false)" style="background:rgba(226,75,74,.1);border:1px solid rgba(226,75,74,.35);border-radius:14px;padding:14px;text-align:center;cursor:pointer"><span style="color:#E24B4A;font-size:14px;font-weight:700">Finalizar entrenamiento</span></div>' +
+    '</div>';
+  document.body.appendChild(ov);
+}
+
+function ejecutarRegresarHoras(guardar) {
+  var ov = document.getElementById('overlay-regresar-horas');
+  if (ov) ov.remove();
+
+  // EN AMBOS CASOS: guardar los ejercicios hechos al historial (alimenta el tablero).
+  // Como usa sesionId, si ya estaba guardado se ACTUALIZA (no se duplica).
+  guardarEntrenamientoHistorial();
+
+  if (guardar) {
+    // Guardar para CONTINUAR después: el estado de la sesión sigue vivo
+    guardarEstadoSesion();
+  } else {
+    // Salir sin continuar: descartar el estado en curso
+    // (los ejercicios hechos YA quedaron en el historial arriba)
+    estadoSesion.programa = [];
+    estadoSesion.completados = [];
+    estadoSesion.tiempo = 0;
+    estadoSesion.sesionId = null;
+    try { localStorage.removeItem('entreno_estado'); } catch(e) {}
+  }
+  irVista('view-entreno-inicio');
+}
+
 function confirmarSalirEntrenamiento() {
   var total = estadoSesion.programa.length;
   var hechos = estadoSesion.completados ? estadoSesion.completados.filter(function(c){ return c !== null; }).length : 0;
@@ -4789,13 +5113,13 @@ function confirmarSalirEntrenamiento() {
 }
 
 function salirEntrenamiento(guardar) {
-  if (guardar) {
-    guardarEntrenamientoHistorial();
-  }
-  // Limpiar estado del entrenamiento
+  // En ambos casos guardar los ejercicios hechos al historial (sin duplicar por sesionId)
+  guardarEntrenamientoHistorial();
+  // Limpiar estado del entrenamiento (esta salida termina la sesión)
   estadoSesion.programa = [];
   estadoSesion.completados = [];
   estadoSesion.tiempo = 0;
+  estadoSesion.sesionId = null;
   try { localStorage.removeItem('entreno_estado'); } catch(e) {}
   irVista('view-home');
 }
@@ -4812,12 +5136,35 @@ function guardarEntrenamientoHistorial() {
         hechos.push({ id: item.id, nom: def ? def.nom : item.id, cat: def ? def.cat : '', datos: estadoSesion.completados[idx] });
       }
     });
-    hist.push({
+    // Si no hay ejercicios hechos, no guardar nada
+    if (hechos.length === 0) return;
+
+    // Asegurar que la sesión tenga un id
+    var sid = estadoSesion.sesionId;
+    if (!sid) { sid = 'ses_' + Date.now(); estadoSesion.sesionId = sid; }
+
+    var registro = {
+      sesionId: sid,
       fecha: new Date().toISOString(),
       ejercicios: hechos,
       totalProgramados: estadoSesion.programa.length,
       totalHechos: hechos.length
-    });
+    };
+
+    // Buscar si YA existe un registro de esta misma sesión (mismo sesionId)
+    var idxExistente = -1;
+    for (var i = 0; i < hist.length; i++) {
+      if (hist[i] && hist[i].sesionId === sid) { idxExistente = i; break; }
+    }
+    if (idxExistente >= 0) {
+      // Actualizar el registro existente (NO duplicar)
+      // Conservar la fecha original de cuando empezó la sesión
+      registro.fecha = hist[idxExistente].fecha || registro.fecha;
+      hist[idxExistente] = registro;
+    } else {
+      // Primera vez que se guarda esta sesión
+      hist.unshift(registro);
+    }
     localStorage.setItem(key, JSON.stringify(hist));
   } catch(e) {}
 }
@@ -4968,6 +5315,7 @@ function abrirRegistro(idx) {
   if (def.instrucciones) {
     instHtml += '<div style="color:#1D9E75;font-size:11px;font-weight:700;letter-spacing:.6px;margin-bottom:10px">COMO SE JUEGA</div>';
     def.instrucciones.forEach(function(ins, i) {
+      ins = textoNivelReto(ins);
       var bg = i === def.instrucciones.length-1 ? '#0F6E56' : '#185FA5';
       var tc = i === def.instrucciones.length-1 ? '#9FE1CB' : '#B5D4F4';
       instHtml += '<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px">';
@@ -5243,10 +5591,111 @@ function renderOp36Desc() {
       '<div style="display:flex;align-items:center;gap:6px"><span style="color:#e8e8f0;font-size:13px;font-weight:700">' + h.golpes + ' golpes</span><span style="color:' + resCol + ';font-size:13px;font-weight:800">' + resTxt + '</span></div>' +
     '</div>' +
     '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">' +
-      '<div style="text-align:center"><div style="color:#4a4a6a;font-size:9px;font-weight:700;margin-bottom:4px">GREEN REG.</div><div style="color:' + girCol + ';font-size:14px;font-weight:700">' + girTxt + '</div></div>' +
-      '<div style="text-align:center;border-left:0.5px solid rgba(255,255,255,.07);border-right:0.5px solid rgba(255,255,255,.07)"><div style="color:#4a4a6a;font-size:9px;font-weight:700;margin-bottom:4px">1ER PUTT</div><div style="color:#e8e8f0;font-size:14px;font-weight:700">' + puttTxt + '</div></div>' +
-      '<div style="text-align:center"><div style="color:#4a4a6a;font-size:9px;font-weight:700;margin-bottom:4px">PUTT &lt;2 PASOS</div><div style="color:' + cortoCol + ';font-size:13px;font-weight:700">' + cortoTxt + '</div></div>' +
+      '<div onclick="editarGirOp36()" style="text-align:center;cursor:pointer;background:rgba(255,255,255,.03);border-radius:10px;padding:6px 2px"><div style="color:#4a4a6a;font-size:9px;font-weight:700;margin-bottom:4px">GREEN REG. ✎</div><div style="color:' + girCol + ';font-size:14px;font-weight:700">' + girTxt + '</div></div>' +
+      '<div onclick="editarPasosOp36()" style="text-align:center;cursor:pointer;background:rgba(255,255,255,.03);border-radius:10px;padding:6px 2px"><div style="color:#4a4a6a;font-size:9px;font-weight:700;margin-bottom:4px">1ER PUTT ✎</div><div style="color:#e8e8f0;font-size:14px;font-weight:700">' + puttTxt + '</div></div>' +
+      '<div onclick="editarCortoOp36()" style="text-align:center;cursor:pointer;background:rgba(255,255,255,.03);border-radius:10px;padding:6px 2px"><div style="color:#4a4a6a;font-size:9px;font-weight:700;margin-bottom:4px">PUTT &lt;2 ✎</div><div style="color:' + cortoCol + ';font-size:13px;font-weight:700">' + cortoTxt + '</div></div>' +
     '</div>';
+}
+
+// ── EDITAR GIR (alternar sí/no) ──
+function editarGirOp36() {
+  var h = op36Estado.hoyos[op36Estado.hoyoActual - 1];
+  if (!h || !h.ok) return;
+  h.gir = (h.gir === true) ? false : true; // alternar
+  op36GuardarYRefrescar(h);
+}
+
+// ── EDITAR PASOS (calculadora) ──
+function editarPasosOp36() {
+  var h = op36Estado.hoyos[op36Estado.hoyoActual - 1];
+  if (!h || !h.ok) return;
+  var actual = (typeof h.pasosPrimerPutt === 'number') ? h.pasosPrimerPutt : 0;
+  window._editPasosValor = actual;
+
+  var ov = document.createElement('div');
+  ov.id = 'overlay-edit-pasos';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;padding:24px';
+  ov.onclick = function(e) { if (e.target === ov) ov.remove(); };
+
+  function teclaBtn(n) {
+    return '<div onclick="pasosTecla(\'' + n + '\')" style="background:rgba(255,255,255,.08);border-radius:12px;padding:16px 0;text-align:center;cursor:pointer"><span style="color:#e8e8f0;font-size:20px;font-weight:700">' + n + '</span></div>';
+  }
+  ov.innerHTML =
+    '<div style="background:#1a1f2e;border-radius:24px;width:100%;max-width:300px;padding:22px">' +
+      '<div style="color:#888;font-size:12px;text-align:center;margin-bottom:4px">Pasos del primer putt a la bandera</div>' +
+      '<div id="edit-pasos-display" style="color:#e8e8f0;font-size:40px;font-weight:800;text-align:center;margin-bottom:18px">' + actual + '</div>' +
+      '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">' +
+        teclaBtn('1') + teclaBtn('2') + teclaBtn('3') +
+        teclaBtn('4') + teclaBtn('5') + teclaBtn('6') +
+        teclaBtn('7') + teclaBtn('8') + teclaBtn('9') +
+        '<div onclick="pasosTecla(\'borrar\')" style="background:rgba(226,75,74,.12);border-radius:12px;padding:16px 0;text-align:center;cursor:pointer"><span style="color:#E24B4A;font-size:16px;font-weight:700">⌫</span></div>' +
+        teclaBtn('0') +
+        '<div onclick="pasosGuardar()" style="background:#1D9E75;border-radius:12px;padding:16px 0;text-align:center;cursor:pointer"><span style="color:white;font-size:16px;font-weight:700">✓</span></div>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(ov);
+}
+
+function pasosTecla(t) {
+  var disp = document.getElementById('edit-pasos-display');
+  if (!disp) return;
+  var v = '' + window._editPasosValor;
+  if (t === 'borrar') {
+    v = v.length > 1 ? v.slice(0, -1) : '0';
+  } else {
+    if (v === '0') v = t; else v = v + t;
+    if (parseInt(v) > 60) v = '60'; // máximo razonable
+  }
+  window._editPasosValor = parseInt(v);
+  disp.textContent = v;
+}
+
+function pasosGuardar() {
+  var h = op36Estado.hoyos[op36Estado.hoyoActual - 1];
+  var ov = document.getElementById('overlay-edit-pasos');
+  if (ov) ov.remove();
+  if (!h) return;
+  h.pasosPrimerPutt = window._editPasosValor;
+  op36GuardarYRefrescar(h);
+}
+
+// ── EDITAR PUTT CORTO (3 opciones) ──
+function editarCortoOp36() {
+  var h = op36Estado.hoyos[op36Estado.hoyoActual - 1];
+  if (!h || !h.ok) return;
+
+  var ov = document.createElement('div');
+  ov.id = 'overlay-edit-corto';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;padding:24px';
+  ov.onclick = function(e) { if (e.target === ov) ov.remove(); };
+  ov.innerHTML =
+    '<div style="background:#1a1f2e;border-radius:24px;width:100%;max-width:320px;padding:24px 22px">' +
+      '<div style="text-align:center;margin-bottom:6px"><span style="font-size:34px">⛳</span></div>' +
+      '<div style="color:#e8e8f0;font-size:17px;font-weight:700;text-align:center;margin-bottom:6px">Putt de menos de 2 pasos</div>' +
+      '<div style="color:#888;font-size:12px;text-align:center;margin-bottom:20px">¿Qué pasó con el putt corto?</div>' +
+      '<div style="display:flex;flex-direction:column;gap:8px">' +
+        '<div onclick="cortoGuardar(null)" style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:14px;text-align:center;cursor:pointer"><span style="color:#888;font-size:14px;font-weight:700">No hubo</span></div>' +
+        '<div onclick="cortoGuardar(false)" style="background:rgba(29,158,117,.12);border:1px solid rgba(29,158,117,.35);border-radius:12px;padding:14px;text-align:center;cursor:pointer"><span style="color:#1D9E75;font-size:14px;font-weight:700">Lo metí ✓</span></div>' +
+        '<div onclick="cortoGuardar(true)" style="background:rgba(226,75,74,.1);border:1px solid rgba(226,75,74,.3);border-radius:12px;padding:14px;text-align:center;cursor:pointer"><span style="color:#E24B4A;font-size:14px;font-weight:700">Lo fallé ✗</span></div>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(ov);
+}
+
+function cortoGuardar(valor) {
+  var h = op36Estado.hoyos[op36Estado.hoyoActual - 1];
+  var ov = document.getElementById('overlay-edit-corto');
+  if (ov) ov.remove();
+  if (!h) return;
+  h.puttCortoFallado = valor; // null = no hubo, false = metido, true = fallado
+  op36GuardarYRefrescar(h);
+}
+
+// ── Recalcular y refrescar tras editar ──
+function op36GuardarYRefrescar(h) {
+  // Persistir el estado del reto
+  try { localStorage.setItem('op36_estado', JSON.stringify(op36Estado)); } catch(e) {}
+  renderOp36Hoyos();
 }
 
 function op36SetGolpes(g, gir, pasos, puttCortoFallado, putts) {
@@ -5321,25 +5770,109 @@ function renderRondasReto(tipo, numRondas) {
     var bolas = bolasEnRonda(ronda);
     var completa = bolas >= 5;
     var esActual = !completa && (r === 0 || bolasEnRonda(data[r-1]) >= 5);
-    html += '<div style="background:rgba(0,0,0,.2);border-radius:10px;padding:11px;margin-bottom:8px;' + (esActual ? 'border:1px solid ' + acento + '40' : '') + '">';
-    html += '<div style="display:flex;justify-content:space-between;margin-bottom:8px">';
-    html += '<span style="color:' + acento + ';font-size:9px;font-weight:700;opacity:.8">RONDA ' + (r+1) + ' · 5 bolas</span>';
-    html += completa ? '<span style="color:#34d399;font-size:9px;font-weight:700">✓ completa</span>' : '<span style="color:#4a4a6a;font-size:9px">' + bolas + ' de 5</span>';
-    html += '</div>';
-    html += '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">';
-    [['green','Green','#1D9E75'],['barbas','Barbas','#EF9F27'],['trampa','Trampa','#f87171']].forEach(function(c) {
-      var val = ronda[c[0]] || 0;
-      html += '<div style="text-align:center">';
-      html += '<div style="color:' + c[2] + ';font-size:9px;font-weight:700;margin-bottom:4px">' + c[1] + '</div>';
-      html += '<div style="display:flex;align-items:center;justify-content:center;gap:6px">';
-      html += '<div onclick="op36RetoVal(\'' + tipo + '\',' + r + ',\'' + c[0] + '\',-1)" style="width:22px;height:22px;border-radius:6px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888;font-size:13px">−</div>';
-      html += '<span style="color:#e8e8f0;font-size:14px;font-weight:700;min-width:14px;text-align:center">' + val + '</span>';
-      html += '<div onclick="op36RetoVal(\'' + tipo + '\',' + r + ',\'' + c[0] + '\',1)" style="width:22px;height:22px;border-radius:6px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888;font-size:13px">+</div>';
-      html += '</div></div>';
-    });
-    html += '</div></div>';
+
+    // Construir las 5 pelotitas: green, barbas, trampa, y grises las que faltan
+    var pelotas = '';
+    var ng = ronda.green || 0, nb = ronda.barbas || 0, nt = ronda.trampa || 0;
+    for (var k = 0; k < ng; k++) pelotas += '<div style="width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#5DCAA5,#1D9E75);flex-shrink:0"></div>';
+    for (var k = 0; k < nb; k++) pelotas += '<div style="width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FAC775,#EF9F27);flex-shrink:0"></div>';
+    for (var k = 0; k < nt; k++) pelotas += '<div style="width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#f8a3a3,#f87171);flex-shrink:0"></div>';
+    var faltan = 5 - bolas;
+    for (var k = 0; k < faltan; k++) pelotas += '<div style="width:30px;height:30px;border-radius:50%;background:#1a1f2e;border:1.5px dashed rgba(255,255,255,.18);flex-shrink:0;box-sizing:border-box"></div>';
+
+    var indicador = completa
+      ? '<span style="color:#34d399;font-size:14px;flex-shrink:0;width:18px;text-align:center">\u2713</span>'
+      : '<span style="color:' + acento + ';font-size:16px;flex-shrink:0;width:18px;text-align:center">\u203A</span>';
+
+    var borde = esActual ? 'border:1px solid ' + acento + '66' : 'border:1px solid transparent';
+
+    html += '<div onclick="abrirLlenarRondaReto(\'' + tipo + '\',' + r + ')" style="background:rgba(0,0,0,.25);border-radius:12px;padding:9px 12px;margin-bottom:8px;cursor:pointer;' + borde + ';display:flex;align-items:center;gap:10px">' +
+      '<span style="color:' + (esActual ? acento : '#888') + ';font-size:12px;font-weight:800;width:24px;flex-shrink:0">R' + (r+1) + '</span>' +
+      '<div style="display:flex;gap:7px;justify-content:center;flex:1">' + pelotas + '</div>' +
+      indicador +
+    '</div>';
   }
   return html;
+}
+
+// ── POP-UP para llenar una ronda de reto ──
+function abrirLlenarRondaReto(tipo, ronda) {
+  var data = tipo === 'dist' ? op36Estado.distRondas : op36Estado.trampaRondas;
+  if (!data[ronda] || typeof data[ronda] !== 'object' || Array.isArray(data[ronda])) {
+    data[ronda] = {green:0, barbas:0, trampa:0};
+  }
+  window._retoLlenando = { tipo: tipo, ronda: ronda };
+
+  var prev = document.getElementById('overlay-llenar-reto');
+  if (prev) prev.remove();
+  var ov = document.createElement('div');
+  ov.id = 'overlay-llenar-reto';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;padding:24px';
+  ov.onclick = function(e) { if (e.target === ov) ov.remove(); };
+  ov.innerHTML = '<div id="reto-popup-inner" style="background:#1a1f2e;border-radius:24px;width:100%;max-width:360px;padding:20px 18px;border:1px solid rgba(255,255,255,.08)"></div>';
+  document.body.appendChild(ov);
+  renderLlenarRondaReto();
+}
+
+function renderLlenarRondaReto() {
+  var inner = document.getElementById('reto-popup-inner');
+  if (!inner || !window._retoLlenando) return;
+  var tipo = window._retoLlenando.tipo, ronda = window._retoLlenando.ronda;
+  var data = tipo === 'dist' ? op36Estado.distRondas : op36Estado.trampaRondas;
+  var d = data[ronda] || {green:0, barbas:0, trampa:0};
+  var total = (d.green||0) + (d.barbas||0) + (d.trampa||0);
+
+  function fichero(campo, lbl, color, colorBall, bg) {
+    var val = d[campo] || 0;
+    return '<div style="background:' + bg + ';border:1.5px solid ' + color + '59;border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px">' +
+        '<div style="width:40px;height:40px;border-radius:50%;background:' + colorBall + ';flex-shrink:0"></div>' +
+        '<div style="flex:1"><div style="color:' + color + ';font-size:16px;font-weight:700">' + lbl + '</div></div>' +
+        '<div style="display:flex;align-items:center;gap:12px">' +
+          '<div onclick="retoLlenarVal(\'' + campo + '\',-1)" style="width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;color:#888;font-size:22px;cursor:pointer">\u2212</div>' +
+          '<span style="color:#e8e8f0;font-size:24px;font-weight:800;min-width:22px;text-align:center">' + val + '</span>' +
+          '<div onclick="retoLlenarVal(\'' + campo + '\',1)" style="width:38px;height:38px;border-radius:10px;background:' + color + '33;display:flex;align-items:center;justify-content:center;color:' + color + ';font-size:22px;cursor:pointer">+</div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  inner.innerHTML =
+    '<div style="display:flex;justify-content:flex-end;margin-bottom:8px">' +
+      '<div onclick="document.getElementById(\'overlay-llenar-reto\').remove()" style="width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;color:#888;font-size:18px;cursor:pointer">\u00D7</div>' +
+    '</div>' +
+    '<div style="display:flex;flex-direction:column;gap:12px">' +
+      fichero('green', 'En green', '#1D9E75', 'radial-gradient(circle at 35% 30%,#5DCAA5,#1D9E75)', 'rgba(29,158,117,.12)') +
+      fichero('barbas', 'En barbas', '#EF9F27', 'radial-gradient(circle at 35% 30%,#FAC775,#EF9F27)', 'rgba(239,159,39,.12)') +
+      fichero('trampa', 'En trampa', '#f87171', 'radial-gradient(circle at 35% 30%,#f8a3a3,#f87171)', 'rgba(248,113,113,.12)') +
+    '</div>' +
+    '<div style="color:#4a4a6a;font-size:12px;text-align:center;margin-top:16px">' + total + ' de 5 bolas \u00B7 se cierra al completar</div>';
+}
+
+function retoLlenarVal(campo, delta) {
+  if (!window._retoLlenando) return;
+  var tipo = window._retoLlenando.tipo, ronda = window._retoLlenando.ronda;
+  var data = tipo === 'dist' ? op36Estado.distRondas : op36Estado.trampaRondas;
+  if (!data[ronda]) data[ronda] = {green:0, barbas:0, trampa:0};
+  var cur = data[ronda][campo] || 0;
+  var nuevo = cur + delta;
+  var otros = ['green','barbas','trampa'].filter(function(c){return c!==campo;})
+    .reduce(function(s,c){return s+(data[ronda][c]||0);}, 0);
+  if (nuevo < 0) nuevo = 0;
+  if (nuevo + otros > 5) return;
+  data[ronda][campo] = nuevo;
+  try { localStorage.setItem('op36_estado', JSON.stringify(op36Estado)); } catch(e) {}
+
+  var total = nuevo + otros;
+  renderLlenarRondaReto();
+  renderOp36Retos();
+
+  // Si completó las 5 bolas, cerrar el pop-up solo
+  if (total >= 5) {
+    setTimeout(function() {
+      var ov = document.getElementById('overlay-llenar-reto');
+      if (ov) ov.remove();
+      renderOp36Retos();
+    }, 400);
+  }
 }
 
 function op36RetoVal(tipo, ronda, campo, delta) {
@@ -5423,10 +5956,57 @@ function aNumGolpes(s, palabras) {
   return null;
 }
 
+function mostrarDiagnosticoDictado() {
+  var crudo = window._op36UltimoTextoCrudo || '(aún no has dictado nada)';
+  var interp = window._op36UltimaInterpretacion;
+
+  var ov = document.createElement('div');
+  ov.id = 'overlay-diag-dictado';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;padding:24px';
+  ov.onclick = function(e) { if (e.target === ov) ov.remove(); };
+
+  var interpHtml = '';
+  if (interp) {
+    var score = interp.golpes - 3; // par 3
+    var scoreStr = score === 0 ? 'E (par)' : score > 0 ? '+' + score : '' + score;
+    var girStr = interp.gir === true ? 'Sí' : (interp.gir === false ? 'No' : '—');
+    var pasosStr = (typeof interp.pasos === 'number') ? interp.pasos + ' pasos' : '—';
+    var cortoStr = interp.puttCortoFallado === true ? 'Fallado' : (interp.puttCortoFallado === false ? 'Metido' : 'No hubo');
+    interpHtml =
+      '<div style="background:#0d1117;border-radius:12px;padding:14px;margin-top:12px">' +
+        '<div style="color:#888;font-size:10px;font-weight:700;letter-spacing:.5px;margin-bottom:10px">CÓMO LO INTERPRETÉ</div>' +
+        '<div style="display:flex;justify-content:space-between;padding:4px 0"><span style="color:#9a9ab0;font-size:12px">Golpes</span><span style="color:#e8e8f0;font-size:12px;font-weight:700">' + interp.golpes + ' (' + scoreStr + ')</span></div>' +
+        '<div style="display:flex;justify-content:space-between;padding:4px 0"><span style="color:#9a9ab0;font-size:12px">Green Reg.</span><span style="color:#e8e8f0;font-size:12px;font-weight:700">' + girStr + '</span></div>' +
+        '<div style="display:flex;justify-content:space-between;padding:4px 0"><span style="color:#9a9ab0;font-size:12px">1er putt</span><span style="color:#e8e8f0;font-size:12px;font-weight:700">' + pasosStr + '</span></div>' +
+        '<div style="display:flex;justify-content:space-between;padding:4px 0"><span style="color:#9a9ab0;font-size:12px">Putts</span><span style="color:#e8e8f0;font-size:12px;font-weight:700">' + interp.putts + '</span></div>' +
+        '<div style="display:flex;justify-content:space-between;padding:4px 0"><span style="color:#9a9ab0;font-size:12px">Putt corto</span><span style="color:#e8e8f0;font-size:12px;font-weight:700">' + cortoStr + '</span></div>' +
+      '</div>';
+  } else {
+    interpHtml = '<div style="color:#888;font-size:12px;text-align:center;margin-top:12px">Dicta algo primero para ver la interpretación.</div>';
+  }
+
+  ov.innerHTML =
+    '<div style="background:#1a1f2e;border-radius:24px;width:100%;max-width:340px;padding:22px;max-height:80vh;overflow-y:auto">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">' +
+        '<span style="color:#e8e8f0;font-size:16px;font-weight:700">🔍 Diagnóstico del dictado</span>' +
+        '<div onclick="document.getElementById(\'overlay-diag-dictado\').remove()" style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer"><span style="color:#888;font-size:16px">×</span></div>' +
+      '</div>' +
+      '<div style="background:#0d1117;border-radius:12px;padding:14px">' +
+        '<div style="color:#888;font-size:10px;font-weight:700;letter-spacing:.5px;margin-bottom:8px">LO QUE ENTENDIÓ EL MICRÓFONO</div>' +
+        '<div style="color:#34d399;font-size:15px;font-weight:600;line-height:1.5">"' + crudo + '"</div>' +
+      '</div>' +
+      interpHtml +
+      '<div style="color:#666;font-size:11px;text-align:center;line-height:1.5;margin-top:14px">Si el texto de arriba no es lo que dijiste, el micrófono te entendió mal. Si el texto está bien pero la interpretación no, avísame qué dice exactamente.</div>' +
+    '</div>';
+  document.body.appendChild(ov);
+}
+
 function procesarVozOp36(texto) {
   if (!texto) return;
+  window._op36UltimoTextoCrudo = texto; // guardar lo que entendió el micrófono (crudo)
   texto = texto.toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  window._op36UltimoTextoNorm = texto; // texto normalizado que se procesa
   var palabras = {
     'uno':1,'una':1,'un':1,'dos':2,'tres':3,'cuatro':4,'cinco':5,'seis':6,'siete':7,'ocho':8,'nueve':9,'diez':10,
     'once':11,'doce':12,'trece':13,'catorce':14,'quince':15,'veinte':20,'treinta':30
@@ -5438,11 +6018,20 @@ function procesarVozOp36(texto) {
     return palabras[s] !== undefined ? palabras[s] : null;
   }
 
-  // 1. GOLPES — buscar número junto a "golpes/golpe/tiros", o el primer número
+  // 1. GOLPES — en OP27 cada hoyo es par 3
   var golpes = null;
-  // Primero: "X golpes" o "hice X"
-  var mG1 = texto.match(/(\w+)\s*(?:golpes?|tiros?)/);
-  if (mG1) { var g1 = aNumGolpes(mG1[1], palabras); if (g1 !== null) golpes = g1; }
+  // Términos de golf: par=3, birdie=2, bogey=4, doble bogey=5, eagle=1
+  // (cada hoyo del reto OP27 es par 3)
+  if (/\beagle\b|\baguila\b/.test(texto)) golpes = 1;
+  else if (/\bbirdie\b|\bberdi\b|\bbirdi\b|\bpajaro\b/.test(texto)) golpes = 2;
+  else if (/\bdoble bogey\b|\bdoble bogui\b|\bdoble\b/.test(texto)) golpes = 5;
+  else if (/\bbogey\b|\bbogui\b|\bboguey\b/.test(texto)) golpes = 4;
+  else if (/\bpar\b/.test(texto)) golpes = 3;
+  // Si no fue término de golf, buscar número junto a "golpes/golpe/tiros"
+  if (golpes === null) {
+    var mG1 = texto.match(/(\w+)\s*(?:golpes?|tiros?)/);
+    if (mG1) { var g1 = aNumGolpes(mG1[1], palabras); if (g1 !== null) golpes = g1; }
+  }
   if (golpes === null) {
     var mG2 = texto.match(/(?:hice|hizo|tire|tiré)\s+(\w+)/);
     if (mG2) { var g2 = aNumGolpes(mG2[1], palabras); if (g2 !== null) golpes = g2; }
@@ -5474,8 +6063,39 @@ function procesarVozOp36(texto) {
   else if (/\b(?:tres|3)\s+p(?:utt?s?|ot|od|oco)/.test(texto)) putts = 3;
   else if (/\b(?:cuatro|4)\s+p(?:utt?s?|ot|od|oco)/.test(texto)) putts = 4;
 
+  // 3. PASOS — detectar TODOS los números de pasos/distancias mencionados PRIMERO
+  // Casos: "de 8 y de 2 pasos", "a 8 pasos", "uno de diez y uno de uno"
+  var todosPasos = [];
+  if (/pasos?/.test(texto)) {
+    // Con la palabra "pasos": capturar todos los "de X" / "a X"
+    var regNum = /(?:a|de)\s+(\w+)/g;
+    var mP;
+    while ((mP = regNum.exec(texto)) !== null) {
+      var pv = aNum(mP[1]);
+      if (pv !== null && pv >= 0 && pv <= 60) todosPasos.push(pv);
+    }
+  } else {
+    // SIN la palabra "pasos": detectar patrón "uno de X y uno de Y" / "de X y de Y"
+    // (cada "uno de N" o "de N" representa un putt a N pasos)
+    var regUnoDe = /(?:uno|una|un|1)?\s*de\s+(\w+)/g;
+    var mU;
+    while ((mU = regUnoDe.exec(texto)) !== null) {
+      var uv = aNum(mU[1]);
+      if (uv !== null && uv >= 0 && uv <= 60) todosPasos.push(uv);
+    }
+  }
+
+  // El número de putts = número de distancias mencionadas (tiene prioridad)
+  // ej. "un putt de diez y uno de un paso" = 2 distancias = 2 putts
+  // (aunque haya dicho "un putt", si menciona 2 distancias, fueron 2 putts)
+  if (todosPasos.length >= 1) {
+    if (putts === null || todosPasos.length > putts) {
+      putts = todosPasos.length;
+    }
+  }
+
   // 3. GIR — deducción por golpes y putts
-  // En par 3: GIR = llegó al green con el primer tiro = (golpes - putts) <= 1
+  // GIR = llegó al green con (golpes - putts) tiros, y eso es <= 1 (par 3 del reto)
   var gir = null;
   // Forzar false si dice explícitamente que NO se subió
   if (/no green|sin green|falle el green|fall[eé] el green|no llegue|no llegué|no me subi|no me subí|fuera del green|no subio|no subió|barbas|trampa|bunker|arena|castigo|agua/.test(texto)) {
@@ -5484,23 +6104,8 @@ function procesarVozOp36(texto) {
     // Deducir: si llegó al green en 1 tiro → GIR sí
     gir = (golpes - putts) <= 1;
   } else {
-    // No mencionó putts: GIR true por defecto (asume que subió en regulación)
+    // No mencionó putts ni distancias: GIR true por defecto
     gir = true;
-  }
-
-  // 3. PASOS — detectar TODOS los números de pasos mencionados
-  // "de 8 y de 2 pasos", "a 8 pasos", "primer putt a 5"
-  var todosPasos = [];
-  // Buscar patrones "de X" y "a X" cerca de "pasos"
-  var regPasos = /(?:a|de)\s+(\w+)(?=\s*(?:y|,|\.|\s+de|\s+y\s+de|\s*pasos?|$))/g;
-  var mP;
-  // Primero: si hay la palabra "pasos", capturar todos los "de X" / "a X" del segmento
-  if (/pasos?/.test(texto)) {
-    var regNum = /(?:a|de)\s+(\w+)/g;
-    while ((mP = regNum.exec(texto)) !== null) {
-      var pv = aNum(mP[1]);
-      if (pv !== null && pv >= 0 && pv <= 60 && todosPasos.indexOf(pv) < 0) todosPasos.push(pv);
-    }
   }
   var pasos = null;
   if (todosPasos.length > 0) {
@@ -5545,6 +6150,9 @@ function procesarVozOp36(texto) {
     // Sin putts explícitos: deducir de golpes y GIR
     puttsDelHoyo = gir ? Math.max(0, golpes - 1) : Math.max(0, golpes - 2);
   }
+
+  // Guardar la interpretación para el diagnóstico
+  window._op36UltimaInterpretacion = { golpes: golpes, gir: gir, pasos: pasos, putts: puttsDelHoyo, puttCortoFallado: puttCortoFallado };
 
   // Si hubo 2+ putts y no se dictó el putt corto, preguntar
   if (puttsDelHoyo >= 2 && puttCortoFallado === null) {
@@ -5665,6 +6273,7 @@ function guardarIngresoMacro() {
   var idx = estadoSesion.ejActivo;
   if (idx >= 0) {
     estadoSesion.completados[idx] = { acum: acum, golpes: op36Macro.tiros, gir: op36Macro.gir, macro: true };
+    guardarEstadoSesion();
   }
 
   mostrarResumenOp36(op36Macro.tiros, acum, 9);
@@ -5760,6 +6369,7 @@ function guardarYResumenOp36() {
   var idx = estadoSesion.ejActivo;
   if (idx >= 0) {
     estadoSesion.completados[idx] = { mins: estadoSesion.programa[idx].mins, golpes: totalGolpes, acum: acum };
+    guardarEstadoSesion();
   }
 
   mostrarResumenOp36(totalGolpes, acum, hoyosOk.length);
@@ -5838,7 +6448,6 @@ function mostrarResumenOp36(golpes, acum, hoyos) {
 document.addEventListener('DOMContentLoaded', function() {
   cargarPerfilesLocal();
   renderHome();
-  try { localStorage.removeItem('entreno_estado'); } catch(e) {}
 });
 
 function cargarPerfilesLocal() {
@@ -5923,78 +6532,106 @@ function selJugadorPerfil(id, av, nom, color){
   r.style.setProperty('--player-bg', color + '26');
   r.style.setProperty('--player-border', color + '66');
 
-  // Intentar restaurar ronda guardada del mismo día
-  var restaurada = false;
-  try {
-    var key = 'ronda_' + id;
-    var raw = localStorage.getItem(key);
-    if (raw) {
-      var data = JSON.parse(raw);
-      var fechaGuardada = new Date(data.fecha);
-      var hoy = new Date();
-      if (fechaGuardada.toDateString() === hoy.toDateString()) {
-        var hoyosConDatos = data.hoyos.filter(function(h){ return h.ok; }).length;
-        if (hoyosConDatos > 0) {
-          if (confirm('Tienes una ronda de hoy con ' + hoyosConDatos + ' hoyo(s) guardado(s). ¿Continuar donde dejaste?')) {
-            E.hoyos = data.hoyos;
-            E.hoyoActual = data.hoyoActual;
-            E.totalHoyos = data.totalHoyos;
-            restaurada = true;
-          }
-        }
-      }
-    }
-  } catch(e) {}
-
-  if (!restaurada) {
-    // Ronda nueva: reiniciar hoyos
-    E.hoyos = [];
-    for (var i = 1; i <= 9; i++) E.hoyos.push({num:i,ok:false,res:null,tiros:{}});
-    E.hoyoActual = 1;
-    E.totalHoyos = 9;
-    tiroParcialPorHoyo = {};
-    tiroParcial = getTiroParcial(1);
-  }
-
+  // Mostrar datos del jugador
   var ja = document.getElementById('jug-avatar'); if (ja) ja.textContent = av;
   var jn = document.getElementById('jug-nombre'); if (jn) jn.textContent = nom;
   var tm = document.getElementById('torneo-mi'); if (tm) tm.textContent = av + ' ' + nom;
 
+  // ¿Hay una ronda de hoy guardada? Preguntar con modal propio
+  var rondaPrevia = obtenerRondaPreviaHoy(id);
+  if (rondaPrevia) {
+    mostrarModalRondaPrevia(rondaPrevia.hoyosConDatos,
+      function() { // Continuar
+        E.hoyos = rondaPrevia.data.hoyos;
+        E.hoyoActual = rondaPrevia.data.hoyoActual;
+        E.totalHoyos = rondaPrevia.data.totalHoyos;
+        renderHoyos(); actualizarHoyo(); irA('view-hoyo');
+      },
+      function() { // Empezar nueva
+        iniciarRondaNuevaHoyos();
+        renderHoyos(); actualizarHoyo(); irA('view-hoyo');
+      });
+    return;
+  }
+
+  // Sin ronda previa: empezar nueva directo
+  iniciarRondaNuevaHoyos();
   renderHoyos(); actualizarHoyo(); irA('view-hoyo');
+}
+
+// Helper: revisa si hay una ronda guardada de hoy con datos
+function obtenerRondaPreviaHoy(id) {
+  try {
+    var raw = localStorage.getItem('ronda_' + id);
+    if (!raw) return null;
+    var data = JSON.parse(raw);
+    var fechaGuardada = new Date(data.fecha);
+    var hoy = new Date();
+    if (fechaGuardada.toDateString() !== hoy.toDateString()) return null;
+    var hoyosConDatos = data.hoyos.filter(function(h){ return h.ok; }).length;
+    if (hoyosConDatos === 0) return null;
+    return { data: data, hoyosConDatos: hoyosConDatos };
+  } catch(e) { return null; }
+}
+
+// Helper: reinicia los hoyos para una ronda nueva
+function iniciarRondaNuevaHoyos() {
+  E.hoyos = [];
+  for (var i = 1; i <= 9; i++) E.hoyos.push({num:i,ok:false,res:null,tiros:{}});
+  E.hoyoActual = 1;
+  E.totalHoyos = 9;
+  tiroParcialPorHoyo = {};
+  tiroParcial = getTiroParcial(1);
+}
+
+// Modal propio: ¿continuar ronda previa o empezar nueva?
+function mostrarModalRondaPrevia(hoyosConDatos, onContinuar, onNueva) {
+  var prev = document.getElementById('overlay-ronda-previa');
+  if (prev) prev.remove();
+  var ov = document.createElement('div');
+  ov.id = 'overlay-ronda-previa';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:9200;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;padding:24px';
+  window._onContinuarRonda = onContinuar;
+  window._onNuevaRonda = onNueva;
+  ov.innerHTML =
+    '<div style="background:#1a1f2e;border-radius:24px;width:100%;max-width:340px;padding:24px 22px;text-align:center">' +
+      '<div style="font-size:36px;margin-bottom:10px">⛳</div>' +
+      '<div style="color:#e8e8f0;font-size:18px;font-weight:700;margin-bottom:8px">Tienes una ronda de hoy</div>' +
+      '<div style="color:#9a9ab0;font-size:13px;line-height:1.5;margin-bottom:22px">Llevas ' + hoyosConDatos + (hoyosConDatos === 1 ? ' hoyo guardado' : ' hoyos guardados') + '. ¿Quieres continuar donde la dejaste o empezar una nueva?</div>' +
+      '<div style="display:flex;flex-direction:column;gap:9px">' +
+        '<div onclick="if(window._onContinuarRonda)window._onContinuarRonda();document.getElementById(\'overlay-ronda-previa\').remove()" style="background:#1D9E75;border-radius:12px;padding:14px;cursor:pointer"><span style="color:white;font-size:14px;font-weight:700">Continuar donde dejé</span></div>' +
+        '<div onclick="if(window._onNuevaRonda)window._onNuevaRonda();document.getElementById(\'overlay-ronda-previa\').remove()" style="background:rgba(255,255,255,.08);border-radius:12px;padding:14px;cursor:pointer"><span style="color:#bbb;font-size:14px;font-weight:700">Empezar una nueva</span></div>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(ov);
 }
 
 function selJugador(id,av,nom){
   E.jugador={id,avatar:av,nombre:nom};
-  // Intentar cargar ronda guardada del mismo día
-  var restaurada = false;
-  try {
-    var key = 'ronda_' + id;
-    var raw = localStorage.getItem(key);
-    if (raw) {
-      var data = JSON.parse(raw);
-      var fechaGuardada = new Date(data.fecha);
-      var hoy = new Date();
-      if (fechaGuardada.toDateString() === hoy.toDateString()) {
-        var hoyosConDatos = data.hoyos.filter(function(h){ return h.ok; }).length;
-        if (hoyosConDatos > 0) {
-          if (confirm('Tienes una ronda de hoy con ' + hoyosConDatos + ' hoyo(s) guardado(s). ¿Continuar donde dejaste?')) {
-            E.hoyos = data.hoyos;
-            E.hoyoActual = data.hoyoActual;
-            E.totalHoyos = data.totalHoyos;
-            restaurada = true;
-          }
-        }
-      }
-    }
-  } catch(e) {}
   document.getElementById('jug-avatar').textContent=av;
   document.getElementById('jug-nombre').textContent=nom;
   document.getElementById('torneo-mi').textContent=av+' '+nom;
   aplicarColorJugador(id);
-  if (!restaurada) {
-    tiroParcialPorHoyo = {};
-    tiroParcial = getTiroParcial(1);
+
+  var rondaPrevia = obtenerRondaPreviaHoy(id);
+  if (rondaPrevia) {
+    mostrarModalRondaPrevia(rondaPrevia.hoyosConDatos,
+      function() { // Continuar
+        E.hoyos = rondaPrevia.data.hoyos;
+        E.hoyoActual = rondaPrevia.data.hoyoActual;
+        E.totalHoyos = rondaPrevia.data.totalHoyos;
+        renderHoyos(); actualizarHoyo(); irA('view-hoyo');
+      },
+      function() { // Nueva
+        tiroParcialPorHoyo = {};
+        tiroParcial = getTiroParcial(1);
+        renderHoyos(); actualizarHoyo(); irA('view-hoyo');
+      });
+    return;
   }
+
+  tiroParcialPorHoyo = {};
+  tiroParcial = getTiroParcial(1);
   renderHoyos(); actualizarHoyo(); irA('view-hoyo');
 }
 
@@ -8907,7 +9544,61 @@ function extraerNum(txt) {
   return null;
 }
 
+function mostrarDiagnosticoRonda() {
+  var crudo = window._rondaUltimoTextoCrudo || '(aún no has dictado nada)';
+  var r = window._rondaUltimaInterpretacion;
+
+  var ov = document.createElement('div');
+  ov.id = 'overlay-diag-ronda';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;padding:24px';
+  ov.onclick = function(e) { if (e.target === ov) ov.remove(); };
+
+  var interpHtml = '';
+  if (r) {
+    function fila(lbl, val) {
+      return '<div style="display:flex;justify-content:space-between;padding:4px 0"><span style="color:#9a9ab0;font-size:12px">' + lbl + '</span><span style="color:#e8e8f0;font-size:12px;font-weight:700">' + val + '</span></div>';
+    }
+    var scoreStr = r.score === null ? '—' : (r.score === 0 ? 'Par' : r.score > 0 ? '+' + r.score : '' + r.score);
+    var driveStr = r.drive === 'fairway' ? 'Fairway' : r.drive === 'castigo' ? 'Castigo' : r.drive === 'sin-tiro' ? 'Fuera (árboles/rough)' : '—';
+    var hierrosStr = (r.hierros && r.hierros.length > 0) ? r.hierros.map(function(h){ return h.dist + 'y' + (h.resultado ? ' (' + h.resultado + ')' : ''); }).join(', ') : '—';
+    var apStr = r.approach || '—';
+    var puttsStr = (r.putts === null || r.putts === undefined) ? '—' : '' + r.putts;
+    var pasosStr = (typeof r.pasos === 'number') ? r.pasos + ' pasos' : '—';
+    var cortoStr = r.puttCorto === 'lo-meti' ? 'Lo metí' : r.puttCorto === 'lo-falle' ? 'Lo fallé' : r.puttCorto === 'no-hubo' ? 'No hubo' : '—';
+
+    interpHtml =
+      '<div style="background:#0d1117;border-radius:12px;padding:14px;margin-top:12px">' +
+        '<div style="color:#888;font-size:10px;font-weight:700;letter-spacing:.5px;margin-bottom:10px">CÓMO LO INTERPRETÉ</div>' +
+        fila('Score', scoreStr) +
+        fila('Drive', driveStr) +
+        fila('Hierros', hierrosStr) +
+        fila('Approach', apStr) +
+        fila('Putts', puttsStr) +
+        fila('1er putt', pasosStr) +
+        fila('Putt corto', cortoStr) +
+      '</div>';
+  } else {
+    interpHtml = '<div style="color:#888;font-size:12px;text-align:center;margin-top:12px">Dicta algo primero para ver la interpretación.</div>';
+  }
+
+  ov.innerHTML =
+    '<div style="background:#1a1f2e;border-radius:24px;width:100%;max-width:340px;padding:22px;max-height:82vh;overflow-y:auto">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">' +
+        '<span style="color:#e8e8f0;font-size:16px;font-weight:700">🔍 Diagnóstico del dictado</span>' +
+        '<div onclick="document.getElementById(\'overlay-diag-ronda\').remove()" style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer"><span style="color:#888;font-size:16px">×</span></div>' +
+      '</div>' +
+      '<div style="background:#0d1117;border-radius:12px;padding:14px">' +
+        '<div style="color:#888;font-size:10px;font-weight:700;letter-spacing:.5px;margin-bottom:8px">LO QUE ENTENDIÓ EL MICRÓFONO</div>' +
+        '<div style="color:#34d399;font-size:15px;font-weight:600;line-height:1.5">"' + crudo + '"</div>' +
+      '</div>' +
+      interpHtml +
+      '<div style="color:#666;font-size:11px;text-align:center;line-height:1.5;margin-top:14px">Si el texto de arriba no es lo que dijiste, el micrófono te entendió mal. Si el texto está bien pero la interpretación no, avísame qué dice exactamente.</div>' +
+    '</div>';
+  document.body.appendChild(ov);
+}
+
 function interpretarHoyo(txt) {
+  window._rondaUltimoTextoCrudo = txt; // guardar lo que entendió el micrófono
   var n = norm(txt);
   var r = { score:null, drive:null, hierros:[], approach:null, putts:null, pasos:null, puttCorto:null, metidaFuera:false };
 
@@ -9177,6 +9868,13 @@ function interpretarHoyo(txt) {
     var menorPaso = Math.min.apply(null, todosLosNums);
     r.pasos = mayorPaso; // El MAYOR = primer putt
 
+    // El número de putts = número de distancias dictadas (tiene prioridad).
+    // Ej: "un putt de diez y uno de un paso" = 2 distancias = 2 putts,
+    // aunque haya dicho "un putt" al inicio.
+    if (todosLosNums.length > (r.putts || 0)) {
+      r.putts = todosLosNums.length;
+    }
+
     if (todosLosNums.length >= 2) {
       // Múltiples putts con pasos declarados
       if (menorPaso > 2) {
@@ -9228,6 +9926,7 @@ function interpretarHoyo(txt) {
     else if (DICT.puttCorto.nohubo.some(function(p){ return n.includes(norm(p)); })) r.puttCorto = 'no-hubo';
   }
 
+  window._rondaUltimaInterpretacion = r; // guardar para el diagnóstico
   return r;
 }
 
