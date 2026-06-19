@@ -2,8 +2,14 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Golf Necochea</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Golf Necochea">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#0d1117">
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxODAiIGhlaWdodD0iMTgwIiB2aWV3Qm94PSIwIDAgMTgwIDE4MCI+PHJlY3Qgd2lkdGg9IjE4MCIgaGVpZ2h0PSIxODAiIHJ4PSI0MCIgZmlsbD0iIzBGNkU1NiIvPjxjaXJjbGUgY3g9IjkwIiBjeT0iMTM4IiByPSIxNCIgZmlsbD0id2hpdGUiLz48cGF0aCBkPSJNOTAgMTI0VjQ4bDQyIDI0LTQyIDI0IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjEwIiBmaWxsPSJub25lIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+PC9zdmc+">
 <style>
 
   :root {
@@ -35,7 +41,7 @@
 
   /* CARDS */
   .card { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 16px; padding: 13px 14px; margin-bottom: 8px; }
-  .section-label { font-size: 9px; font-weight: 700; letter-spacing: 1.2px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; margin-top: 0; }
+  .section-label { font-size: 13px; font-weight: 800; letter-spacing: 0.3px; color: #e8e8f0; text-transform: none; margin-bottom: 8px; margin-top: 0; }
 
   /* STAT BOXES */
   .stat-box { background: rgba(0,0,0,.25); border: 0.5px solid var(--border); border-radius: 10px; padding: 8px; text-align: center; flex: 1; }
@@ -48,7 +54,7 @@
 
   /* BOTTOM NAV */
   .action-btns { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; margin-top: 4px; }
-  .action-btn-primary { background: var(--green-dark); border-radius: 14px; padding: 13px 8px; text-align: center; cursor: pointer; }
+  .action-btn-primary { background: var(--player-main, var(--green-dark)); border-radius: 14px; padding: 13px 8px; text-align: center; cursor: pointer; }
   .action-btn-secondary { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 14px; padding: 13px 8px; text-align: center; cursor: pointer; }
   .action-btn-lbl { font-size: 10px; font-weight: 700; margin-top: 5px; }
 
@@ -183,7 +189,7 @@
 .add-player-btn { display:flex; align-items:center; justify-content:center; gap:8px; padding:14px; border-radius:16px; border:1.5px dashed rgba(255,255,255,.1); background:rgba(255,255,255,.02); color:var(--text-dim); font-size:13px; font-weight:600; cursor:pointer; width:100%; }
 
 /* ── HEADER VERDE ── */
-.header-green { background:var(--player-main, var(--green)); border-radius:0 0 28px 28px; padding:16px 18px 14px; }
+.header-green { background:var(--player-main, var(--green)); border-radius:0 0 22px 22px; padding:16px 18px 14px; }
 .header-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
 .jugador-pill { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.12); border-radius:20px; padding:7px 14px 7px 8px; cursor:pointer; }
 .jugador-nombre { color:white; font-size:14px; font-weight:600; }
@@ -690,16 +696,16 @@
   <div id="home-view-pro" style="padding: 0 16px; min-height: 100%; display: flex; flex-direction: column; box-sizing: border-box;">
 
     <!-- Header perfil -->
-    <div class="home-header" style="padding: calc(env(safe-area-inset-top, 16px) + 18px) 0 14px;">
+    <div class="home-header" style="padding: calc(env(safe-area-inset-top, 16px) + 18px) 16px 16px; margin: 0 -16px 14px; background: var(--player-main, #0F6E56); border-radius: 0 0 22px 22px;">
       <div style="display:flex;align-items:center;gap:12px">
         <div class="avatar" id="home-avatar" onclick="abrirPerfiles()" style="cursor:pointer">SC</div>
         <div onclick="abrirPerfiles()" style="cursor:pointer">
-          <div style="color:#e8e8f0;font-size:16px;font-weight:700" id="home-nombre">Salvador (papá)</div>
-          <div style="color:#4a4a6a;font-size:11px">Hcp actual: <span id="home-hcp">—</span> <span style="color:#1D9E75;font-size:9px">▾</span></div>
+          <div style="color:#ffffff;font-size:16px;font-weight:700" id="home-nombre">Salvador (papá)</div>
+          <div style="color:rgba(255,255,255,.75);font-size:11px">Hcp actual: <span id="home-hcp">—</span> <span style="color:#ffffff;font-size:9px">▾</span></div>
         </div>
       </div>
-      <div onclick="abrirMenuPro()" style="width:40px;height:40px;border-radius:11px;background:var(--bg2);border:0.5px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#e8e8f0" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      <div onclick="abrirMenuPro()" style="width:40px;height:40px;border-radius:11px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
       </div>
     </div>
 
@@ -707,8 +713,8 @@
     <div class="section-label">Semana en curso</div>
     <div class="card">
       <div class="rings-wrap">
-        <div style="position:relative;width:140px;height:140px;flex-shrink:0">
-          <svg viewBox="0 0 90 90" width="140" height="140" id="svg-anillos">
+        <div style="position:relative;width:158px;height:158px;flex-shrink:0">
+          <svg viewBox="0 0 90 90" width="158" height="158" id="svg-anillos">
             <!-- Horas -->
             <circle cx="45" cy="45" r="37" fill="none" stroke="var(--bg3)" stroke-width="11"/>
             <circle cx="45" cy="45" r="37" fill="none" stroke="var(--green-dark)" stroke-width="11" stroke-dasharray="232.5" stroke-dashoffset="69.7" stroke-linecap="round" transform="rotate(-90 45 45)" id="ring-horas"/>
@@ -834,7 +840,7 @@
 
     <!-- Botón Ronda -->
     <div style="margin-top:auto;padding:18px 0 calc(env(safe-area-inset-bottom, 16px) + 20px)">
-      <div onclick="iniciarRondaPerfilActivo()" style="background:#1D9E75;border-radius:14px;padding:15px;text-align:center;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px">
+      <div onclick="iniciarRondaPerfilActivo()" style="background:var(--player-main, #1D9E75);border-radius:14px;padding:15px;text-align:center;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px">
         <span style="font-size:22px;line-height:1">🏌️</span>
         <div style="color:white;font-size:15px;font-weight:700">Iniciar ronda</div>
       </div>
@@ -2228,8 +2234,8 @@
 
 <div class="view" id="view-op36">
   <!-- Header verde -->
-  <div style="background:#0F6E56">
-    <div style="padding:14px 16px 12px;display:flex;align-items:center;justify-content:space-between">
+  <div style="background:var(--player-main, #0F6E56);border-radius:0 0 22px 22px">
+    <div style="padding:16px 18px 14px;display:flex;align-items:center;justify-content:space-between">
       <div style="display:flex;align-items:center;gap:8px">
         <div onclick="confirmarSalirOp36()" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
@@ -2263,7 +2269,7 @@
 
   <!-- Micrófono -->
   <div style="display:flex;flex-direction:column;align-items:center;gap:14px;padding:20px 0 24px">
-    <button id="op36-mic-btn" onclick="toggleVozOp36()" style="width:96px;height:96px;border-radius:50%;background:#1D9E75;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer">
+    <button id="op36-mic-btn" onclick="toggleVozOp36()" style="width:96px;height:96px;border-radius:50%;background:var(--player-main, #1D9E75);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer">
       <span id="op36-mic-emoji" style="font-size:48px;line-height:1">🎤</span>
     </button>
     <span id="op36-mic-hint" style="color:#4a4a6a;font-size:13px">Toca para dictar tus golpes</span>
@@ -2517,6 +2523,12 @@ function getHistorialEntreno(jugId) {
 
 function renderHome() {
   var p = getPerfil();
+  // Aplicar el color del perfil activo a las variables globales (botones, acentos)
+  var r = document.documentElement;
+  r.style.setProperty('--player-main', p.color);
+  r.style.setProperty('--player-light', p.color);
+  r.style.setProperty('--player-bg', p.color + '26');
+  r.style.setProperty('--player-border', p.color + '66');
   if (p.version === 'light') {
     renderHomeLight();
   } else {
@@ -2781,15 +2793,15 @@ function renderProUltimasRondas() {
   orden.forEach(function(r, i) {
     // Altura: más score (peor) = barra más alta; mejor = más baja. Entre 16 y 58px.
     var h;
-    if (rango === 0) h = 32;
-    else h = 16 + Math.round((r.scoreTotal - minScore) / rango * 42);
+    if (rango === 0) h = 40;
+    else h = 20 + Math.round((r.scoreTotal - minScore) / rango * 54);
     var esMejor = r.scoreTotal === minScore;
     var color = esMejor ? '#1D9E75' : (i < orden.length - 1 ? '#534AB7' : '#0F6E56');
     var txtColor = esMejor ? '#9FE1CB' : '#888';
     var txtPeso = esMejor ? '800' : '700';
     barras += '<div style="display:flex;flex-direction:column;align-items:center;gap:6px">' +
-        '<div style="width:22px;background:' + color + ';border-radius:6px;height:' + h + 'px"></div>' +
-        '<span style="color:' + txtColor + ';font-size:11px;font-weight:' + txtPeso + '">' + fmtScoreOp(r.scoreTotal) + '</span>' +
+        '<div style="width:27px;background:' + color + ';border-radius:7px;height:' + h + 'px"></div>' +
+        '<span style="color:' + txtColor + ';font-size:13px;font-weight:' + txtPeso + '">' + fmtScoreOp(r.scoreTotal) + '</span>' +
       '</div>';
   });
 
@@ -2805,9 +2817,9 @@ function renderProUltimasRondas() {
   }
 
   card.innerHTML =
-    '<div style="display:flex;align-items:flex-end;justify-content:space-around;gap:8px;height:78px;margin-bottom:10px">' + barras + '</div>' +
-    '<div style="text-align:center;border-top:0.5px solid rgba(255,255,255,.07);padding-top:10px">' +
-      '<span style="color:' + tendColor + ';font-size:11px;font-weight:700">' + tendTxt + '</span>' +
+    '<div style="display:flex;align-items:flex-end;justify-content:space-around;gap:8px;height:98px;margin-bottom:12px">' + barras + '</div>' +
+    '<div style="text-align:center;border-top:0.5px solid rgba(255,255,255,.07);padding-top:12px">' +
+      '<span style="color:' + tendColor + ';font-size:13px;font-weight:700">' + tendTxt + '</span>' +
     '</div>';
 }
 
@@ -2835,13 +2847,13 @@ function renderProOp27() {
     : null;
 
   card.innerHTML =
-    '<div style="background:rgba(239,159,39,.1);border-radius:12px;padding:10px;text-align:center;flex:1;display:flex;flex-direction:column;justify-content:center">' +
-      '<div style="color:#888;font-size:9px;font-weight:700;letter-spacing:.5px;margin-bottom:4px">ÚLTIMA</div>' +
-      '<div style="color:#EF9F27;font-size:26px;font-weight:800;line-height:1">' + fmtScoreOp(ultima.acum) + '</div>' +
+    '<div style="background:rgba(239,159,39,.1);border-radius:12px;padding:12px;text-align:center;flex:1;display:flex;flex-direction:column;justify-content:center">' +
+      '<div style="color:#888;font-size:11px;font-weight:700;letter-spacing:.5px;margin-bottom:5px">ÚLTIMA</div>' +
+      '<div style="color:#EF9F27;font-size:33px;font-weight:800;line-height:1">' + fmtScoreOp(ultima.acum) + '</div>' +
     '</div>' +
-    '<div style="background:rgba(29,158,117,.1);border-radius:12px;padding:10px;text-align:center;flex:1;display:flex;flex-direction:column;justify-content:center">' +
-      '<div style="color:#888;font-size:9px;font-weight:700;letter-spacing:.5px;margin-bottom:4px">MEJOR (30 DÍAS)</div>' +
-      '<div style="color:#9FE1CB;font-size:26px;font-weight:800;line-height:1">' + fmtScoreOp(mejor30) + '</div>' +
+    '<div style="background:rgba(29,158,117,.1);border-radius:12px;padding:12px;text-align:center;flex:1;display:flex;flex-direction:column;justify-content:center">' +
+      '<div style="color:#888;font-size:11px;font-weight:700;letter-spacing:.5px;margin-bottom:5px">MEJOR (30 DÍAS)</div>' +
+      '<div style="color:#9FE1CB;font-size:33px;font-weight:800;line-height:1">' + fmtScoreOp(mejor30) + '</div>' +
     '</div>';
 }
 
@@ -2857,13 +2869,13 @@ function circuloPct(pct, label) {
   var c = colorPorPct(pct);
   var circ = 201; // 2*PI*32
   var off = circ - (Math.min(pct, 100) / 100) * circ;
-  return '<div class="card" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:6px;padding:10px 4px">' +
-      '<svg viewBox="0 0 80 80" width="76" height="76">' +
+  return '<div class="card" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:7px;padding:12px 4px">' +
+      '<svg viewBox="0 0 80 80" width="94" height="94">' +
         '<circle cx="40" cy="40" r="32" fill="none" stroke="' + c.bg + '" stroke-width="8"/>' +
         '<circle cx="40" cy="40" r="32" fill="none" stroke="' + c.stroke + '" stroke-width="8" stroke-dasharray="' + circ + '" stroke-dashoffset="' + off + '" stroke-linecap="round" transform="rotate(-90 40 40)"/>' +
-        '<text x="40" y="40" text-anchor="middle" dominant-baseline="central" fill="' + c.txt + '" font-size="23" font-weight="800">' + pct + '%</text>' +
+        '<text x="40" y="40" text-anchor="middle" dominant-baseline="central" fill="' + c.txt + '" font-size="24" font-weight="800">' + pct + '%</text>' +
       '</svg>' +
-      '<div style="color:#888;font-size:9px;font-weight:700;line-height:1.3">' + label + '</div>' +
+      '<div style="color:#888;font-size:10px;font-weight:700;line-height:1.3">' + label + '</div>' +
     '</div>';
 }
 
@@ -3007,22 +3019,22 @@ function renderProNivelMedio() {
   var dotsHtml = '';
   for (var i = 0; i < 10; i++) {
     var lleno = i < progreso;
-    dotsHtml += '<div style="width:12px;height:12px;border-radius:50%;background:' + (lleno ? '#1D9E75' : (mostrarAlerta ? '#2e1a1a' : '#1a2e26')) + '"></div>';
+    dotsHtml += '<div style="width:15px;height:15px;border-radius:50%;background:' + (lleno ? '#1D9E75' : (mostrarAlerta ? '#2e1a1a' : '#1a2e26')) + '"></div>';
   }
 
   if (mostrarAlerta) {
     card.innerHTML =
       '<div class="card pro-alerta-nivel" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:7px;padding:10px 6px;border:1.5px solid #E24B4A;background:rgba(226,75,74,.08)">' +
-        '<div style="color:#1D9E75;font-size:24px;font-weight:800;line-height:1">N' + nivel + '</div>' +
-        '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px">' + dotsHtml + '</div>' +
+        '<div style="color:#1D9E75;font-size:30px;font-weight:800;line-height:1">N' + nivel + '</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:5px">' + dotsHtml + '</div>' +
         '<div style="background:#E24B4A;border-radius:8px;padding:4px 10px"><span style="color:white;font-size:13px;font-weight:800">' + diasParaBajar + ' días</span></div>' +
       '</div>';
   } else {
     var faltanSubir = 10 - progreso;
     card.innerHTML =
       '<div class="card" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;padding:10px 6px">' +
-        '<div style="color:#1D9E75;font-size:26px;font-weight:800;line-height:1">N' + nivel + '</div>' +
-        '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px">' + dotsHtml + '</div>' +
+        '<div style="color:#1D9E75;font-size:32px;font-weight:800;line-height:1">N' + nivel + '</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:5px">' + dotsHtml + '</div>' +
       '</div>';
   }
 }
@@ -5046,45 +5058,63 @@ function eliminarEjercicio(idx) {
 
 // ── MENU EJERCICIOS ──────────────────────────────────────────────────────────
 function abrirMenuEjercicios() {
-  var listaIds = [];
-  var grupos = [
-    { lbl: 'PUTT', ids: ['reloj4','reloj6','reloj8','tobogan','escalera','retoMedio','retoMedioReto'] },
-    { lbl: 'APPROACH CORTO', ids: ['tobogan-ap','escalera-ap'] },
-    { lbl: 'APPROACH CAMPO', ids: ['ud2d3'] },
-    { lbl: 'HIERROS', ids: ['hierros'] },
-    { lbl: 'DRIVE', ids: ['drive'] },
-    { lbl: 'RETOS EN CAMPO', ids: ['op36-25','op36-50','op36-100','op36-150','op36-200','retoDist','retoTrampa'] },
+  // Agrupar por categoría grande con ícono y color
+  var cats = [
+    { key:'putt', lbl:'Putt', icon:'⛳', iconBg:'rgba(24,95,165,.15)', ids:['reloj4','reloj6','reloj8','tobogan','escalera','retoMedio','retoMedioReto'] },
+    { key:'approach', lbl:'Approach', icon:'🎯', iconBg:'rgba(133,79,11,.18)', ids:['tobogan-ap','escalera-ap','ud2d3'] },
+    { key:'hierros', lbl:'Hierros, maderas y drive', icon:'🏌️', iconBg:'rgba(59,109,17,.2)', ids:['hierros','drive'] },
+    { key:'retos', lbl:'Retos', icon:'🔥', iconBg:'rgba(239,159,39,.18)', ids:['op36-25','op36-50','op36-100','op36-150','op36-200','retoDist','retoTrampa'], esReto:true },
   ];
+
+  // Construir lista global de ids para el manejo de clicks
+  var listaIds = [];
   var html = '';
-  grupos.forEach(function(g) {
-    var items = '';
-    g.ids.forEach(function(id) {
+  cats.forEach(function(c) {
+    // Filtrar ids que existen
+    var idsValidos = c.ids.filter(function(id){ return EJERCICIOS_DEF[id]; });
+    if (idsValidos.length === 0) return;
+
+    var acentoLbl = c.esReto ? '#EF9F27' : '#e8e8f0';
+    var bordeCat = c.esReto ? 'rgba(239,159,39,.25)' : 'rgba(255,255,255,.08)';
+
+    // Encabezado de la categoría (toca para desplegar)
+    var nEj = idsValidos.length;
+    html += '<div style="background:#13131f;border:0.5px solid ' + bordeCat + ';border-radius:14px;margin-bottom:10px;overflow:hidden">' +
+      '<div class="cat-head" data-cat="' + c.key + '" style="display:flex;align-items:center;gap:12px;padding:15px;cursor:pointer">' +
+        '<div style="width:40px;height:40px;border-radius:11px;background:' + c.iconBg + ';display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">' + c.icon + '</div>' +
+        '<div style="flex:1"><div style="color:' + acentoLbl + ';font-size:15px;font-weight:700">' + c.lbl + '</div><div style="color:#4a4a6a;font-size:11px">' + nEj + (nEj === 1 ? ' ejercicio' : ' ejercicios') + '</div></div>' +
+        '<span class="cat-chev" data-chev="' + c.key + '" style="color:#4a4a6a;font-size:18px;transition:transform .2s">\u203A</span>' +
+      '</div>' +
+      '<div class="cat-body" data-body="' + c.key + '" style="display:none;padding:0 12px 8px">';
+
+    idsValidos.forEach(function(id) {
       var def = EJERCICIOS_DEF[id];
-      if (!def) return;
       var i = listaIds.length;
       listaIds.push(id);
       var esReto = def.cat === 'reto';
-      var bg = esReto ? 'rgba(65,36,2,.3)' : '#13131f';
-      var border = esReto ? '#633806' : 'rgba(255,255,255,.07)';
       var col = esReto ? '#EF9F27' : '#e8e8f0';
-      items += '<div class="mej" data-i="'+i+'" style="background:'+bg+';border:0.5px solid '+border+';border-radius:12px;padding:14px;display:flex;align-items:center;gap:10px;margin-bottom:6px">';
-      items += '<div style="flex:1"><div style="color:'+col+';font-size:13px;font-weight:700">'+def.nom+'</div><div style="color:#4a4a6a;font-size:10px;margin-top:2px">'+def.cat+'</div></div>';
-      items += '<div class="mej-info" data-info="'+i+'" style="width:26px;height:26px;border-radius:50%;background:rgba(96,165,250,.12);display:flex;align-items:center;justify-content:center;cursor:pointer;margin-right:4px;flex-shrink:0"><span style="color:#60a5fa;font-size:14px;font-weight:700">?</span></div>';
-      items += '<span class="mej-add" data-add="'+i+'" style="color:#888;font-size:24px;width:26px;text-align:center;flex-shrink:0">+</span></div>';
+      html += '<div class="mej" data-i="' + i + '" style="background:#0d1117;border:0.5px solid rgba(255,255,255,.06);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:6px">' +
+        '<div style="flex:1"><div style="color:' + col + ';font-size:13px;font-weight:700">' + def.nom + '</div></div>' +
+        '<div class="mej-info" data-info="' + i + '" style="width:24px;height:24px;border-radius:50%;background:rgba(96,165,250,.12);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0"><span style="color:#60a5fa;font-size:13px;font-weight:700">?</span></div>' +
+        '<span class="mej-add" data-add="' + i + '" style="color:#888;font-size:22px;width:24px;text-align:center;flex-shrink:0">+</span>' +
+      '</div>';
     });
-    if (items) { html += '<div style="color:#4a4a6a;font-size:9px;font-weight:700;letter-spacing:1px;margin:16px 0 8px">'+g.lbl+'</div>'+items; }
+
+    html += '</div></div>';
   });
+
   window._mejIds = listaIds;
   var ov = document.createElement('div');
   ov.id = 'overlay-menu-ej';
   ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;display:flex;align-items:flex-end;justify-content:center';
   ov.innerHTML = '<div style="background:#1a1f2e;border-radius:24px 24px 0 0;width:100%;max-width:430px;max-height:85vh;overflow-y:auto">' +
     '<div style="display:flex;justify-content:center;padding:12px 0"><div style="width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:2px"></div></div>' +
-    '<div style="padding:0 20px 10px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid rgba(255,255,255,.07)">' +
+    '<div style="padding:0 20px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid rgba(255,255,255,.07)">' +
     '<div style="color:#e8e8f0;font-size:16px;font-weight:700">Agregar ejercicio</div>' +
     '<div id="cerrar-mej" style="color:#4a4a6a;font-size:28px;cursor:pointer;padding:4px 8px">x</div></div>' +
-    '<div style="padding:8px 20px 50px">'+html+'</div></div>';
+    '<div style="padding:14px 16px 50px">' + html + '</div></div>';
   document.body.appendChild(ov);
+
   ov.addEventListener('click', function(e) {
     if (e.target.id === 'cerrar-mej' || e.target === ov) { ov.remove(); return; }
     var el = e.target;
@@ -5094,9 +5124,21 @@ function abrirMenuEjercicios() {
         mostrarInfoEjercicio(window._mejIds[parseInt(el.getAttribute('data-info'))]);
         return;
       }
-      // Resto del renglón o botón + → agregar
+      // Renglón de ejercicio o botón + → agregar
       if (el.classList && el.classList.contains('mej')) {
         agregarEjercicioAlPrograma(window._mejIds[parseInt(el.getAttribute('data-i'))]);
+        return;
+      }
+      // Encabezado de categoría → desplegar/plegar
+      if (el.classList && el.classList.contains('cat-head')) {
+        var key = el.getAttribute('data-cat');
+        var body = ov.querySelector('[data-body="' + key + '"]');
+        var chev = ov.querySelector('[data-chev="' + key + '"]');
+        if (body) {
+          var abierto = body.style.display === 'block';
+          body.style.display = abierto ? 'none' : 'block';
+          if (chev) chev.style.transform = abierto ? 'rotate(0deg)' : 'rotate(90deg)';
+        }
         return;
       }
       el = el.parentElement;
@@ -5865,6 +5907,12 @@ function iniciarRetoCompleto() {
   if (ds) ds.style.display=retoConfig.conDist?'block':'none';
   if (ts) ts.style.display=retoConfig.conTrampa?'block':'none';
   var p=getPerfil();
+  // Aplicar color del perfil al header del OP27 (igual que en ronda y home)
+  var rdoc = document.documentElement;
+  rdoc.style.setProperty('--player-main', p.color);
+  rdoc.style.setProperty('--player-light', p.color);
+  rdoc.style.setProperty('--player-bg', p.color + '26');
+  rdoc.style.setProperty('--player-border', p.color + '66');
   var av=document.getElementById('op36-avatar'), nm=document.getElementById('op36-nombre');
   if (av) { av.textContent=p.iniciales; av.style.background=p.color; }
   if (nm) nm.textContent=p.nom;
@@ -5913,7 +5961,7 @@ function renderOp36Hoyos() {
               '<div style="color:#e8e8f0;font-size:11px;font-weight:700;line-height:1.3">' + pasosTxt + '</div>' +
               '<div style="color:' + cortoCol + ';font-size:12px;font-weight:700;line-height:1.3">' + cortoTxt + '</div>';
     } else if (h.num === op36Estado.hoyoActual) {
-      numBg = 'background:#1D9E75;color:white;box-shadow:0 0 0 2px #0d1117,0 0 0 4px white';
+      numBg = 'background:var(--player-main, #1D9E75);color:white;box-shadow:0 0 0 2px #0d1117,0 0 0 4px white';
       circulo = '<div style="width:36px;height:36px;border-radius:50%;border:2px dashed rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="color:rgba(255,255,255,.3);font-size:14px">+</span></div>';
       datos = '<div style="color:#4a4a6a;font-size:10px;line-height:1.3">·</div><div style="color:#4a4a6a;font-size:11px;line-height:1.3">·</div><div style="color:#4a4a6a;font-size:12px;line-height:1.3">·</div>';
     } else {
@@ -5921,7 +5969,7 @@ function renderOp36Hoyos() {
       circulo = '<div style="width:36px;height:36px;border-radius:50%;border:2px dashed rgba(255,255,255,.15);flex-shrink:0"></div>';
       datos = '<div style="color:#4a4a6a;font-size:10px;line-height:1.3">·</div><div style="color:#4a4a6a;font-size:11px;line-height:1.3">·</div><div style="color:#4a4a6a;font-size:12px;line-height:1.3">·</div>';
     }
-    html += '<div style="display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer" onclick="irOp36Hoyo(' + h.num + ')">' +
+    html += '<div style="display:flex;flex-direction:column;align-items:center;gap:9px;cursor:pointer" onclick="irOp36Hoyo(' + h.num + ')">' +
       '<div style="width:100%;min-height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;padding:10px 0;box-sizing:border-box;' + numBg + '">' + h.num + '</div>' +
       circulo + datos + '</div>';
   });
@@ -6319,7 +6367,8 @@ function resetMicOp36() {
   var btn = document.getElementById('op36-mic-btn');
   var emoji = document.getElementById('op36-mic-emoji');
   var hint = document.getElementById('op36-mic-hint');
-  if (btn) btn.style.background = '#1D9E75';
+  var p = getPerfil();
+  if (btn) btn.style.background = (p && p.color) ? p.color : '#1D9E75';
   if (emoji) emoji.textContent = '🎤';
   if (hint) hint.textContent = 'Toca para dictar tus golpes';
 }
