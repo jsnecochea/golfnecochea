@@ -34,8 +34,8 @@
   .view.active { display: block; position: fixed; top: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; height: 100%; overflow-y: auto; overflow-x: hidden; background: var(--bg); z-index: 1; }
 
   /* CARDS */
-  .card { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 16px; padding: 14px 16px; margin-bottom: 10px; }
-  .section-label { font-size: 9px; font-weight: 700; letter-spacing: 1.2px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+  .card { background: var(--bg2); border: 0.5px solid var(--border); border-radius: 16px; padding: 13px 14px; margin-bottom: 8px; }
+  .section-label { font-size: 9px; font-weight: 700; letter-spacing: 1.2px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 5px; margin-top: 0; }
 
   /* STAT BOXES */
   .stat-box { background: rgba(0,0,0,.25); border: 0.5px solid var(--border); border-radius: 10px; padding: 8px; text-align: center; flex: 1; }
@@ -758,23 +758,23 @@
         <div class="week-dot" style="background:#1a1a2e;color:#4a4a6a">S</div>
         <div class="week-dot" style="background:#1a1a2e;color:#4a4a6a">D</div>
       </div>
-      <div style="color:#1D9E75;font-size:11px;font-weight:700;text-align:center;margin-top:10px" id="racha-texto">4 días seguidos entrenando</div>
+      <div style="color:#1D9E75;font-size:11px;font-weight:700;text-align:center;margin-top:6px" id="racha-texto">4 días seguidos entrenando</div>
     </div>
 
     <!-- Sección dividida: últimas 4 rondas | OP27 25y -->
     <div style="display:flex;gap:12px;align-items:stretch">
       <div style="flex:1;display:flex;flex-direction:column">
         <div class="section-label" style="text-align:center">Últimas 4 rondas</div>
-        <div class="card" style="margin-bottom:0;padding:16px 12px;flex:1" id="pro-rondas-card"></div>
+        <div class="card" style="margin-bottom:0;padding:12px 10px;flex:1" id="pro-rondas-card"></div>
       </div>
       <div style="flex:1;display:flex;flex-direction:column">
         <div class="section-label" style="text-align:center">OP27 · 25 yardas</div>
-        <div class="card" style="margin-bottom:0;padding:14px 12px;flex:1;display:flex;flex-direction:column;justify-content:space-between;gap:10px" id="pro-op27-card"></div>
+        <div class="card" style="margin-bottom:0;padding:12px 10px;flex:1;display:flex;flex-direction:column;justify-content:space-between;gap:8px" id="pro-op27-card"></div>
       </div>
     </div>
 
     <!-- Tres ventanas: putts fallados | triputts | nivel putt medio -->
-    <div style="display:flex;gap:10px;align-items:stretch;margin-top:14px">
+    <div style="display:flex;gap:10px;align-items:stretch;margin-top:8px">
       <div style="flex:1;display:flex" id="pro-putts-card"></div>
       <div style="flex:1;display:flex" id="pro-triputts-card"></div>
       <div style="flex:1;display:flex" id="pro-nivelmedio-card"></div>
@@ -2946,36 +2946,62 @@ function renderProNivelMedio() {
   });
   var progreso = retosTotales % 10; // cuántos lleva hacia el siguiente nivel (0-9)
 
-  // Retos de los últimos 30 días (regla de NO bajar: necesita >= 4)
-  var limite30 = Date.now() - 30 * 24 * 60 * 60 * 1000;
-  var fechasRetos30 = [];
+  // ─── Periodo de mantenimiento: 4 retos cada 30 días ───
+  // El periodo arranca en nivelDesde. Cada vez que junta 4 retos, el periodo
+  // se REINICIA a la fecha del 4º reto (vuelve a tener 30 días limpios).
+  var periodoInicio = p.nivelDesde ? new Date(p.nivelDesde).getTime() : null;
+
+  // Reunir todas las fechas de retoMedio ordenadas
+  var todasFechasReto = [];
   entrenos.forEach(function(e) {
     var ts = new Date(e.fecha).getTime();
-    if (ts >= limite30) {
-      (e.ejercicios || []).forEach(function(ej) {
-        if (ej.id === 'retoMedio') fechasRetos30.push(ts);
-      });
-    }
+    (e.ejercicios || []).forEach(function(ej) {
+      if (ej.id === 'retoMedio') todasFechasReto.push(ts);
+    });
   });
-  var retos30 = fechasRetos30.length;
+  todasFechasReto.sort(function(a,b){ return a - b; });
 
-  // ¿Advertencia? Si tiene < 4 retos en ventana móvil, calcular días para "bajar".
-  // El 4º reto más reciente, al cumplir 30 días, lo deja con < 4.
-  var enRiesgo = retos30 < 4;
-  var diasParaBajar = null;
-  if (enRiesgo) {
-    if (retos30 === 0) {
-      diasParaBajar = 0; // ya está en riesgo inmediato
-    } else {
-      // El reto más antiguo de los que tiene saldrá de la ventana en (30 - antigüedad) días
-      fechasRetos30.sort(function(a,b){ return a - b; }); // más antiguo primero
-      var masAntiguo = fechasRetos30[0];
-      var diasViejo = Math.floor((Date.now() - masAntiguo) / (24*60*60*1000));
-      diasParaBajar = Math.max(0, 30 - diasViejo);
+  // Avanzar el periodo: cada vez que se juntan 4 retos DESPUÉS del inicio del periodo,
+  // se reinicia el periodo a la fecha de ese 4º reto.
+  if (periodoInicio !== null) {
+    var seguir = true;
+    while (seguir) {
+      var enPeriodo = todasFechasReto.filter(function(ts){ return ts >= periodoInicio; });
+      if (enPeriodo.length >= 4) {
+        periodoInicio = enPeriodo[3]; // fecha del 4º reto → reinicia aquí
+      } else {
+        seguir = false;
+      }
     }
   }
-  var mostrarAlerta = enRiesgo && (diasParaBajar !== null && diasParaBajar <= 10);
-  var faltanRetos = 4 - retos30;
+
+  // Retos juntados en el periodo ACTUAL (después del último reinicio)
+  var retosPeriodo = periodoInicio !== null
+    ? todasFechasReto.filter(function(ts){ return ts >= periodoInicio; }).length
+    : 0;
+
+  // Días que restan del periodo actual de 30 días
+  var diasParaBajar = null;
+  if (periodoInicio !== null) {
+    var diasTranscurridos = Math.floor((Date.now() - periodoInicio) / (24*60*60*1000));
+    diasParaBajar = Math.max(0, 30 - diasTranscurridos);
+  }
+
+  // En riesgo si el periodo ya casi se acaba y no juntó los 4
+  var enRiesgo = (retosPeriodo < 4);
+
+  // Periodo de gracia: si fijó su nivel hace menos de 30 días Y aún no ha juntado
+  // 4 retos nunca, no alertar. (En cuanto reinicia el periodo, ya no hay gracia.)
+  var enGracia = false;
+  if (!p.nivelDesde) {
+    enGracia = true; // nunca fijó nivel inicial
+  }
+
+  if (enRiesgo && !enGracia) {
+    // diasParaBajar ya calculado arriba según el periodo actual
+  }
+  var mostrarAlerta = enRiesgo && !enGracia && (diasParaBajar !== null && diasParaBajar <= 10);
+  var faltanRetos = 4 - retosPeriodo;
 
   // Puntitos: progreso hacia el siguiente nivel (10 retos)
   var dotsHtml = '';
@@ -2986,21 +3012,17 @@ function renderProNivelMedio() {
 
   if (mostrarAlerta) {
     card.innerHTML =
-      '<div class="card pro-alerta-nivel" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:5px;padding:12px 6px;border:1.5px solid #E24B4A;background:rgba(226,75,74,.08)">' +
-        '<div style="color:#E24B4A;font-size:9px;font-weight:700">NIVEL P. MEDIO</div>' +
-        '<div style="color:#1D9E75;font-size:24px;font-weight:800;line-height:1">' + nivel + '</div>' +
+      '<div class="card pro-alerta-nivel" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;padding:10px 6px;border:1.5px solid #E24B4A;background:rgba(226,75,74,.08)">' +
+        '<div style="color:#E24B4A;font-size:9px;font-weight:700">NIVEL ' + nivel + '</div>' +
         '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px">' + dotsHtml + '</div>' +
-        '<div style="background:#E24B4A;border-radius:6px;padding:3px 7px;margin-top:2px"><span style="color:white;font-size:8px;font-weight:800">⚠️ ' + diasParaBajar + ' DÍAS</span></div>' +
-        '<div style="color:#f87171;font-size:7.5px;font-weight:600;line-height:1.25">haz ' + faltanRetos + (faltanRetos === 1 ? ' reto' : ' retos') + '<br>o bajas a nivel ' + Math.max(1, nivel-1) + '</div>' +
+        '<div style="background:#E24B4A;border-radius:8px;padding:5px 10px;margin-top:2px"><span style="color:white;font-size:13px;font-weight:800">' + diasParaBajar + ' días</span></div>' +
       '</div>';
   } else {
     var faltanSubir = 10 - progreso;
     card.innerHTML =
-      '<div class="card" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:7px;padding:14px 6px">' +
-        '<div style="color:#0F6E56;font-size:9px;font-weight:700">NIVEL P. MEDIO</div>' +
-        '<div style="color:#1D9E75;font-size:28px;font-weight:800;line-height:1">' + nivel + '</div>' +
+      '<div class="card" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;padding:10px 6px">' +
+        '<div style="color:#0F6E56;font-size:9px;font-weight:700">NIVEL ' + nivel + '</div>' +
         '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px">' + dotsHtml + '</div>' +
-        '<div style="color:#5DCAA5;font-size:8px;font-weight:600">' + (nivel >= 10 ? '¡nivel máximo!' : 'faltan ' + faltanSubir + ' p/ nivel ' + (nivel+1)) + '</div>' +
       '</div>';
   }
 }
@@ -3231,6 +3253,10 @@ function abrirMenuPro() {
       '<div onclick="document.getElementById(\'overlay-menu-pro\').remove();abrirBenchmark()" style="display:flex;align-items:center;gap:14px;padding:15px 20px;cursor:pointer">' +
         '<div style="width:40px;height:40px;border-radius:11px;background:rgba(239,159,39,.15);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EF9F27" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="0.5" fill="#EF9F27"/></svg></div>' +
         '<div><div style="color:#e8e8f0;font-size:15px;font-weight:700">Objetivo ideal</div><div style="color:#9a9ab0;font-size:11px">Tu meta y comparativa</div></div>' +
+      '</div>' +
+      '<div onclick="document.getElementById(\'overlay-menu-pro\').remove();abrirNivelInicial()" style="display:flex;align-items:center;gap:14px;padding:15px 20px;cursor:pointer">' +
+        '<div style="width:40px;height:40px;border-radius:11px;background:rgba(29,158,117,.15);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.5 7h7l-5.5 4 2 7-6-4.5L6 22l2-7-5.5-4h7z"/></svg></div>' +
+        '<div><div style="color:#e8e8f0;font-size:15px;font-weight:700">Nivel inicial de Putt</div><div style="color:#9a9ab0;font-size:11px">Define tu nivel de arranque</div></div>' +
       '</div>' +
     '</div>';
   document.body.appendChild(ov);
@@ -3798,6 +3824,55 @@ function renderNivelPuttSelector() {
     return h;
   }
   cont.innerHTML = fila(1, 5) + fila(6, 10);
+}
+
+function abrirNivelInicial() {
+  var p = getPerfil();
+  var nivelActual = p.nivelPutt || 3;
+  var prev = document.getElementById('overlay-nivel-inicial');
+  if (prev) prev.remove();
+  var ov = document.createElement('div');
+  ov.id = 'overlay-nivel-inicial';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;padding:24px';
+  ov.onclick = function(e) { if (e.target === ov) ov.remove(); };
+
+  function fila(desde, hasta) {
+    var h = '<div style="display:flex;gap:7px;margin-bottom:7px">';
+    for (var n = desde; n <= hasta; n++) {
+      var activo = n === nivelActual;
+      var bg = activo ? '#1D9E75' : 'rgba(255,255,255,.06)';
+      var col = activo ? 'white' : '#888';
+      var bd = activo ? '#1D9E75' : 'rgba(255,255,255,.12)';
+      h += '<div onclick="fijarNivelInicial(' + n + ')" style="flex:1;text-align:center;background:' + bg + ';border:1px solid ' + bd + ';border-radius:10px;padding:12px 0;cursor:pointer">' +
+        '<span style="color:' + col + ';font-size:18px;font-weight:800">' + n + '</span></div>';
+    }
+    return h + '</div>';
+  }
+
+  ov.innerHTML =
+    '<div style="background:#1a1f2e;border-radius:24px;width:100%;max-width:360px;padding:24px 22px">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">' +
+        '<span style="color:#e8e8f0;font-size:18px;font-weight:700">Nivel inicial de Putt</span>' +
+        '<div onclick="document.getElementById(\'overlay-nivel-inicial\').remove()" style="width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888;font-size:18px">\u00D7</div>' +
+      '</div>' +
+      '<div style="color:#9a9ab0;font-size:13px;line-height:1.5;margin-bottom:18px">Elige el nivel en el que arrancas. Es tu punto de partida para los retos de Putt Medio y Largo.</div>' +
+      fila(1, 5) + fila(6, 10) +
+      '<div style="color:#5DCAA5;font-size:11px;text-align:center;margin-top:12px;line-height:1.5">Al fijar tu nivel, tienes 30 días de gracia<br>antes de que aplique la regla de bajar.</div>' +
+    '</div>';
+  document.body.appendChild(ov);
+}
+
+function fijarNivelInicial(n) {
+  var p = getPerfil();
+  if (n < 1) n = 1;
+  if (n > 10) n = 10;
+  p.nivelPutt = n;
+  // Guardar la fecha en que se fijó este nivel (periodo de gracia de 30 días)
+  p.nivelDesde = new Date().toISOString();
+  guardarPerfilesLocal();
+  var ov = document.getElementById('overlay-nivel-inicial');
+  if (ov) ov.remove();
+  renderHome();
 }
 
 function selNivelPutt(n) {
