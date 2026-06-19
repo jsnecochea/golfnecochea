@@ -666,6 +666,8 @@
   }
   /* Asegurar que nada se desborde horizontalmente */
   body { overflow-x: hidden; }
+  @keyframes pulsoAlerta { 0%,100% { opacity: 1; } 50% { opacity: .6; } }
+  .pro-alerta-nivel { animation: pulsoAlerta 1.6s ease-in-out infinite; }
 </style>
 </head>
 <body>
@@ -769,6 +771,13 @@
         <div class="section-label" style="text-align:center">OP27 · 25 yardas</div>
         <div class="card" style="margin-bottom:0;padding:14px 12px;flex:1;display:flex;flex-direction:column;justify-content:space-between;gap:10px" id="pro-op27-card"></div>
       </div>
+    </div>
+
+    <!-- Tres ventanas: putts fallados | triputts | nivel putt medio -->
+    <div style="display:flex;gap:10px;align-items:stretch;margin-top:14px">
+      <div style="flex:1;display:flex" id="pro-putts-card"></div>
+      <div style="flex:1;display:flex" id="pro-triputts-card"></div>
+      <div style="flex:1;display:flex" id="pro-nivelmedio-card"></div>
     </div>
 
 
@@ -2527,6 +2536,8 @@ function renderHomePro() {
   renderRacha();
   renderProUltimasRondas();
   renderProOp27();
+  renderProPuttsTriputts();
+  renderProNivelMedio();
 
   setTimeout(actualizarStatsPro, 100);
 }
@@ -2832,6 +2843,166 @@ function renderProOp27() {
       '<div style="color:#888;font-size:9px;font-weight:700;letter-spacing:.5px;margin-bottom:4px">MEJOR (30 DÍAS)</div>' +
       '<div style="color:#9FE1CB;font-size:26px;font-weight:800;line-height:1">' + fmtScoreOp(mejor30) + '</div>' +
     '</div>';
+}
+
+// ── Tres ventanas de stats del home pro ──
+// Color según porcentaje (menos es mejor): <10% verde, 10-25% amarillo, >25% rojo
+function colorPorPct(pct) {
+  if (pct < 10) return { stroke:'#1D9E75', bg:'#1a2e26', txt:'#1D9E75' };
+  if (pct <= 25) return { stroke:'#EF9F27', bg:'#2e2a1a', txt:'#EF9F27' };
+  return { stroke:'#E24B4A', bg:'#2e1a1a', txt:'#E24B4A' };
+}
+
+function circuloPct(pct, label) {
+  var c = colorPorPct(pct);
+  var circ = 201; // 2*PI*32
+  var off = circ - (Math.min(pct, 100) / 100) * circ;
+  return '<div class="card" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px;padding:14px 6px">' +
+      '<svg viewBox="0 0 80 80" width="60" height="60">' +
+        '<circle cx="40" cy="40" r="32" fill="none" stroke="' + c.bg + '" stroke-width="8"/>' +
+        '<circle cx="40" cy="40" r="32" fill="none" stroke="' + c.stroke + '" stroke-width="8" stroke-dasharray="' + circ + '" stroke-dashoffset="' + off + '" stroke-linecap="round" transform="rotate(-90 40 40)"/>' +
+        '<text x="40" y="40" text-anchor="middle" dominant-baseline="central" fill="' + c.txt + '" font-size="19" font-weight="800">' + pct + '%</text>' +
+      '</svg>' +
+      '<div style="color:#888;font-size:9px;font-weight:700;line-height:1.3">' + label + '</div>' +
+    '</div>';
+}
+
+// Datos de putts cortos fallados (<2 pasos) y triputts (<12 pasos) de los últimos 30 días
+function calcStatsPuttHome() {
+  var p = getPerfil();
+  var limite = Date.now() - 30 * 24 * 60 * 60 * 1000;
+  var cortoFall = 0, cortoTot = 0;
+  var triCerca = 0, triCercaTot = 0;
+
+  // 1. Rondas normales
+  var rondas = getHistorialRondas(p.id).filter(function(r){
+    var ts = r.timestamp || (r.fecha ? new Date(r.fecha).getTime() : 0);
+    return ts >= limite;
+  });
+  rondas.forEach(function(ronda) {
+    (ronda.hoyos || []).filter(function(h){ return h.ok; }).forEach(function(h) {
+      var t = h.tiros; if (!t) return;
+      // Putt corto <2 pasos
+      if (t.puttCorto === 'lo-meti' || t.puttCorto === 'lo-falle') {
+        cortoTot++;
+        if (t.puttCorto === 'lo-falle') cortoFall++;
+      }
+      // Triputt desde <12 pasos
+      if (typeof t.pasos === 'number' && t.pasos < 12 && t.putts) {
+        triCercaTot++;
+        if (t.putts >= 3) triCerca++;
+      }
+    });
+  });
+
+  // 2. Retos OP27 (cada hoyo es par 3)
+  var op27 = getHistorialOP36(p.id).filter(function(h){
+    return new Date(h.fecha).getTime() >= limite;
+  });
+  op27.forEach(function(reg) {
+    (reg.hoyosDetalle || []).forEach(function(h) {
+      // Putt corto fallado
+      if (h.puttCortoFallado === true) { cortoTot++; cortoFall++; }
+      else if (h.puttCortoFallado === false) { cortoTot++; }
+      // Triputt desde <12 pasos
+      if (typeof h.pasos === 'number' && h.pasos < 12 && h.golpes) {
+        var putts = h.golpes - 1; // en par 3, putts aprox = golpes - 1 (si llegó en regulación)
+        triCercaTot++;
+        if (putts >= 3) triCerca++;
+      }
+    });
+  });
+
+  return {
+    cortoPct: cortoTot > 0 ? Math.round(cortoFall / cortoTot * 100) : 0,
+    cortoFall: cortoFall, cortoTot: cortoTot,
+    triPct: triCercaTot > 0 ? Math.round(triCerca / triCercaTot * 100) : 0,
+    triCerca: triCerca, triCercaTot: triCercaTot
+  };
+}
+
+function renderProPuttsTriputts() {
+  var st = calcStatsPuttHome();
+  var cp = document.getElementById('pro-putts-card');
+  var ct = document.getElementById('pro-triputts-card');
+  if (cp) cp.innerHTML = circuloPct(st.cortoPct, 'PUTTS FALLADOS<br>−2 PASOS');
+  if (ct) ct.innerHTML = circuloPct(st.triPct, 'TRIPUTTS<br>−12 PASOS');
+}
+
+// Ventana del nivel de Putt Medio con puntitos y advertencia
+function renderProNivelMedio() {
+  var card = document.getElementById('pro-nivelmedio-card');
+  if (!card) return;
+  var p = getPerfil();
+  var nivel = p.nivelPutt || 3;
+
+  // Contar retos de Putt Medio completados (para el progreso al siguiente nivel)
+  var entrenos = getHistorialEntreno(p.id);
+  var retosTotales = 0;
+  entrenos.forEach(function(e) {
+    (e.ejercicios || []).forEach(function(ej) {
+      if (ej.id === 'retoMedio') retosTotales++;
+    });
+  });
+  var progreso = retosTotales % 10; // cuántos lleva hacia el siguiente nivel (0-9)
+
+  // Retos de los últimos 30 días (regla de NO bajar: necesita >= 4)
+  var limite30 = Date.now() - 30 * 24 * 60 * 60 * 1000;
+  var fechasRetos30 = [];
+  entrenos.forEach(function(e) {
+    var ts = new Date(e.fecha).getTime();
+    if (ts >= limite30) {
+      (e.ejercicios || []).forEach(function(ej) {
+        if (ej.id === 'retoMedio') fechasRetos30.push(ts);
+      });
+    }
+  });
+  var retos30 = fechasRetos30.length;
+
+  // ¿Advertencia? Si tiene < 4 retos en ventana móvil, calcular días para "bajar".
+  // El 4º reto más reciente, al cumplir 30 días, lo deja con < 4.
+  var enRiesgo = retos30 < 4;
+  var diasParaBajar = null;
+  if (enRiesgo) {
+    if (retos30 === 0) {
+      diasParaBajar = 0; // ya está en riesgo inmediato
+    } else {
+      // El reto más antiguo de los que tiene saldrá de la ventana en (30 - antigüedad) días
+      fechasRetos30.sort(function(a,b){ return a - b; }); // más antiguo primero
+      var masAntiguo = fechasRetos30[0];
+      var diasViejo = Math.floor((Date.now() - masAntiguo) / (24*60*60*1000));
+      diasParaBajar = Math.max(0, 30 - diasViejo);
+    }
+  }
+  var mostrarAlerta = enRiesgo && (diasParaBajar !== null && diasParaBajar <= 10);
+  var faltanRetos = 4 - retos30;
+
+  // Puntitos: progreso hacia el siguiente nivel (10 retos)
+  var dotsHtml = '';
+  for (var i = 0; i < 10; i++) {
+    var lleno = i < progreso;
+    dotsHtml += '<div style="width:12px;height:12px;border-radius:50%;background:' + (lleno ? '#1D9E75' : (mostrarAlerta ? '#2e1a1a' : '#1a2e26')) + '"></div>';
+  }
+
+  if (mostrarAlerta) {
+    card.innerHTML =
+      '<div class="card pro-alerta-nivel" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:5px;padding:12px 6px;border:1.5px solid #E24B4A;background:rgba(226,75,74,.08)">' +
+        '<div style="color:#E24B4A;font-size:9px;font-weight:700">NIVEL P. MEDIO</div>' +
+        '<div style="color:#1D9E75;font-size:24px;font-weight:800;line-height:1">' + nivel + '</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px">' + dotsHtml + '</div>' +
+        '<div style="background:#E24B4A;border-radius:6px;padding:3px 7px;margin-top:2px"><span style="color:white;font-size:8px;font-weight:800">⚠️ ' + diasParaBajar + ' DÍAS</span></div>' +
+        '<div style="color:#f87171;font-size:7.5px;font-weight:600;line-height:1.25">haz ' + faltanRetos + (faltanRetos === 1 ? ' reto' : ' retos') + '<br>o bajas a nivel ' + Math.max(1, nivel-1) + '</div>' +
+      '</div>';
+  } else {
+    var faltanSubir = 10 - progreso;
+    card.innerHTML =
+      '<div class="card" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:7px;padding:14px 6px">' +
+        '<div style="color:#0F6E56;font-size:9px;font-weight:700">NIVEL P. MEDIO</div>' +
+        '<div style="color:#1D9E75;font-size:28px;font-weight:800;line-height:1">' + nivel + '</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px">' + dotsHtml + '</div>' +
+        '<div style="color:#5DCAA5;font-size:8px;font-weight:600">' + (nivel >= 10 ? '¡nivel máximo!' : 'faltan ' + faltanSubir + ' p/ nivel ' + (nivel+1)) + '</div>' +
+      '</div>';
+  }
 }
 
 function renderAnillos() {
