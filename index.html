@@ -240,7 +240,7 @@
 /* ── HOYOS SELECTOR ── */
 .hoyos-selector { padding:16px 12px 8px; display:grid; grid-template-columns:repeat(9,1fr); gap:4px; row-gap:14px; }
 .hoyo-btn { display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer; }
-.hoyo-num { width:100%; border-radius:10px; padding:10px 0; display:flex; align-items:center; justify-content:center; font-size:16px; font-weight:700; min-height:40px; transition:all .15s; }
+.hoyo-num { width:100%; border-radius:10px; padding:11px 0; display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:700; min-height:44px; transition:all .15s; }
 .hoyo-num.completado { background:var(--player-main,var(--blue)); color:white; opacity:.7; }
 .hoyo-num.activo { background:var(--player-main,var(--green)); color:white; box-shadow:0 0 0 2px var(--bg),0 0 0 4px white; }
 .hoyo-num.vacio { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); color:rgba(255,255,255,.2); }
@@ -1030,6 +1030,19 @@
     <div id="reg-dist-wrap" style="display:none;background:rgba(65,36,2,.3);border:0.5px solid #633806;border-radius:14px;padding:14px;margin-bottom:20px">
       <div style="color:var(--amber);font-size:13px;font-weight:700;margin-bottom:10px">¿Hasta qué distancia llegaste?</div>
       <div id="reg-dist-btns" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+    </div>
+
+    <!-- NIVEL ACTUAL (sistema de niveles) -->
+    <div id="reg-nivel-wrap" style="display:none;background:linear-gradient(135deg,#1a2942,#13131f);border:0.5px solid rgba(110,168,254,.2);border-radius:14px;padding:14px;margin-bottom:16px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <span style="color:#6EA8FE;font-size:11px;font-weight:700;letter-spacing:.5px">TU NIVEL</span>
+        <span id="reg-nivel-num" style="color:#fff;font-size:22px;font-weight:800">1</span>
+      </div>
+      <div id="reg-nivel-meta" style="color:#9fb8d4;font-size:12px;margin-bottom:10px"></div>
+      <div style="display:flex;gap:4px;align-items:center">
+        <div id="reg-nivel-pelotitas" style="display:flex;gap:3px;flex:1"></div>
+        <span id="reg-nivel-prog" style="color:#6EA8FE;font-size:10px;font-weight:600"></span>
+      </div>
     </div>
 
     <!-- Récord -->
@@ -2304,6 +2317,473 @@
 </div>
 
 <script>
+/* ============================================================
+   SISTEMA DE NIVELES — Motor universal + Tablas
+   (insertado por sesión de programación; no romper)
+   ============================================================ */
+var NIVEL_MIN=1, NIVEL_MAX=5;
+var SESIONES_PARA_SUBIR=10, VENTANA_SESIONES=40;
+var DIAS_MANTENER=30, DIAS_SEGUNDO_DESCENSO=90;
+var REND_VENTANA=25, REND_MINIMO=5;  // de últimas 25, al menos 5 deben cumplir el nivel
+var NIV_DIA_MS=86400000;
+
+function nivHoyISO(){ return new Date().toISOString(); }
+function nivDiasEntre(a,b){ return Math.floor((new Date(b)-new Date(a))/NIV_DIA_MS); }
+function nivMismoDiaISO(a,b){ return new Date(a).toDateString()===new Date(b).toDateString(); }
+
+function getNivelReg(perfil, clave){
+  if(!perfil.niveles) perfil.niveles={};
+  if(!perfil.niveles[clave]){
+    perfil.niveles[clave]={ nivel:1, sesiones:[], nivelDesde:nivHoyISO(), ultimoDescenso:null, sesionesDesdeRendimiento:0 };
+  }
+  // por si vienen registros viejos sin el campo nuevo
+  if(perfil.niveles[clave].sesionesDesdeRendimiento===undefined) perfil.niveles[clave].sesionesDesdeRendimiento=0;
+  return perfil.niveles[clave];
+}
+
+function registrarSesion(perfil, clave, nivelCumplido, fechaISO){
+  var reg=getNivelReg(perfil,clave);
+  var f=fechaISO||nivHoyISO();
+  var nivelAnterior=reg.nivel;
+  // máx 1 por día (se queda con el más alto del día)
+  var idxHoy=-1;
+  for(var i=0;i<reg.sesiones.length;i++){ if(nivMismoDiaISO(reg.sesiones[i].fecha,f)){idxHoy=i;break;} }
+  if(idxHoy>=0){ if(nivelCumplido>reg.sesiones[idxHoy].nivelCumplido) reg.sesiones[idxHoy].nivelCumplido=nivelCumplido; }
+  else { reg.sesiones.push({fecha:f,nivelCumplido:nivelCumplido}); reg.sesionesDesdeRendimiento++; }
+  reg.sesiones.sort(function(a,b){ return new Date(a.fecha)-new Date(b.fecha); });
+  if(reg.sesiones.length>200) reg.sesiones=reg.sesiones.slice(-200);
+
+  // ASCENSO: nivel más alto con >=10 en las últimas 40
+  var ultimas=reg.sesiones.slice(-VENTANA_SESIONES);
+  var nuevo=reg.nivel;
+  for(var nv=NIVEL_MAX; nv>=reg.nivel+1; nv--){
+    var cuenta=ultimas.filter(function(s){return s.nivelCumplido>=nv;}).length;
+    if(cuenta>=SESIONES_PARA_SUBIR){ nuevo=nv; break; }
+  }
+  if(nuevo>reg.nivel){
+    reg.nivel=nuevo; reg.nivelDesde=f; reg.ultimoDescenso=null; reg.sesionesDesdeRendimiento=0;
+    return {subio:true, nivel:reg.nivel, nivelAnterior:nivelAnterior};
+  }
+  return {subio:false, nivel:reg.nivel, nivelAnterior:nivelAnterior};
+}
+
+// DESCENSO POR RENDIMIENTO: llamar tras registrar. Si <5 de últimas 25 cumplen el nivel → baja 1 y reinicia conteo.
+function evaluarRendimiento(perfil, clave){
+  var reg=getNivelReg(perfil,clave);
+  if(reg.nivel<=NIVEL_MIN) return {bajo:false,nivel:reg.nivel};
+  // solo evalúa cuando ya juntó al menos 25 sesiones nuevas desde el último ajuste
+  if(reg.sesionesDesdeRendimiento < REND_VENTANA) return {bajo:false,nivel:reg.nivel};
+  var ultimas=reg.sesiones.slice(-REND_VENTANA);
+  var cumplen=ultimas.filter(function(s){return s.nivelCumplido>=reg.nivel;}).length;
+  if(cumplen < REND_MINIMO){
+    reg.nivel=Math.max(reg.nivel-1,NIVEL_MIN);
+    reg.sesionesDesdeRendimiento=0;   // reinicia conteo
+    reg.nivelDesde=nivHoyISO();
+    return {bajo:true, nivel:reg.nivel, motivo:'rendimiento'};
+  }
+  // cumplió: reinicia el conteo para la próxima ventana de 25
+  reg.sesionesDesdeRendimiento=0;
+  return {bajo:false, nivel:reg.nivel};
+}
+
+// DESCENSO POR TIEMPO: llamar al abrir el ejercicio.
+function evaluarDescensoTiempo(perfil, clave, ahoraISO){
+  var reg=getNivelReg(perfil,clave);
+  var ahora=ahoraISO||nivHoyISO();
+  if(reg.nivel<=NIVEL_MIN) return {bajo:false,nivel:reg.nivel};
+  if(nivDiasEntre(reg.nivelDesde,ahora)<DIAS_MANTENER) return {bajo:false,nivel:reg.nivel};
+  var ultimoRespaldo=null;
+  for(var i=reg.sesiones.length-1;i>=0;i--){ if(reg.sesiones[i].nivelCumplido>=reg.nivel){ultimoRespaldo=reg.sesiones[i].fecha;break;} }
+  if(!ultimoRespaldo) ultimoRespaldo=reg.nivelDesde;
+  var diasSin=nivDiasEntre(ultimoRespaldo,ahora);
+  if(reg.ultimoDescenso){
+    if(diasSin>=DIAS_SEGUNDO_DESCENSO){ reg.nivel=Math.max(reg.nivel-1,NIVEL_MIN); reg.ultimoDescenso=ahora; return {bajo:true,nivel:reg.nivel,motivo:'tiempo'}; }
+    return {bajo:false,nivel:reg.nivel};
+  }
+  if(diasSin>=DIAS_MANTENER){ reg.nivel=Math.max(reg.nivel-1,NIVEL_MIN); reg.ultimoDescenso=ahora; return {bajo:true,nivel:reg.nivel,motivo:'tiempo'}; }
+  return {bajo:false,nivel:reg.nivel};
+}
+
+var TABLAS_NIVELES = {
+  'circulo-tobogan-4': { tipo:'tees', obj:{1:4,2:5,3:6,4:7,5:8} },
+  'circulo-tobogan-6': { tipo:'tees', obj:{1:3,2:4,3:5,4:6,5:7} },
+  'circulo-tobogan-8': { tipo:'tees', obj:{1:2,2:3,3:3,4:4,5:5} },
+  'circulo-escalera-4': { tipo:'pos', seguidas:3, obj:{1:3,2:4,3:5,4:6,5:7} },
+  'circulo-escalera-6': { tipo:'pos', seguidas:2, obj:{1:3,2:4,3:5,4:6,5:6} },
+  'circulo-escalera-8': { tipo:'pos', seguidas:2, obj:{1:2,2:2,3:3,4:4,5:4} },
+  'circulo-suma-4': { tipo:'suma', obj:{1:5,2:10,3:15,4:20,5:25} },
+  'circulo-suma-6': { tipo:'suma', obj:{1:3,2:6,3:9,4:12,5:15} },
+  'circulo-suma-8': { tipo:'suma', obj:{1:2,2:3,3:4,4:5,5:6} },
+  'circulo-handicap-4': { tipo:'deN', n:8, obj:{1:4,2:5,3:6,4:7,5:8} },
+  'circulo-handicap-6': { tipo:'deN', n:8, obj:{1:3,2:4,3:4,4:5,5:6} },
+  'circulo-handicap-8': { tipo:'deN', n:8, obj:{1:2,2:3,3:3,4:4,5:4} },
+  'circulo-record-4': { tipo:'racha', min:10, obj:{1:5,2:10,3:15,4:20,5:25} },
+  'circulo-record-6': { tipo:'racha', min:10, obj:{1:3,2:6,3:9,4:12,5:15} },
+  'circulo-record-8': { tipo:'racha', min:10, obj:{1:2,2:4,3:6,4:8,5:10} },
+  'lineal-esctob-corto': { tipo:'estaciones', veces:2, metas:{ 1:[3,2,1], 2:[4,3,1], 3:[4,3,2], 4:[4,4,2], 5:[4,4,3] }, obj:{1:2,2:2,3:2,4:2,5:2} },
+  'medio-escalera': { tipo:'vueltas', obj:{ 1:[1,1,0,0], 2:[1,1,1,1], 3:[2,2,1,1], 4:[2,2,2,1], 5:[3,3,2,2] } },
+  'medio-tobogan': { tipo:'corridas', min:15, obj:{1:1,2:2,3:3,4:4,5:5} },
+  'largo-esctob': { tipo:'pares-ronda', min:15, obj:{1:0,2:2,3:4,4:6,5:8} },
+  'approach-escalera': { tipo:'ejec-margen', min:15, obj:{ 1:{ejec:1,margen:5}, 2:{ejec:2,margen:4}, 3:{ejec:2,margen:3}, 4:{ejec:2,margen:2}, 5:{ejec:3,margen:2} } },
+  'approach-tobogan': { tipo:'ejec-margen', min:15, obj:{ 1:{ejec:1,margen:5}, 2:{ejec:2,margen:4}, 3:{ejec:2,margen:3}, 4:{ejec:2,margen:2}, 5:{ejec:3,margen:2} } },
+  'approach-record': { tipo:'racha-hereda', min:15 },
+  'approach-ud2d3': { tipo:'ejec-ud', topeMin:30, obj:{1:1,2:2,3:3,4:4,5:5} },
+  'drive-handicap': { tipo:'deN', n:10, obj:{1:4,2:5,3:6,4:7,5:8} },
+  'drive-record': { tipo:'racha', min:15, obj:{1:2,2:4,3:6,4:8,5:10} },
+  'hierro-handicap-corto': { tipo:'deN', n:10, obj:{1:3,2:5,3:7,4:9,5:10} },
+  'hierro-handicap-largo': { tipo:'deN', n:10, obj:{1:4,2:5,3:6,4:7,5:8} },
+  'hierro-record': { tipo:'racha', min:15, obj:{1:2,2:4,3:6,4:8,5:10} },
+  'reto-putt-medio': { tipo:'hoyos-ejec', hoyos:{1:2,2:4,3:6,4:8,5:10}, ejec:{1:5,2:4,3:3,4:2,5:1} },
+  'reto-putt-largo': { tipo:'hoyos-ejec', hoyos:{1:2,2:3,3:4,4:5,5:6}, ejec:{1:5,2:4,3:3,4:2,5:1} }
+};
+var DISPERSION_PALO = { 'pitching':10,'9':10,'8':10,'7':15,'6':15,'5':20,'4':20,'madera5':20,'madera3':20 };
+
+/* ============================================================
+   PUENTE NIVELES ↔ INTERFAZ
+   Funciones que usan TODAS las pantallas de ejercicios.
+   ============================================================ */
+
+// Dado el resultado bruto de un ejercicio, calcula qué NIVEL cumplió (1-5, o 0 si ninguno).
+// clave = clave del ejercicio en TABLAS_NIVELES; valor = el resultado del jugador (número).
+// Para ejercicios con objetivos numéricos simples (tees, suma, deN, racha, corridas, pares-ronda).
+function nivelCumplido(clave, valor){
+  var t = TABLAS_NIVELES[clave];
+  if(!t || !t.obj) return 0;
+  var cumplido = 0;
+  for(var nv=1; nv<=5; nv++){
+    if(t.obj[nv]!==undefined && valor >= t.obj[nv]) cumplido = nv;
+  }
+  return cumplido;
+}
+
+// Registra el resultado de un ejercicio para el perfil y devuelve info para mostrar.
+// Devuelve {nivelCumplido, nivelActual, subio, nivelAnterior}
+// Caso especial: ejercicios tipo 'estaciones' (escalera+tobogán lineal).
+// El usuario SIEMPRE juega en su nivel actual y mete cuántas VECES completó el recorrido.
+// Si alcanza el objetivo de veces (obj[nivelActual]), respalda su nivel; sube de 1 en 1.
+function registrarEstaciones(perfil, clave, vecesCompletadas, fechaISO){
+  var t = TABLAS_NIVELES[clave];
+  var reg = getNivelReg(perfil, clave);
+  var nivelActual = reg.nivel;
+  var meta = (t.obj && t.obj[nivelActual]!==undefined) ? t.obj[nivelActual] : 2;
+  // Si cumplió la meta de veces EN SU NIVEL, la sesión respalda su nivel actual (cuenta como nivelCumplido = nivelActual)
+  var nivCump = (vecesCompletadas >= meta) ? nivelActual : (nivelActual>1?nivelActual-1:0);
+  // registrarSesion con tope: para subir de 1 en 1, marcamos como cumplido SOLO el nivel actual
+  // (el motor sube cuando junta 10 sesiones que cumplan el nivel siguiente; aquí el "siguiente" se cumple
+  //  cuando el jugador, ya en nivel actual, sigue completando — su nivelCumplido=nivelActual permite
+  //  que al subir, el nuevo nivel pida la nueva meta). Para salto de 1 en 1 usamos nivelActual como tope.
+  var res = registrarSesion(perfil, clave, nivCump>=nivelActual?nivelActual+1:nivCump, fechaISO);
+  var rend = evaluarRendimiento(perfil, clave);
+  return { nivelCumplido:nivCump, nivelActual:res.nivel, subio:res.subio, nivelAnterior:res.nivelAnterior, bajoPorRendimiento:rend.bajo||false };
+}
+
+function registrarResultadoEjercicio(perfil, clave, valor, fechaISO){
+  var nivCump = nivelCumplido(clave, valor);
+  var res = registrarSesion(perfil, clave, nivCump, fechaISO);
+  // tras registrar, evaluar descenso por rendimiento
+  var rend = evaluarRendimiento(perfil, clave);
+  return {
+    nivelCumplido: nivCump,
+    nivelActual: res.nivel,
+    subio: res.subio,
+    nivelAnterior: res.nivelAnterior,
+    bajoPorRendimiento: rend.bajo || false
+  };
+}
+
+// Para mostrar el progreso hacia el siguiente nivel (las "pelotitas").
+// Devuelve {nivel, sesionesNivelSup, faltan, total:10}
+function progresoNivel(perfil, clave){
+  var reg = getNivelReg(perfil, clave);
+  if(reg.nivel >= 5) return { nivel:5, sesionesNivelSup:0, faltan:0, total:10, max:true };
+  var ultimas = reg.sesiones.slice(-40);
+  var nivelSup = reg.nivel + 1;
+  var cuenta = ultimas.filter(function(s){ return s.nivelCumplido >= nivelSup; }).length;
+  return { nivel:reg.nivel, sesionesNivelSup:Math.min(cuenta,10), faltan:Math.max(0,10-cuenta), total:10, max:false };
+}
+
+/* ===== MAPA: IDs de ejercicios viejos -> claves del motor de niveles ===== */
+var MAPA_EJERCICIO_NIVEL = {
+  'reloj4': 'circulo-tobogan-4',
+  'reloj6': 'circulo-tobogan-6',
+  'reloj8': 'circulo-tobogan-8',
+  'tobogan': 'circulo-tobogan-4',
+  'escalera': 'circulo-escalera-4',
+  'retoMedio': 'reto-putt-medio',
+  'tobogan-ap': 'approach-tobogan',
+  'escalera-ap': 'approach-escalera',
+  'ud2d3': 'approach-ud2d3',
+  'hierros': 'hierro-handicap-largo',
+  'drive': 'drive-handicap'
+};
+
+function conectarNivel(ejercicioId, ejecuciones){
+  var clave = MAPA_EJERCICIO_NIVEL[ejercicioId];
+  if (!clave) return null;
+  return conectarNivelClave(clave, ejecuciones);
+}
+
+// Conecta usando la clave del motor directamente (ejercicios nuevos del catálogo)
+function conectarNivelClave(clave, ejecuciones){
+  var perfil = getPerfil();
+  if (!perfil) return null;
+  var t = TABLAS_NIVELES[clave];
+  if (!t) return null;
+  var res;
+  if (t.tipo === 'estaciones'){ res = registrarEstaciones(perfil, clave, ejecuciones); }
+  else { res = registrarResultadoEjercicio(perfil, clave, ejecuciones); }
+  guardarPerfilesLocal();
+  return res;
+}
+
+function infoNivelEjercicio(ejercicioId){
+  var clave = MAPA_EJERCICIO_NIVEL[ejercicioId];
+  if (!clave) return null;
+  var perfil = getPerfil();
+  if (!perfil) return null;
+  evaluarDescensoTiempo(perfil, clave);
+  var reg = getNivelReg(perfil, clave);
+  var prog = progresoNivel(perfil, clave);
+  var t = TABLAS_NIVELES[clave];
+  var metaActual = null;
+  if (t.metas) metaActual = t.metas[reg.nivel];
+  else if (t.obj) metaActual = t.obj[reg.nivel];
+  return { clave:clave, nivel:reg.nivel, progreso:prog, meta:metaActual, tipo:t.tipo };
+}
+
+/* ===== CATÁLOGO NUEVO DE EJERCICIOS (menú Forma 2: mecánica → distancia) ===== */
+// Cada entrada describe una MECÁNICA. Si tiene 'distancias', al tocarla se pregunta cuál.
+// 'claveBase' + distancia forma la clave del motor (ej. circulo-tobogan + '-4').
+var CATALOGO_NUEVO = {
+  // ---- PUTT CORTO ----
+  'circulo-tobogan': { nom:'Círculo Tobogán', cat:'putt', seccion:'Putt corto', mins:10,
+    distancias:[{lbl:'4 pies',k:'4'},{lbl:'6 pies',k:'6'},{lbl:'8 pies',k:'8'}],
+    instr:['Tees en círculo alrededor del hoyo','Da la vuelta sin fallar','Si fallas, vuelves al inicio'] },
+  'circulo-escalera': { nom:'Círculo Escalera', cat:'putt', seccion:'Putt corto', mins:10,
+    distancias:[{lbl:'4 pies',k:'4'},{lbl:'6 pies',k:'6'},{lbl:'8 pies',k:'8'}],
+    instr:['Posiciones en círculo','Mete varias seguidas para avanzar de posición'] },
+  'circulo-suma': { nom:'Círculo Suma', cat:'putt', seccion:'Putt corto', mins:10,
+    distancias:[{lbl:'4 pies',k:'4'},{lbl:'6 pies',k:'6'},{lbl:'8 pies',k:'8'}],
+    instr:['+1 si metes, -1 si fallas','Llega a la meta (piso en 0)'] },
+  'circulo-handicap': { nom:'Círculo Handicap', cat:'putt', seccion:'Putt corto', mins:10,
+    distancias:[{lbl:'4 pies',k:'4'},{lbl:'6 pies',k:'6'},{lbl:'8 pies',k:'8'}],
+    instr:['Tira 8 bolas','Mete las que pide tu nivel'] },
+  'circulo-record': { nom:'Círculo Récord', cat:'putt', seccion:'Putt corto', mins:10,
+    distancias:[{lbl:'4 pies',k:'4'},{lbl:'6 pies',k:'6'},{lbl:'8 pies',k:'8'}],
+    instr:['Tira desde una posición contando aciertos seguidos','Al fallar, cambia de posición y reinicia','Tu mejor racha en 10 min'] },
+  'lineal-esctob-corto': { nom:'Escalera + Tobogán', cat:'putt', seccion:'Putt corto', mins:10,
+    instr:['3 estaciones: 4, 6, 8 pies','Mete la meta para avanzar','Si fallas, vuelves al inicio','Completa el recorrido 2 veces'] },
+  // ---- PUTT MEDIO ----
+  'medio-escalera': { nom:'Escalera Putt Medio', cat:'putt', seccion:'Putt medio', mins:10,
+    instr:['Estaciones: 6,9,12,15 yardas','3 bolas, par = meter en 2','Vueltas consecutivas'] },
+  'medio-tobogan': { nom:'Tobogán Putt Medio', cat:'putt', seccion:'Putt medio', mins:10,
+    instr:['1 bola, corrida 6→9→12→15 yardas','Si fallas, vuelves al inicio','Corridas en 15 min'] },
+  // ---- PUTT LARGO ----
+  'largo-esctob': { nom:'Escalera + Tobogán Largo', cat:'putt', seccion:'Putt largo', mins:15,
+    instr:['Estaciones: 15,20,25,30 yardas','3 bolas, evita el 4-putt','Pares en tu mejor ronda'] },
+  // ---- APPROACH ----
+  'approach-escalera': { nom:'Escalera Approach', cat:'approach', seccion:'Approach', mins:15,
+    instr:['Distancias 10-30 yardas','Pasa la marca sin pasarte del margen','Margen según tu nivel'] },
+  'approach-tobogan': { nom:'Tobogán Approach', cat:'approach', seccion:'Approach', mins:15,
+    instr:['Distancias 10-30 yardas','Si fallas, vuelves al inicio','Margen según tu nivel'] },
+  'approach-record': { nom:'Récord Approach', cat:'approach', seccion:'Approach', mins:15,
+    instr:['Racha de tiros buenos seguidos','Margen heredado de tu nivel de Escalera','Tu mejor racha en 15 min'] },
+  'approach-ud2d3': { nom:'Up & Down 2 de 3', cat:'approach', seccion:'Approach', mins:30,
+    instr:['3 bolas desde 20-40 yardas','2 up&downs de 3 = 1 ejecución','Tope 30 min'] },
+  // ---- HIERROS / DRIVE (se eligen por palo aparte) ----
+  // ---- RETO PUTT ----
+  'reto-putt': { nom:'Reto Putt', cat:'reto', seccion:'Retos', mins:0,
+    distancias:[{lbl:'Putt Medio',k:'medio'},{lbl:'Putt Largo',k:'largo'}],
+    instr:['Hoyos seguidos de 2 golpes','Ejecuciones según tu nivel'] }
+};
+
+// Palos para hierros/maderas/drive (menú unificado)
+var PALOS_HIERROS = [
+  {lbl:'Pitching', k:'pitching', grupo:'corto'},
+  {lbl:'Hierro 9', k:'9', grupo:'corto'},
+  {lbl:'Hierro 8', k:'8', grupo:'corto'},
+  {lbl:'Hierro 7', k:'7', grupo:'largo'},
+  {lbl:'Hierro 6', k:'6', grupo:'largo'},
+  {lbl:'Hierro 5', k:'5', grupo:'largo'},
+  {lbl:'Hierro 4', k:'4', grupo:'largo'},
+  {lbl:'Madera 5', k:'madera5', grupo:'largo'},
+  {lbl:'Madera 3', k:'madera3', grupo:'largo'},
+  {lbl:'Drive', k:'drive', grupo:'drive'}
+];
+
+// Llena el bloque visual de nivel en la pantalla de registro según el item del programa
+function mostrarNivelEnRegistro(item) {
+  var wrap = document.getElementById('reg-nivel-wrap');
+  if (!wrap) return;
+  // Determinar la clave del motor
+  var clave = null;
+  if (item.esNuevo && item.claveNivel) clave = item.claveNivel;
+  else if (MAPA_EJERCICIO_NIVEL[item.id]) clave = MAPA_EJERCICIO_NIVEL[item.id];
+  if (!clave || !TABLAS_NIVELES[clave]) { wrap.style.display = 'none'; return; }
+
+  var perfil = getPerfil();
+  if (!perfil) { wrap.style.display = 'none'; return; }
+  evaluarDescensoTiempo(perfil, clave);
+  var reg = getNivelReg(perfil, clave);
+  var prog = progresoNivel(perfil, clave);
+  var t = TABLAS_NIVELES[clave];
+
+  wrap.style.display = 'block';
+  document.getElementById('reg-nivel-num').textContent = reg.nivel;
+
+  // Texto de la meta del nivel actual
+  var metaTxt = textoMetaNivel(clave, reg.nivel, item);
+  document.getElementById('reg-nivel-meta').innerHTML = metaTxt;
+
+  // Pelotitas de progreso hacia el siguiente nivel
+  var pelWrap = document.getElementById('reg-nivel-pelotitas');
+  var progTxt = document.getElementById('reg-nivel-prog');
+  if (prog.max) {
+    pelWrap.innerHTML = '<span style="color:#FFD700;font-size:12px;font-weight:700">★ Nivel máximo</span>';
+    if (progTxt) progTxt.textContent = '';
+  } else {
+    var pel = '';
+    for (var i=0;i<10;i++) {
+      var lleno = i < prog.sesionesNivelSup;
+      pel += '<div style="flex:1;height:6px;border-radius:3px;background:' + (lleno?'#6EA8FE':'rgba(255,255,255,.1)') + '"></div>';
+    }
+    pelWrap.innerHTML = pel;
+    if (progTxt) progTxt.textContent = prog.sesionesNivelSup + '/10';
+  }
+}
+
+// Devuelve el texto de la meta de un nivel para un ejercicio (qué tiene que lograr)
+function textoMetaNivel(clave, nivel, item) {
+  var t = TABLAS_NIVELES[clave];
+  if (!t) return '';
+  var o = t.obj ? t.obj[nivel] : null;
+  switch(t.tipo) {
+    case 'tees': return 'Meta nivel ' + nivel + ': mete <strong>' + o + ' tees</strong> dando la vuelta sin fallar';
+    case 'pos': return 'Meta nivel ' + nivel + ': logra <strong>' + o + ' posiciones</strong> (' + t.seguidas + ' seguidas c/u)';
+    case 'suma': return 'Meta nivel ' + nivel + ': llega a <strong>+' + o + '</strong> de saldo';
+    case 'deN': return 'Meta nivel ' + nivel + ': mete <strong>' + o + ' de ' + t.n + '</strong>';
+    case 'racha': return 'Meta nivel ' + nivel + ': racha de <strong>' + o + ' seguidas</strong>';
+    case 'corridas': return 'Meta nivel ' + nivel + ': <strong>' + o + ' corridas</strong> en 15 min';
+    case 'pares-ronda': return 'Meta nivel ' + nivel + ': <strong>' + o + ' pares</strong> en tu mejor ronda';
+    case 'vueltas': return 'Meta nivel ' + nivel + ': completa las vueltas por estación';
+    case 'ejec-margen':
+      var em = t.obj[nivel];
+      return 'Meta nivel ' + nivel + ': <strong>' + em.ejec + ' ' + (em.ejec===1?'ejecución':'ejecuciones') + '</strong> con margen de <strong>' + em.margen + ' yardas</strong>';
+    case 'ejec-ud': return 'Meta nivel ' + nivel + ': <strong>' + o + ' ' + (o===1?'ejecución':'ejecuciones') + '</strong> (2 de 3 up&down)';
+    case 'racha-hereda': return 'Racha máxima · margen heredado de tu nivel de Escalera';
+    case 'estaciones':
+      var m = t.metas ? t.metas[nivel] : null;
+      var metaStr = m ? (m[0]+'-'+m[1]+'-'+m[2]) : '';
+      return 'Meta nivel ' + nivel + ': completa el recorrido (' + metaStr + ' por estación) <strong>' + (t.obj?t.obj[nivel]:2) + ' veces</strong>';
+    case 'hoyos-ejec':
+      var h = t.hoyos[nivel], ej = t.ejec[nivel];
+      return 'Meta nivel ' + nivel + ': <strong>' + h + ' hoyos seguidos</strong>, <strong>' + ej + ' ' + (ej===1?'ejecución':'ejecuciones') + '</strong>';
+    default: return 'Meta del nivel ' + nivel;
+  }
+}
+
+// Celebración especial cuando el jugador SUBE DE NIVEL
+function celebrarSubidaNivel(nivelNuevo, callback) {
+  var stage = document.createElement('div');
+  stage.id = 'celeb-nivel-stage';
+  stage.style.cssText = 'position:fixed;top:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;height:100%;z-index:5200;pointer-events:none;overflow:hidden;background:rgba(5,8,12,.9);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);animation:celebBgIn .3s ease-out';
+  document.body.appendChild(stage);
+
+  // Halo radiante
+  var rays = document.createElement('div');
+  rays.style.cssText = 'position:absolute;top:38%;left:50%;margin:-110px 0 0 -110px;width:220px;height:220px;background:conic-gradient(from 0deg,transparent 0deg,rgba(110,168,254,.5) 25deg,transparent 50deg,rgba(110,168,254,.5) 75deg,transparent 100deg,rgba(110,168,254,.5) 125deg,transparent 150deg,rgba(110,168,254,.5) 175deg,transparent 200deg,rgba(110,168,254,.5) 225deg,transparent 250deg,rgba(110,168,254,.5) 275deg,transparent 300deg);border-radius:50%;animation:celebRecordRays 3s ease-out forwards';
+  stage.appendChild(rays);
+
+  // Insignia central con el número de nivel
+  var badge = document.createElement('div');
+  badge.style.cssText = 'position:absolute;top:38%;left:50%;margin:-50px 0 0 -50px;width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,#6EA8FE,#3B6DD8);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 30px rgba(110,168,254,.6);animation:celebCrown 1s cubic-bezier(.3,1.4,.5,1) forwards';
+  badge.innerHTML = '<span style="color:#fff;font-size:48px;font-weight:900;text-shadow:0 2px 8px rgba(0,0,0,.3)">' + nivelNuevo + '</span>';
+  stage.appendChild(badge);
+
+  // Estrellas alrededor
+  for (var i = 0; i < 14; i++) {
+    var sp = document.createElement('div');
+    sp.textContent = '⭐';
+    var ang = (i/14)*Math.PI*2, r = 90;
+    sp.style.cssText = 'position:absolute;top:calc(38% + '+(Math.sin(ang)*r)+'px);left:calc(50% + '+(Math.cos(ang)*r)+'px);font-size:18px;animation:celebSparkle 1.6s ease-out forwards;animation-delay:'+(.4+i*.05)+'s';
+    stage.appendChild(sp);
+  }
+
+  // Textos
+  var t1 = document.createElement('div');
+  t1.textContent = '¡SUBISTE DE NIVEL!';
+  t1.style.cssText = 'position:absolute;bottom:42%;left:50%;transform:translateX(-50%);color:#6EA8FE;font-size:24px;font-weight:900;white-space:nowrap;animation:celebText .6s ease-out forwards;animation-delay:.3s;opacity:0;text-shadow:0 2px 14px rgba(0,0,0,.6);letter-spacing:.5px';
+  stage.appendChild(t1);
+
+  var t2 = document.createElement('div');
+  t2.textContent = 'Ahora eres Nivel ' + nivelNuevo;
+  t2.style.cssText = 'position:absolute;bottom:36%;left:50%;transform:translateX(-50%);color:#e8e8f0;font-size:15px;font-weight:600;white-space:nowrap;animation:celebText .6s ease-out forwards;animation-delay:.5s;opacity:0;text-shadow:0 2px 10px rgba(0,0,0,.6)';
+  stage.appendChild(t2);
+
+  setTimeout(function(){
+    stage.style.transition = 'opacity .4s';
+    stage.style.opacity = '0';
+    setTimeout(function(){ if(stage.parentNode) stage.remove(); if(callback) callback(); }, 400);
+  }, 3200);
+}
+
+// Obtiene la distancia guardada de un palo (o null si no la ha configurado)
+function getDistanciaPalo(paloK) {
+  var perfil = getPerfil();
+  if (!perfil) return null;
+  if (!perfil.distanciasPalos) return null;
+  return perfil.distanciasPalos[paloK] || null;
+}
+
+// Guarda la distancia de un palo
+function setDistanciaPalo(paloK, yardas) {
+  var perfil = getPerfil();
+  if (!perfil) return;
+  if (!perfil.distanciasPalos) perfil.distanciasPalos = {};
+  perfil.distanciasPalos[paloK] = yardas;
+  guardarPerfilesLocal();
+}
+
+// Devuelve el texto de la zona de dispersión de un palo según su grupo
+function textoDispersionPalo(paloK) {
+  var margen = DISPERSION_PALO[paloK];
+  if (paloK === 'drive') return 'Calle de ancho fijo';
+  if (!margen) return '';
+  return margen + ' yardas a cada lado y adelante/atrás';
+}
+
+// Pregunta la distancia del palo (primera vez) con un overlay simple
+function preguntarDistanciaPalo(paloK, paloLbl, callback) {
+  var prev = document.getElementById('overlay-dist-palo');
+  if (prev) prev.remove();
+  var ov = document.createElement('div');
+  ov.id = 'overlay-dist-palo';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:700;display:flex;align-items:center;justify-content:center;padding:24px';
+  ov.innerHTML = '<div style="background:#1a1f2e;border-radius:24px;width:100%;max-width:340px;padding:24px 22px">' +
+    '<div style="color:#e8e8f0;font-size:18px;font-weight:700;margin-bottom:6px;text-align:center">¿Cuántas yardas pegas tu ' + paloLbl + '?</div>' +
+    '<div style="color:#9a9ab0;font-size:12px;line-height:1.5;margin-bottom:18px;text-align:center">Lo usamos para ubicar tu objetivo. Solo se pregunta una vez.</div>' +
+    '<input id="inp-dist-palo" type="number" inputmode="numeric" placeholder="ej. 150" style="width:100%;background:#0d1117;border:1px solid rgba(110,168,254,.3);border-radius:12px;padding:14px;color:#fff;font-size:18px;text-align:center;font-weight:700;margin-bottom:16px;box-sizing:border-box">' +
+    '<div id="btn-dist-palo-ok" style="background:#0F6E56;border-radius:12px;padding:14px;text-align:center;cursor:pointer"><span style="color:white;font-size:15px;font-weight:700">Guardar</span></div>' +
+    '</div>';
+  document.body.appendChild(ov);
+  var inp = document.getElementById('inp-dist-palo');
+  if (inp) inp.focus();
+  document.getElementById('btn-dist-palo-ok').onclick = function() {
+    var val = parseInt(inp.value, 10);
+    if (val && val > 0) {
+      setDistanciaPalo(paloK, val);
+      ov.remove();
+      if (callback) callback(val);
+    } else {
+      inp.style.borderColor = '#E24B4A';
+    }
+  };
+  ov.onclick = function(e) { if (e.target === ov) ov.remove(); };
+}
+
+/* ===== FIN SISTEMA DE NIVELES ===== */
+
+
 /* HOME JS */
 
 // ── DATOS ────────────────────────────────────────
@@ -2338,19 +2818,6 @@ var GIR_DATA = [
 ];
 
 var BENCHMARKS = [0, 5, 8, 10, 15, 20];
-
-var EJERCICIOS_DEF = {
-  'reloj4': { nom: 'Reloj 4 pies', cat: 'putt', color: '#185FA5', colorTxt: '#B5D4F4', instrucciones: ['Pon 6 tees alrededor del hoyo a 4 pies', 'Mete las 6 seguidas sin fallar', '¡Eso es 1 ejecución! Si fallas, vuelves a empezar'] },
-  'reloj6': { nom: 'Reloj 6 pies', cat: 'putt', color: '#185FA5', colorTxt: '#B5D4F4', instrucciones: ['Pon 4 tees alrededor del hoyo a 6 pies', 'Mete las 4 seguidas sin fallar', '¡Eso es 1 ejecución!'] },
-  'tobogan': { nom: 'Tobogán clásico', cat: 'putt', color: '#378ADD', colorTxt: '#B5D4F4', instrucciones: ['Distancias: 6, 9, 12, 15, 18 pasos', 'Mete en 2 tiros o menos cada distancia', 'Si fallas, regresa al inicio'] },
-  'escalera': { nom: 'Escalera clásica', cat: 'putt', color: '#378ADD', colorTxt: '#B5D4F4', instrucciones: ['Distancias: 6, 9, 12, 15, 18 pasos', '3 veces seguidas en 2 tiros para avanzar', 'Si fallas, te quedas en esa distancia'] },
-  'retoMedio': { nom: 'Reto Putt Medio', cat: 'putt', color: '#0F6E56', colorTxt: '#9FE1CB', instrucciones: ['Elige hoyos a ~8-10 pasos de distancia', 'Emboca cada hoyo en 2 golpes (acercas y metes)', 'Logra varios hoyos seguidos de 2 golpes sin fallar', '__NIVEL_MEDIO__'], esReto: true, retoTipo: 'medio' },
-  'escalera-ap': { nom: 'Escalera approach', cat: 'approach', color: '#854F0B', colorTxt: '#FAC775', instrucciones: ['Distancias: 10, 15, 20, 25, 30, 35 yardas', '3 tiros consecutivos al green para avanzar', 'Si fallas, te quedas en esa distancia'] },
-  'ud2d3': { nom: 'Up and Down 2d3', cat: 'approach', color: '#BA7517', colorTxt: '#FAC775', instrucciones: ['Desde 20-40 yardas, tira 3 bolas', '2 de 3 en up and down = 1 punto', 'Approach + 1 putt = up and down'] },
-  'hierros': { nom: 'Escalera hierros', cat: 'hierros', color: '#3B6D11', colorTxt: '#C0DD97', instrucciones: ['Palos: 9H → 8H → 7H → 6H', '5 bolas consecutivas en ±10y del objetivo', 'Si fallas, reinicia el contador en ese palo'], distancias: ['9H', '8H', '7H', '6H'] },
-  'drive': { nom: 'Drive', cat: 'drive', color: '#0F6E56', colorTxt: '#9FE1CB', instrucciones: ['5 tiros consecutivos en zona objetivo', '1 ejecución = 5 tiros seguidos en zona', 'Cuenta madera 3 y drive por separado'] },
-  'retoMedioReto': { nom: 'Reto Putt Largo', cat: 'putt', color: '#0C447C', colorTxt: '#B5D4F4', instrucciones: ['Elige hoyos a ~14-16 pasos de distancia', 'Emboca cada hoyo en 2 golpes (acercas y metes)', 'Logra varios hoyos seguidos de 2 golpes sin fallar', '__NIVEL_LARGO__'], esReto: true, retoTipo: 'largo' },
-};
 
 var PROGRAMAS = {
   1: [
@@ -4316,7 +4783,7 @@ function teclaOK() {
 function mostrarDistancias() {
   var idx = estadoSesion.ejActivo;
   var item = estadoSesion.programa[idx];
-  var def = EJERCICIOS_DEF[item.id];
+  var def = getDefItem(item);
   var dists = def.distancias || ['10y','15y','20y','25y','30y','35y'];
   var html = '';
   dists.forEach(function(d) {
@@ -4487,7 +4954,21 @@ function guardarRegistro() {
   estadoSesion.completados[idx] = estadoSesion.reg;
   guardarEstadoSesion();
   var item = estadoSesion.programa[idx];
-  var def = item ? EJERCICIOS_DEF[item.id] : null;
+  var def = item ? getDefItem(item) : null;
+
+  // === CONECTAR CON MOTOR DE NIVELES ===
+  // Si el ejercicio tiene nivel asociado y el usuario metió ejecuciones, registrar la sesión
+  var resultadoNivel = null;
+  if (item && estadoSesion.reg.ejec !== null && estadoSesion.reg.ejec >= 0) {
+    try {
+      if (item.esNuevo && item.claveNivel) {
+        resultadoNivel = conectarNivelClave(item.claveNivel, estadoSesion.reg.ejec);
+      } else {
+        resultadoNivel = conectarNivel(item.id, estadoSesion.reg.ejec);
+      }
+    } catch(e) {}
+  }
+  estadoSesion.ultimoResultadoNivel = resultadoNivel;
 
   // Detectar si rompe récord ANTES de guardar el nuevo
   var esRecord = false;
@@ -4512,7 +4993,12 @@ function guardarRegistro() {
   // Elegir y mostrar celebración, luego volver al programa
   var tipo = elegirCelebracion(esRecord, esUltimo, esPutt);
   irVista('view-programa');
-  mostrarCelebracion(tipo);
+  // Si subió de nivel, mostrar celebración especial de nivel primero, luego la normal
+  if (resultadoNivel && resultadoNivel.subio) {
+    celebrarSubidaNivel(resultadoNivel.nivelActual, function(){ mostrarCelebracion(tipo); });
+  } else {
+    mostrarCelebracion(tipo);
+  }
 }
 
 function guardarRecordEjercicio(ejId, ejec, mins) {
@@ -4558,7 +5044,7 @@ function renderResumenSesion() {
   // Categorías del día
   var cats = {};
   estadoSesion.programa.forEach(function(item, idx) {
-    var def = EJERCICIOS_DEF[item.id];
+    var def = getDefItem(item);
     if (!def) return;
     if (!cats[def.cat]) cats[def.cat] = [];
     cats[def.cat].push({ def: def, comp: estadoSesion.completados[idx] });
@@ -5017,7 +5503,7 @@ function renderPrograma() {
   var catT = { putt:'#B5D4F4', approach:'#FAC775', hierros:'#C0DD97', drive:'#9FE1CB', reto:'#EF9F27' };
 
   estadoSesion.programa.forEach(function(item, idx) {
-    var def = EJERCICIOS_DEF[item.id];
+    var def = getDefItem(item);
     if (!def) return;
     if (item.lock) {
       html += '<div class="ej-reto" style="margin-bottom:8px">';
@@ -5048,7 +5534,7 @@ function renderPrograma() {
 }
 
 function eliminarEjercicio(idx) {
-  var def = EJERCICIOS_DEF[estadoSesion.programa[idx].id];
+  var def = getDefItem(estadoSesion.programa[idx]);
   if (confirm('Quitar ' + (def ? def.nom : 'este ejercicio') + '?')) {
     estadoSesion.programa.splice(idx, 1);
     if (estadoSesion.completados) estadoSesion.completados.splice(idx, 1);
@@ -5056,54 +5542,62 @@ function eliminarEjercicio(idx) {
   }
 }
 
-// ── MENU EJERCICIOS ──────────────────────────────────────────────────────────
+// ── MENU EJERCICIOS (catálogo nuevo, Forma 2) ───────────────────────────────
 function abrirMenuEjercicios() {
-  // Agrupar por categoría grande con ícono y color
-  var cats = [
-    { key:'putt', lbl:'Putt', icon:'⛳', iconBg:'rgba(24,95,165,.15)', ids:['reloj4','reloj6','reloj8','tobogan','escalera','retoMedio','retoMedioReto'] },
-    { key:'approach', lbl:'Approach', icon:'🎯', iconBg:'rgba(133,79,11,.18)', ids:['tobogan-ap','escalera-ap','ud2d3'] },
-    { key:'hierros', lbl:'Hierros, maderas y drive', icon:'🏌️', iconBg:'rgba(59,109,17,.2)', ids:['hierros','drive'] },
-    { key:'retos', lbl:'Retos', icon:'🔥', iconBg:'rgba(239,159,39,.18)', ids:['op36-25','op36-50','op36-100','op36-150','op36-200','retoDist','retoTrampa'], esReto:true },
+  // Secciones del menú. Cada una agrupa mecánicas del CATALOGO_NUEVO o ejercicios viejos (retos).
+  var secciones = [
+    { key:'putt-corto', lbl:'Putt corto', icon:'⛳', iconBg:'rgba(24,95,165,.15)', tipo:'catalogo',
+      items:['circulo-tobogan','circulo-escalera','circulo-suma','circulo-handicap','circulo-record','lineal-esctob-corto'] },
+    { key:'putt-medio', lbl:'Putt medio', icon:'⛳', iconBg:'rgba(24,95,165,.15)', tipo:'catalogo',
+      items:['medio-escalera','medio-tobogan'] },
+    { key:'putt-largo', lbl:'Putt largo', icon:'⛳', iconBg:'rgba(24,95,165,.15)', tipo:'catalogo',
+      items:['largo-esctob'] },
+    { key:'approach', lbl:'Approach', icon:'🎯', iconBg:'rgba(133,79,11,.18)', tipo:'catalogo',
+      items:['approach-escalera','approach-tobogan','approach-record','approach-ud2d3'] },
+    { key:'hierros', lbl:'Hierros, maderas y drive', icon:'🏌️', iconBg:'rgba(59,109,17,.2)', tipo:'palos',
+      items:['handicap','record'] },
+    { key:'retos', lbl:'Retos', icon:'🔥', iconBg:'rgba(239,159,39,.18)', tipo:'retos',
+      items:['reto-putt','op36','retoDist','retoTrampa'] }
   ];
 
-  // Construir lista global de ids para el manejo de clicks
-  var listaIds = [];
   var html = '';
-  cats.forEach(function(c) {
-    // Filtrar ids que existen
-    var idsValidos = c.ids.filter(function(id){ return EJERCICIOS_DEF[id]; });
-    if (idsValidos.length === 0) return;
-
-    var acentoLbl = c.esReto ? '#EF9F27' : '#e8e8f0';
-    var bordeCat = c.esReto ? 'rgba(239,159,39,.25)' : 'rgba(255,255,255,.08)';
-
-    // Encabezado de la categoría (toca para desplegar)
-    var nEj = idsValidos.length;
-    html += '<div style="background:#13131f;border:0.5px solid ' + bordeCat + ';border-radius:14px;margin-bottom:10px;overflow:hidden">' +
-      '<div class="cat-head" data-cat="' + c.key + '" style="display:flex;align-items:center;gap:12px;padding:15px;cursor:pointer">' +
-        '<div style="width:40px;height:40px;border-radius:11px;background:' + c.iconBg + ';display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">' + c.icon + '</div>' +
-        '<div style="flex:1"><div style="color:' + acentoLbl + ';font-size:15px;font-weight:700">' + c.lbl + '</div><div style="color:#4a4a6a;font-size:11px">' + nEj + (nEj === 1 ? ' ejercicio' : ' ejercicios') + '</div></div>' +
-        '<span class="cat-chev" data-chev="' + c.key + '" style="color:#4a4a6a;font-size:18px;transition:transform .2s">\u203A</span>' +
+  secciones.forEach(function(sec) {
+    var acentoLbl = (sec.key==='retos') ? '#EF9F27' : '#e8e8f0';
+    var borde = (sec.key==='retos') ? 'rgba(239,159,39,.25)' : 'rgba(255,255,255,.08)';
+    var nEj = sec.items.length;
+    html += '<div style="background:#13131f;border:0.5px solid ' + borde + ';border-radius:14px;margin-bottom:10px;overflow:hidden">' +
+      '<div class="cat-head" data-cat="' + sec.key + '" style="display:flex;align-items:center;gap:12px;padding:15px;cursor:pointer">' +
+        '<div style="width:40px;height:40px;border-radius:11px;background:' + sec.iconBg + ';display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">' + sec.icon + '</div>' +
+        '<div style="flex:1"><div style="color:' + acentoLbl + ';font-size:15px;font-weight:700">' + sec.lbl + '</div><div style="color:#4a4a6a;font-size:11px">' + nEj + (nEj===1?' ejercicio':' ejercicios') + '</div></div>' +
+        '<span class="cat-chev" data-chev="' + sec.key + '" style="color:#4a4a6a;font-size:18px;transition:transform .2s">\u203A</span>' +
       '</div>' +
-      '<div class="cat-body" data-body="' + c.key + '" style="display:none;padding:0 12px 8px">';
+      '<div class="cat-body" data-body="' + sec.key + '" style="display:none;padding:0 12px 8px">';
 
-    idsValidos.forEach(function(id) {
-      var def = EJERCICIOS_DEF[id];
-      var i = listaIds.length;
-      listaIds.push(id);
-      var esReto = def.cat === 'reto';
-      var col = esReto ? '#EF9F27' : '#e8e8f0';
-      html += '<div class="mej" data-i="' + i + '" style="background:#0d1117;border:0.5px solid rgba(255,255,255,.06);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:6px">' +
-        '<div style="flex:1"><div style="color:' + col + ';font-size:13px;font-weight:700">' + def.nom + '</div></div>' +
-        '<div class="mej-info" data-info="' + i + '" style="width:24px;height:24px;border-radius:50%;background:rgba(96,165,250,.12);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0"><span style="color:#60a5fa;font-size:13px;font-weight:700">?</span></div>' +
-        '<span class="mej-add" data-add="' + i + '" style="color:#888;font-size:22px;width:24px;text-align:center;flex-shrink:0">+</span>' +
+    sec.items.forEach(function(it) {
+      var nom, accion, dataAttr;
+      if (sec.tipo === 'catalogo') {
+        var def = CATALOGO_NUEVO[it];
+        if (!def) return;
+        nom = def.nom;
+        dataAttr = 'data-cat-item="' + it + '"';
+      } else if (sec.tipo === 'palos') {
+        nom = (it === 'handicap') ? 'Handicap (elige palo)' : 'Récord (elige palo)';
+        dataAttr = 'data-palo-mec="' + it + '"';
+      } else { // retos
+        if (it === 'reto-putt') { nom = 'Reto Putt'; dataAttr = 'data-cat-item="reto-putt"'; }
+        else if (it === 'op36') { nom = 'OP 27'; dataAttr = 'data-reto-op36="1"'; }
+        else if (it === 'retoDist') { nom = 'Reto Distancia'; dataAttr = 'data-reto-viejo="retoDist"'; }
+        else if (it === 'retoTrampa') { nom = 'Reto Trampa'; dataAttr = 'data-reto-viejo="retoTrampa"'; }
+      }
+      var col = (sec.key==='retos') ? '#EF9F27' : '#e8e8f0';
+      html += '<div class="mej-nuevo" ' + dataAttr + ' style="background:#0d1117;border:0.5px solid rgba(255,255,255,.06);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:6px;cursor:pointer">' +
+        '<div style="flex:1"><div style="color:' + col + ';font-size:13px;font-weight:700">' + nom + '</div></div>' +
+        '<span style="color:#888;font-size:22px;width:24px;text-align:center;flex-shrink:0">\u203A</span>' +
       '</div>';
     });
-
     html += '</div></div>';
   });
 
-  window._mejIds = listaIds;
   var ov = document.createElement('div');
   ov.id = 'overlay-menu-ej';
   ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;display:flex;align-items:flex-end;justify-content:center';
@@ -5119,31 +5613,219 @@ function abrirMenuEjercicios() {
     if (e.target.id === 'cerrar-mej' || e.target === ov) { ov.remove(); return; }
     var el = e.target;
     while (el && el !== ov) {
-      // Botón de info (?)
-      if (el.classList && el.classList.contains('mej-info')) {
-        mostrarInfoEjercicio(window._mejIds[parseInt(el.getAttribute('data-info'))]);
-        return;
-      }
-      // Renglón de ejercicio o botón + → agregar
-      if (el.classList && el.classList.contains('mej')) {
-        agregarEjercicioAlPrograma(window._mejIds[parseInt(el.getAttribute('data-i'))]);
-        return;
-      }
-      // Encabezado de categoría → desplegar/plegar
       if (el.classList && el.classList.contains('cat-head')) {
         var key = el.getAttribute('data-cat');
         var body = ov.querySelector('[data-body="' + key + '"]');
         var chev = ov.querySelector('[data-chev="' + key + '"]');
-        if (body) {
-          var abierto = body.style.display === 'block';
-          body.style.display = abierto ? 'none' : 'block';
-          if (chev) chev.style.transform = abierto ? 'rotate(0deg)' : 'rotate(90deg)';
-        }
+        if (body) { var ab = body.style.display === 'block'; body.style.display = ab?'none':'block'; if(chev) chev.style.transform = ab?'rotate(0deg)':'rotate(90deg)'; }
+        return;
+      }
+      if (el.classList && el.classList.contains('mej-nuevo')) {
+        var catItem = el.getAttribute('data-cat-item');
+        var paloMec = el.getAttribute('data-palo-mec');
+        var retoOp36 = el.getAttribute('data-reto-op36');
+        var retoViejo = el.getAttribute('data-reto-viejo');
+        if (catItem) { elegirEjercicioCatalogo(catItem); }
+        else if (paloMec) { elegirPaloHierro(paloMec); }
+        else if (retoOp36) { agregarEjercicioAlPrograma('op36-25'); ov.remove(); }
+        else if (retoViejo) { agregarEjercicioAlPrograma(retoViejo); ov.remove(); }
         return;
       }
       el = el.parentElement;
     }
   });
+}
+
+
+// Cuando eliges una mecánica del catálogo: si tiene distancias, preguntar; si no, agregar directo.
+function elegirEjercicioCatalogo(catItem) {
+  var def = CATALOGO_NUEVO[catItem];
+  if (!def) return;
+  if (def.distancias && def.distancias.length) {
+    mostrarSelectorDistancia(catItem, def);
+  } else {
+    // sin distancia: la clave del motor es el propio catItem
+    agregarEjercicioNivel(catItem, def, catItem);
+  }
+}
+
+// Muestra un sub-overlay para elegir la distancia
+function mostrarSelectorDistancia(catItem, def) {
+  var prev = document.getElementById('overlay-distancia');
+  if (prev) prev.remove();
+  var ov = document.createElement('div');
+  ov.id = 'overlay-distancia';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:600;display:flex;align-items:flex-end;justify-content:center';
+  var btns = '';
+  def.distancias.forEach(function(d) {
+    // mostrar el nivel actual del jugador para esa distancia
+    var clave = catItem + '-' + d.k;
+    var nivelTxt = '';
+    try {
+      var perfil = getPerfil();
+      if (perfil && TABLAS_NIVELES[clave]) {
+        evaluarDescensoTiempo(perfil, clave);
+        var reg = getNivelReg(perfil, clave);
+        nivelTxt = '<span style="color:#6EA8FE;font-size:11px;font-weight:700">Nivel ' + reg.nivel + '</span>';
+      }
+    } catch(e) {}
+    btns += '<div class="dist-opt" data-dk="' + d.k + '" style="background:#0d1117;border:0.5px solid rgba(255,255,255,.08);border-radius:12px;padding:16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;cursor:pointer">' +
+      '<span style="color:#e8e8f0;font-size:15px;font-weight:700">' + d.lbl + '</span>' + nivelTxt + '</div>';
+  });
+  ov.innerHTML = '<div style="background:#1a1f2e;border-radius:24px 24px 0 0;width:100%;max-width:430px;padding:0 0 40px">' +
+    '<div style="display:flex;justify-content:center;padding:12px 0"><div style="width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:2px"></div></div>' +
+    '<div style="padding:0 20px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid rgba(255,255,255,.07)">' +
+    '<div style="color:#e8e8f0;font-size:16px;font-weight:700">' + def.nom + ' · ¿Distancia?</div>' +
+    '<div id="cerrar-dist" style="color:#4a4a6a;font-size:28px;cursor:pointer;padding:4px 8px">x</div></div>' +
+    '<div style="padding:16px 16px 0">' + btns + '</div></div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click', function(e) {
+    if (e.target.id === 'cerrar-dist' || e.target === ov) { ov.remove(); return; }
+    var el = e.target;
+    while (el && el !== ov) {
+      if (el.classList && el.classList.contains('dist-opt')) {
+        var dk = el.getAttribute('data-dk');
+        var clave = catItem + '-' + dk;
+        agregarEjercicioNivel(catItem, def, clave, dk);
+        ov.remove();
+        var menu = document.getElementById('overlay-menu-ej');
+        if (menu) menu.remove();
+        return;
+      }
+      el = el.parentElement;
+    }
+  });
+}
+
+// Menú de palos para Hierros/Drive
+function elegirPaloHierro(mecanica) { // mecanica: 'handicap' o 'record'
+  var prev = document.getElementById('overlay-palo');
+  if (prev) prev.remove();
+  var ov = document.createElement('div');
+  ov.id = 'overlay-palo';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:600;display:flex;align-items:flex-end;justify-content:center';
+  var btns = '';
+  PALOS_HIERROS.forEach(function(p) {
+    // determinar la clave del motor según palo y mecánica
+    var clave = claveHierro(p, mecanica);
+    var nivelTxt = '';
+    try {
+      var perfil = getPerfil();
+      if (perfil && TABLAS_NIVELES[clave]) {
+        evaluarDescensoTiempo(perfil, clave);
+        var reg = getNivelReg(perfil, clave);
+        nivelTxt = '<span style="color:#6EA8FE;font-size:11px;font-weight:700">Nivel ' + reg.nivel + '</span>';
+      }
+    } catch(e) {}
+    btns += '<div class="palo-opt" data-pk="' + p.k + '" style="background:#0d1117;border:0.5px solid rgba(255,255,255,.08);border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;cursor:pointer">' +
+      '<span style="color:#e8e8f0;font-size:14px;font-weight:700">' + p.lbl + '</span>' + nivelTxt + '</div>';
+  });
+  var titMec = (mecanica==='handicap') ? 'Handicap' : 'Récord';
+  ov.innerHTML = '<div style="background:#1a1f2e;border-radius:24px 24px 0 0;width:100%;max-width:430px;max-height:85vh;overflow-y:auto;padding-bottom:40px">' +
+    '<div style="display:flex;justify-content:center;padding:12px 0"><div style="width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:2px"></div></div>' +
+    '<div style="padding:0 20px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid rgba(255,255,255,.07)">' +
+    '<div style="color:#e8e8f0;font-size:16px;font-weight:700">' + titMec + ' · ¿Qué palo?</div>' +
+    '<div id="cerrar-palo" style="color:#4a4a6a;font-size:28px;cursor:pointer;padding:4px 8px">x</div></div>' +
+    '<div style="padding:16px 16px 0">' + btns + '</div></div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click', function(e) {
+    if (e.target.id === 'cerrar-palo' || e.target === ov) { ov.remove(); return; }
+    var el = e.target;
+    while (el && el !== ov) {
+      if (el.classList && el.classList.contains('palo-opt')) {
+        var pk = el.getAttribute('data-pk');
+        var palo = PALOS_HIERROS.find(function(x){ return x.k === pk; });
+        var clave = claveHierro(palo, mecanica);
+        var nom = palo.lbl + ' · ' + titMec;
+        agregarEjercicioNivelDirecto(clave, nom, (palo.grupo==='drive'?'drive':'hierros'), pk, mecanica);
+        ov.remove();
+        var menu = document.getElementById('overlay-menu-ej');
+        if (menu) menu.remove();
+        return;
+      }
+      el = el.parentElement;
+    }
+  });
+}
+
+// Determina la clave del motor para un palo + mecánica
+function claveHierro(palo, mecanica) {
+  if (mecanica === 'record') {
+    return (palo.grupo === 'drive') ? 'drive-record' : 'hierro-record';
+  } else { // handicap
+    if (palo.grupo === 'drive') return 'drive-handicap';
+    return (palo.grupo === 'corto') ? 'hierro-handicap-corto' : 'hierro-handicap-largo';
+  }
+}
+
+
+// Agrega un ejercicio del catálogo nuevo al programa (con clave de motor)
+function agregarEjercicioNivel(catItem, def, clave, distK) {
+  var ov = document.getElementById('overlay-menu-ej');
+  if (ov) ov.remove();
+  var nom = def.nom;
+  if (distK) {
+    var dd = def.distancias.find(function(x){ return x.k === distK; });
+    if (dd) nom = def.nom + ' · ' + dd.lbl;
+  }
+  // Reto Putt necesita configuración especial (medio/largo ya viene en distK)
+  estadoSesion.programa.push({
+    id: 'nv:' + clave,        // prefijo nv: para identificar ejercicios de nivel
+    claveNivel: clave,
+    nom: nom,
+    cat: def.cat,
+    mins: def.mins || (def.cat==='putt'?10:15),
+    instr: def.instr || [],
+    esNuevo: true
+  });
+  renderSesionSync();
+}
+
+// Agrega un ejercicio de hierro/drive directo (clave ya resuelta)
+function agregarEjercicioNivelDirecto(clave, nom, cat, paloK, mecanica) {
+  var ov = document.getElementById('overlay-menu-ej');
+  if (ov) ov.remove();
+  // Si es hierro/madera (no drive) y no tiene distancia guardada, preguntarla primero
+  if (paloK && paloK !== 'drive' && !getDistanciaPalo(paloK)) {
+    var palo = PALOS_HIERROS.find(function(x){ return x.k === paloK; });
+    var paloLbl = palo ? palo.lbl : 'palo';
+    preguntarDistanciaPalo(paloK, paloLbl, function(){
+      _pushEjercicioHierro(clave, nom, cat, paloK, mecanica);
+    });
+    return;
+  }
+  _pushEjercicioHierro(clave, nom, cat, paloK, mecanica);
+}
+
+function _pushEjercicioHierro(clave, nom, cat, paloK, mecanica) {
+  var instr = [];
+  if (paloK && paloK !== 'drive') {
+    var dist = getDistanciaPalo(paloK);
+    if (dist) instr.push('Objetivo a ' + dist + ' yardas');
+    instr.push('Zona buena: ' + textoDispersionPalo(paloK));
+  } else if (paloK === 'drive') {
+    instr.push('Marca una calle de ancho fijo');
+  }
+  estadoSesion.programa.push({
+    id: 'nv:' + clave + (paloK?(':'+paloK):''),
+    claveNivel: clave,
+    paloK: paloK,
+    nom: nom,
+    cat: cat,
+    mins: 15,
+    instr: instr,
+    esNuevo: true
+  });
+  renderSesionSync();
+}
+
+// Helper: obtener la "definición" de un item del programa (nuevo o viejo)
+function getDefItem(item) {
+  if (!item) return null;
+  if (item.esNuevo) {
+    return { nom: item.nom, cat: item.cat, instrucciones: item.instr || [] };
+  }
+  return EJERCICIOS_DEF[item.id] || null;
 }
 
 
@@ -5549,7 +6231,7 @@ function guardarEntrenamientoHistorial() {
     var hechos = [];
     estadoSesion.programa.forEach(function(item, idx) {
       if (estadoSesion.completados[idx] !== null) {
-        var def = EJERCICIOS_DEF[item.id];
+        var def = getDefItem(item);
         hechos.push({ id: item.id, nom: def ? def.nom : item.id, cat: def ? def.cat : '', datos: estadoSesion.completados[idx] });
       }
     });
@@ -5635,7 +6317,7 @@ function renderSesion() {
 
   var cats = {};
   estadoSesion.programa.forEach(function(item, idx) {
-    var def = EJERCICIOS_DEF[item.id];
+    var def = getDefItem(item);
     if (!def) return;
     var c = def.cat;
     if (!cats[c]) cats[c] = { total: 0, hechos: 0 };
@@ -5662,7 +6344,7 @@ function renderSesion() {
   var catC = { putt:'#185FA5', approach:'#854F0B', hierros:'#3B6D11', drive:'#0F6E56', reto:'#412402' };
   var catT = { putt:'#B5D4F4', approach:'#FAC775', hierros:'#C0DD97', drive:'#9FE1CB', reto:'#EF9F27' };
   estadoSesion.programa.forEach(function(item, idx) {
-    var def = EJERCICIOS_DEF[item.id];
+    var def = getDefItem(item);
     if (!def) return;
     var comp = estadoSesion.completados[idx];
     var hecho = comp !== null;
@@ -5712,7 +6394,7 @@ function abrirRegistro(idx) {
   estadoSesion.valTemp = '';
   estadoSesion.reg = { mins: null, ejec: null };
   var item = estadoSesion.programa[idx];
-  var def = EJERCICIOS_DEF[item.id];
+  var def = getDefItem(item);
   if (!def) return;
 
   // OP36 — pantalla especial sin campos
@@ -5741,6 +6423,9 @@ function abrirRegistro(idx) {
     });
   }
   document.getElementById('reg-instrucciones').innerHTML = instHtml;
+
+  // Mostrar nivel actual, meta y pelotitas (sistema de niveles)
+  try { mostrarNivelEnRegistro(item); } catch(e) { var nw=document.getElementById('reg-nivel-wrap'); if(nw) nw.style.display='none'; }
 
   var lbl1 = 'Minutos', lbl2 = 'Ejecuciones';
   document.getElementById('reg-lbl1').textContent = lbl1;
@@ -5946,7 +6631,7 @@ function renderOp36Hoyos() {
       var col = h.res < 0 ? '#b026ff' : h.res === 0 ? '#34d399' : h.res === 1 ? '#fbbf24' : '#f87171';
       var txt = h.res < 0 ? h.res : h.res === 0 ? 'E' : '+' + h.res;
       numBg = 'background:rgba(52,211,153,.18);color:#34d399;opacity:.85';
-      circulo = '<div style="width:36px;height:36px;border-radius:50%;border:2px solid ' + col + ';display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="color:' + col + ';font-size:14px;font-weight:800">' + txt + '</span></div>';
+      circulo = '<div style="width:44px;height:44px;border-radius:50%;border:2.5px solid ' + col + ';display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="color:' + col + ';font-size:17px;font-weight:800">' + txt + '</span></div>';
       // GIR: palabra en verde (sí) o rojo (no)
       var girCol = h.gir === true ? '#1D9E75' : (h.gir === false ? '#E24B4A' : '#4a4a6a');
       var girTxt = (h.gir === true || h.gir === false) ? 'GIR' : '·';
@@ -5962,15 +6647,15 @@ function renderOp36Hoyos() {
               '<div style="color:' + cortoCol + ';font-size:12px;font-weight:700;line-height:1.3">' + cortoTxt + '</div>';
     } else if (h.num === op36Estado.hoyoActual) {
       numBg = 'background:var(--player-main, #1D9E75);color:white;box-shadow:0 0 0 2px #0d1117,0 0 0 4px white';
-      circulo = '<div style="width:36px;height:36px;border-radius:50%;border:2px dashed rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="color:rgba(255,255,255,.3);font-size:14px">+</span></div>';
+      circulo = '<div style="width:44px;height:44px;border-radius:50%;border:2.5px dashed rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="color:rgba(255,255,255,.4);font-size:18px">+</span></div>';
       datos = '<div style="color:#4a4a6a;font-size:10px;line-height:1.3">·</div><div style="color:#4a4a6a;font-size:11px;line-height:1.3">·</div><div style="color:#4a4a6a;font-size:12px;line-height:1.3">·</div>';
     } else {
       numBg = 'background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.2)';
-      circulo = '<div style="width:36px;height:36px;border-radius:50%;border:2px dashed rgba(255,255,255,.15);flex-shrink:0"></div>';
+      circulo = '<div style="width:44px;height:44px;border-radius:50%;border:2.5px dashed rgba(255,255,255,.15);flex-shrink:0"></div>';
       datos = '<div style="color:#4a4a6a;font-size:10px;line-height:1.3">·</div><div style="color:#4a4a6a;font-size:11px;line-height:1.3">·</div><div style="color:#4a4a6a;font-size:12px;line-height:1.3">·</div>';
     }
     html += '<div style="display:flex;flex-direction:column;align-items:center;gap:9px;cursor:pointer" onclick="irOp36Hoyo(' + h.num + ')">' +
-      '<div style="width:100%;min-height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;padding:10px 0;box-sizing:border-box;' + numBg + '">' + h.num + '</div>' +
+      '<div style="width:100%;min-height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;padding:11px 0;box-sizing:border-box;' + numBg + '">' + h.num + '</div>' +
       circulo + datos + '</div>';
   });
   grid.innerHTML = html;
@@ -6145,7 +6830,74 @@ function op36SetGolpes(g, gir, pasos, puttCortoFallado, putts) {
   }, 350);
 }
 
-function irOp36Hoyo(num) { op36Estado.hoyoActual=num; renderOp36Hoyos(); }
+function irOp36Hoyo(num) {
+  op36Estado.hoyoActual = num;
+  renderOp36Hoyos();
+  abrirRegistroManualOp36(num);
+}
+
+// Pop-up para registrar/editar un hoyo del OP27 manualmente (sin voz)
+function abrirRegistroManualOp36(num) {
+  var h = op36Estado.hoyos[num - 1];
+  if (!h) return;
+  var prev = document.getElementById('overlay-reg-op36');
+  if (prev) prev.remove();
+  var ov = document.createElement('div');
+  ov.id = 'overlay-reg-op36';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;padding:24px';
+  ov.onclick = function(e) { if (e.target === ov) ov.remove(); };
+
+  // Opciones de golpes en par 3
+  var opciones = [
+    { g:1, lbl:'Eagle', sub:'1 golpe', col:'#b026ff' },
+    { g:2, lbl:'Birdie', sub:'2 golpes', col:'#b026ff' },
+    { g:3, lbl:'Par', sub:'3 golpes', col:'#34d399' },
+    { g:4, lbl:'Bogey', sub:'4 golpes', col:'#fbbf24' },
+    { g:5, lbl:'Doble', sub:'5 golpes', col:'#f87171' },
+    { g:6, lbl:'+3', sub:'6 golpes', col:'#f87171' }
+  ];
+  var btns = '';
+  opciones.forEach(function(o) {
+    var activo = h.ok && h.golpes === o.g;
+    btns += '<div onclick="registrarGolpesOp36(' + o.g + ')" style="background:' + (activo ? o.col : 'rgba(255,255,255,.06)') + ';border:1.5px solid ' + (activo ? o.col : 'rgba(255,255,255,.12)') + ';border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer">' +
+      '<div style="color:' + (activo ? 'white' : o.col) + ';font-size:16px;font-weight:800;line-height:1">' + o.lbl + '</div>' +
+      '<div style="color:' + (activo ? 'rgba(255,255,255,.8)' : '#888') + ';font-size:10px;margin-top:3px">' + o.sub + '</div>' +
+    '</div>';
+  });
+
+  ov.innerHTML =
+    '<div style="background:#1a1f2e;border-radius:24px;width:100%;max-width:360px;padding:22px">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">' +
+        '<span style="color:#e8e8f0;font-size:18px;font-weight:700">Hoyo ' + num + '</span>' +
+        '<div onclick="document.getElementById(\'overlay-reg-op36\').remove()" style="width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888;font-size:18px">\u00D7</div>' +
+      '</div>' +
+      '<div style="color:#9a9ab0;font-size:12px;margin-bottom:18px">¿Cuántos golpes hiciste? (par 3)</div>' +
+      '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px">' + btns + '</div>' +
+      (h.ok ? '<div onclick="borrarHoyoOp36(' + num + ')" style="text-align:center;margin-top:16px;cursor:pointer"><span style="color:#E24B4A;font-size:13px;font-weight:600">Borrar este hoyo</span></div>' : '') +
+    '</div>';
+  document.body.appendChild(ov);
+}
+
+function registrarGolpesOp36(g) {
+  // Registrar el hoyo con los golpes elegidos. GIR estimado: si metió en 2 o menos
+  // sin putt, asumimos green en regulación según golpes típicos de par 3.
+  var gir = (g <= 3); // llegó al green dentro de regulación (1 golpe en par 3 = green)
+  op36SetGolpes(g, gir, null, null, null);
+  var ov = document.getElementById('overlay-reg-op36');
+  if (ov) ov.remove();
+}
+
+function borrarHoyoOp36(num) {
+  var h = op36Estado.hoyos[num - 1];
+  if (h) {
+    h.ok = false; h.res = null; h.golpes = null; h.gir = null;
+    h.pasosPrimerPutt = null; h.puttCortoFallado = null; h.putts = null;
+  }
+  try { localStorage.setItem('op36_estado', JSON.stringify(op36Estado)); } catch(e) {}
+  renderOp36Hoyos();
+  var ov = document.getElementById('overlay-reg-op36');
+  if (ov) ov.remove();
+}
 
 // ── Distancia y trampa rondas ─────────────────────────────────────────────────
 function renderOp36Retos() {
@@ -6891,6 +7643,8 @@ function cargarPerfilesLocal() {
           if (g.nom) p.nom = g.nom;
           if (g.version) p.version = g.version;
           if (g.nivelPutt !== undefined) p.nivelPutt = g.nivelPutt;
+          if (g.niveles !== undefined) p.niveles = g.niveles;
+          if (g.distanciasPalos !== undefined) p.distanciasPalos = g.distanciasPalos;
         }
       });
     }
@@ -7078,7 +7832,7 @@ function renderHoyos(){
     const hcpHoyos = window.T_hcpPorHoyo ? (window.T_hcpPorHoyo[h.num]||0) : 0;
     const estrella = hcpHoyos>=2?'★★':hcpHoyos===1?'★':'';
     const estrellaHtml = estrella ? `<div style="font-size:10px;color:#fbbf24;line-height:1;text-align:center;margin-top:0">${estrella}</div>` : '';
-    const circulo=`<div style="margin-top:2px;display:flex;flex-direction:column;align-items:center;gap:0"><div onclick="event.stopPropagation();abrirSelectorScore(${h.num})" style="width:36px;height:36px;border-radius:50%;border:2px ${cirDash} ${cirBorde};display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0"><span style="font-size:14px;font-weight:800;color:${cirColor}">${cirTxt}</span></div>${estrellaHtml}</div>`;
+    const circulo=`<div style="margin-top:2px;display:flex;flex-direction:column;align-items:center;gap:0"><div onclick="event.stopPropagation();abrirSelectorScore(${h.num})" style="width:44px;height:44px;border-radius:50%;border:2.5px ${cirDash} ${cirBorde};display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0"><span style="font-size:17px;font-weight:800;color:${cirColor}">${cirTxt}</span></div>${estrellaHtml}</div>`;
     const d=document.createElement('div'); d.className='hoyo-btn'; d.onclick=()=>cambiarHoyo(h.num);
     d.innerHTML=`<div class="hoyo-num ${cn}">${h.num}</div>${circulo}`;
     c.appendChild(d);
