@@ -1043,6 +1043,7 @@
         <div id="reg-nivel-pelotitas" style="display:flex;gap:3px;flex:1"></div>
         <span id="reg-nivel-prog" style="color:#6EA8FE;font-size:10px;font-weight:600"></span>
       </div>
+      <div id="reg-nivel-tabla-btn"></div>
     </div>
 
     <!-- Récord -->
@@ -2322,7 +2323,7 @@
    (insertado por sesión de programación; no romper)
    ============================================================ */
 var NIVEL_MIN=1, NIVEL_MAX=5;
-var SESIONES_PARA_SUBIR=10, VENTANA_SESIONES=40;
+var SESIONES_PARA_SUBIR=10, VENTANA_SESIONES=40, SESIONES_DOMINIO=5, VECES_PARA_VALIDAR=1;
 var DIAS_MANTENER=30, DIAS_SEGUNDO_DESCENSO=90;
 var REND_VENTANA=25, REND_MINIMO=5;  // de últimas 25, al menos 5 deben cumplir el nivel
 var NIV_DIA_MS=86400000;
@@ -2360,8 +2361,23 @@ function registrarSesion(perfil, clave, nivelCumplido, fechaISO){
     var cuenta=ultimas.filter(function(s){return s.nivelCumplido>=nv;}).length;
     if(cuenta>=SESIONES_PARA_SUBIR){ nuevo=nv; break; }
   }
+
+  // ASCENSO RÁPIDO POR DOMINIO: 5 sesiones seguidas cumpliendo por encima del nivel actual.
+  // Sube directo al nivel que demostró en TODAS esas 5 (el mínimo de las 5), si supera su nivel.
+  if(reg.sesiones.length >= SESIONES_DOMINIO){
+    var ult5 = reg.sesiones.slice(-SESIONES_DOMINIO);
+    var minCumplido = NIVEL_MAX;
+    ult5.forEach(function(s){ if(s.nivelCumplido < minCumplido) minCumplido = s.nivelCumplido; });
+    // minCumplido es el nivel que se cumplió en las 5 sesiones (todas >= minCumplido)
+    if(minCumplido > nuevo) nuevo = minCumplido;
+  }
+
   if(nuevo>reg.nivel){
-    reg.nivel=nuevo; reg.nivelDesde=f; reg.ultimoDescenso=null; reg.sesionesDesdeRendimiento=0;
+    // Subir SOLO un nivel a la vez (de 1 en 1), aunque el dominio sugiera más
+    reg.nivel=reg.nivel+1;
+    reg.nivelDesde=f; reg.ultimoDescenso=null; reg.sesionesDesdeRendimiento=0;
+    // Reiniciar el historial de sesiones: el conteo para el siguiente nivel empieza de cero
+    reg.sesiones=[];
     return {subio:true, nivel:reg.nivel, nivelAnterior:nivelAnterior};
   }
   return {subio:false, nivel:reg.nivel, nivelAnterior:nivelAnterior};
@@ -2461,20 +2477,20 @@ function nivelCumplido(clave, valor){
 // Caso especial: ejercicios tipo 'estaciones' (escalera+tobogán lineal).
 // El usuario SIEMPRE juega en su nivel actual y mete cuántas VECES completó el recorrido.
 // Si alcanza el objetivo de veces (obj[nivelActual]), respalda su nivel; sube de 1 en 1.
+// REGISTRADOR UNIVERSAL: el jugador SIEMPRE juega en su nivel actual y anota
+// cuántas VECES completó el ejercicio. Con VECES_PARA_VALIDAR veces, la sesión
+// respalda su nivel. Sube de 1 en 1 (regla normal + dominio). Sin saltos de varios niveles.
 function registrarEstaciones(perfil, clave, vecesCompletadas, fechaISO){
-  var t = TABLAS_NIVELES[clave];
   var reg = getNivelReg(perfil, clave);
   var nivelActual = reg.nivel;
-  var meta = (t.obj && t.obj[nivelActual]!==undefined) ? t.obj[nivelActual] : 2;
-  // Si cumplió la meta de veces EN SU NIVEL, la sesión respalda su nivel actual (cuenta como nivelCumplido = nivelActual)
-  var nivCump = (vecesCompletadas >= meta) ? nivelActual : (nivelActual>1?nivelActual-1:0);
-  // registrarSesion con tope: para subir de 1 en 1, marcamos como cumplido SOLO el nivel actual
-  // (el motor sube cuando junta 10 sesiones que cumplan el nivel siguiente; aquí el "siguiente" se cumple
-  //  cuando el jugador, ya en nivel actual, sigue completando — su nivelCumplido=nivelActual permite
-  //  que al subir, el nuevo nivel pida la nueva meta). Para salto de 1 en 1 usamos nivelActual como tope.
-  var res = registrarSesion(perfil, clave, nivCump>=nivelActual?nivelActual+1:nivCump, fechaISO);
+  var meta = VECES_PARA_VALIDAR; // universal: 1 vez valida la sesión
+  // Si completó la meta de veces en su nivel, la sesión cuenta como cumplir el nivel SIGUIENTE
+  // (eso permite que, al juntar sesiones, suba de 1 en 1). Si no, no respalda nada.
+  var cumplio = (vecesCompletadas >= meta);
+  var nivelParaMotor = cumplio ? (nivelActual + 1) : (nivelActual > NIVEL_MIN ? nivelActual - 1 : 0);
+  var res = registrarSesion(perfil, clave, nivelParaMotor, fechaISO);
   var rend = evaluarRendimiento(perfil, clave);
-  return { nivelCumplido:nivCump, nivelActual:res.nivel, subio:res.subio, nivelAnterior:res.nivelAnterior, bajoPorRendimiento:rend.bajo||false };
+  return { nivelCumplido: cumplio?nivelActual:0, nivelActual:res.nivel, subio:res.subio, nivelAnterior:res.nivelAnterior, bajoPorRendimiento:rend.bajo||false };
 }
 
 function registrarResultadoEjercicio(perfil, clave, valor, fechaISO){
@@ -2529,9 +2545,9 @@ function conectarNivelClave(clave, ejecuciones){
   if (!perfil) return null;
   var t = TABLAS_NIVELES[clave];
   if (!t) return null;
-  var res;
-  if (t.tipo === 'estaciones'){ res = registrarEstaciones(perfil, clave, ejecuciones); }
-  else { res = registrarResultadoEjercicio(perfil, clave, ejecuciones); }
+  // UNIVERSAL: todos los ejercicios se juegan en el nivel actual y se registra
+  // cuántas VECES se completó. registrarEstaciones valida con 1 vez y sube de 1 en 1.
+  var res = registrarEstaciones(perfil, clave, ejecuciones);
   guardarPerfilesLocal();
   return res;
 }
@@ -2650,6 +2666,118 @@ function mostrarNivelEnRegistro(item) {
     pelWrap.innerHTML = pel;
     if (progTxt) progTxt.textContent = prog.sesionesNivelSup + '/10';
   }
+
+  // Pastilla "Tabla de niveles" - guardar clave y item actuales para el pop-up
+  window._tablaNivelClave = clave;
+  window._tablaNivelItem = item;
+  var pastWrap = document.getElementById('reg-nivel-tabla-btn');
+  if (pastWrap) {
+    pastWrap.innerHTML = '<div onclick="mostrarTablaNiveles()" style="display:inline-flex;align-items:center;gap:7px;background:rgba(110,168,254,.12);border:0.5px solid rgba(110,168,254,.35);border-radius:10px;padding:8px 13px;color:#6EA8FE;font-size:13px;font-weight:700;cursor:pointer;margin-top:10px">' +
+      '<span style="font-size:15px">📊</span> Tabla de niveles</div>';
+  }
+}
+
+// Abre un pop-up con la tabla de los 5 niveles del ejercicio/distancia actual
+function mostrarTablaNiveles() {
+  var clave = window._tablaNivelClave;
+  var item = window._tablaNivelItem;
+  if (!clave || !TABLAS_NIVELES[clave]) return;
+  var perfil = getPerfil();
+  var nivelActual = perfil ? getNivelReg(perfil, clave).nivel : 1;
+  var t = TABLAS_NIVELES[clave];
+
+  // Nombre del ejercicio para el título
+  var nomEj = (item && item.nom) ? item.nom : 'Ejercicio';
+
+  var filas = '';
+  for (var nv = 1; nv <= 5; nv++) {
+    var esActual = (nv === nivelActual);
+    var metaTxt = textoMetaNivel(clave, nv, item);
+    // quitar el prefijo "Nivel N: " porque el número ya va en su columna
+    metaTxt = metaTxt.replace(/^Nivel \d+: /, '').replace(/^Meta nivel \d+: /, '');
+    var bg = esActual ? 'rgba(110,168,254,.15)' : 'transparent';
+    var bordeIzq = esActual ? '3px solid #6EA8FE' : '3px solid transparent';
+    var colNum = esActual ? '#6EA8FE' : '#9a9ab0';
+    filas += '<div style="display:flex;align-items:flex-start;gap:12px;padding:12px 14px;background:' + bg + ';border-left:' + bordeIzq + ';border-radius:0 8px 8px 0;margin-bottom:4px">' +
+      '<div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0;min-width:34px">' +
+        '<span style="color:' + colNum + ';font-size:20px;font-weight:800">' + nv + '</span>' +
+        (esActual ? '<span style="color:#6EA8FE;font-size:8px;font-weight:700;letter-spacing:.3px">AQUÍ</span>' : '') +
+      '</div>' +
+      '<div style="flex:1;color:#e8e8f0;font-size:13px;line-height:1.4;padding-top:2px">' + metaTxt + '</div>' +
+    '</div>';
+  }
+
+  var prev = document.getElementById('overlay-tabla-niveles');
+  if (prev) prev.remove();
+  var ov = document.createElement('div');
+  ov.id = 'overlay-tabla-niveles';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:800;display:flex;align-items:flex-end;justify-content:center';
+  ov.innerHTML = '<div style="background:#1a1f2e;border-radius:24px 24px 0 0;width:100%;max-width:430px;max-height:85vh;overflow-y:auto;padding-bottom:40px">' +
+    '<div style="display:flex;justify-content:center;padding:12px 0"><div style="width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:2px"></div></div>' +
+    '<div style="padding:0 20px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid rgba(255,255,255,.07)">' +
+      '<div><div style="color:#e8e8f0;font-size:16px;font-weight:700">Tabla de niveles</div><div style="color:#6a6a85;font-size:12px;margin-top:1px">' + nomEj + '</div></div>' +
+      '<div id="cerrar-tabla-niv" style="color:#4a4a6a;font-size:28px;cursor:pointer;padding:4px 8px">×</div>' +
+    '</div>' +
+    '<div style="padding:14px 16px 0">' + filas + '</div>' +
+    '<div style="padding:14px 20px 0;color:#6a6a85;font-size:11px;line-height:1.5;text-align:center">El nivel 5 equivale a un golfista scratch (handicap 0). Sube cumpliendo tu nivel en varias sesiones.</div>' +
+    '</div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click', function(e) {
+    if (e.target.id === 'cerrar-tabla-niv' || e.target === ov) ov.remove();
+  });
+}
+
+// Devuelve el número GRANDE del objetivo y su etiqueta, según el tipo de ejercicio y nivel.
+// Es lo que se muestra en rojo grande para que el jugador vea su reto al instante.
+function objetivoGrande(clave, nivel) {
+  var t = TABLAS_NIVELES[clave];
+  if (!t) return null;
+  var o = t.obj ? t.obj[nivel] : null;
+  switch(t.tipo) {
+    case 'tees': return { num: String(o), lbl: 'tees' };
+    case 'pos': return { num: String(o), lbl: 'posiciones' };
+    case 'suma': return { num: '+' + o, lbl: 'puntos' };
+    case 'deN': return { num: o + ' de ' + t.n, lbl: 'metidas' };
+    case 'racha': return { num: String(o), lbl: 'seguidas' };
+    case 'corridas': return { num: String(o), lbl: 'corridas' };
+    case 'pares-ronda': return { num: String(o), lbl: 'pares' };
+    case 'ejec-ud': return { num: String(o), lbl: 'up & down' };
+    case 'ejec-margen':
+      var em = t.obj[nivel];
+      return { num: String(em.margen) + ' yd', lbl: 'margen' };
+    case 'estaciones': return { num: '4·6·8', lbl: 'pies' };
+    case 'vueltas': return { num: 'Ver', lbl: 'metas' };
+    case 'racha-hereda': return { num: '★', lbl: 'racha' };
+    case 'hoyos-ejec':
+      var h = t.hoyos ? t.hoyos[nivel] : null;
+      return h ? { num: String(h), lbl: 'hoyos' } : null;
+    default: return null;
+  }
+}
+
+// Devuelve qué métrica se le pregunta al usuario según el tipo de ejercicio
+function etiquetaMetrica(tipo) {
+  return 'Ejecuciones';
+}
+
+// Explicación (última instrucción) de qué cuenta como 1 ejecución, según el tipo
+function explicacionMetrica(tipo) {
+  switch(tipo) {
+    case 'tees': return 'Juega en tu nivel. Al final anota cuántas veces lograste el tobogán completo (cada vuelta completa sin fallar = 1 ejecución)';
+    case 'pos': return 'Juega en tu nivel. Al final anota cuántas veces completaste la escalera (cada escalera completa = 1 ejecución)';
+    case 'suma': return 'Juega en tu nivel. Al final anota cuántas veces llegaste a la suma meta (cada suma completa = 1 ejecución)';
+    case 'estaciones': return 'Juega en tu nivel. Al final anota cuántos recorridos completos lograste (cada recorrido completo = 1 ejecución)';
+    case 'vueltas': return 'Juega en tu nivel. Al final anota cuántas vueltas completas lograste (cada vuelta completa = 1 ejecución)';
+    case 'corridas': return 'Juega en tu nivel. Al final anota cuántas corridas completas lograste (cada corrida completa = 1 ejecución)';
+    case 'pares-ronda': return 'Juega en tu nivel. Al final anota cuántas veces lograste la meta de pares (cada meta lograda = 1 ejecución)';
+    case 'ejec-margen': return 'Juega en tu nivel. Al final anota cuántas veces lo lograste dentro del margen (cada logro = 1 ejecución)';
+    case 'ejec-ud': return 'Juega en tu nivel. Al final anota cuántas veces lograste los up&down (cada logro = 1 ejecución)';
+    case 'hoyos-ejec': return 'Juega en tu nivel. Al final anota cuántas veces lograste la meta de hoyos (cada logro = 1 ejecución)';
+    case 'deN': return 'Juega en tu nivel. Al final anota cuántas veces metiste las que pide tu nivel (cada logro = 1 ejecución)';
+    case 'racha': return 'Juega en tu nivel. Al final anota cuántas veces lograste la racha meta (cada racha lograda = 1 ejecución)';
+    case 'racha-hereda': return 'Juega en tu nivel. Al final anota cuántas veces lograste la racha (cada racha lograda = 1 ejecución)';
+    default: return 'Juega en tu nivel. Al final anota cuántas veces lo completaste (cada logro = 1 ejecución)';
+  }
 }
 
 // Devuelve el texto de la meta de un nivel para un ejercicio (qué tiene que lograr)
@@ -2732,6 +2860,25 @@ function celebrarSubidaNivel(nivelNuevo, callback) {
 }
 
 // Obtiene la distancia guardada de un palo (o null si no la ha configurado)
+// Edita la distancia de un palo ya guardado (botón editar en las instrucciones)
+function editarDistanciaPalo(paloK) {
+  var palo = PALOS_HIERROS.find(function(x){ return x.k === paloK; });
+  var paloLbl = palo ? palo.lbl : 'palo';
+  preguntarDistanciaPalo(paloK, paloLbl, function(nuevaDist){
+    // Actualizar las instrucciones del item activo en el programa y re-renderizar
+    var idx = estadoSesion.ejActivo;
+    var item = estadoSesion.programa[idx];
+    if (item && item.paloK === paloK) {
+      var instr = [];
+      instr.push('Objetivo a ' + nuevaDist + ' yardas');
+      instr.push('Zona buena: ' + textoDispersionPalo(paloK));
+      item.instr = instr;
+      guardarEstadoSesion();
+      abrirRegistro(idx); // re-pintar la pantalla con la nueva distancia
+    }
+  });
+}
+
 function getDistanciaPalo(paloK) {
   var perfil = getPerfil();
   if (!perfil) return null;
@@ -5804,6 +5951,7 @@ function agregarEjercicioNivel(catItem, def, clave, distK) {
     esNuevo: true
   });
   renderSesionSync();
+  guardarEstadoSesion();
 }
 
 // Agrega un ejercicio de hierro/drive directo (clave ya resuelta)
@@ -5842,6 +5990,7 @@ function _pushEjercicioHierro(clave, nom, cat, paloK, mecanica) {
     esNuevo: true
   });
   renderSesionSync();
+  guardarEstadoSesion();
 }
 
 // Helper: obtener la "definición" de un item del programa (nuevo o viejo)
@@ -5949,6 +6098,7 @@ function agregarEjercicioAlPrograma(id) {
   estadoSesion.programa.splice(lastReto >= 0 ? lastReto : estadoSesion.programa.length, 0,
     { id: id, mins: (id==='reloj4'||id==='reloj6'||id==='reloj8') ? 10 : 15 });
   renderSesionSync();
+  guardarEstadoSesion();
 }
 
 // ── CONFIG OP36 ───────────────────────────────────────────────────────────────
@@ -6438,14 +6588,40 @@ function abrirRegistro(idx) {
   var instHtml = '';
   if (def.instrucciones) {
     instHtml += '<div style="color:#1D9E75;font-size:11px;font-weight:700;letter-spacing:.6px;margin-bottom:10px">COMO SE JUEGA</div>';
-    def.instrucciones.forEach(function(ins, i) {
+    // Las instrucciones normales (numeradas)
+    var instrucciones = def.instrucciones.slice();
+    instrucciones.forEach(function(ins, i) {
       ins = textoNivelReto(ins);
-      var bg = i === def.instrucciones.length-1 ? '#0F6E56' : '#185FA5';
-      var tc = i === def.instrucciones.length-1 ? '#9FE1CB' : '#B5D4F4';
+      // Si es la instrucción de "Objetivo a X yardas" de un hierro, agregar botón editar a la derecha
+      var esObjetivoDist = (item.paloK && item.paloK !== 'drive' && ins.indexOf('Objetivo a') === 0);
       instHtml += '<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px">';
-      instHtml += '<div style="width:22px;height:22px;border-radius:6px;background:'+bg+';display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="color:'+tc+';font-size:11px;font-weight:700">'+(i+1)+'</span></div>';
-      instHtml += '<span style="color:#e8e8f0;font-size:13px;line-height:1.4">'+ins+'</span></div>';
+      instHtml += '<div style="width:22px;height:22px;border-radius:6px;background:#185FA5;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="color:#B5D4F4;font-size:11px;font-weight:700">'+(i+1)+'</span></div>';
+      if (esObjetivoDist) {
+        instHtml += '<span style="color:#e8e8f0;font-size:13px;line-height:1.4;flex:1">'+ins+'</span>';
+        instHtml += '<span onclick="editarDistanciaPalo(\''+item.paloK+'\')" style="color:#6EA8FE;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;display:flex;align-items:center;gap:3px"><span style="font-size:12px">✎</span>editar</span>';
+      } else {
+        instHtml += '<span style="color:#e8e8f0;font-size:13px;line-height:1.4">'+ins+'</span>';
+      }
+      instHtml += '</div>';
     });
+    // ÚLTIMO PUNTO: el OBJETIVO del nivel actual, en un renglón continuo con el número en rojo grande
+    try {
+      var claveObj = null;
+      if (item.esNuevo && item.claveNivel) claveObj = item.claveNivel;
+      else if (MAPA_EJERCICIO_NIVEL[item.id]) claveObj = MAPA_EJERCICIO_NIVEL[item.id];
+      if (claveObj && TABLAS_NIVELES[claveObj]) {
+        var perfilObj = getPerfil();
+        var nivelObj = perfilObj ? getNivelReg(perfilObj, claveObj).nivel : 1;
+        var og = objetivoGrande(claveObj, nivelObj);
+        var numPunto = instrucciones.length + 1;
+        if (og) {
+          instHtml += '<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">';
+          instHtml += '<div style="width:22px;height:22px;border-radius:6px;background:#E24B4A;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="color:#fff;font-size:11px;font-weight:700">'+numPunto+'</span></div>';
+          instHtml += '<div style="color:#e8e8f0;font-size:13px;line-height:1.3;display:flex;align-items:baseline;gap:7px;flex-wrap:wrap"><span style="color:#E24B4A;font-weight:700">Tu objetivo:</span><span style="color:#E24B4A;font-size:32px;font-weight:800;line-height:1">'+og.num+'</span><span style="color:#E24B4A;font-size:14px;font-weight:600">'+og.lbl+'</span></div>';
+          instHtml += '</div>';
+        }
+      }
+    } catch(e) {}
   }
   document.getElementById('reg-instrucciones').innerHTML = instHtml;
 
@@ -6453,6 +6629,15 @@ function abrirRegistro(idx) {
   try { mostrarNivelEnRegistro(item); } catch(e) { var nw=document.getElementById('reg-nivel-wrap'); if(nw) nw.style.display='none'; }
 
   var lbl1 = 'Minutos', lbl2 = 'Ejecuciones';
+  // Si el ejercicio tiene nivel, la etiqueta de la métrica depende del tipo de ejercicio
+  try {
+    var claveLbl = null;
+    if (item.esNuevo && item.claveNivel) claveLbl = item.claveNivel;
+    else if (MAPA_EJERCICIO_NIVEL[item.id]) claveLbl = MAPA_EJERCICIO_NIVEL[item.id];
+    if (claveLbl && TABLAS_NIVELES[claveLbl]) {
+      lbl2 = etiquetaMetrica(TABLAS_NIVELES[claveLbl].tipo);
+    }
+  } catch(e) {}
   document.getElementById('reg-lbl1').textContent = lbl1;
   document.getElementById('reg-lbl2').textContent = lbl2;
   resetCampo(1); resetCampo(2);
