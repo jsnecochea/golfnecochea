@@ -2439,6 +2439,9 @@ var TABLAS_NIVELES = {
   'circulo-record-4': { tipo:'racha', min:10, obj:{1:5,2:10,3:15,4:20,5:25} },
   'circulo-record-6': { tipo:'racha', min:10, obj:{1:3,2:6,3:9,4:12,5:15} },
   'circulo-record-8': { tipo:'racha', min:10, obj:{1:2,2:4,3:6,4:8,5:10} },
+  'circulo-velocidades-4': { tipo:'metidas', total:12, obj:{1:6,2:8,3:10,4:11,5:12} },
+  'circulo-velocidades-6': { tipo:'metidas', total:12, obj:{1:5,2:7,3:9,4:10,5:11} },
+  'circulo-velocidades-8': { tipo:'metidas', total:12, obj:{1:4,2:6,3:8,4:9,5:10} },
   'lineal-esctob-corto': { tipo:'estaciones', veces:2, metas:{ 1:[3,2,1], 2:[4,3,1], 3:[4,3,2], 4:[4,4,2], 5:[4,4,3] }, obj:{1:2,2:2,3:2,4:2,5:2} },
   'medio-escalera': { tipo:'vueltas', obj:{ 1:[1,1,0,0], 2:[1,1,1,1], 3:[2,2,1,1], 4:[2,2,2,1], 5:[3,3,2,2] } },
   'medio-tobogan': { tipo:'corridas', min:15, obj:{1:1,2:2,3:3,4:4,5:5} },
@@ -2592,6 +2595,9 @@ var CATALOGO_NUEVO = {
   'circulo-record': { nom:'Círculo Récord', cat:'putt', seccion:'Putt corto', mins:10,
     distancias:[{lbl:'4 pies',k:'4'},{lbl:'6 pies',k:'6'},{lbl:'8 pies',k:'8'}],
     instr:['Pon 4 tees a la distancia indicada','Mete seguidas contando tu racha','Al fallar, cambia de tee y reinicia','Anota tu mejor racha en 10 min'] },
+  'circulo-velocidades': { nom:'Círculo Velocidades', cat:'putt', seccion:'Putt corto', mins:10,
+    distancias:[{lbl:'4 pies',k:'4'},{lbl:'6 pies',k:'6'},{lbl:'8 pies',k:'8'}],
+    instr:['Pon 4 tees en círculo a la distancia indicada','En cada tee tira 3 bolas (12 en total) con 3 velocidades:','1) que apenas llegue al hoyo, 2) firme contra la parte de atrás, 3) velocidad normal cómoda','Controla línea y velocidad. Anota tu mejor resultado de cuántas metiste de 12'] },
   'lineal-esctob-corto': { nom:'Escalera + Tobogán', cat:'putt', seccion:'Putt corto', mins:10,
     instr:['3 estaciones: 4, 6 y 8 pies','En cada estación mete las que pide tu nivel para avanzar','Si fallas, vuelves a la primera estación','Completa el recorrido 2 veces (ver objetivo abajo)'] },
   // ---- PUTT MEDIO ----
@@ -2762,6 +2768,7 @@ function objetivoGrande(clave, nivel) {
     case 'pos': return { num: String(o), lbl: 'posiciones' };
     case 'suma': return { num: '+' + o, lbl: 'puntos' };
     case 'deN': return { num: o + ' de ' + t.n, lbl: 'metidas' };
+    case 'metidas': return { num: o + ' de ' + t.total, lbl: 'metidas' };
     case 'racha': return { num: String(o), lbl: 'seguidas' };
     case 'corridas': return { num: String(o), lbl: 'corridas' };
     case 'pares-ronda': return { num: String(o), lbl: 'pares' };
@@ -2808,6 +2815,7 @@ function explicacionMetrica(tipo) {
     case 'ejec-ud': return 'Juega en tu nivel. Al final anota cuántas veces lograste los up&down (cada logro = 1 ejecución)';
     case 'hoyos-ejec': return 'Juega en tu nivel. Al final anota cuántas veces lograste la meta de hoyos (cada logro = 1 ejecución)';
     case 'deN': return 'Juega en tu nivel. Al final anota cuántas veces metiste las que pide tu nivel (cada logro = 1 ejecución)';
+    case 'metidas': return 'Tira las 12 bolas (4 tees × 3 velocidades) varias veces en 10 min. Anota tu MEJOR resultado: cuántas metiste de 12';
     case 'racha': return 'Juega en tu nivel. Al final anota cuántas veces lograste la racha meta (cada racha lograda = 1 ejecución)';
     case 'racha-hereda': return 'Juega en tu nivel. Al final anota cuántas veces lograste la racha (cada racha lograda = 1 ejecución)';
     default: return 'Juega en tu nivel. Al final anota cuántas veces lo completaste (cada logro = 1 ejecución)';
@@ -2828,6 +2836,7 @@ function textoMetaNivel(clave, nivel, item) {
     case 'pos': return 'Nivel ' + nivel + ': pon <strong>' + o + ' tees</strong> a ' + distPies + '. Mete <strong>' + t.seguidas + ' seguidas</strong> en cada uno antes de avanzar';
     case 'suma': return 'Nivel ' + nivel + ': pon <strong>4 tees</strong> a ' + distPies + '. +1 si metes, −1 si fallas. Llega a <strong>+' + o + '</strong>';
     case 'deN': return 'Nivel ' + nivel + ': tira <strong>' + t.n + ' bolas</strong>' + (distPies?(' desde ' + distPies):'') + '. Mete <strong>' + o + ' de ' + t.n + '</strong>';
+    case 'metidas': return 'Nivel ' + nivel + ': <strong>4 tees</strong>' + (distPies?(' a ' + distPies):'') + ', 3 bolas por tee con 3 velocidades (12 en total). Mete <strong>' + o + ' de ' + t.total + '</strong>';
     case 'racha': return 'Nivel ' + nivel + ': pon <strong>4 tees</strong>' + (distPies?(' a ' + distPies):'') + '. Racha de aciertos, cambia de tee al fallar. Meta: <strong>' + o + ' seguidas</strong>';
     case 'corridas': return 'Nivel ' + nivel + ': <strong>' + o + ' corridas</strong> en 15 min';
     case 'pares-ronda': return 'Nivel ' + nivel + ': <strong>' + o + ' pares</strong> en tu mejor ronda';
@@ -2987,6 +2996,7 @@ var PERFILES = [
   { id: 2, nom: 'Salvador',        iniciales: 'SN', color: '#1D9E75', hcp: null, objetivo: null, version: 'pro', nivelPutt: 3 },
   { id: 3, nom: 'Constanza',       iniciales: 'CO', color: '#7F77DD', hcp: null, objetivo: null, version: 'pro', nivelPutt: 3 },
   { id: 4, nom: 'Elisa',           iniciales: 'EL', color: '#D4537E', hcp: null, objetivo: null, version: 'pro', nivelPutt: 3 },
+  { id: 5, nom: 'Prueba',          iniciales: 'PR', color: '#EF9F27', hcp: null, objetivo: null, version: 'pro', nivelPutt: 3 },
 ];
 
 var perfilActivo = 1;
@@ -3052,7 +3062,7 @@ var PROGRAMAS = {
 
 // Catálogo de ejercicios disponibles por categoría (ids reales del menú)
 var BLOQUE_EJERCICIOS = {
-  puttCorto: ['circulo-tobogan','circulo-escalera','circulo-suma','circulo-handicap','circulo-record','lineal-esctob-corto'], // 4-6 pasos, 10 min
+  puttCorto: ['circulo-tobogan','circulo-escalera','circulo-suma','circulo-handicap','circulo-record','circulo-velocidades','lineal-esctob-corto'], // 4-6 pasos, 10 min
   puttMedioLargo: ['medio-escalera','medio-tobogan','largo-esctob'], // putt medio/largo, 10-15 min
   approach: ['approach-escalera','approach-tobogan','approach-record','approach-bunker'], // 15 min (sin ud2d3 que es 30)
   hierros: ['handicap','record'], // 15 min
@@ -4471,14 +4481,13 @@ function getPerfil() {
 
 // ════════ GENERADOR DE DATOS DE PRUEBA ════════
 // Llena los 4 perfiles con estadísticas realistas para revisar todas las secciones.
-function generarDatosPrueba() {
+function generarDatosPrueba(silencioso) {
   try {
-    // Perfiles con su "nivel de juego" para hacer datos coherentes
+    // Perfiles con su "nivel de juego" para hacer datos coherentes.
+    // SOLO el perfil 5 (Prueba) recibe datos. Los perfiles 1-4 (reales) quedan en ceros
+    // para que la familia empiece a llenar su historial de verdad desde cero.
     var perfilesConfig = [
-      { id: 1, hcp: 8,  drives: 0.62, gir: 0.45 },   // Salvador papá
-      { id: 2, hcp: 12, drives: 0.55, gir: 0.38 },   // Salvador
-      { id: 3, hcp: 20, drives: 0.42, gir: 0.25 },   // Constanza
-      { id: 4, hcp: 25, drives: 0.35, gir: 0.18 }    // Elisa
+      { id: 5, hcp: 12, drives: 0.55, gir: 0.38 }    // Perfil de prueba
     ];
 
     function rnd(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
@@ -4557,6 +4566,9 @@ function generarDatosPrueba() {
         { id:'nv:circulo-suma-6', nom:'Círculo Suma · 6 pies', cat:'putt', claveNivel:'circulo-suma-6' },
         { id:'nv:circulo-handicap-4', nom:'Círculo Handicap · 4 pies', cat:'putt', claveNivel:'circulo-handicap-4' },
         { id:'nv:circulo-record-4', nom:'Círculo Récord · 4 pies', cat:'putt', claveNivel:'circulo-record-4' },
+        { id:'nv:circulo-velocidades-4', nom:'Círculo Velocidades · 4 pies', cat:'putt', claveNivel:'circulo-velocidades-4' },
+        { id:'nv:circulo-velocidades-6', nom:'Círculo Velocidades · 6 pies', cat:'putt', claveNivel:'circulo-velocidades-6' },
+        { id:'nv:circulo-velocidades-8', nom:'Círculo Velocidades · 8 pies', cat:'putt', claveNivel:'circulo-velocidades-8' },
         { id:'nv:medio-escalera', nom:'Escalera Putt Medio', cat:'putt', claveNivel:'medio-escalera' },
         { id:'nv:medio-tobogan', nom:'Tobogán Putt Medio', cat:'putt', claveNivel:'medio-tobogan' },
         { id:'nv:largo-esctob', nom:'Escalera + Tobogán Largo', cat:'putt', claveNivel:'largo-esctob' },
@@ -4730,7 +4742,7 @@ function generarDatosPrueba() {
         // niveles: mejores jugadores = niveles más altos
         var nivelBase = cfg.hcp <= 8 ? 4 : cfg.hcp <= 12 ? 3 : cfg.hcp <= 20 ? 2 : 1;
         // Claves CON progresión de distancia (círculos): 4 pies va arriba de 6, y 6 arriba de 8
-        var circulos = ['circulo-tobogan','circulo-escalera','circulo-suma','circulo-handicap','circulo-record'];
+        var circulos = ['circulo-tobogan','circulo-escalera','circulo-suma','circulo-handicap','circulo-record','circulo-velocidades'];
         circulos.forEach(function(base) {
           var n4 = Math.max(1, Math.min(5, nivelBase + rnd(-1, 1)));
           var n6 = Math.max(1, Math.min(n4, n4 - rnd(0, 1)));      // 6 pies <= 4 pies
@@ -4775,19 +4787,21 @@ function generarDatosPrueba() {
     });
 
     guardarPerfilesLocal();
+    if (silencioso) return; // arranque automático: sin alert ni reload
     var ejSem = calcStatsEjercicios('sem');
-    alert('✅ Datos generados para los 4 perfiles.\n\nEsta semana (perfil actual): ' + ejSem.totalN + ' ejercicios en ' + ejSem.nDias + ' día(s).\n\nRevisa estadísticas, historial, niveles y OP27.');
+    alert('✅ Datos generados en el perfil "Prueba".\n\nSelecciona el perfil Prueba para ver todas las secciones llenas. Tus perfiles reales quedan en ceros.');
     location.reload();
   } catch(err) {
-    alert('Error generando datos: ' + err.message);
+    if (!silencioso) alert('Error generando datos: ' + err.message);
   }
 }
 
-// Borra TODOS los datos de prueba (deja la app limpia)
-// Menú que pregunta QUÉ borrar: todo, o solo los datos ficticios (22 jun 2026 y antes)
+// Menú que pregunta QUÉ borrar — SOLO afecta al perfil en el que estás ingresado
 function menuBorrarDatos() {
   var prev = document.getElementById('overlay-opciones-borrado');
   if (prev) prev.remove();
+  var p = getPerfil();
+  var nombrePerfil = p ? p.nom : 'este perfil';
   var ov = document.createElement('div');
   ov.id = 'overlay-opciones-borrado';
   ov.style.cssText = 'position:fixed;inset:0;z-index:9100;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:24px';
@@ -4795,16 +4809,16 @@ function menuBorrarDatos() {
   ov.innerHTML =
     '<div style="background:#1a1a2e;border-radius:22px;padding:24px;max-width:340px;width:100%">' +
       '<div style="text-align:center;font-size:32px;margin-bottom:8px">🗑️</div>' +
-      '<div style="color:#e8e8f0;font-size:18px;font-weight:700;text-align:center;margin-bottom:6px">¿Qué quieres borrar?</div>' +
-      '<div style="color:#9a9ab0;font-size:12px;text-align:center;line-height:1.5;margin-bottom:20px">Los datos del 22 de junio 2026 y anteriores son los ficticios de prueba.</div>' +
+      '<div style="color:#e8e8f0;font-size:18px;font-weight:700;text-align:center;margin-bottom:6px">Borrar datos de ' + nombrePerfil + '</div>' +
+      '<div style="color:#9a9ab0;font-size:12px;text-align:center;line-height:1.5;margin-bottom:20px">Solo se borrarán los datos de <strong>' + nombrePerfil + '</strong>. Los demás perfiles no se tocan.</div>' +
       '<div style="display:flex;flex-direction:column;gap:10px">' +
         '<div onclick="document.getElementById(\'overlay-opciones-borrado\').remove();pedirBorrarFicticios()" style="background:rgba(239,159,39,.12);border:1px solid rgba(239,159,39,.35);border-radius:14px;padding:15px;text-align:center;cursor:pointer">' +
           '<div style="color:#EF9F27;font-size:14px;font-weight:700">Solo los de prueba</div>' +
           '<div style="color:#9a9ab0;font-size:11px;margin-top:3px">Del 22 jun 2026 hacia atrás</div>' +
         '</div>' +
         '<div onclick="document.getElementById(\'overlay-opciones-borrado\').remove();pedirBorrarTodo()" style="background:rgba(226,75,74,.12);border:1px solid rgba(226,75,74,.35);border-radius:14px;padding:15px;text-align:center;cursor:pointer">' +
-          '<div style="color:#E24B4A;font-size:14px;font-weight:700">Borrar TODO</div>' +
-          '<div style="color:#9a9ab0;font-size:11px;margin-top:3px">Deja la app en ceros</div>' +
+          '<div style="color:#E24B4A;font-size:14px;font-weight:700">Borrar TODO de ' + nombrePerfil + '</div>' +
+          '<div style="color:#9a9ab0;font-size:11px;margin-top:3px">Deja este perfil en ceros</div>' +
         '</div>' +
         '<div onclick="document.getElementById(\'overlay-opciones-borrado\').remove()" style="background:rgba(255,255,255,.06);border-radius:14px;padding:14px;text-align:center;cursor:pointer">' +
           '<span style="color:#888;font-size:14px;font-weight:700">Cancelar</span>' +
@@ -4814,23 +4828,26 @@ function menuBorrarDatos() {
   document.body.appendChild(ov);
 }
 
-// Confirmar y borrar SOLO los datos ficticios (22 jun 2026 y anteriores)
+// Confirmar y borrar SOLO los datos ficticios (22 jun 2026 y anteriores) del PERFIL ACTIVO
 function pedirBorrarFicticios() {
-  confirmarBorrado('¿Borrar los datos de prueba (22 de junio 2026 y anteriores)? Se conservará todo lo nuevo.', function() {
-    borrarDatosAntesDe('2026-06-23'); // corte exclusivo: borra todo lo ANTERIOR al 23, o sea el 22 y antes
+  var p = getPerfil();
+  var nombre = p ? p.nom : 'este perfil';
+  confirmarBorrado('¿Borrar los datos de prueba (22 de junio 2026 y anteriores) de ' + nombre + '? Se conservará todo lo nuevo.', function() {
+    borrarDatosAntesDe('2026-06-23'); // borra del PERFIL ACTIVO lo anterior al 23
   });
 }
 
-// Confirmar y borrar TODO (deja en ceros)
+// Confirmar y borrar TODO del PERFIL ACTIVO (deja ese perfil en ceros)
 function pedirBorrarTodo() {
-  confirmarBorrado('¿Borrar TODOS los datos de los 4 perfiles? Esto deja la app en ceros y no se puede deshacer.', function() {
+  var p = getPerfil();
+  var id = p ? p.id : perfilActivo;
+  var nombre = p ? p.nom : 'este perfil';
+  confirmarBorrado('¿Borrar TODOS los datos de ' + nombre + '? Esto deja SOLO este perfil en ceros y no se puede deshacer.', function() {
     try {
-      [1,2,3,4].forEach(function(id) {
-        localStorage.removeItem('historial_' + id);
-        localStorage.removeItem('entreno_hist_' + id);
-        localStorage.removeItem('op36_hist_' + id);
-      });
-      PERFILES.forEach(function(p) { p.niveles = {}; p.distanciasPalos = {}; });
+      localStorage.removeItem('historial_' + id);
+      localStorage.removeItem('entreno_hist_' + id);
+      localStorage.removeItem('op36_hist_' + id);
+      if (p) { p.niveles = {}; p.distanciasPalos = {}; }
       localStorage.removeItem('entreno_estado');
       guardarPerfilesLocal();
       location.reload();
@@ -4841,21 +4858,7 @@ function pedirBorrarTodo() {
 }
 
 function borrarDatosPrueba() {
-  confirmarBorrado('Esto BORRARÁ todos los datos (rondas, entrenamientos, OP27, niveles) de los 4 perfiles. ¿Seguro?', function() {
-    try {
-      [1,2,3,4].forEach(function(id) {
-        localStorage.removeItem('historial_' + id);
-        localStorage.removeItem('entreno_hist_' + id);
-        localStorage.removeItem('op36_hist_' + id);
-      });
-      PERFILES.forEach(function(p) { p.niveles = {}; p.distanciasPalos = {}; });
-      localStorage.removeItem('entreno_estado');
-      guardarPerfilesLocal();
-      location.reload();
-    } catch(err) {
-      alert('Error: ' + err.message);
-    }
-  });
+  pedirBorrarTodo();
 }
 
 // Borra TODO lo registrado ANTES de la fecha dada (no incluye ese día).
@@ -4872,7 +4875,8 @@ function borrarDatosAntesDe(fechaCorte) {
       if (reg.fecha) return new Date(reg.fecha).getTime();
       return 0;
     }
-    [1,2,3,4].forEach(function(id) {
+    var idActivo = (typeof perfilActivo !== 'undefined') ? perfilActivo : 1;
+    [idActivo].forEach(function(id) {
       ['historial_', 'entreno_hist_', 'op36_hist_'].forEach(function(prefijo) {
         var key = prefijo + id;
         var raw = localStorage.getItem(key);
@@ -7524,7 +7528,7 @@ function abrirMenuEjercicios(soloRetos) {
   var secciones = [
     { key:'putt', lbl:'Putt', icon:'⛳', iconBg:'rgba(24,95,165,.15)', tipo:'subgrupos',
       subgrupos:[
-        { sub:'Putt corto', items:['circulo-tobogan','circulo-escalera','circulo-suma','circulo-handicap','circulo-record','lineal-esctob-corto'] },
+        { sub:'Putt corto', items:['circulo-tobogan','circulo-escalera','circulo-suma','circulo-handicap','circulo-record','circulo-velocidades','lineal-esctob-corto'] },
         { sub:'Putt medio', items:['medio-escalera','medio-tobogan'] },
         { sub:'Putt largo', items:['largo-esctob'] }
       ] },
@@ -9818,6 +9822,14 @@ function mostrarResumenOp36(golpes, acum, hoyos) {
 // ── INIT ──────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
   cargarPerfilesLocal();
+  // La PRIMERA vez que se abre la app, generar automáticamente los datos del perfil Prueba (id 5).
+  // Se usa una bandera para no volver a generarlos (así si el usuario los borra, no reaparecen).
+  try {
+    if (!localStorage.getItem('datos_prueba_inicializados')) {
+      generarDatosPrueba(true);
+      localStorage.setItem('datos_prueba_inicializados', '1');
+    }
+  } catch(e) {}
   renderHome();
 });
 
