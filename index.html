@@ -51,7 +51,7 @@
 
   /* WEEK DOTS */
   .week-dot { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
-  .week-dot-10 { width: 28px; height: 28px; font-size: 12px; }
+  .week-dot-10 { width: 42px; height: 42px; font-size: 14px; }
 
   /* BOTTOM NAV */
   .action-btns { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; margin-top: 4px; }
@@ -663,14 +663,14 @@
     .rings-legend { gap: 11px; }
     .ring-row span[id$="-val"] { font-size: 22px !important; }
     .week-dot { width: 38px !important; height: 38px !important; font-size: 12px !important; }
-    .week-dot-10 { width: 27px !important; height: 27px !important; font-size: 11px !important; }
+    .week-dot-10 { width: 38px !important; height: 38px !important; font-size: 13px !important; }
     .action-btn-primary, .action-btn-secondary { padding: 12px 6px; }
   }
   @media (max-width: 340px) {
     .rings-wrap > div:first-child { width: 120px !important; height: 120px !important; }
     .rings-wrap > div:first-child svg { width: 120px !important; height: 120px !important; }
     .week-dot { width: 34px !important; height: 34px !important; font-size: 11px !important; }
-    .week-dot-10 { width: 25px !important; height: 25px !important; font-size: 10px !important; }
+    .week-dot-10 { width: 34px !important; height: 34px !important; font-size: 12px !important; }
     .ring-row span[id$="-val"] { font-size: 20px !important; }
   }
   /* Asegurar que nada se desborde horizontalmente */
@@ -759,7 +759,7 @@
     </div>
 
     <!-- Racha semanal -->
-    <div class="section-label">Actividad · últimos 10 días</div>
+    <div class="section-label">Actividad · últimos 7 días</div>
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:flex-end" id="racha-dias"></div>
       <div style="color:#1D9E75;font-size:11px;font-weight:700;text-align:center;margin-top:8px" id="racha-texto"></div>
@@ -4233,7 +4233,7 @@ function renderRacha() {
 
   var hoy = new Date();
   hoy.setHours(0,0,0,0);
-  var N = 10; // últimos 10 días
+  var N = 7; // últimos 7 días
   var inicialDia = ['D','L','M','X','J','V','S']; // getDay(): 0=domingo
 
   // Para cada uno de los últimos 10 días (índice 0 = hace 9 días, 9 = hoy)
