@@ -673,6 +673,22 @@
     .week-dot-10 { width: 34px !important; height: 34px !important; font-size: 12px !important; }
     .ring-row span[id$="-val"] { font-size: 20px !important; }
   }
+  /* ─── RESPONSIVE POR ALTURA: comprime espacios en teléfonos de poca altura ─── */
+  /* En pantallas altas (iPhone Max, etc.) no se aplica nada y el diseño queda igual. */
+  @media (max-height: 780px) {
+    #home-view-pro .card { padding: 11px 14px; margin-bottom: 6px; }
+    #home-view-pro .section-label { margin-bottom: 5px; }
+    #home-view-pro .rings-legend { gap: 11px; }
+    #home-view-pro .home-header { padding-top: calc(env(safe-area-inset-top, 12px) + 13px) !important; padding-bottom: 13px !important; margin-bottom: 11px !important; }
+  }
+  @media (max-height: 680px) {
+    #home-view-pro .card { padding: 9px 13px; margin-bottom: 5px; }
+    #home-view-pro .section-label { margin-bottom: 4px; font-size: 12px; }
+    #home-view-pro .rings-legend { gap: 9px; }
+    #home-view-pro .rings-wrap > div:first-child { width: 132px !important; height: 132px !important; }
+    #home-view-pro .rings-wrap > div:first-child svg { width: 132px !important; height: 132px !important; }
+    #home-view-pro .home-header { padding-top: calc(env(safe-area-inset-top, 10px) + 10px) !important; padding-bottom: 11px !important; margin-bottom: 9px !important; }
+  }
   /* Asegurar que nada se desborde horizontalmente */
   body { overflow-x: hidden; }
   @keyframes pulsoAlerta { 0%,100% { opacity: 1; } 50% { opacity: .6; } }
@@ -785,7 +801,7 @@
 
 
   <!-- Bottom Nav -->
-  <div style="margin-top:16px; padding: 0 0 calc(env(safe-area-inset-bottom, 16px) + 16px);">
+  <div style="margin-top:auto; padding-top:10px; padding-bottom: calc(env(safe-area-inset-bottom, 16px) + 12px);">
     <div class="action-btns">
       <div class="action-btn-primary" onclick="iniciarRondaPerfilActivo()">
         <div style="font-size:22px;line-height:1">🏌️</div>
@@ -5273,34 +5289,25 @@ function abrirDesgloseDia(idx) {
     var totalMin = 0;
     var hayPractica = false;
 
-    // Acumular TODOS los entrenos del día juntos (puede haber varios entrenamientos el mismo día)
+    // Acumular TODOS los ejercicios del día (incluidos los retos de putt, que cuentan como
+    // ejercicio de entreno igual que en el historial). Puede haber varios entrenamientos el mismo día.
     var totalEj = 0, minEj = 0;
-    var retosPuttDia = []; // cada reto de putt es su propia fila
     entrenos.forEach(function(e){
       if (!mismoDia(e.fecha)) return;
       var ejs = e.ejercicios || [];
       ejs.forEach(function(ej){
         var cat = ej.cat || '', id = ej.id || '';
-        var esRetoPutt = (cat === 'reto') || id === 'retoMedio' || id === 'retoMedioReto' || id.indexOf('reto-putt') >= 0;
-        if (esRetoPutt) {
-          var tipo = (id === 'retoMedioReto' || (ej.retoTipo === 'largo')) ? 'largo' : 'medio';
-          retosPuttDia.push(tipo);
-        } else {
-          totalEj++;
-          minEj += (cat === 'approach' || cat === 'hierros') ? 15 : 10;
-        }
+        var esRetoPutt = id === 'retoMedio' || id === 'retoMedioReto' || id.indexOf('reto-putt') >= 0;
+        totalEj++;
+        if (esRetoPutt) minEj += 15;
+        else minEj += (cat === 'approach' || cat === 'hierros') ? 15 : 10;
       });
     });
-    // Una sola fila con TODOS los ejercicios de práctica del día
+    // Una sola fila con TODOS los ejercicios del día (incluye los retos de putt)
     if (totalEj > 0) {
-      items.push({ color:'#1D4ED8', titulo:totalEj + (totalEj===1?' ejercicio':' ejercicios'), sub:'Práctica de putt, approach, hierros', tiempo:minEj });
+      items.push({ color:'#1D4ED8', titulo:totalEj + (totalEj===1?' ejercicio':' ejercicios'), sub:'Práctica de putt, approach, hierros y retos de putt', tiempo:minEj });
       totalMin += minEj; hayPractica = true;
     }
-    // Una fila por cada reto de putt
-    retosPuttDia.forEach(function(tipo){
-      items.push({ color:'#1D4ED8', titulo:'1 reto de putt ' + tipo, sub:'Nivel ' + (p.nivelPutt || 3), tiempo:15 });
-      totalMin += 15; hayPractica = true;
-    });
 
     // Retos OP27 del día
     op27.forEach(function(o){
