@@ -2,6 +2,10 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<meta name="version" content="2026-06-24-v4">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Golf Necochea</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -963,7 +967,7 @@
 
     <!-- Actividad de esta semana -->
     <div style="background:#2a2a34;border:0.5px solid rgba(255,255,255,.1);border-radius:16px;padding:16px;margin-top:18px;margin-bottom:20px">
-      <div style="color:#c5c5d5;font-size:13px;font-weight:700;text-align:center;margin-bottom:13px">Tu actividad esta semana</div>
+      <div style="color:#c5c5d5;font-size:13px;font-weight:700;text-align:center;margin-bottom:13px">Tu actividad · últimos 7 días</div>
       <div id="prog-actividad-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px"></div>
     </div>
 
@@ -2424,12 +2428,12 @@ function evaluarDescensoTiempo(perfil, clave, ahoraISO){
 }
 
 var TABLAS_NIVELES = {
-  'circulo-tobogan-4': { tipo:'tees', obj:{1:4,2:5,3:6,4:7,5:8} },
-  'circulo-tobogan-6': { tipo:'tees', obj:{1:3,2:4,3:5,4:6,5:7} },
-  'circulo-tobogan-8': { tipo:'tees', obj:{1:2,2:3,3:3,4:4,5:5} },
-  'circulo-escalera-4': { tipo:'pos', seguidas:3, obj:{1:3,2:4,3:5,4:6,5:7} },
-  'circulo-escalera-6': { tipo:'pos', seguidas:2, obj:{1:3,2:4,3:5,4:6,5:6} },
-  'circulo-escalera-8': { tipo:'pos', seguidas:2, obj:{1:2,2:2,3:3,4:4,5:4} },
+  'circulo-tobogan-4': { tipo:'tees', tees:4, obj:{1:2,2:4,3:6,4:8,5:10} },
+  'circulo-tobogan-6': { tipo:'tees', tees:4, obj:{1:2,2:3,3:4,4:5,5:6} },
+  'circulo-tobogan-8': { tipo:'tees', tees:4, obj:{1:1,2:2,3:3,4:4,5:5} },
+  'circulo-escalera-4': { tipo:'pos', pos:4, obj:{1:2,2:4,3:6,4:8,5:10} },
+  'circulo-escalera-6': { tipo:'pos', pos:4, obj:{1:2,2:3,3:4,4:5,5:6} },
+  'circulo-escalera-8': { tipo:'pos', pos:4, obj:{1:1,2:2,3:3,4:4,5:5} },
   'circulo-suma-4': { tipo:'suma', obj:{1:5,2:10,3:15,4:20,5:25} },
   'circulo-suma-6': { tipo:'suma', obj:{1:3,2:6,3:9,4:12,5:15} },
   'circulo-suma-8': { tipo:'suma', obj:{1:2,2:3,3:4,4:5,5:6} },
@@ -2582,7 +2586,7 @@ var CATALOGO_NUEVO = {
   // ---- PUTT CORTO ----
   'circulo-tobogan': { nom:'Círculo Tobogán', cat:'putt', seccion:'Putt corto', mins:10,
     distancias:[{lbl:'4 pies',k:'4'},{lbl:'6 pies',k:'6'},{lbl:'8 pies',k:'8'}],
-    instr:['Pon los tees en círculo a la distancia indicada','Mételos todos dando la vuelta sin fallar','Si fallas, vuelves a empezar'] },
+    instr:['🎯 Objetivo: dar una vuelta completa al círculo metiendo todos los putts seguidos.','📍 Montaje: pon 4 tees en círculo a la distancia indicada. Empieza en cualquiera y ve metiendo dando la vuelta.','⭐ Tu nivel: logra las vueltas que pide tu objetivo durante los 10 minutos.'] },
   'circulo-escalera': { nom:'Círculo Escalera', cat:'putt', seccion:'Putt corto', mins:10,
     distancias:[{lbl:'4 pies',k:'4'},{lbl:'6 pies',k:'6'},{lbl:'8 pies',k:'8'}],
     instr:['Pon los tees en círculo a la distancia indicada','En cada tee mete las seguidas que pide tu nivel antes de avanzar','Completa todas las posiciones'] },
@@ -2764,8 +2768,8 @@ function objetivoGrande(clave, nivel) {
   if (!t) return null;
   var o = t.obj ? t.obj[nivel] : null;
   switch(t.tipo) {
-    case 'tees': return { num: String(o), lbl: 'tees' };
-    case 'pos': return { num: String(o), lbl: 'posiciones' };
+    case 'tees': return { num: String(o), lbl: (o===1?'vuelta':'vueltas') };
+    case 'pos': return { num: String(o), lbl: (o===1?'bola por posición':'bolas por posición') };
     case 'suma': return { num: '+' + o, lbl: 'puntos' };
     case 'deN': return { num: o + ' de ' + t.n, lbl: 'metidas' };
     case 'metidas': return { num: o + ' de ' + t.total, lbl: 'metidas' };
@@ -2795,9 +2799,27 @@ function objetivoGrande(clave, nivel) {
   }
 }
 
-// Devuelve qué métrica se le pregunta al usuario según el tipo de ejercicio
+// Devuelve qué métrica se le pregunta al usuario según el tipo de ejercicio.
+// Etiqueta corta y clara para niños (lo que ven en el recuadro de resultado).
 function etiquetaMetrica(tipo) {
-  return 'Ejecuciones';
+  switch(tipo) {
+    case 'tees': return 'Vueltas completas';
+    case 'pos': return 'Escaleras completas';
+    case 'suma': return 'Veces que sumaste los puntos';
+    case 'estaciones': return 'Recorridos completos';
+    case 'vueltas': return 'Vueltas completas';
+    case 'corridas': return 'Corridas completas';
+    case 'pares-ronda': return 'Veces que lograste la meta';
+    case 'ejec-margen': return 'Veces dentro del margen';
+    case 'bunker': return 'Veces que lo lograste';
+    case 'ejec-ud': return 'Up & downs logrados';
+    case 'hoyos-ejec': return 'Veces que lograste la meta';
+    case 'deN': return 'Veces que lo lograste';
+    case 'metidas': return 'Cuántas metiste de 12';
+    case 'racha': return 'Tu mejor racha';
+    case 'racha-hereda': return 'Tu mejor racha';
+    default: return 'Veces que lo lograste';
+  }
 }
 
 // Explicación (última instrucción) de qué cuenta como 1 ejecución, según el tipo
@@ -2832,8 +2854,8 @@ function textoMetaNivel(clave, nivel, item) {
   var mDist = clave.match(/-(\d+)$/);
   if (mDist && (clave.indexOf('circulo')===0)) distPies = mDist[1] + ' pies';
   switch(t.tipo) {
-    case 'tees': return 'Nivel ' + nivel + ': pon <strong>' + o + ' tees</strong> en círculo a ' + distPies + ' y mételos todos dando la vuelta sin fallar';
-    case 'pos': return 'Nivel ' + nivel + ': pon <strong>' + o + ' tees</strong> a ' + distPies + '. Mete <strong>' + t.seguidas + ' seguidas</strong> en cada uno antes de avanzar';
+    case 'tees': return 'Nivel ' + nivel + ': pon <strong>4 tees</strong> a ' + distPies + ', 1 bola por tee. Logra <strong>' + o + (o===1?' vuelta':' vueltas') + '</strong> completas';
+    case 'pos': return 'Nivel ' + nivel + ': pon <strong>' + (t.pos||4) + ' tees</strong> a ' + distPies + '. Mete <strong>' + o + (o===1?' bola':' seguidas') + '</strong> en cada posición antes de avanzar';
     case 'suma': return 'Nivel ' + nivel + ': pon <strong>4 tees</strong> a ' + distPies + '. +1 si metes, −1 si fallas. Llega a <strong>+' + o + '</strong>';
     case 'deN': return 'Nivel ' + nivel + ': tira <strong>' + t.n + ' bolas</strong>' + (distPies?(' desde ' + distPies):'') + '. Mete <strong>' + o + ' de ' + t.n + '</strong>';
     case 'metidas': return 'Nivel ' + nivel + ': <strong>4 tees</strong>' + (distPies?(' a ' + distPies):'') + ', 3 bolas por tee con 3 velocidades (12 en total). Mete <strong>' + o + ' de ' + t.total + '</strong>';
@@ -6479,8 +6501,6 @@ function guardarRegistro() {
     guardarRecordEjercicio(item.id, estadoSesion.reg.ejec, estadoSesion.reg.mins);
   }
 
-  renderSesion();
-
   // Detectar si es el último ejercicio del entrenamiento
   var hechos = estadoSesion.completados.filter(function(c){ return c !== null; }).length;
   var esUltimo = hechos === estadoSesion.programa.length;
@@ -6491,6 +6511,12 @@ function guardarRegistro() {
   // Elegir y mostrar celebración, luego volver al programa
   var tipo = elegirCelebracion(esRecord, esUltimo, esPutt);
   irVista('view-programa');
+  // Render DESPUÉS de cambiar a la vista de programa, para que el tablero de
+  // actividad se actualice en pantalla al momento (no hasta salir y volver).
+  renderSesion();
+  // Red de seguridad: re-renderizar el tablero un instante después, por si la
+  // vista aún no estaba lista al primer render.
+  setTimeout(function(){ try { renderActividadSemanaEntreno(); } catch(e){} }, 60);
   // Si subió de nivel, mostrar celebración especial de nivel primero, luego la normal
   if (resultadoNivel && resultadoNivel.subio) {
     celebrarSubidaNivel(resultadoNivel.nivelActual, function(){ mostrarCelebracion(tipo); });
@@ -7514,10 +7540,18 @@ function renderPrograma() {
 }
 
 function eliminarEjercicio(idx) {
+  if (!estadoSesion || !estadoSesion.programa || idx < 0 || idx >= estadoSesion.programa.length) return;
   var def = getDefItem(estadoSesion.programa[idx]);
   if (confirm('Quitar ' + (def ? def.nom : 'este ejercicio') + '?')) {
     estadoSesion.programa.splice(idx, 1);
     if (estadoSesion.completados) estadoSesion.completados.splice(idx, 1);
+    // Ajustar el índice del ejercicio activo si se borró uno antes o el mismo
+    if (typeof estadoSesion.ejActivo === 'number') {
+      if (idx < estadoSesion.ejActivo) estadoSesion.ejActivo--;
+      else if (idx === estadoSesion.ejActivo) estadoSesion.ejActivo = -1;
+      if (estadoSesion.ejActivo >= estadoSesion.programa.length) estadoSesion.ejActivo = -1;
+    }
+    guardarEstadoSesion();
     renderSesionSync();
   }
 }
@@ -8300,12 +8334,16 @@ function renderActividadSemanaEntreno() {
   if (!grid) return;
   var p = getPerfil();
   if (!p) return;
-  var ini = inicioSemana().getTime();
+  // Últimos 7 días móviles (no desde el lunes), para que coincida con "últimos 7 días"
+  var ini = Date.now() - 7*24*60*60*1000;
   var cont = { putt:0, approach:0, hierros:0, op27:0 };
   // Contar ejercicios de entrenamientos de esta semana
+  var sesionEnHist = false;
   (getHistorialEntreno(p.id) || []).forEach(function(e) {
     if (!e || !e.fecha) return;
     if (new Date(e.fecha).getTime() < ini) return;
+    // ¿Es la sesión que está activa ahora mismo? (para no contarla doble más abajo)
+    if (estadoSesion && estadoSesion.sesionId && e.sesionId === estadoSesion.sesionId) sesionEnHist = true;
     (e.ejercicios || []).forEach(function(ej) {
       if (!ej) return;
       var cat = ej.cat || '';
@@ -8320,6 +8358,21 @@ function renderActividadSemanaEntreno() {
   (getHistorialOP36(p.id) || []).forEach(function(reg) {
     if (reg.fecha && new Date(reg.fecha).getTime() >= ini) cont.op27++;
   });
+
+  // ── Sumar también los ejercicios completados en la SESIÓN ACTUAL (aún no guardados) ──
+  // Así el tablero se actualiza al momento de llenar un ejercicio, sin esperar a salir.
+  // Solo si la sesión NO está ya guardada en el historial (para no contar doble).
+  if (estadoSesion && estadoSesion.programa && estadoSesion.completados && !sesionEnHist) {
+    estadoSesion.programa.forEach(function(item, idx) {
+      if (estadoSesion.completados[idx] === null || estadoSesion.completados[idx] === undefined) return;
+      var cat = (item && item.cat) || '';
+      var id = (item && item.id) || '';
+      if (cat === 'reto' || id.indexOf('reto-putt') >= 0) return; // retos putt no cuentan aquí
+      if (cat === 'approach') cont.approach++;
+      else if (cat === 'hierros') cont.hierros++;
+      else if (cat === 'putt') cont.putt++;
+    });
+  }
 
   var items = [
     { lbl:'Putt', n:cont.putt, bg:'#185FA5', col:'#B5D4F4' },
@@ -8410,7 +8463,8 @@ function renderSesion() {
     var esReto = def.cat === 'reto';
     var bg = catC[def.cat]||'#185FA5';
     var tc = catT[def.cat]||'#B5D4F4';
-    var trash = '<div onclick="event.stopPropagation();eliminarEjercicio(' + idx + ')" style="padding:2px 4px;cursor:pointer;flex-shrink:0;color:#E24B4A;font-size:17px">🗑</div>';
+    var trash = '<div onclick="event.stopPropagation();event.preventDefault();eliminarEjercicio(' + idx + ');return false;" style="padding:6px 8px;cursor:pointer;flex-shrink:0;color:#E24B4A;font-size:18px;position:relative;z-index:2">🗑</div>';
+    var lapiz = '<div onclick="event.stopPropagation();event.preventDefault();abrirRegistro(' + idx + ');return false;" style="padding:6px 8px;cursor:pointer;flex-shrink:0;color:#8fc0f5;font-size:17px;position:relative;z-index:2">✏️</div>';
 
     if (hecho) {
       var resTxt;
@@ -8424,7 +8478,7 @@ function renderSesion() {
       html += '<div style="display:flex;align-items:center;gap:11px;background:rgba(29,158,117,.12);border:0.5px solid rgba(29,158,117,.35);border-radius:14px;padding:13px 14px;margin-bottom:8px">';
       html += '<div style="width:30px;height:30px;border-radius:9px;background:#1D9E75;display:flex;align-items:center;justify-content:center;color:white;font-size:15px;font-weight:700">✓</div>';
       html += '<div style="flex:1"><div style="color:#e8e8f0;font-size:13px;font-weight:700">' + def.nom + '</div><div style="color:#1D9E75;font-size:10px;font-weight:600">' + resTxt + ' · completado</div></div>';
-      html += trash + '</div>';
+      html += lapiz + '</div>';
     } else if (esReto) {
       var sub = 'Reto en campo';
       if (item.id.indexOf('op36') === 0) sub = 'OP27 · ' + (item.op36dist || item.id.split('-')[1]) + 'y';
@@ -8463,22 +8517,25 @@ function instruccionesDinamicas(item, clave) {
 
   switch (t.tipo) {
     case 'tees': // Círculo Tobogán
+      var nTees = t.tees || 4;
       return [
-        'Pon ' + o + ' tees en círculo a ' + pies + ' pies del hoyo',
-        'Mete los ' + o + ' dando la vuelta sin fallar',
-        'Si fallas uno, vuelves a empezar el círculo'
+        '🎯 Objetivo: dar una vuelta completa metiendo los ' + nTees + ' putts seguidos (1 bola en cada tee, sin fallar) es 1 vuelta.',
+        '📍 Montaje: pon ' + nTees + ' tees en círculo a ' + pies + ' pies del hoyo. Da la vuelta metiendo 1 bola en cada uno. Si fallas una, esa vuelta no cuenta y empiezas otra.',
+        '⭐ En tus 10 minutos: tu meta es lograr ' + o + (o===1?' vuelta':' vueltas') + ' completas. Anota cuántas vueltas lograste.'
       ];
     case 'pos': // Círculo Escalera
+      var nPos = t.pos || 4;
+      var totalBolas = o * nPos;
       return [
-        'Pon ' + o + ' tees en círculo a ' + pies + ' pies',
-        'En cada tee mete ' + t.seguidas + ' seguidas antes de avanzar',
-        'Completa las ' + o + ' posiciones'
+        '🎯 Objetivo: metiendo ' + o + (o===1?' bola seguida':' bolas seguidas') + ' en cada una de las 4 posiciones (' + totalBolas + ' bolas en total) completas 1 escalera.',
+        '📍 Montaje: pon 4 tees en círculo a ' + pies + ' pies del hoyo. En cada posición mete ' + o + (o===1?' bola':' bolas seguidas') + ' y avanza a la siguiente. Si fallas una, vuelves a empezar las ' + o + ' de ESA posición (las posiciones que ya pasaste no se pierden).',
+        '⭐ En tus 10 minutos: anota cuántas escaleras completas lograste (con 1 ya cuenta para subir de nivel).'
       ];
     case 'suma': // Círculo Suma
       return [
-        'Pon 4 tees a ' + pies + ' pies',
-        '+1 si metes, −1 si fallas (no baja de 0)',
-        'Llega a +' + o + ' puntos'
+        '🎯 Objetivo: sumar ' + o + ' puntos en total. Ganas +1 cada vez que metes y pierdes −1 cada vez que fallas (nunca bajas de 0).',
+        '📍 Montaje: pon 4 tees en círculo a ' + pies + ' pies del hoyo. Ve rotando entre ellos tirando putts y llevando tu cuenta de puntos.',
+        '⭐ En tus 10 minutos: cada vez que llegas a ' + o + ' puntos completaste 1. Anota cuántas veces llegaste a la meta (con 1 ya cuenta para subir de nivel).'
       ];
     case 'deN': // Círculo Handicap (n bolas)
       if (pies) return [
