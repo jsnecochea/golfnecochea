@@ -5957,6 +5957,231 @@ async function probarClaude() {
 // ═══════════════════════════════════════════════════════════
 // DICTADO GLOBAL · pop-up con micrófono inteligente
 // ═══════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════
+// DICTADO INTELIGENTE · CAPA 2 — Claude interpreta el dictado
+// ═══════════════════════════════════════════════════════════
+
+// Lista de perfiles con apodos comunes, para que Claude mapee nombres → id
+function _listaPerfilesParaClaude() {
+  var apodos = {
+    1: ['papá', 'papa', 'salvador papá', 'salvador papa', 'el papá', 'pa'],
+    2: ['salvador', 'salva', 'salvador hijo', 'el niño'],
+    3: ['constanza', 'cony', 'connie', 'coni', 'consti'],
+    4: ['elisa', 'eli', 'elisita'],
+    5: ['prueba', 'test']
+  };
+  var lista = [];
+  (typeof PERFILES !== 'undefined' ? PERFILES : []).forEach(function(p) {
+    var ap = apodos[p.id] || [];
+    lista.push('- id ' + p.id + ': "' + p.nom + '"' + (ap.length ? ' (también le dicen: ' + ap.join(', ') + ')' : ''));
+  });
+  return lista.join('\n');
+}
+
+// Catálogo de ejercicios (clave + nombre + cómo se mide) para que Claude mapee lenguaje natural → clave
+function _catalogoParaClaude() {
+  return [
+    'PUTT CORTO (se juega a 4, 6 u 8 pies; usa la clave con el número de pies):',
+    '- circulo-tobogan-4 / -6 / -8: "Círculo Tobogán" (mide: vueltas)',
+    '- circulo-escalera-4 / -6 / -8: "Círculo Escalera" (mide: vueltas)',
+    '- circulo-suma-4 / -6 / -8: "Círculo Suma" (mide: puntos)',
+    '- circulo-handicap-4 / -6 / -8: "Círculo Handicap" (mide: metidas de 8)',
+    '- circulo-record-4 / -6 / -8: "Círculo Récord" (mide: mejor racha)',
+    '- circulo-velocidades-4 / -6 / -8: "Círculo Velocidades" (mide: metidas de 12)',
+    '- lineal-esctob-corto: "Putt Línea 4-8-12-16" (mide: rondas)',
+    '- estrella-1v1: "Estrella 1 vs 1" (juego 2 jugadores, mide: enfrentamientos)',
+    '- lineal-1v1: "Lineal 1 vs 1" (juego 2 jugadores, mide: partidas)',
+    'PUTT MEDIO:',
+    '- medio-escalera: "Escalera Putt Medio" (mide: rondas)',
+    '- medio-tobogan: "Tobogán Putt Medio" (mide: rondas)',
+    'PUTT LARGO:',
+    '- largo-esctob: "Escalera + Tobogán Largo" (mide: pares en la mejor ronda)',
+    'APPROACH:',
+    '- approach-escalera: "Escalera Approach" (mide: rondas)',
+    '- approach-tobogan: "Tobogán Approach" (mide: rondas)',
+    '- approach-record: "Récord Approach" (mide: mejor racha)',
+    '- approach-bunker: "Bunker" (mide: veces que logró el objetivo)',
+    '- approach-ud2d3: "Up & Down" (mide: up & downs de 9)'
+  ].join('\n');
+}
+
+// Construye el system prompt para interpretar dictado de golf
+function _systemPromptDictado() {
+  var hoy = new Date();
+  var fechaHoy = hoy.getFullYear() + '-' + String(hoy.getMonth()+1).padStart(2,'0') + '-' + String(hoy.getDate()).padStart(2,'0');
+  return 'Eres un asistente que interpreta el dictado por voz de un entrenador de golf y lo convierte en datos estructurados. ' +
+    'El usuario dicta, de forma natural y en español, lo que él y su familia hicieron: entrenamientos, retos (Operation 27 / Reto 27, que se juega a 25 yardas, cada hoyo es par 3) y rondas de golf.\n\n' +
+    'PERFILES disponibles (mapea los nombres/apodos dictados al id correcto):\n' + _listaPerfilesParaClaude() + '\n\n' +
+    'CATÁLOGO de ejercicios (mapea lo que se dicte al ejercicio y su clave; ej. "círculo de 8 pasos" o "círculo de 8 pies" → usa la clave con -8):\n' + _catalogoParaClaude() + '\n\n' +
+    'TÉRMINOS de golf por hoyo: "par" = 0 (al par), "birdie" o "menos uno" = -1, "bogey" o "más uno" = +1, "doble bogey" o "más dos" = +2, "eagle" o "menos dos" = -2. Los "pasos" o "yardas" que menciona son la distancia a la que quedó del hoyo.\n\n' +
+    'La fecha de hoy es ' + fechaHoy + '.\n\n' +
+    'Devuelve SOLO un JSON válido (sin markdown, sin explicaciones) con esta estructura exacta:\n' +
+    '{\n' +
+    '  "actividades": [\n' +
+    '    { "tipo": "reto27" | "ronda" | "entrenamiento",\n' +
+    '      "perfilId": <número del id del perfil>,\n' +
+    '      "perfilNombre": "<nombre del perfil>",\n' +
+    '      "ejercicioClave": "<clave del catálogo, solo si es entrenamiento>",\n' +
+    '      "ejercicioNombre": "<nombre legible del ejercicio o actividad>",\n' +
+    '      "valor": <número que logró: vueltas/rondas/racha/up&downs, solo entrenamiento>,\n' +
+    '      "hoyos": { "1": {"score": <número relativo al par>, "pasos": <número o null>}, ... }  // solo reto27/ronda\n' +
+    '    }\n' +
+    '  ],\n' +
+    '  "dudas": "<si algo no quedó claro, descríbelo brevemente; si todo claro, cadena vacía>"\n' +
+    '}\n\n' +
+    'Reglas: (1) Si el dictado menciona varios jugadores en un mismo reto/ronda, crea una actividad por jugador. (2) Si solo dan el score de un hoyo sin pasos, pon "pasos": null. (3) Si no estás seguro de a qué perfil se refiere, usa perfilId null y explícalo en "dudas". (4) No inventes datos que no se dictaron.';
+}
+
+// Interpreta el texto dictado y devuelve el objeto estructurado
+async function interpretarDictado(texto) {
+  if (!texto || !texto.trim()) return { actividades: [], dudas: '' };
+  var resultado = await dictarAClaudeJSON(texto, _systemPromptDictado(), { maxTokens: 2048 });
+  if (!resultado.actividades) resultado.actividades = [];
+  return resultado;
+}
+
+function detenerDictadoEscuchar() {
+  _dictadoEscuchando = false;
+  if (_dictadoReconocimiento) { try { _dictadoReconocimiento.stop(); } catch(e){} _dictadoReconocimiento = null; }
+  var btn = document.getElementById('dictado-btn-hablar');
+  if (btn) { btn.textContent = '🎤 Empezar a dictar'; btn.style.background = 'linear-gradient(160deg,#E24B4A,#b8322f)'; }
+  var circ = document.getElementById('dictado-mic-circ'); if (circ) circ.style.transform = 'scale(1)';
+  var est = document.getElementById('dictado-estado'); if (est) est.textContent = 'Toca para dictar';
+  mostrarOndasDictado(false);
+  var texto = (_dictadoTextoAcum || '').trim();
+  if (texto) procesarDictadoConClaude(texto);
+}
+
+// Acumulador de actividades captadas hoy (en memoria durante la sesión del pop-up)
+var _dictadoActividades = [];
+
+async function procesarDictadoConClaude(texto) {
+  var est = document.getElementById('dictado-estado');
+  var sub = document.getElementById('dictado-texto-vivo');
+  if (est) est.textContent = 'Entendiendo…';
+  if (sub) sub.textContent = 'Claude está interpretando lo que dictaste';
+  var btn = document.getElementById('dictado-btn-hablar');
+  if (btn) { btn.textContent = '⏳ Procesando…'; btn.disabled = true; }
+
+  try {
+    var r = await interpretarDictado(texto);
+    // Agregar las nuevas actividades AL INICIO (lo reciente arriba)
+    var nuevas = r.actividades || [];
+    // marcar como recién dictadas
+    nuevas.forEach(function(a){ a._nueva = true; a._ts = Date.now(); });
+    // quitar la marca "nueva" de las anteriores
+    _dictadoActividades.forEach(function(a){ a._nueva = false; });
+    _dictadoActividades = nuevas.concat(_dictadoActividades);
+    _dictadoTextoAcum = '';
+    if (est) est.textContent = 'Listo ✓';
+    if (sub) sub.textContent = 'Toca para dictar más';
+    renderDictadoFichas(r.dudas);
+  } catch(e) {
+    if (est) est.textContent = 'Ups…';
+    if (sub) sub.textContent = '';
+    var msg = e.message;
+    if (msg === 'SIN_CLAVE' || msg === 'CLAVE_INVALIDA') msg = 'Revisa tu clave en Enlazar Claude.';
+    var cap = document.getElementById('dictado-captado');
+    if (cap) cap.innerHTML = '<div style="background:rgba(226,75,74,.12);border:1px solid rgba(226,75,74,.35);border-radius:12px;padding:13px 14px;color:#E88;font-size:12px">No pude interpretar el dictado: ' + msg + '<br><br>Lo que dictaste: "' + texto + '"</div>';
+  }
+  if (btn) { btn.textContent = '🎤 Dictar más'; btn.disabled = false; }
+}
+
+function iconoTipoDictado(tipo) {
+  if (tipo === 'reto27') return '⛳';
+  if (tipo === 'ronda') return '🏌️';
+  return '🏋️';
+}
+
+function renderDictadoFichas(dudas) {
+  var cont = document.getElementById('dictado-captado');
+  if (!cont) return;
+  if (!_dictadoActividades.length) { cont.innerHTML = ''; return; }
+
+  var html = '<div style="display:flex;justify-content:space-between;padding:0 4px 8px"><span style="color:#6a6a85;font-size:10px;font-weight:700;letter-spacing:.5px">CAPTADO HOY · ' + _dictadoActividades.length + '</span></div>';
+
+  _dictadoActividades.forEach(function(a, idx) {
+    var esNueva = a._nueva;
+    var borde = a.tipo === 'entrenamiento' ? 'rgba(239,159,39,.3)' : 'rgba(127,119,221,.35)';
+    html += '<div style="position:relative;background:#1a1f33;border:0.5px solid ' + borde + ';border-radius:12px;padding:12px 14px;margin-bottom:9px">';
+    if (esNueva) html += '<div style="position:absolute;top:-6px;right:12px;background:#EF9F27;color:#000;font-size:8px;font-weight:800;padding:2px 7px;border-radius:6px">RECIÉN DICTADO</div>';
+
+    if (a.tipo === 'entrenamiento') {
+      html += '<div style="display:flex;align-items:center;gap:8px">' +
+        '<span style="font-size:14px">' + iconoTipoDictado(a.tipo) + '</span>' +
+        '<div style="flex:1"><span style="color:#e8e8f0;font-size:12px;font-weight:800">' + (a.perfilNombre || '?') + '</span> <span style="color:#7a7a95;font-size:10px">· ' + (a.ejercicioNombre || a.ejercicioClave || 'ejercicio') + '</span></div>' +
+        '<span style="color:#5FD6AA;font-size:14px">✓</span>' +
+        '<span onclick="borrarActividadDictado(' + idx + ')" style="color:#E24B4A;font-size:14px;cursor:pointer">🗑️</span>' +
+      '</div>';
+      var valTxt = (a.valor !== undefined && a.valor !== null) ? ('· ' + a.valor) : '';
+      html += '<div style="color:#9a9ab0;font-size:11px;margin-top:4px;padding-left:22px">Ejecutado ' + valTxt + '</div>';
+    } else {
+      // reto27 o ronda: tabla de un jugador
+      html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">' +
+        '<span style="font-size:13px">' + iconoTipoDictado(a.tipo) + '</span>' +
+        '<div style="flex:1"><span style="color:#e8e8f0;font-size:12px;font-weight:800">' + (a.perfilNombre || '?') + '</span> <span style="color:#7a7a95;font-size:10px">· ' + (a.tipo === 'reto27' ? 'Reto 27' : 'Ronda') + '</span></div>' +
+        '<span onclick="borrarActividadDictado(' + idx + ')" style="color:#E24B4A;font-size:14px;cursor:pointer">🗑️</span>' +
+      '</div>';
+      html += renderTablaHoyos(a.hoyos);
+    }
+    html += '</div>';
+  });
+
+  if (dudas && dudas.trim()) {
+    html += '<div style="background:rgba(239,159,39,.1);border:0.5px solid rgba(239,159,39,.3);border-radius:10px;padding:10px 12px;margin-bottom:9px;color:#f0c078;font-size:11px">⚠️ ' + dudas + '</div>';
+  }
+
+  // Botón subir
+  html += '<div onclick="subirDictadoTodo()" style="background:linear-gradient(160deg,#1D9E75,#0F6E56);border-radius:13px;padding:14px;text-align:center;color:#fff;font-size:14px;font-weight:800;cursor:pointer;margin-top:4px">⬆️ Subir todo a cada perfil</div>' +
+    '<div style="color:#6a6a85;font-size:10px;text-align:center;margin-top:8px">Revisa que todo esté bien antes de subir</div>';
+
+  cont.innerHTML = html;
+}
+
+// Renderiza la tabla de hoyos (Total, Prom pasos, H1..H9) de un jugador
+function renderTablaHoyos(hoyos) {
+  hoyos = hoyos || {};
+  var total = 0, sumaPasos = 0, nPasos = 0, hayScore = false;
+  for (var h = 1; h <= 9; h++) {
+    var d = hoyos[String(h)] || hoyos[h];
+    if (d && typeof d.score === 'number') { total += d.score; hayScore = true; }
+    if (d && typeof d.pasos === 'number') { sumaPasos += d.pasos; nPasos++; }
+  }
+  var promTxt = nPasos > 0 ? (sumaPasos / nPasos).toFixed(1) : '—';
+  var totTxt = hayScore ? (total > 0 ? '+' + total : (total === 0 ? '0' : String(total))) : '·';
+  var totColor = total < 0 ? '#6EA8FE' : (total > 0 ? '#f0a860' : '#5FD6AA');
+
+  var html = '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;min-width:300px">';
+  html += '<tr><th style="color:#9a9ab0;font-size:8px;padding:4px 2px">Tot</th><th style="color:#9a9ab0;font-size:8px;padding:4px 2px">Pr</th>';
+  for (var h2 = 1; h2 <= 9; h2++) html += '<th style="color:#6a6a85;font-size:8px;padding:4px 2px">H' + h2 + '</th>';
+  html += '</tr><tr>';
+  html += '<td style="background:rgba(29,158,117,.1);font-weight:800;color:' + totColor + ';font-size:11px;padding:5px 2px;text-align:center">' + totTxt + '</td>';
+  html += '<td style="background:rgba(110,168,254,.08);color:#9dc0f5;font-weight:700;font-size:11px;padding:5px 2px;text-align:center">' + promTxt + '</td>';
+  for (var h3 = 1; h3 <= 9; h3++) {
+    var dd = hoyos[String(h3)] || hoyos[h3];
+    if (dd && typeof dd.score === 'number') {
+      var sc = dd.score, col = sc < 0 ? '#6EA8FE' : (sc > 0 ? '#f0a860' : '#5FD6AA');
+      var txt = sc > 0 ? '+' + sc : String(sc);
+      var pasosTxt = (typeof dd.pasos === 'number') ? ('<div style="font-size:8px;color:#6a6a85">' + dd.pasos + 'p</div>') : '';
+      html += '<td style="padding:5px 2px;text-align:center"><span style="color:' + col + ';font-weight:700;font-size:11px">' + txt + '</span>' + pasosTxt + '</td>';
+    } else {
+      html += '<td style="padding:5px 2px;text-align:center;color:#3a3a50">·</td>';
+    }
+  }
+  html += '</tr></table></div>';
+  return html;
+}
+
+function borrarActividadDictado(idx) {
+  _dictadoActividades.splice(idx, 1);
+  renderDictadoFichas('');
+}
+
+function subirDictadoTodo() {
+  // Capa 4: aquí se guardará en cada perfil. Por ahora, aviso.
+  alert('En el siguiente paso, esto guardará todo en el perfil de cada jugador. Por ahora es la vista previa de lo captado.');
+}
+
 var _dictadoReconocimiento = null;
 var _dictadoEscuchando = false;
 var _dictadoTextoAcum = '';
@@ -6044,28 +6269,6 @@ function iniciarDictadoEscuchar() {
     mostrarOndasDictado(true);
   } catch(e) {
     alert('No se pudo iniciar el micrófono: ' + e.message);
-  }
-}
-
-function detenerDictadoEscuchar() {
-  _dictadoEscuchando = false;
-  if (_dictadoReconocimiento) { try { _dictadoReconocimiento.stop(); } catch(e){} _dictadoReconocimiento = null; }
-  var btn = document.getElementById('dictado-btn-hablar');
-  if (btn) { btn.textContent = '🎤 Empezar a dictar'; btn.style.background = 'linear-gradient(160deg,#E24B4A,#b8322f)'; }
-  var circ = document.getElementById('dictado-mic-circ'); if (circ) circ.style.transform = 'scale(1)';
-  var est = document.getElementById('dictado-estado'); if (est) est.textContent = 'Toca para dictar';
-  mostrarOndasDictado(false);
-  // Si hay texto acumulado, procesarlo (capa 2 en adelante). Por ahora, mostrarlo.
-  var texto = (_dictadoTextoAcum || '').trim();
-  if (texto) {
-    var cap = document.getElementById('dictado-captado');
-    if (cap) {
-      cap.innerHTML = '<div style="background:#1a1f33;border:0.5px solid rgba(255,255,255,.1);border-radius:12px;padding:13px 14px">' +
-        '<div style="color:#6a6a85;font-size:10px;font-weight:700;letter-spacing:.5px;margin-bottom:5px">LO QUE DICTASTE</div>' +
-        '<div style="color:#e8e8f0;font-size:13px;line-height:1.5">' + texto + '</div>' +
-        '<div style="color:#7a7a95;font-size:10px;margin-top:8px">✓ Micrófono funcionando. (El siguiente paso hará que Claude lo entienda y reparta a cada perfil.)</div>' +
-      '</div>';
-    }
   }
 }
 
