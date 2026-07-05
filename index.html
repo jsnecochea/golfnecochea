@@ -5778,7 +5778,10 @@ function borrarDatosAntesDe(fechaCorte) {
 function abrirEnlazarClaude() {
   var claveActual = '';
   try { claveActual = localStorage.getItem('claude_api_key') || ''; } catch(e) {}
-  var enlazado = claveActual.length > 0;
+  // Solo se considera enlazado si es una clave válida de Anthropic
+  var enlazado = claveActual.indexOf('sk-ant-') === 0;
+  // Si hay una clave guardada pero es inválida (ej. copiada mal), limpiarla
+  if (claveActual && !enlazado) { try { localStorage.removeItem('claude_api_key'); } catch(e) {} claveActual = ''; }
   var claveCorta = enlazado ? (claveActual.substring(0, 12) + '••••••••') : '';
   var ov = document.createElement('div');
   ov.id = 'overlay-enlazar-claude';
@@ -5810,6 +5813,7 @@ function abrirEnlazarClaude() {
         '<button onclick="guardarClaveClaude()" style="flex:1;background:linear-gradient(160deg,#D97757,#b85c3e);border:none;border-radius:11px;padding:14px;color:#fff;font-size:14px;font-weight:700;cursor:pointer">Guardar y enlazar</button>' +
         (enlazado ? '<button onclick="borrarClaveClaude()" style="background:rgba(226,75,74,.12);border:1px solid rgba(226,75,74,.3);border-radius:11px;padding:14px 16px;color:#E24B4A;font-size:14px;font-weight:700;cursor:pointer">Desenlazar</button>' : '') +
       '</div>' +
+      '<div id="claude-msg-guardar" style="padding:10px 22px 0"></div>' +
       '<div style="margin:18px 22px 0;padding:14px;background:rgba(255,255,255,.03);border-radius:12px">' +
         '<div style="color:#cfcfe0;font-size:12px;font-weight:700;margin-bottom:8px">¿No tienes clave? Cómo conseguirla:</div>' +
         '<div style="color:#9a9ab0;font-size:12px;line-height:1.7">' +
@@ -5824,18 +5828,42 @@ function abrirEnlazarClaude() {
   document.body.appendChild(ov);
 }
 
-function guardarClaveClaude() {
+function mostrarMsgClaude(texto, tipo) {
+  var cont = document.getElementById('claude-msg-guardar');
+  if (!cont) return;
+  var col = tipo === 'error' ? { bg:'rgba(226,75,74,.12)', bd:'rgba(226,75,74,.35)', tx:'#E88' }
+          : tipo === 'ok'    ? { bg:'rgba(29,158,117,.12)', bd:'rgba(29,158,117,.35)', tx:'#5FD6AA' }
+          :                    { bg:'rgba(217,119,87,.12)', bd:'rgba(217,119,87,.35)', tx:'#D9A177' };
+  cont.innerHTML = '<div style="padding:11px 13px;background:' + col.bg + ';border:1px solid ' + col.bd + ';border-radius:10px;color:' + col.tx + ';font-size:12px;font-weight:600;line-height:1.4">' + texto + '</div>';
+}
+
+async function guardarClaveClaude() {
   var inp = document.getElementById('claude-key-input');
   if (!inp) return;
   var k = (inp.value || '').trim();
-  if (!k) { alert('Pega tu clave primero.'); return; }
+  if (!k) { mostrarMsgClaude('Pega tu clave primero. Debe empezar con "sk-ant-".', 'error'); return; }
+  // Validación estricta: solo claves reales de Anthropic
   if (k.indexOf('sk-ant-') !== 0) {
-    if (!confirm('Esa clave no parece de Anthropic (suelen empezar con "sk-ant-"). ¿Guardar de todos modos?')) return;
+    mostrarMsgClaude('Esa no es una clave válida de Anthropic. Las claves empiezan con <b>sk-ant-api03-</b>. Cópiala de console.anthropic.com → API Keys.', 'error');
+    return;
   }
-  try { localStorage.setItem('claude_api_key', k); } catch(e) { alert('No se pudo guardar.'); return; }
-  var ov = document.getElementById('overlay-enlazar-claude');
-  if (ov) ov.remove();
-  alert('¡Claude enlazado! Ya puedes usar el dictado por voz.');
+  // Guardar y probar la conexión automáticamente
+  try { localStorage.setItem('claude_api_key', k); } catch(e) { mostrarMsgClaude('No se pudo guardar en este dispositivo.', 'error'); return; }
+  mostrarMsgClaude('⏳ Verificando la clave con Claude…', 'info');
+  var r = await probarClaude();
+  if (r.ok) {
+    mostrarMsgClaude('✅ ¡Clave correcta! Claude está enlazado y listo.', 'ok');
+    setTimeout(function(){
+      var ov = document.getElementById('overlay-enlazar-claude');
+      if (ov) ov.remove();
+    }, 1200);
+  } else {
+    // La clave no funcionó: quitarla para no dejar una inválida marcada como enlazada
+    try { localStorage.removeItem('claude_api_key'); } catch(e) {}
+    var msg = r.error;
+    if (msg === 'CLAVE_INVALIDA') msg = 'La clave no es válida o está incompleta. Verifica que la copiaste completa.';
+    mostrarMsgClaude('❌ ' + msg, 'error');
+  }
 }
 
 async function ejecutarPruebaClaude() {
@@ -5861,7 +5889,7 @@ function borrarClaveClaude() {
   try { localStorage.removeItem('claude_api_key'); } catch(e) {}
   var ov = document.getElementById('overlay-enlazar-claude');
   if (ov) ov.remove();
-  alert('Claude desenlazado.');
+  abrirEnlazarClaude();
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -5884,7 +5912,7 @@ function iconoCharola(tam) {
 }
 
 function tieneClaudeEnlazado() {
-  try { return (localStorage.getItem('claude_api_key') || '').length > 0; } catch(e) { return false; }
+  try { return (localStorage.getItem('claude_api_key') || '').indexOf('sk-ant-') === 0; } catch(e) { return false; }
 }
 
 // Manda texto a Claude y devuelve su respuesta como texto.
@@ -6013,7 +6041,7 @@ function _systemPromptDictado() {
     'El usuario dicta, de forma natural y en español, lo que él y su familia hicieron: entrenamientos, retos (Operation 27 / Reto 27, que se juega a 25 yardas, cada hoyo es par 3) y rondas de golf.\n\n' +
     'PERFILES disponibles (mapea los nombres/apodos dictados al id correcto):\n' + _listaPerfilesParaClaude() + '\n\n' +
     'CATÁLOGO de ejercicios (mapea lo que se dicte al ejercicio y su clave; ej. "círculo de 8 pasos" o "círculo de 8 pies" → usa la clave con -8):\n' + _catalogoParaClaude() + '\n\n' +
-    'TÉRMINOS de golf por hoyo: "par" = 0 (al par), "birdie" o "menos uno" = -1, "bogey" o "más uno" = +1, "doble bogey" o "más dos" = +2, "eagle" o "menos dos" = -2. Los "pasos" o "yardas" que menciona son la distancia a la que quedó del hoyo.\n\n' +
+    'TÉRMINOS de golf por hoyo (score relativo al par): "águila"/"aguilita"/"eagle"/"menos dos" = -2; "birdie"/"verde"/"verdi"/"menos uno" = -1; "par"/"empate"/"al par" = 0; "bogey"/"bogui"/"más uno" = +1; "doble bogey"/"doble bogui"/"sopi"/"más dos" = +2; "triple bogey"/"triple bogui"/"doble sopi"/"más tres" = +3. Los "pasos" o "yardas" que menciona son la distancia a la que quedó del hoyo.\n\n' +
     'La fecha de hoy es ' + fechaHoy + '.\n\n' +
     'Devuelve SOLO un JSON válido (sin markdown, sin explicaciones) con esta estructura exacta:\n' +
     '{\n' +
@@ -6029,62 +6057,89 @@ function _systemPromptDictado() {
     '  ],\n' +
     '  "dudas": "<si algo no quedó claro, descríbelo brevemente; si todo claro, cadena vacía>"\n' +
     '}\n\n' +
-    'Reglas: (1) Si el dictado menciona varios jugadores en un mismo reto/ronda, crea una actividad por jugador. (2) Si solo dan el score de un hoyo sin pasos, pon "pasos": null. (3) Si no estás seguro de a qué perfil se refiere, usa perfilId null y explícalo en "dudas". (4) No inventes datos que no se dictaron.';
+    'Reglas: (1) Si el dictado menciona varios jugadores en un mismo reto/ronda, crea una actividad por jugador. (2) Si solo dan el score de un hoyo sin pasos, pon "pasos": null. (3) Si no estás seguro de a qué perfil se refiere, usa perfilId null y explícalo en "dudas". (4) No inventes datos que no se dictaron. (5) IMPORTANTE errores de dictado por voz: "precio 27", "presión 27", "operation 27", "presios 27" siempre significan "Reto 27" (reto27). "tiro verde"/"quedó verde" = birdie (-1). "bogui"/"bogey" = +1. "par"/"al par" = 0. (6) Si en CONTEXTO de abajo hay un reto/ronda en progreso de un jugador y el nuevo dictado menciona hoyos SIN decir el nombre del jugador, asígnalos a ese jugador en progreso. (7) CRÍTICO: incluye en "hoyos" ÚNICAMENTE los hoyos que se mencionan EN ESTE dictado. NO rellenes ni inventes los demás hoyos con par ni con ningún valor. Si solo se dictó el hoyo 9, devuelve solo el hoyo 9. Los hoyos anteriores ya están guardados y NO deben repetirse. (8) Si el usuario dice explícitamente que CORRIGE o CAMBIA un hoyo (ej. "corrige el hoyo 3", "el hoyo 2 fue bogey no par", "me equivoqué en el 4"), incluye ese hoyo con un campo extra "corregir": true, para permitir sobrescribir el valor anterior.';
 }
 
 // Interpreta el texto dictado y devuelve el objeto estructurado
 async function interpretarDictado(texto) {
   if (!texto || !texto.trim()) return { actividades: [], dudas: '' };
-  var resultado = await dictarAClaudeJSON(texto, _systemPromptDictado(), { maxTokens: 2048 });
+  // Construir contexto de retos/rondas en progreso (sin subir) para que Claude asigne hoyos sueltos
+  var contexto = '';
+  var enProgreso = _dictadoActividades.filter(function(a){
+    return (a.tipo === 'reto27' || a.tipo === 'ronda') && !a._guardada && a.perfilId;
+  });
+  if (enProgreso.length) {
+    contexto = '\n\nCONTEXTO — retos/rondas en progreso (si el dictado da hoyos sin nombre, probablemente son de aquí):\n';
+    enProgreso.forEach(function(a){
+      var hoyosYa = Object.keys(a.hoyos || {}).filter(function(k){ return a.hoyos[k] && typeof a.hoyos[k].score === 'number'; });
+      contexto += '- ' + (a.perfilNombre || '?') + ' está jugando ' + (a.tipo === 'reto27' ? 'Reto 27' : 'Ronda') + ', ya tiene los hoyos: ' + (hoyosYa.join(', ') || 'ninguno') + '\n';
+    });
+  }
+  var resultado = await dictarAClaudeJSON(texto, _systemPromptDictado() + contexto, { maxTokens: 2048 });
   if (!resultado.actividades) resultado.actividades = [];
   return resultado;
 }
 
 function detenerDictadoEscuchar() {
   _dictadoEscuchando = false;
+  if (_dictadoSilencioTimer) { clearTimeout(_dictadoSilencioTimer); _dictadoSilencioTimer = null; }
+  // Rescatar el texto provisional (interim) que aún no se marcó como final
+  if (_dictadoInterim && _dictadoInterim.trim()) {
+    _dictadoTextoAcum += _dictadoInterim + ' ';
+    _dictadoInterim = '';
+  }
   if (_dictadoReconocimiento) { try { _dictadoReconocimiento.stop(); } catch(e){} _dictadoReconocimiento = null; }
-  var btn = document.getElementById('dictado-btn-hablar');
-  if (btn) { btn.textContent = '🎤 Empezar a dictar'; btn.style.background = 'linear-gradient(160deg,#E24B4A,#b8322f)'; }
   var circ = document.getElementById('dictado-mic-circ'); if (circ) circ.style.transform = 'scale(1)';
-  var est = document.getElementById('dictado-estado'); if (est) est.textContent = 'Toca para dictar';
+  _iconoDictado('mic');
   mostrarOndasDictado(false);
   var texto = (_dictadoTextoAcum || '').trim();
-  if (texto) procesarDictadoConClaude(texto);
+  if (texto) {
+    procesarDictadoConClaude(texto);
+  } else {
+    // No dictó nada: volver a estado listo
+    var est = document.getElementById('dictado-estado'); if (est) est.textContent = 'Toca para dictar';
+    var sub = document.getElementById('dictado-texto-vivo'); if (sub) sub.textContent = '';
+  }
 }
 
 // Acumulador de actividades captadas hoy (en memoria durante la sesión del pop-up)
 var _dictadoActividades = [];
 
 async function procesarDictadoConClaude(texto) {
+  _dictadoProcesando = true;
   var est = document.getElementById('dictado-estado');
   var sub = document.getElementById('dictado-texto-vivo');
+  var circ = document.getElementById('dictado-mic-circ');
   if (est) est.textContent = 'Entendiendo…';
   if (sub) sub.textContent = 'Claude está interpretando lo que dictaste';
-  var btn = document.getElementById('dictado-btn-hablar');
-  if (btn) { btn.textContent = '⏳ Procesando…'; btn.disabled = true; }
 
   try {
     var r = await interpretarDictado(texto);
-    // Agregar las nuevas actividades AL INICIO (lo reciente arriba)
     var nuevas = r.actividades || [];
-    // marcar como recién dictadas
-    nuevas.forEach(function(a){ a._nueva = true; a._ts = Date.now(); });
-    // quitar la marca "nueva" de las anteriores
-    _dictadoActividades.forEach(function(a){ a._nueva = false; });
-    _dictadoActividades = nuevas.concat(_dictadoActividades);
+    _fusionarActividadesDictado(nuevas);
     _dictadoTextoAcum = '';
-    if (est) est.textContent = 'Listo ✓';
-    if (sub) sub.textContent = 'Toca para dictar más';
+    if (est) est.textContent = 'Toca para dictar más';
+    if (sub) sub.textContent = '';
     renderDictadoFichas(r.dudas);
   } catch(e) {
-    if (est) est.textContent = 'Ups…';
+    if (est) est.textContent = 'Toca para dictar más';
     if (sub) sub.textContent = '';
     var msg = e.message;
     if (msg === 'SIN_CLAVE' || msg === 'CLAVE_INVALIDA') msg = 'Revisa tu clave en Enlazar Claude.';
     var cap = document.getElementById('dictado-captado');
     if (cap) cap.innerHTML = '<div style="background:rgba(226,75,74,.12);border:1px solid rgba(226,75,74,.35);border-radius:12px;padding:13px 14px;color:#E88;font-size:12px">No pude interpretar el dictado: ' + msg + '<br><br>Lo que dictaste: "' + texto + '"</div>';
   }
-  if (btn) { btn.textContent = '🎤 Dictar más'; btn.disabled = false; }
+  if (circ) circ.style.transform = 'scale(1)';
+  _iconoDictado('mic');
+  _dictadoProcesando = false;
+}
+
+// Reinicia la escucha para dictar más (limpia el texto pero conserva las actividades captadas)
+function reiniciarDictado() {
+  _dictadoTextoAcum = '';
+  var est = document.getElementById('dictado-estado'); if (est) est.textContent = 'Escuchando…';
+  var sub = document.getElementById('dictado-texto-vivo'); if (sub) sub.textContent = 'Di lo que hiciste, natural…';
+  iniciarDictadoEscuchar();
 }
 
 function iconoTipoDictado(tipo) {
@@ -6093,34 +6148,116 @@ function iconoTipoDictado(tipo) {
   return '🏋️';
 }
 
+// Fusiona las actividades nuevas con las existentes:
+// - reto27/ronda del mismo perfil (sin subir) → acumula los hoyos en la misma ficha
+// - entrenamiento → siempre se agrega como nuevo
+function _fusionarActividadesDictado(nuevas) {
+  // Quitar la marca "nueva" de todas las anteriores
+  _dictadoActividades.forEach(function(a){ a._nueva = false; });
+
+  nuevas.forEach(function(nueva) {
+    nueva._ts = Date.now();
+    if ((nueva.tipo === 'reto27' || nueva.tipo === 'ronda') && nueva.perfilId) {
+      // Buscar un reto/ronda del mismo tipo y perfil que NO esté guardado aún
+      var existente = null;
+      for (var i = 0; i < _dictadoActividades.length; i++) {
+        var a = _dictadoActividades[i];
+        if (a.tipo === nueva.tipo && a.perfilId === nueva.perfilId && !a._guardada) { existente = a; break; }
+      }
+      if (existente) {
+        // Acumular los hoyos nuevos en el existente
+        existente.hoyos = existente.hoyos || {};
+        var hn = nueva.hoyos || {};
+        Object.keys(hn).forEach(function(k){
+          var nuevoDato = hn[k];
+          // Solo aceptar el hoyo nuevo si tiene un score válido (número)
+          if (!nuevoDato || typeof nuevoDato.score !== 'number') return;
+          var yaExiste = existente.hoyos[k];
+          // Si ese hoyo ya tenía dato válido, NO lo pises (evita que un "par" asumido borre lo real),
+          // A MENOS que el usuario lo esté corrigiendo explícitamente (corregir:true).
+          if (yaExiste && typeof yaExiste.score === 'number' && !nuevoDato.corregir) {
+            return;
+          }
+          existente.hoyos[k] = nuevoDato;
+        });
+        existente._nueva = true;
+        // moverlo al inicio para que se vea arriba
+        var idx = _dictadoActividades.indexOf(existente);
+        if (idx > 0) { _dictadoActividades.splice(idx, 1); _dictadoActividades.unshift(existente); }
+        return;
+      }
+    }
+    // Si no hubo fusión, agregar como nueva al inicio
+    nueva._nueva = true;
+    _dictadoActividades.unshift(nueva);
+  });
+}
+
+// ¿Cuántos hoyos tiene registrados una actividad?
+function _contarHoyosDictado(a) {
+  if (!a.hoyos) return 0;
+  var n = 0;
+  Object.keys(a.hoyos).forEach(function(k){
+    var d = a.hoyos[k];
+    if (d && typeof d.score === 'number') n++;
+  });
+  return n;
+}
+
+// ¿Está completa una actividad para poder subirse?
+// entrenamiento: siempre. reto27: 9 hoyos. ronda: 9 o 18 hoyos.
+function _actividadCompleta(a) {
+  if (a.tipo === 'entrenamiento') return true;
+  var n = _contarHoyosDictado(a);
+  if (a.tipo === 'reto27') return n >= 9;
+  if (a.tipo === 'ronda') return n >= 9; // 9 o más (18 también cumple)
+  return false;
+}
+
 function renderDictadoFichas(dudas) {
   var cont = document.getElementById('dictado-captado');
   if (!cont) return;
   if (!_dictadoActividades.length) { cont.innerHTML = ''; return; }
 
+  var pendientes = _dictadoActividades.filter(function(a){ return !a._guardada && _actividadCompleta(a); }).length;
+  var incompletas = _dictadoActividades.filter(function(a){ return !a._guardada && !_actividadCompleta(a); }).length;
+
   var html = '<div style="display:flex;justify-content:space-between;padding:0 4px 8px"><span style="color:#6a6a85;font-size:10px;font-weight:700;letter-spacing:.5px">CAPTADO HOY · ' + _dictadoActividades.length + '</span></div>';
 
   _dictadoActividades.forEach(function(a, idx) {
-    var esNueva = a._nueva;
-    var borde = a.tipo === 'entrenamiento' ? 'rgba(239,159,39,.3)' : 'rgba(127,119,221,.35)';
-    html += '<div style="position:relative;background:#1a1f33;border:0.5px solid ' + borde + ';border-radius:12px;padding:12px 14px;margin-bottom:9px">';
+    var esNueva = a._nueva && !a._guardada;
+    var guardada = a._guardada;
+    var borde = guardada ? 'rgba(255,255,255,.06)' : (a.tipo === 'entrenamiento' ? 'rgba(239,159,39,.3)' : 'rgba(127,119,221,.35)');
+    var op = guardada ? 'opacity:.5;' : '';
+    html += '<div style="position:relative;background:#1a1f33;border:0.5px solid ' + borde + ';border-radius:12px;padding:12px 14px;margin-bottom:9px;' + op + '">';
     if (esNueva) html += '<div style="position:absolute;top:-6px;right:12px;background:#EF9F27;color:#000;font-size:8px;font-weight:800;padding:2px 7px;border-radius:6px">RECIÉN DICTADO</div>';
+    if (guardada) html += '<div style="position:absolute;top:-6px;right:12px;background:#1D9E75;color:#fff;font-size:8px;font-weight:800;padding:2px 7px;border-radius:6px">✓ YA GUARDADO</div>';
+
+    // Solo se puede borrar si NO está guardada
+    var accionDer = guardada
+      ? '<span style="color:#5FD6AA;font-size:13px">✓</span>'
+      : '<span onclick="borrarActividadDictado(' + idx + ')" style="color:#E24B4A;font-size:14px;cursor:pointer">🗑️</span>';
 
     if (a.tipo === 'entrenamiento') {
       html += '<div style="display:flex;align-items:center;gap:8px">' +
         '<span style="font-size:14px">' + iconoTipoDictado(a.tipo) + '</span>' +
         '<div style="flex:1"><span style="color:#e8e8f0;font-size:12px;font-weight:800">' + (a.perfilNombre || '?') + '</span> <span style="color:#7a7a95;font-size:10px">· ' + (a.ejercicioNombre || a.ejercicioClave || 'ejercicio') + '</span></div>' +
-        '<span style="color:#5FD6AA;font-size:14px">✓</span>' +
-        '<span onclick="borrarActividadDictado(' + idx + ')" style="color:#E24B4A;font-size:14px;cursor:pointer">🗑️</span>' +
+        (guardada ? '' : '<span style="color:#5FD6AA;font-size:14px">✓</span>') +
+        accionDer +
       '</div>';
       var valTxt = (a.valor !== undefined && a.valor !== null) ? ('· ' + a.valor) : '';
       html += '<div style="color:#9a9ab0;font-size:11px;margin-top:4px;padding-left:22px">Ejecutado ' + valTxt + '</div>';
     } else {
-      // reto27 o ronda: tabla de un jugador
+      var nHoyos = _contarHoyosDictado(a);
+      var metaHoyos = a.tipo === 'reto27' ? 9 : (nHoyos > 9 ? 18 : 9);
+      var completa = _actividadCompleta(a);
+      var progresoTxt = completa
+        ? '<span style="color:#5FD6AA;font-size:9px;font-weight:700">✓ completo</span>'
+        : '<span style="color:#f0a860;font-size:9px;font-weight:700">' + nHoyos + ' de ' + metaHoyos + ' hoyos</span>';
       html += '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">' +
         '<span style="font-size:13px">' + iconoTipoDictado(a.tipo) + '</span>' +
-        '<div style="flex:1"><span style="color:#e8e8f0;font-size:12px;font-weight:800">' + (a.perfilNombre || '?') + '</span> <span style="color:#7a7a95;font-size:10px">· ' + (a.tipo === 'reto27' ? 'Reto 27' : 'Ronda') + '</span></div>' +
-        '<span onclick="borrarActividadDictado(' + idx + ')" style="color:#E24B4A;font-size:14px;cursor:pointer">🗑️</span>' +
+        '<div style="flex:1"><span style="color:#e8e8f0;font-size:12px;font-weight:800">' + (a.perfilNombre || '?') + '</span> <span style="color:#7a7a95;font-size:10px">· ' + (a.tipo === 'reto27' ? 'Reto 27' : 'Ronda') + '</span> · ' + progresoTxt + '</div>' +
+        accionDer +
       '</div>';
       html += renderTablaHoyos(a.hoyos);
     }
@@ -6131,9 +6268,19 @@ function renderDictadoFichas(dudas) {
     html += '<div style="background:rgba(239,159,39,.1);border:0.5px solid rgba(239,159,39,.3);border-radius:10px;padding:10px 12px;margin-bottom:9px;color:#f0c078;font-size:11px">⚠️ ' + dudas + '</div>';
   }
 
-  // Botón subir
-  html += '<div onclick="subirDictadoTodo()" style="background:linear-gradient(160deg,#1D9E75,#0F6E56);border-radius:13px;padding:14px;text-align:center;color:#fff;font-size:14px;font-weight:800;cursor:pointer;margin-top:4px">⬆️ Subir todo a cada perfil</div>' +
-    '<div style="color:#6a6a85;font-size:10px;text-align:center;margin-top:8px">Revisa que todo esté bien antes de subir</div>';
+  // Botón subir: solo si hay pendientes por subir
+  if (pendientes > 0) {
+    html += '<div onclick="subirDictadoTodo()" style="background:linear-gradient(160deg,#1D9E75,#0F6E56);border-radius:13px;padding:14px;text-align:center;color:#fff;font-size:14px;font-weight:800;cursor:pointer;margin-top:4px">⬆️ Subir ' + pendientes + ' a cada perfil</div>';
+    if (incompletas > 0) {
+      html += '<div style="color:#f0a860;font-size:10px;text-align:center;margin-top:8px">⏳ ' + incompletas + ' reto/ronda sin completar no se subirá hasta tener todos los hoyos</div>';
+    } else {
+      html += '<div style="color:#6a6a85;font-size:10px;text-align:center;margin-top:8px">Revisa que todo esté bien antes de subir</div>';
+    }
+  } else if (incompletas > 0) {
+    html += '<div style="background:rgba(239,159,39,.1);border:0.5px solid rgba(239,159,39,.3);border-radius:12px;padding:12px;text-align:center;color:#f0c078;font-size:11px;margin-top:4px">⏳ Sigue dictando los hoyos que faltan. El reto/ronda se podrá subir cuando esté completo.</div>';
+  } else {
+    html += '<div style="color:#5FD6AA;font-size:12px;text-align:center;margin-top:8px;font-weight:600">✓ Todo guardado en su perfil</div>';
+  }
 
   cont.innerHTML = html;
 }
@@ -6147,13 +6294,18 @@ function renderTablaHoyos(hoyos) {
     if (d && typeof d.score === 'number') { total += d.score; hayScore = true; }
     if (d && typeof d.pasos === 'number') { sumaPasos += d.pasos; nPasos++; }
   }
-  var promTxt = nPasos > 0 ? (sumaPasos / nPasos).toFixed(1) : '—';
-  var totTxt = hayScore ? (total > 0 ? '+' + total : (total === 0 ? '0' : String(total))) : '·';
+  var promTxt = nPasos > 0 ? (sumaPasos / nPasos).toFixed(1) : '–';
+  var totTxt = hayScore ? _scoreTxt(total) : '–';
   var totColor = total < 0 ? '#6EA8FE' : (total > 0 ? '#f0a860' : '#5FD6AA');
 
   var html = '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;min-width:300px">';
   html += '<tr><th style="color:#9a9ab0;font-size:8px;padding:4px 2px">Tot</th><th style="color:#9a9ab0;font-size:8px;padding:4px 2px">Pr</th>';
-  for (var h2 = 1; h2 <= 9; h2++) html += '<th style="color:#6a6a85;font-size:8px;padding:4px 2px">H' + h2 + '</th>';
+  for (var h2 = 1; h2 <= 9; h2++) {
+    var tiene = (hoyos[String(h2)] || hoyos[h2]);
+    var conDato = tiene && typeof tiene.score === 'number';
+    var colH = conDato ? '#8a8a9a' : '#3a3a50';
+    html += '<th style="color:' + colH + ';font-size:8px;padding:4px 2px">H' + h2 + '</th>';
+  }
   html += '</tr><tr>';
   html += '<td style="background:rgba(29,158,117,.1);font-weight:800;color:' + totColor + ';font-size:11px;padding:5px 2px;text-align:center">' + totTxt + '</td>';
   html += '<td style="background:rgba(110,168,254,.08);color:#9dc0f5;font-weight:700;font-size:11px;padding:5px 2px;text-align:center">' + promTxt + '</td>';
@@ -6161,30 +6313,203 @@ function renderTablaHoyos(hoyos) {
     var dd = hoyos[String(h3)] || hoyos[h3];
     if (dd && typeof dd.score === 'number') {
       var sc = dd.score, col = sc < 0 ? '#6EA8FE' : (sc > 0 ? '#f0a860' : '#5FD6AA');
-      var txt = sc > 0 ? '+' + sc : String(sc);
-      var pasosTxt = (typeof dd.pasos === 'number') ? ('<div style="font-size:8px;color:#6a6a85">' + dd.pasos + 'p</div>') : '';
-      html += '<td style="padding:5px 2px;text-align:center"><span style="color:' + col + ';font-weight:700;font-size:11px">' + txt + '</span>' + pasosTxt + '</td>';
+      var txt = _scoreTxt(sc);
+      // pasos: número + "p" si hay dato, guion si no (para que todos los campos estén rellenos)
+      var pasosTxt = (typeof dd.pasos === 'number')
+        ? ('<div style="font-size:8px;color:#6a6a85">' + dd.pasos + 'p</div>')
+        : ('<div style="font-size:8px;color:#3a3a50">–</div>');
+      html += '<td style="padding:5px 2px;text-align:center;background:rgba(255,255,255,.02)"><span style="color:' + col + ';font-weight:700;font-size:11px">' + txt + '</span>' + pasosTxt + '</td>';
     } else {
-      html += '<td style="padding:5px 2px;text-align:center;color:#3a3a50">·</td>';
+      // Hoyo SIN dictar: guion arriba (score) y guion abajo (pasos), todo apagado
+      html += '<td style="padding:5px 2px;text-align:center;color:#2f2f42"><span style="font-size:13px">–</span><div style="font-size:8px;color:#2f2f42">–</div></td>';
     }
   }
   html += '</tr></table></div>';
   return html;
 }
 
+// Texto del score relativo al par: E (empate/par), −1, +1, etc.
+function _scoreTxt(sc) {
+  if (sc === 0) return 'E';
+  return sc > 0 ? ('+' + sc) : String(sc);
+}
+
 function borrarActividadDictado(idx) {
+  var a = _dictadoActividades[idx];
+  if (a && a._guardada) return; // no borrar las ya guardadas
   _dictadoActividades.splice(idx, 1);
   renderDictadoFichas('');
 }
 
+// ═══════════════════════════════════════════════════════════
+// DICTADO INTELIGENTE · CAPA 4 — guardar en cada perfil
+// ═══════════════════════════════════════════════════════════
+
+// Convierte los hoyos del dictado {"1":{score,pasos}} a array de hoyosDetalle para op27
+function _hoyosDictadoAOp27(hoyos) {
+  hoyos = hoyos || {};
+  var detalle = [];
+  for (var h = 1; h <= 9; h++) {
+    var d = hoyos[String(h)] || hoyos[h];
+    if (d && typeof d.score === 'number') {
+      // En OP27 cada hoyo es par 3, golpes = 3 + score
+      detalle.push({
+        num: h,
+        golpes: 3 + d.score,
+        gir: null,
+        pasos: (typeof d.pasos === 'number') ? d.pasos : null,
+        puttCortoFallado: null
+      });
+    }
+  }
+  return detalle;
+}
+
+// Guarda una actividad de ENTRENAMIENTO en el perfil correspondiente
+function _guardarEntrenamientoDictado(a) {
+  var key = 'entreno_hist_' + a.perfilId;
+  var hist = [];
+  try { hist = JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) {}
+  var cat = 'putt';
+  // deducir categoría de la clave si se puede
+  if (a.ejercicioClave) {
+    if (a.ejercicioClave.indexOf('approach') >= 0) cat = 'approach';
+    else if (a.ejercicioClave.indexOf('hierro') >= 0) cat = 'hierros';
+    else if (a.ejercicioClave.indexOf('drive') >= 0) cat = 'drive';
+    else cat = 'putt';
+  }
+  var registro = {
+    sesionId: 'dictado_' + Date.now() + '_' + Math.floor(Math.random()*1000),
+    fecha: new Date().toISOString(),
+    ejercicios: [{
+      id: a.ejercicioClave || a.ejercicioNombre || 'ejercicio',
+      nom: a.ejercicioNombre || a.ejercicioClave || 'Ejercicio',
+      cat: cat,
+      datos: { mins: 10, ejec: (a.valor !== undefined && a.valor !== null) ? a.valor : 1 }
+    }],
+    totalProgramados: 1,
+    totalHechos: 1,
+    _dictado: true
+  };
+  hist.unshift(registro);
+  localStorage.setItem(key, JSON.stringify(hist));
+}
+
+// Guarda una actividad de RETO 27 en el perfil correspondiente
+function _guardarReto27Dictado(a) {
+  var key = 'op36_hist_' + a.perfilId;
+  var hist = [];
+  try { hist = JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) {}
+  var detalle = _hoyosDictadoAOp27(a.hoyos);
+  if (detalle.length === 0) return; // sin hoyos válidos, no guardar
+  var acum = detalle.reduce(function(s,h){ return s + (h.golpes - 3); }, 0);
+  var golpes = detalle.reduce(function(s,h){ return s + h.golpes; }, 0);
+  var pasosArr = detalle.filter(function(h){ return typeof h.pasos === 'number'; }).map(function(h){ return h.pasos; });
+  var distPutt = pasosArr.length > 0 ? Math.round(pasosArr.reduce(function(x,y){return x+y;},0) / pasosArr.length) : null;
+  hist.push({
+    fecha: new Date().toISOString(),
+    dist: '25',
+    golpes: golpes,
+    acum: acum,
+    hoyos: detalle.length,
+    gir: 0,
+    puttsFallados: 0,
+    distPutt: distPutt,
+    hoyosDetalle: detalle,
+    distRondas: null,
+    trampaRondas: null,
+    _dictado: true
+  });
+  localStorage.setItem(key, JSON.stringify(hist));
+}
+
+// Guarda una actividad de RONDA en el perfil correspondiente
+function _guardarRondaDictado(a) {
+  var key = 'historial_' + a.perfilId;
+  var hist = [];
+  try { hist = JSON.parse(localStorage.getItem(key) || '[]'); } catch(e) {}
+  var hoyos = a.hoyos || {};
+  // construir array de hoyos estilo ronda
+  var arrHoyos = [];
+  var scoreReal = 0, nJugados = 0;
+  for (var h = 1; h <= 18; h++) {
+    var d = hoyos[String(h)] || hoyos[h];
+    if (d && typeof d.score === 'number') {
+      arrHoyos.push({ num: h, res: d.score, ok: true, pasos: (typeof d.pasos === 'number' ? d.pasos : null) });
+      scoreReal += d.score;
+      nJugados++;
+    } else {
+      arrHoyos.push({ num: h, res: null, ok: false });
+    }
+  }
+  if (nJugados === 0) return;
+  var totalHoyos = nJugados <= 9 ? 9 : 18;
+  // score normalizado: si jugó 9, se proyecta a 18
+  var scoreNorm = (nJugados <= 9);
+  var scoreTotal = scoreNorm ? scoreReal * 2 : scoreReal;
+  hist.unshift({
+    fecha: new Date().toISOString().split('T')[0],
+    timestamp: Date.now(),
+    jugador: a.perfilNombre || '',
+    totalHoyos: totalHoyos,
+    hoyos: arrHoyos,
+    scoreTotal: scoreTotal,
+    scoreNormalizado: scoreNorm,
+    scoreReal: scoreReal,
+    _dictado: true
+  });
+  if (hist.length > 100) hist = hist.slice(0, 100);
+  localStorage.setItem(key, JSON.stringify(hist));
+}
+
 function subirDictadoTodo() {
-  // Capa 4: aquí se guardará en cada perfil. Por ahora, aviso.
-  alert('En el siguiente paso, esto guardará todo en el perfil de cada jugador. Por ahora es la vista previa de lo captado.');
+  // Solo las que faltan por subir Y están completas
+  var pendientes = _dictadoActividades.filter(function(a){ return !a._guardada && _actividadCompleta(a); });
+  if (!pendientes.length) return;
+  var n = pendientes.length;
+  if (!confirm('¿Subir ' + n + ' actividad' + (n !== 1 ? 'es' : '') + ' al perfil de cada jugador? Esto las guarda en sus estadísticas.')) return;
+  _ejecutarSubidaDictado();
+}
+
+function _ejecutarSubidaDictado() {
+  var guardadas = 0, errores = 0;
+  _dictadoActividades.forEach(function(a) {
+    if (a._guardada) return; // ya estaba guardada
+    if (!_actividadCompleta(a)) return; // incompleta: no subir todavía
+    if (!a.perfilId) { errores++; return; }
+    try {
+      if (a.tipo === 'entrenamiento') _guardarEntrenamientoDictado(a);
+      else if (a.tipo === 'reto27') _guardarReto27Dictado(a);
+      else if (a.tipo === 'ronda') _guardarRondaDictado(a);
+      else { errores++; return; }
+      a._guardada = true;   // marcar como guardada (se queda visible pero apagada)
+      a._nueva = false;
+      guardadas++;
+    } catch(e) { errores++; }
+  });
+
+  // Refrescar las fichas (las guardadas aparecerán apagadas con "✓ Ya guardado")
+  renderDictadoFichas('');
+
+  // Mensaje breve de confirmación arriba de las fichas
+  var cont = document.getElementById('dictado-captado');
+  if (cont) {
+    var aviso = document.createElement('div');
+    aviso.style.cssText = 'background:rgba(29,158,117,.12);border:1px solid rgba(29,158,117,.35);border-radius:12px;padding:12px;color:#5FD6AA;font-size:12px;font-weight:600;text-align:center;margin-bottom:10px';
+    aviso.textContent = '✅ Se guardaron ' + guardadas + ' en su perfil' + (errores > 0 ? ' · ' + errores + ' sin perfil' : '');
+    cont.insertBefore(aviso, cont.firstChild);
+    setTimeout(function(){ try { aviso.remove(); } catch(e){} }, 3000);
+  }
+
+  // Refrescar el home de fondo
+  try { if (typeof renderHome === 'function') renderHome(); } catch(e) {}
 }
 
 var _dictadoReconocimiento = null;
 var _dictadoEscuchando = false;
+var _dictadoProcesando = false;
 var _dictadoTextoAcum = '';
+var _dictadoInterim = '';
 
 function abrirDictadoGlobal() {
   // Si Claude no está enlazado, ofrecer enlazarlo
@@ -6200,25 +6525,45 @@ function abrirDictadoGlobal() {
   ov.onclick = function(e){ if (e.target === ov) cerrarDictadoGlobal(); };
   ov.innerHTML =
     '<div style="background:#12121f;border-radius:22px 22px 0 0;width:100%;max-width:430px;padding:8px 0 26px;max-height:88vh;overflow-y:auto">' +
-      '<div style="display:flex;justify-content:center;padding:10px 0"><div style="width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,.15)"></div></div>' +
-      '<div style="padding:6px 20px 14px;border-bottom:0.5px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:11px">' +
-        '<div id="dictado-mic-circ" style="width:44px;height:44px;border-radius:50%;background:#E24B4A;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .2s">' +
-          '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg>' +
-        '</div>' +
-        '<div style="flex:1">' +
-          '<div id="dictado-estado" style="color:#e8e8f0;font-size:15px;font-weight:800">Toca para dictar</div>' +
-          '<div id="dictado-texto-vivo" style="color:#8a8a9a;font-size:11px;font-style:italic;min-height:14px">Di lo que hiciste, natural…</div>' +
-        '</div>' +
-        '<div onclick="cerrarDictadoGlobal()" style="color:#8a8a9a;font-size:22px;cursor:pointer;padding:0 4px">✕</div>' +
+      '<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 20px 4px">' +
+        '<div style="width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,.15);margin:0 auto"></div>' +
+        '<div onclick="cerrarDictadoGlobal()" style="position:absolute;right:22px;color:#8a8a9a;font-size:22px;cursor:pointer">✕</div>' +
       '</div>' +
-      '<div id="dictado-ondas" style="display:none;padding:10px 0;justify-content:center;gap:4px;align-items:center;height:34px"></div>' +
-      '<div style="padding:16px 20px 0">' +
-        '<button id="dictado-btn-hablar" onclick="toggleDictadoEscuchar()" style="width:100%;background:linear-gradient(160deg,#E24B4A,#b8322f);border:none;border-radius:13px;padding:15px;color:#fff;font-size:15px;font-weight:800;cursor:pointer">🎤 Empezar a dictar</button>' +
+      // Micrófono central único (control principal)
+      '<div style="display:flex;flex-direction:column;align-items:center;padding:14px 20px 6px">' +
+        '<div id="dictado-mic-circ" onclick="toggleDictadoDesdeMic()" style="width:72px;height:72px;border-radius:50%;background:linear-gradient(160deg,#E24B4A,#b8322f);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 18px rgba(226,75,74,.5);transition:transform .2s">' +
+          '<span id="dictado-mic-icono"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg></span>' +
+        '</div>' +
+        '<div id="dictado-ondas" style="display:none;padding:10px 0 0;justify-content:center;gap:4px;align-items:center;height:24px"></div>' +
+        '<div id="dictado-estado" style="color:#e8e8f0;font-size:14px;font-weight:800;margin-top:10px">Escuchando…</div>' +
+        '<div id="dictado-texto-vivo" style="color:#8a8a9a;font-size:11px;font-style:italic;min-height:14px;text-align:center;margin-top:3px;padding:0 10px">Di lo que hiciste, natural…</div>' +
       '</div>' +
-      '<div id="dictado-captado" style="padding:16px 16px 0"></div>' +
-      '<div style="padding:14px 20px 0;color:#6a6a85;font-size:11px;text-align:center;line-height:1.5">Lo que dictes se irá mostrando aquí. Podrás revisarlo y corregirlo antes de guardar.</div>' +
+      '<div id="dictado-captado" style="padding:14px 16px 0"></div>' +
     '</div>';
   document.body.appendChild(ov);
+  // Empezar a escuchar de inmediato (sin botón intermedio)
+  setTimeout(function(){ iniciarDictadoEscuchar(); }, 250);
+}
+
+// Cambia el ícono del círculo central: 'stop' (cuadrito) mientras escucha, 'mic' cuando no
+function _iconoDictado(modo) {
+  var span = document.getElementById('dictado-mic-icono');
+  if (!span) return;
+  if (modo === 'stop') {
+    span.innerHTML = '<svg width="30" height="30" viewBox="0 0 24 24" fill="#fff"><rect x="6" y="6" width="12" height="12" rx="2.5"/></svg>';
+  } else {
+    span.innerHTML = '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg>';
+  }
+}
+
+// El micrófono central: si escucha, detiene y procesa; si no, reinicia el dictado
+function toggleDictadoDesdeMic() {
+  if (_dictadoProcesando) return; // evitar doble toque mientras procesa
+  if (_dictadoEscuchando) {
+    detenerDictadoEscuchar();
+  } else {
+    reiniciarDictado();
+  }
 }
 
 function cerrarDictadoGlobal() {
@@ -6241,6 +6586,7 @@ function iniciarDictadoEscuchar() {
     _dictadoReconocimiento.continuous = true;
     _dictadoReconocimiento.interimResults = true;
     _dictadoTextoAcum = '';
+    _dictadoInterim = '';
     _dictadoReconocimiento.onresult = function(ev) {
       var interim = '', fin = '';
       for (var i = ev.resultIndex; i < ev.results.length; i++) {
@@ -6248,8 +6594,11 @@ function iniciarDictadoEscuchar() {
         if (ev.results[i].isFinal) fin += t; else interim += t;
       }
       if (fin) _dictadoTextoAcum += fin + ' ';
+      _dictadoInterim = interim; // guardar lo provisional por si se hace stop antes de finalizar
       var vivo = document.getElementById('dictado-texto-vivo');
       if (vivo) vivo.textContent = (_dictadoTextoAcum + interim).trim() || 'Escuchando…';
+      // Detección de silencio: cada vez que hay voz, reinicia el temporizador
+      reiniciarSilencioDictado();
     };
     _dictadoReconocimiento.onend = function() {
       if (_dictadoEscuchando) { try { _dictadoReconocimiento.start(); } catch(e){} }
@@ -6263,13 +6612,24 @@ function iniciarDictadoEscuchar() {
     _dictadoReconocimiento.start();
     _dictadoEscuchando = true;
     var est = document.getElementById('dictado-estado'); if (est) est.textContent = 'Escuchando…';
-    var btn = document.getElementById('dictado-btn-hablar');
-    if (btn) { btn.textContent = '⏹ Detener y procesar'; btn.style.background = 'linear-gradient(160deg,#555,#333)'; }
     var circ = document.getElementById('dictado-mic-circ'); if (circ) circ.style.transform = 'scale(1.1)';
+    _iconoDictado('stop');
     mostrarOndasDictado(true);
   } catch(e) {
     alert('No se pudo iniciar el micrófono: ' + e.message);
   }
+}
+
+// Temporizador de silencio: si pasan ~4.5s sin hablar, procesa solo
+var _dictadoSilencioTimer = null;
+function reiniciarSilencioDictado() {
+  if (_dictadoSilencioTimer) clearTimeout(_dictadoSilencioTimer);
+  _dictadoSilencioTimer = setTimeout(function() {
+    // Solo procesa si hay algo dictado y sigue escuchando
+    if (_dictadoEscuchando && (_dictadoTextoAcum || '').trim()) {
+      detenerDictadoEscuchar();
+    }
+  }, 4500);
 }
 
 function mostrarOndasDictado(mostrar) {
