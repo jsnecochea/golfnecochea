@@ -716,6 +716,55 @@
      VISTA: HOME
 ================================================ -->
 <div class="view active" id="view-home">
+
+<!-- POP-UP TROFEO (modo gamer, 1 vez al día) -->
+<div id="overlay-trofeo-gamer" style="display:none;position:fixed;inset:0;z-index:5000;background:rgba(8,8,16,.82);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:24px;box-sizing:border-box">
+  <div style="position:relative;width:100%;max-width:360px">
+    <div onclick="cerrarTrofeoGamer()" style="position:absolute;top:-14px;right:-6px;z-index:2;width:34px;height:34px;border-radius:50%;background:#2a2440;border:1px solid rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.5)">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c4bce4" stroke-width="2.5" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </div>
+<div style="background:linear-gradient(135deg,#221c42 0%,#2e2156 45%,#1a1530 100%);border-radius:20px;padding:24px 16px;text-align:center;border:1px solid rgba(255,210,63,.35);position:relative;overflow:hidden;box-shadow:0 8px 28px rgba(46,33,86,.5),inset 0 1px 0 rgba(255,255,255,.08)">
+      <div style="position:absolute;top:-30px;right:-25px;width:110px;height:110px;background:radial-gradient(circle,rgba(255,210,63,.18),transparent 70%)"></div>
+      <div style="position:absolute;bottom:-30px;left:-25px;width:90px;height:90px;background:radial-gradient(circle,rgba(125,58,237,.2),transparent 70%)"></div>
+      <div id="gamer-trofeo" style="display:flex;justify-content:center;line-height:1">
+        <svg width="66" height="66" viewBox="0 0 48 48" id="gamer-trofeo-svg">
+          <defs>
+            <linearGradient id="trofeoFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#FFE680"/><stop offset="0.5" stop-color="#FFD23F"/><stop offset="1" stop-color="#E6A317"/>
+            </linearGradient>
+            <!-- Máscara de llenado de abajo hacia arriba (se ajusta la y del rect por JS) -->
+            <clipPath id="trofeoClip"><rect id="trofeo-clip-rect" x="0" y="48" width="48" height="0"/></clipPath>
+          </defs>
+          <!-- Relleno dorado recortado por el clip (nivel de progreso) -->
+          <g clip-path="url(#trofeoClip)">
+            <path d="M14 8 H34 V18 C34 24 30 28 24 28 C18 28 14 24 14 18 Z" fill="url(#trofeoFill)"/>
+            <path d="M24 28 V34" stroke="#FFD23F" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M17 40 H31 M19 40 C19 36 21 34 24 34 C27 34 29 36 29 40" fill="url(#trofeoFill)" stroke="#FFD23F" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+          </g>
+          <!-- copa (contorno) -->
+          <path id="trofeo-copa" d="M14 8 H34 V18 C34 24 30 28 24 28 C18 28 14 24 14 18 Z" fill="none" stroke="#5a5a6e" stroke-width="2.2" stroke-linejoin="round"/>
+          <!-- asa izquierda -->
+          <path id="trofeo-asaL" d="M14 11 H9 C9 17 11 20 15 20" fill="none" stroke="#5a5a6e" stroke-width="2.2" stroke-linecap="round"/>
+          <!-- asa derecha -->
+          <path id="trofeo-asaR" d="M34 11 H39 C39 17 37 20 33 20" fill="none" stroke="#5a5a6e" stroke-width="2.2" stroke-linecap="round"/>
+          <!-- tallo -->
+          <path id="trofeo-tallo" d="M24 28 V34" fill="none" stroke="#5a5a6e" stroke-width="2.2" stroke-linecap="round"/>
+          <!-- base -->
+          <path id="trofeo-base" d="M17 40 H31 M19 40 C19 36 21 34 24 34 C27 34 29 36 29 40" fill="none" stroke="#5a5a6e" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div id="gamer-trofeo-frase" style="color:#FFD23F;font-size:19px;font-weight:800;margin-top:12px;letter-spacing:-.2px;text-shadow:0 2px 14px rgba(255,210,63,.4)">VAMOS POR EL TROFEO</div>
+      <!-- 3 medallas (una por tipo de práctica) -->
+      <div style="display:flex;justify-content:center;gap:18px;margin-top:16px">
+        <div id="gamer-med-putt" style="font-size:26px;filter:grayscale(1);opacity:.4">🏅</div>
+        <div id="gamer-med-app" style="font-size:26px;filter:grayscale(1);opacity:.4">🏅</div>
+        <div id="gamer-med-hierro" style="font-size:26px;filter:grayscale(1);opacity:.4">🏅</div>
+      </div>
+      <div id="gamer-estrellas" style="display:flex;align-items:center;justify-content:center;gap:7px;margin-top:7px"></div>
+    </div>
+  </div>
+</div>
+
   <!-- VISTA PRO -->
   <div id="home-view-pro" style="padding: 0 16px 0; min-height: 100%; display: flex; flex-direction: column; justify-content: flex-start; box-sizing: border-box;">
 
@@ -734,23 +783,29 @@
     </div>
 
     <!-- Anillos semana -->
-    <div class="section-label">Semana en curso</div>
+    <div class="section-label" style="display:flex;align-items:center;justify-content:space-between">
+      <span>Semana en curso</span>
+      <span style="font-weight:600;font-size:12px;color:var(--text-muted)">⏱️ <span id="ring-horas-val" style="color:var(--text);font-weight:800;font-size:14px">0</span> h de golf</span>
+    </div>
     <div class="card">
       <div class="rings-wrap">
         <div style="position:relative;width:158px;height:158px;flex-shrink:0">
           <svg viewBox="0 0 90 90" width="158" height="158" id="svg-anillos">
             <!-- Ejercicios -->
-            <circle cx="45" cy="45" r="37" fill="none" stroke="var(--bg3)" stroke-width="11"/>
-            <circle cx="45" cy="45" r="37" fill="none" stroke="#1D4ED8" stroke-width="11" stroke-dasharray="232.5" stroke-dashoffset="58.1" stroke-linecap="round" transform="rotate(-90 45 45)" id="ring-ejercicios"/>
-            <circle cx="45" cy="45" r="37" fill="none" stroke="#4D9BFF" stroke-width="11" stroke-dasharray="0 232.5" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 45 45)" id="ring-ejercicios-v2"/>
+            <circle cx="45" cy="45" r="38" fill="none" stroke="var(--bg3)" stroke-width="9" id="bg-ejercicios"/>
+            <circle cx="45" cy="45" r="38" fill="none" stroke="#1D4ED8" stroke-width="9" stroke-dasharray="238.8" stroke-dashoffset="59.7" stroke-linecap="round" transform="rotate(-90 45 45)" id="ring-ejercicios"/>
+            <circle cx="45" cy="45" r="38" fill="none" stroke="#4D9BFF" stroke-width="9" stroke-dasharray="0 238.8" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 45 45)" id="ring-ejercicios-v2"/>
             <!-- Reto OP27 -->
-            <circle cx="45" cy="45" r="24.5" fill="none" stroke="var(--bg3)" stroke-width="11"/>
-            <circle cx="45" cy="45" r="24.5" fill="none" stroke="#FF7A1A" stroke-width="11" stroke-dasharray="153.9" stroke-dashoffset="38.5" stroke-linecap="round" transform="rotate(-90 45 45)" id="ring-retos"/>
-            <circle cx="45" cy="45" r="24.5" fill="none" stroke="#FFA033" stroke-width="11" stroke-dasharray="0 153.9" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 45 45)" id="ring-retos-v2"/>
+            <circle cx="45" cy="45" r="28" fill="none" stroke="var(--bg3)" stroke-width="9" id="bg-retos"/>
+            <circle cx="45" cy="45" r="28" fill="none" stroke="#FF7A1A" stroke-width="9" stroke-dasharray="175.9" stroke-dashoffset="44" stroke-linecap="round" transform="rotate(-90 45 45)" id="ring-retos"/>
+            <circle cx="45" cy="45" r="28" fill="none" stroke="#FFA033" stroke-width="9" stroke-dasharray="0 175.9" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 45 45)" id="ring-retos-v2"/>
             <!-- Rondas -->
-            <circle cx="45" cy="45" r="12" fill="none" stroke="var(--bg3)" stroke-width="11"/>
-            <circle cx="45" cy="45" r="12" fill="none" stroke="#7C3AED" stroke-width="11" stroke-dasharray="75.4" stroke-dashoffset="18.8" stroke-linecap="round" transform="rotate(-90 45 45)" id="ring-rondas"/>
-            <circle cx="45" cy="45" r="12" fill="none" stroke="#9D6BFF" stroke-width="11" stroke-dasharray="0 75.4" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 45 45)" id="ring-rondas-v2"/>
+            <circle cx="45" cy="45" r="18" fill="none" stroke="var(--bg3)" stroke-width="9" id="bg-rondas"/>
+            <circle cx="45" cy="45" r="18" fill="none" stroke="#7C3AED" stroke-width="9" stroke-dasharray="113.1" stroke-dashoffset="28.3" stroke-linecap="round" transform="rotate(-90 45 45)" id="ring-rondas"/>
+            <circle cx="45" cy="45" r="18" fill="none" stroke="#9D6BFF" stroke-width="9" stroke-dasharray="0 113.1" stroke-dashoffset="0" stroke-linecap="round" transform="rotate(-90 45 45)" id="ring-rondas-v2"/>
+            <!-- Simulador (solo se muestra si hay trabajo de simulador) -->
+            <circle cx="45" cy="45" r="8" fill="none" stroke="var(--bg3)" stroke-width="9" id="ring-sim-bg" style="display:none"/>
+            <circle cx="45" cy="45" r="8" fill="none" stroke="#1D9E75" stroke-width="9" stroke-dasharray="50.3" stroke-dashoffset="50.3" stroke-linecap="round" transform="rotate(-90 45 45)" id="ring-sim" style="display:none"/>
           </svg>
         </div>
         <div class="rings-legend">
@@ -774,6 +829,13 @@
               <span style="color:var(--text-muted);font-size:14px;font-weight:600">Rondas</span>
             </div>
             <div style="display:flex;align-items:baseline;justify-content:flex-end"><span style="color:var(--text);font-size:26px;font-weight:800;text-align:right;min-width:44px"><span id="ring-ro-val">1.5</span></span><span style="color:var(--text-muted);font-weight:400;font-size:13px;min-width:34px;text-align:left"> / 2</span></div>
+          </div>
+          <div class="ring-row" id="ring-sim-row" style="display:none">
+            <div style="display:flex;align-items:center;gap:6px">
+              <div class="ring-dot" style="background:#1D9E75"></div>
+              <span style="color:var(--text-muted);font-size:14px;font-weight:600">Simulador</span>
+            </div>
+            <div style="display:flex;align-items:baseline;justify-content:flex-end"><span style="color:var(--text);font-size:26px;font-weight:800;text-align:right;min-width:44px"><span id="ring-sim-val">0</span></span><span style="color:var(--text-muted);font-weight:400;font-size:13px;min-width:34px;text-align:left"> / 3 días</span></div>
           </div>
         </div>
       </div>
@@ -813,7 +875,7 @@
         <div class="action-btn-lbl" style="color:white;margin-top:3px">Ronda</div>
       </div>
       <div class="action-btn-primary" onclick="entrarAEntrenar()">
-        <div style="font-size:22px;line-height:1">🏋️</div>
+        <div style="font-size:22px;line-height:1"><svg width="23" height="23" viewBox="0 0 32 32" style="display:inline-block;vertical-align:middle"><circle cx="16" cy="6" r="3.5" fill="#fff"/><circle cx="11" cy="12.5" r="3.5" fill="#fff"/><circle cx="21" cy="12.5" r="3.5" fill="#f2f2f2"/><circle cx="6.5" cy="19" r="3.5" fill="#fff"/><circle cx="16" cy="19" r="3.5" fill="#f2f2f2"/><circle cx="25.5" cy="19" r="3.5" fill="#fff"/><circle cx="15.2" cy="5" r="0.55" fill="#c8c8c8"/><circle cx="16.9" cy="6.3" r="0.5" fill="#c8c8c8"/><circle cx="10.2" cy="11.6" r="0.55" fill="#c8c8c8"/><circle cx="11.6" cy="13" r="0.5" fill="#c8c8c8"/><path d="M3 22 L29 22 L27.5 26.5 L4.5 26.5 Z" fill="#0d0d0d" stroke="#000" stroke-width="0.5"/></svg></div>
         <div class="action-btn-lbl" style="color:white;margin-top:3px">Entrenar</div>
       </div>
       <div class="action-btn-primary" onclick="entrarARetos()">
@@ -868,7 +930,7 @@
           <div style="color:white;font-size:10px;font-weight:700;margin-top:5px">Ronda</div>
         </div>
         <div onclick="entrarAEntrenar()" style="background:var(--player-main, #1D9E75);border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer">
-          <div style="font-size:22px;line-height:1">🏋️</div>
+          <div style="font-size:22px;line-height:1"><svg width="23" height="23" viewBox="0 0 32 32" style="display:inline-block;vertical-align:middle"><circle cx="16" cy="6" r="3.5" fill="#fff"/><circle cx="11" cy="12.5" r="3.5" fill="#fff"/><circle cx="21" cy="12.5" r="3.5" fill="#f2f2f2"/><circle cx="6.5" cy="19" r="3.5" fill="#fff"/><circle cx="16" cy="19" r="3.5" fill="#f2f2f2"/><circle cx="25.5" cy="19" r="3.5" fill="#fff"/><circle cx="15.2" cy="5" r="0.55" fill="#c8c8c8"/><circle cx="16.9" cy="6.3" r="0.5" fill="#c8c8c8"/><circle cx="10.2" cy="11.6" r="0.55" fill="#c8c8c8"/><circle cx="11.6" cy="13" r="0.5" fill="#c8c8c8"/><path d="M3 22 L29 22 L27.5 26.5 L4.5 26.5 Z" fill="#0d0d0d" stroke="#000" stroke-width="0.5"/></svg></div>
           <div style="color:white;font-size:10px;font-weight:700;margin-top:5px">Entrenar</div>
         </div>
         <div onclick="entrarARetos()" style="background:var(--player-main, #1D9E75);border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer">
@@ -879,6 +941,202 @@
     </div>
 
   </div><!-- /home-view-light -->
+
+  <!-- VISTA GAMER (modo videojuego) -->
+  <div id="home-view-gamer" style="display:none;background:radial-gradient(ellipse at top,#15131f 0%,#0a0a12 100%);min-height:100%;padding:0 14px 20px;box-sizing:border-box;flex-direction:column">
+
+    <!-- Header perfil -->
+    <div style="padding:calc(env(safe-area-inset-top, 16px) + 16px) 2px 14px;display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:11px">
+        <div id="gamer-avatar" onclick="abrirPerfiles()" style="width:42px;height:42px;border-radius:50%;background:#9D6BFF;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:white;cursor:pointer">PA</div>
+        <div onclick="abrirPerfiles()" style="cursor:pointer">
+          <div id="gamer-nombre" style="color:#fff;font-size:15px;font-weight:800">Jugador</div>
+          <div style="color:#8AAAF0;font-size:11px;font-weight:600">Modo Gamer 🎮</div>
+        </div>
+      </div>
+      <div onclick="abrirMenuPro()" style="width:40px;height:40px;border-radius:11px;background:rgba(157,107,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c4a5f8" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </div>
+    </div>
+
+    <!-- Tira de 7 días (arriba) -->
+    <!-- Separador mi semana -->
+    <div style="display:flex;align-items:center;gap:11px;margin-bottom:13px">
+      <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(138,170,240,.4))"></div>
+      <div style="color:#8AAAF0;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;text-shadow:0 0 12px rgba(138,170,240,.4);white-space:nowrap">📅 Mi semana</div>
+      <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(138,170,240,.4),transparent)"></div>
+    </div>
+
+    <!-- Tira de 7 días con mini-trofeos -->
+    <div id="gamer-semana-dias" style="display:flex;justify-content:space-between;gap:4px;margin-bottom:18px;background:rgba(255,255,255,.03);border:0.5px solid rgba(255,255,255,.08);border-radius:16px;padding:14px 8px"></div>
+
+    <!-- Gran logro de la semana (solo si hay) -->
+    <div id="gamer-logro" style="display:none;background:linear-gradient(135deg,#3a2e0e,#2a2418);border:1.5px solid #EF9F27;border-radius:16px;padding:13px 15px;margin-bottom:18px;align-items:center;gap:13px">
+      <div style="font-size:38px;line-height:1">🔥</div>
+      <div style="flex:1">
+        <div style="color:#FFD23F;font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.5px">Gran logro de la semana</div>
+        <div id="gamer-logro-txt" style="color:#e8e8f0;font-size:15px;font-weight:800;margin-top:2px">¡Hiciste récord! 🎉</div>
+      </div>
+    </div>
+
+    <!-- Separador mi práctica -->
+    <div style="display:flex;align-items:center;gap:11px;margin-bottom:13px">
+      <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(133,183,235,.4))"></div>
+      <div style="color:#85B7EB;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;text-shadow:0 0 12px rgba(133,183,235,.4);white-space:nowrap">🏅 Mi práctica</div>
+      <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(133,183,235,.4),transparent)"></div>
+    </div>
+
+    <!-- 3 aros de práctica: Putt, Approach, Hierro (una sola sección azul) -->
+    <div style="display:flex;gap:9px;justify-content:space-around;background:linear-gradient(160deg,#0a2545 0%,#0f1320 100%);border:1px solid rgba(77,155,255,.45);border-radius:17px;padding:18px 12px;margin-bottom:18px;position:relative;overflow:hidden;box-shadow:0 6px 18px rgba(10,37,69,.5),inset 0 1px 0 rgba(133,183,235,.2)">
+      <div style="position:absolute;top:-25px;right:-25px;width:90px;height:90px;background:radial-gradient(circle,rgba(77,155,255,.22),transparent 70%)"></div>
+      <div style="position:absolute;bottom:-25px;left:-25px;width:80px;height:80px;background:radial-gradient(circle,rgba(77,155,255,.15),transparent 70%)"></div>
+      <div style="text-align:center;position:relative">
+        <div style="position:relative;width:62px;height:62px;margin:0 auto">
+          <svg width="62" height="62" viewBox="0 0 80 80"><defs><linearGradient id="apg-putt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f0abfc"/><stop offset="1" stop-color="#c026d3"/></linearGradient></defs><circle cx="40" cy="40" r="32" fill="none" stroke="#16213a" stroke-width="9"/><circle id="ap-putt-ring" cx="40" cy="40" r="32" fill="none" stroke="url(#apg-putt)" stroke-width="9" stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round" transform="rotate(-90 40 40)" style="filter:drop-shadow(0 0 4px rgba(232,121,249,.7))"/></svg>
+          <div id="ap-putt-med" style="position:absolute;top:-4px;right:-2px;font-size:17px;filter:drop-shadow(0 0 5px rgba(240,171,252,.9));display:none">🏅</div>
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)"><span id="ap-putt-val" style="color:#fff;font-size:17px;font-weight:800">0</span><span style="color:#f0abfc;font-size:9px">/10</span></div>
+        </div>
+        <div style="color:#f0abfc;font-size:11px;font-weight:800;margin-top:7px">Putt</div>
+      </div>
+      <div style="text-align:center;position:relative">
+        <div style="position:relative;width:62px;height:62px;margin:0 auto">
+          <svg width="62" height="62" viewBox="0 0 80 80"><defs><linearGradient id="apg-app" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFC466"/><stop offset="1" stop-color="#EF9F27"/></linearGradient></defs><circle cx="40" cy="40" r="32" fill="none" stroke="#16213a" stroke-width="9"/><circle id="ap-app-ring" cx="40" cy="40" r="32" fill="none" stroke="url(#apg-app)" stroke-width="9" stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round" transform="rotate(-90 40 40)" style="filter:drop-shadow(0 0 4px rgba(239,159,39,.7))"/></svg>
+          <div id="ap-app-med" style="position:absolute;top:-4px;right:-2px;font-size:17px;filter:drop-shadow(0 0 5px rgba(239,159,39,.9));display:none">🏅</div>
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)"><span id="ap-app-val" style="color:#fff;font-size:17px;font-weight:800">0</span><span style="color:#FFC466;font-size:9px">/8</span></div>
+        </div>
+        <div style="color:#FAC775;font-size:11px;font-weight:800;margin-top:7px">Approach</div>
+      </div>
+      <div style="text-align:center;position:relative">
+        <div style="position:relative;width:62px;height:62px;margin:0 auto">
+          <svg width="62" height="62" viewBox="0 0 80 80"><defs><linearGradient id="apg-hierro" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5FD6AA"/><stop offset="1" stop-color="#1D9E75"/></linearGradient></defs><circle cx="40" cy="40" r="32" fill="none" stroke="#16213a" stroke-width="9"/><circle id="ap-hierro-ring" cx="40" cy="40" r="32" fill="none" stroke="url(#apg-hierro)" stroke-width="9" stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round" transform="rotate(-90 40 40)" style="filter:drop-shadow(0 0 4px rgba(29,158,117,.7))"/></svg>
+          <div id="ap-hierro-med" style="position:absolute;top:-4px;right:-2px;font-size:17px;filter:drop-shadow(0 0 5px rgba(29,158,117,.9));display:none">🏅</div>
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)"><span id="ap-hierro-val" style="color:#fff;font-size:17px;font-weight:800">0</span><span style="color:#5FD6AA;font-size:9px">/8</span></div>
+        </div>
+        <div style="color:#9FE1CB;font-size:11px;font-weight:800;margin-top:7px">Hierro</div>
+      </div>
+    </div>
+
+    <!-- Separador retos -->
+    <div style="display:flex;align-items:center;gap:11px;margin-bottom:13px">
+      <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(138,170,240,.4))"></div>
+      <div style="color:#8AAAF0;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;text-shadow:0 0 12px rgba(138,170,240,.4);white-space:nowrap">⭐ Mis retos</div>
+      <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(138,170,240,.4),transparent)"></div>
+    </div>
+
+    <!-- 3 retos -->
+    <div style="display:flex;gap:9px;margin-bottom:18px">
+      <div style="flex:1;background:linear-gradient(160deg,#3d1040 0%,#0f1320 100%);border:1px solid rgba(232,121,249,.6);border-radius:17px;padding:14px 6px;text-align:center;position:relative;overflow:hidden;box-shadow:0 6px 18px rgba(50,10,55,.55),inset 0 1px 0 rgba(240,171,252,.2)">
+        <div style="position:absolute;top:-18px;right:-18px;width:55px;height:55px;background:radial-gradient(circle,rgba(232,121,249,.3),transparent 70%)"></div>
+        <div id="gamer-putt-star" style="position:absolute;top:8px;right:8px;font-size:15px;filter:drop-shadow(0 0 5px rgba(255,210,63,.8));display:none">⭐</div>
+        <div style="font-size:28px;line-height:1;filter:drop-shadow(0 2px 5px rgba(0,0,0,.4))">🚀</div>
+        <div style="color:#fff;font-size:12px;font-weight:800;margin-top:6px">Putt <span id="gamer-putt-nivel" style="color:#f0abfc;font-size:12px;font-weight:800">N1</span></div>
+        <div id="gamer-putt-dots" style="display:flex;gap:6px;justify-content:center;margin-top:9px"></div>
+      </div>
+      <div style="flex:1;background:linear-gradient(160deg,#4a3810 0%,#0f1320 100%);border:1px solid rgba(239,159,39,.55);border-radius:17px;padding:14px 6px;text-align:center;position:relative;overflow:hidden;box-shadow:0 6px 18px rgba(60,45,15,.5),inset 0 1px 0 rgba(239,159,39,.2)">
+        <div style="position:absolute;top:-18px;right:-18px;width:55px;height:55px;background:radial-gradient(circle,rgba(239,159,39,.25),transparent 70%)"></div>
+        <div id="gamer-app-star" style="position:absolute;top:8px;right:8px;font-size:15px;filter:drop-shadow(0 0 5px rgba(255,210,63,.8));display:none">⭐</div>
+        <div style="font-size:28px;line-height:1;filter:drop-shadow(0 2px 5px rgba(0,0,0,.4))">💥</div>
+        <div style="color:#fff;font-size:12px;font-weight:800;margin-top:6px">Approach <span id="gamer-app-nivel" style="color:#ffc466;font-size:12px;font-weight:800">N1</span></div>
+        <div id="gamer-app-dots" style="display:flex;gap:6px;justify-content:center;margin-top:9px"></div>
+      </div>
+      <div style="flex:1;background:linear-gradient(160deg,#0a3d45 0%,#0f1320 100%);border:1px solid rgba(34,211,238,.55);border-radius:17px;padding:14px 6px;text-align:center;position:relative;overflow:hidden;box-shadow:0 6px 18px rgba(10,50,55,.5),inset 0 1px 0 rgba(103,232,249,.2)">
+        <div style="position:absolute;top:-18px;right:-18px;width:55px;height:55px;background:radial-gradient(circle,rgba(34,211,238,.25),transparent 70%)"></div>
+        <div id="gamer-sim-star" style="position:absolute;top:8px;right:8px;font-size:15px;filter:drop-shadow(0 0 5px rgba(255,210,63,.8));display:none">⭐</div>
+        <div style="height:28px;display:flex;align-items:center;justify-content:center">
+          <svg width="32" height="32" viewBox="0 0 48 48" style="filter:drop-shadow(0 2px 6px rgba(34,211,238,.7))">
+            <defs><linearGradient id="ghG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#67e8f9"/><stop offset="1" stop-color="#0891b2"/></linearGradient>
+            <linearGradient id="rhG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a5f3fc"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs>
+            <path d="M8 22 L24 9 L40 22 L40 41 L8 41 Z" fill="url(#ghG)"/>
+            <path d="M5 23 L24 8 L43 23 L40 25 L24 12 L8 25 Z" fill="url(#rhG)"/>
+            <rect x="20" y="30" width="8" height="11" rx="1" fill="#0a2a2e"/>
+            <rect x="12" y="26" width="6" height="6" rx="1" fill="#0a2a2e"/>
+            <rect x="30" y="26" width="6" height="6" rx="1" fill="#0a2a2e"/>
+            <circle cx="24" cy="34" r="1" fill="#ffd23f"/>
+          </svg>
+        </div>
+        <div style="color:#fff;font-size:12px;font-weight:800;margin-top:6px">Simulador</div>
+        <div id="gamer-sim-dots" style="display:flex;gap:6px;justify-content:center;margin-top:9px"></div>
+      </div>
+    </div>
+
+    <!-- Separador campo -->
+    <div style="display:flex;align-items:center;gap:11px;margin-bottom:13px">
+      <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(138,170,240,.4))"></div>
+      <div style="color:#8AAAF0;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;text-shadow:0 0 12px rgba(138,170,240,.4);white-space:nowrap">⛳ En el campo</div>
+      <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(138,170,240,.4),transparent)"></div>
+    </div>
+
+    <!-- 2 fichas de campo -->
+    <div style="display:flex;gap:9px;margin-bottom:18px">
+      <div style="flex:1;background:linear-gradient(160deg,#421414 0%,#120f1c 100%);border:1px solid rgba(248,113,113,.5);border-radius:17px;padding:15px 11px;text-align:center;position:relative;overflow:hidden;box-shadow:0 6px 20px rgba(58,18,18,.55),inset 0 1px 0 rgba(248,113,113,.15)">
+        <div style="position:absolute;top:-20px;right:-20px;width:70px;height:70px;background:radial-gradient(circle,rgba(248,113,113,.2),transparent 70%)"></div>
+        <div style="font-size:25px;line-height:1;filter:drop-shadow(0 2px 5px rgba(0,0,0,.4))">🚩</div>
+        <div style="color:#fca5a5;font-size:13px;font-weight:800;margin-top:5px">Reto OP27</div>
+        <div style="color:#c98080;font-size:9px;font-weight:600">25 yardas</div>
+        <div style="margin-top:9px;display:flex;align-items:baseline;gap:4px;justify-content:center">
+          <span id="gamer-op27-sem" style="color:#f87171;font-size:22px;font-weight:800;text-shadow:0 2px 10px rgba(248,113,113,.5)">0</span>
+          <span style="color:#9a5555;font-size:11px;font-weight:700">/ 1 semana</span>
+        </div>
+        <div style="margin-top:10px;display:flex;gap:6px">
+          <div style="flex:1;background:linear-gradient(135deg,rgba(248,113,113,.18),rgba(248,113,113,.06));border:0.5px solid rgba(248,113,113,.3);border-radius:10px;padding:7px 4px;box-shadow:inset 0 1px 0 rgba(252,165,165,.15)">
+            <div style="color:#fca5a5;font-size:8px;font-weight:800;letter-spacing:.3px">🏅 RÉCORD</div>
+            <div id="gamer-op27-rec" style="color:#fff;font-size:14px;font-weight:800;margin-top:2px">—</div>
+            <div id="gamer-op27-rec-f" style="color:#c98080;font-size:9px;font-weight:700">—</div>
+          </div>
+          <div style="flex:1;background:rgba(255,255,255,.04);border:0.5px solid rgba(255,255,255,.1);border-radius:10px;padding:7px 4px">
+            <div style="color:#b0b0c0;font-size:8px;font-weight:800;letter-spacing:.3px">⏱️ ÚLTIMO</div>
+            <div id="gamer-op27-ult" style="color:#fff;font-size:14px;font-weight:800;margin-top:2px">—</div>
+            <div id="gamer-op27-ult-f" style="color:#8a8a9a;font-size:9px;font-weight:700">—</div>
+          </div>
+        </div>
+      </div>
+      <div style="flex:1;background:linear-gradient(160deg,#2c1849 0%,#120f1c 100%);border:1px solid rgba(125,58,237,.5);border-radius:17px;padding:15px 11px;text-align:center;position:relative;overflow:hidden;box-shadow:0 6px 20px rgba(44,24,73,.55),inset 0 1px 0 rgba(157,107,255,.15)">
+        <div style="position:absolute;top:-20px;right:-20px;width:70px;height:70px;background:radial-gradient(circle,rgba(157,107,255,.2),transparent 70%)"></div>
+        <div style="font-size:25px;line-height:1;filter:drop-shadow(0 2px 5px rgba(0,0,0,.4))">🏌️</div>
+        <div style="color:#C4A5F8;font-size:13px;font-weight:800;margin-top:5px">Mi ronda</div>
+        <div style="color:#9a7ac7;font-size:9px;font-weight:600">en el campo</div>
+        <div style="margin-top:9px;display:flex;align-items:baseline;gap:4px;justify-content:center">
+          <span id="gamer-ronda-sem" style="color:#9D6BFF;font-size:22px;font-weight:800;text-shadow:0 2px 10px rgba(157,107,255,.5)">0</span>
+          <span style="color:#7a6a9a;font-size:11px;font-weight:700">/ 1 semana</span>
+        </div>
+        <div style="margin-top:10px;display:flex;gap:6px">
+          <div style="flex:1;background:linear-gradient(135deg,rgba(125,58,237,.18),rgba(125,58,237,.06));border:0.5px solid rgba(125,58,237,.3);border-radius:10px;padding:7px 4px;box-shadow:inset 0 1px 0 rgba(196,165,248,.15)">
+            <div style="color:#C4A5F8;font-size:8px;font-weight:800;letter-spacing:.3px">🏅 RÉCORD</div>
+            <div id="gamer-ronda-rec" style="color:#fff;font-size:14px;font-weight:800;margin-top:2px">—</div>
+            <div id="gamer-ronda-rec-f" style="color:#9a7ac7;font-size:9px;font-weight:700">—</div>
+          </div>
+          <div style="flex:1;background:rgba(255,255,255,.04);border:0.5px solid rgba(255,255,255,.1);border-radius:10px;padding:7px 4px">
+            <div style="color:#b0b0c0;font-size:8px;font-weight:800;letter-spacing:.3px">⏱️ ÚLTIMA</div>
+            <div id="gamer-ronda-ult" style="color:#fff;font-size:14px;font-weight:800;margin-top:2px">—</div>
+            <div id="gamer-ronda-ult-f" style="color:#8a8a9a;font-size:9px;font-weight:700">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Botones de acción (Ronda, Entrenar, Retos) + micrófono inteligente incrustado -->
+    <div style="position:relative;margin-top:8px;padding-top:26px;padding-bottom:calc(env(safe-area-inset-bottom, 12px) + 10px)">
+      <!-- Micrófono inteligente sobresaliendo del centro -->
+      <div onclick="abrirDictadoGlobal()" style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:52px;height:52px;border-radius:50%;background:linear-gradient(160deg,#E24B4A,#b8322f);display:flex;align-items:center;justify-content:center;border:4px solid var(--bg, #0a0e14);box-shadow:0 4px 14px rgba(226,75,74,.6);z-index:5;cursor:pointer">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px">
+        <div onclick="iniciarRondaPerfilActivo()" style="background:linear-gradient(160deg,#1D9E75,#0F6E56);border:1px solid rgba(95,214,170,.5);border-radius:15px;padding:22px 6px 13px;text-align:center;cursor:pointer;box-shadow:0 6px 16px rgba(10,50,40,.5),inset 0 1px 0 rgba(95,214,170,.3)">
+          <div style="font-size:23px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))">🏌️</div>
+          <div style="color:white;font-size:11px;font-weight:800;margin-top:4px">Ronda</div>
+        </div>
+        <div onclick="entrarAEntrenar()" style="background:linear-gradient(160deg,#1D9E75,#0F6E56);border:1px solid rgba(95,214,170,.5);border-radius:15px;padding:22px 6px 13px;text-align:center;cursor:pointer;box-shadow:0 6px 16px rgba(10,50,40,.5),inset 0 1px 0 rgba(95,214,170,.3)">
+          <div style="font-size:23px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))"><svg width="25" height="25" viewBox="0 0 32 32" style="display:inline-block;vertical-align:middle"><circle cx="16" cy="6" r="3.5" fill="#fff"/><circle cx="11" cy="12.5" r="3.5" fill="#fff"/><circle cx="21" cy="12.5" r="3.5" fill="#f2f2f2"/><circle cx="6.5" cy="19" r="3.5" fill="#fff"/><circle cx="16" cy="19" r="3.5" fill="#f2f2f2"/><circle cx="25.5" cy="19" r="3.5" fill="#fff"/><circle cx="15.2" cy="5" r="0.55" fill="#c8c8c8"/><circle cx="16.9" cy="6.3" r="0.5" fill="#c8c8c8"/><circle cx="10.2" cy="11.6" r="0.55" fill="#c8c8c8"/><circle cx="11.6" cy="13" r="0.5" fill="#c8c8c8"/><path d="M3 22 L29 22 L27.5 26.5 L4.5 26.5 Z" fill="#0d0d0d" stroke="#000" stroke-width="0.5"/></svg></div>
+          <div style="color:white;font-size:11px;font-weight:800;margin-top:4px">Entrenar</div>
+        </div>
+        <div onclick="entrarARetos()" style="background:linear-gradient(160deg,#1D9E75,#0F6E56);border:1px solid rgba(95,214,170,.5);border-radius:15px;padding:22px 6px 13px;text-align:center;cursor:pointer;box-shadow:0 6px 16px rgba(10,50,40,.5),inset 0 1px 0 rgba(95,214,170,.3)">
+          <div style="font-size:23px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))">🔥</div>
+          <div style="color:white;font-size:11px;font-weight:800;margin-top:4px">Retos</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /home-view-gamer -->
 
 </div>
 
@@ -953,17 +1211,30 @@
 
     <!-- Título grande -->
     <div style="margin-bottom:6px"><span style="color:#1D9E75;font-size:13px;font-weight:700;letter-spacing:.5px" id="prog-fecha">HOY</span></div>
-    <div id="prog-titulo" style="color:white;font-size:26px;font-weight:800;line-height:1.1;margin-bottom:6px;letter-spacing:-.5px">Tu primer bloque de hoy 🎯</div>
-    <div id="prog-subtitulo" style="color:#888;font-size:12px;line-height:1.4;margin-bottom:18px">Tu plan personalizado armó este bloque para ti. Quita o agrega lo que quieras y ¡a entrenar!</div>
+    <div id="prog-titulo" style="color:white;font-size:26px;font-weight:800;line-height:1.1;margin-bottom:6px;letter-spacing:-.5px">Tu entrenamiento de hoy 🎯</div>
+    <div id="prog-subtitulo" style="color:#888;font-size:12px;line-height:1.4;margin-bottom:16px">Agrega tus ejercicios, o deja que te armemos un bloque inteligente.</div>
+
+    <!-- Agregar -->
+    <button onclick="abrirMenuEjercicios()" style="width:100%;background:transparent;border:1.5px solid #60a5fa;border-radius:14px;padding:15px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;margin-bottom:14px">
+      <span style="color:#60a5fa;font-size:20px">+</span>
+      <span style="color:#60a5fa;font-size:13px;font-weight:600">Agregar ejercicio</span>
+    </button>
 
     <!-- Lista de ejercicios -->
     <div id="sesion-lista"></div>
 
-    <!-- Agregar -->
-    <button onclick="abrirMenuEjercicios()" style="width:100%;background:transparent;border:1.5px solid #60a5fa;border-radius:14px;padding:15px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;margin-top:6px;margin-bottom:18px">
-      <span style="color:#60a5fa;font-size:20px">+</span>
-      <span style="color:#60a5fa;font-size:13px;font-weight:600">Agregar ejercicio</span>
-    </button>
+    <!-- Sección destacada: generar bloque inteligente -->
+    <div id="prog-generar-card" onclick="sugerirEntrenamiento()" style="background:linear-gradient(160deg,rgba(29,158,117,.22),rgba(29,158,117,.06));border:1.5px solid rgba(29,158,117,.5);border-radius:18px;padding:16px;margin-bottom:18px;cursor:pointer;box-shadow:0 6px 20px rgba(10,50,40,.4),inset 0 1px 0 rgba(95,214,170,.18);position:relative;overflow:hidden">
+      <div style="position:absolute;top:-20px;right:-20px;width:90px;height:90px;background:radial-gradient(circle,rgba(29,158,117,.25),transparent 70%)"></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <span style="font-size:26px;filter:drop-shadow(0 0 8px rgba(29,158,117,.5))">✨</span>
+        <div style="color:#5fd6aa;font-size:16px;font-weight:800;letter-spacing:-.2px">Tu bloque inteligente de hoy</div>
+      </div>
+      <div style="color:#b8d8cc;font-size:12px;line-height:1.5;margin-bottom:12px">La app te arma un bloque especial según tu avance de los últimos días y tu rendimiento registrado. Al terminarlo, puedes pedir otro bloque extra para seguir sumando.</div>
+      <div style="background:#1D9E75;border-radius:12px;padding:13px;text-align:center;box-shadow:0 4px 14px rgba(29,158,117,.4)">
+        <span style="color:#fff;font-size:14px;font-weight:800">⚡ Generar mi bloque de hoy</span>
+      </div>
+    </div>
 
     <!-- Actividad de esta semana -->
     <div style="background:#2a2a34;border:0.5px solid rgba(255,255,255,.1);border-radius:16px;padding:16px;margin-top:18px;margin-bottom:20px">
@@ -993,6 +1264,10 @@
 
     <div id="sesion-lista"></div>
 
+  </div>
+  <!-- Micrófono inteligente flotante (dictado global) -->
+  <div onclick="abrirDictadoGlobal()" style="position:fixed;bottom:calc(env(safe-area-inset-bottom, 12px) + 18px);right:18px;width:58px;height:58px;border-radius:50%;background:linear-gradient(160deg,#E24B4A,#b8322f);display:flex;align-items:center;justify-content:center;box-shadow:0 5px 18px rgba(226,75,74,.6);z-index:200;cursor:pointer;border:3px solid rgba(255,160,160,.25)">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg>
   </div>
 </div>
 
@@ -1213,16 +1488,21 @@
       <!-- Versión -->
       <div style="margin-bottom:10px">
         <div style="color:#4a4a6a;font-size:9px;font-weight:700;letter-spacing:1px;margin-bottom:6px">VERSIÓN</div>
-        <div style="display:flex;gap:8px">
-          <div id="pf-ver-light" onclick="selVersionRapida('light')" style="flex:1;border-radius:10px;padding:10px;text-align:center;background:rgba(255,255,255,.04);border:0.5px solid rgba(255,255,255,.1);cursor:pointer">
+        <div style="display:flex;gap:6px">
+          <div id="pf-ver-light" onclick="selVersionRapida('light')" style="flex:1;border-radius:10px;padding:10px 4px;text-align:center;background:rgba(255,255,255,.04);border:0.5px solid rgba(255,255,255,.1);cursor:pointer">
             <div style="font-size:16px;margin-bottom:3px">☀️</div>
             <div style="color:#e8e8f0;font-size:11px;font-weight:700">Light</div>
             <div style="color:#4a4a6a;font-size:9px;margin-top:2px">Solo rondas</div>
           </div>
-          <div id="pf-ver-pro" onclick="selVersionRapida('pro')" style="flex:1;border-radius:10px;padding:10px;text-align:center;background:rgba(15,110,86,.15);border:1.5px solid #0F6E56;cursor:pointer">
+          <div id="pf-ver-pro" onclick="selVersionRapida('pro')" style="flex:1;border-radius:10px;padding:10px 4px;text-align:center;background:rgba(15,110,86,.15);border:1.5px solid #0F6E56;cursor:pointer">
             <div style="font-size:16px;margin-bottom:3px">⚡</div>
             <div style="color:#1D9E75;font-size:11px;font-weight:700">Pro</div>
-            <div style="color:#4a4a6a;font-size:9px;margin-top:2px">Entrena y compite</div>
+            <div style="color:#4a4a6a;font-size:9px;margin-top:2px">Entrena</div>
+          </div>
+          <div id="pf-ver-gamer" onclick="selVersionRapida('gamer')" style="flex:1;border-radius:10px;padding:10px 4px;text-align:center;background:rgba(255,255,255,.04);border:0.5px solid rgba(255,255,255,.1);cursor:pointer">
+            <div style="font-size:16px;margin-bottom:3px">🎮</div>
+            <div style="color:#e8e8f0;font-size:11px;font-weight:700">Gamer</div>
+            <div style="color:#4a4a6a;font-size:9px;margin-top:2px">Misiones</div>
           </div>
         </div>
         <div id="pf-ver-desc" style="color:#4a4a6a;font-size:10px;line-height:1.4;margin-top:8px;padding:8px 10px;background:rgba(255,255,255,.04);border-radius:8px">
@@ -2429,39 +2709,40 @@ function evaluarDescensoTiempo(perfil, clave, ahoraISO){
 
 var TABLAS_NIVELES = {
   'circulo-tobogan-4': { tipo:'tees', tees:4, obj:{1:2,2:4,3:6,4:8,5:10} },
-  'circulo-tobogan-6': { tipo:'tees', tees:4, obj:{1:2,2:3,3:4,4:5,5:6} },
+  'circulo-tobogan-6': { tipo:'tees', tees:4, obj:{1:1,2:2,3:3,4:4,5:5} },
   'circulo-tobogan-8': { tipo:'tees', tees:4, obj:{1:1,2:2,3:3,4:4,5:5} },
-  'circulo-escalera-4': { tipo:'pos', pos:4, obj:{1:2,2:4,3:6,4:8,5:10} },
-  'circulo-escalera-6': { tipo:'pos', pos:4, obj:{1:2,2:3,3:4,4:5,5:6} },
-  'circulo-escalera-8': { tipo:'pos', pos:4, obj:{1:1,2:2,3:3,4:4,5:5} },
+  'circulo-escalera-4': { tipo:'pos', pos:4, bolasMeta:4, obj:{1:1,2:2,3:3,4:4,5:5} },
+  'circulo-escalera-6': { tipo:'pos', pos:4, bolasMeta:3, obj:{1:1,2:2,3:3,4:4,5:5} },
+  'circulo-escalera-8': { tipo:'pos', pos:4, bolasMeta:2, obj:{1:1,2:2,3:3,4:4,5:5} },
   'circulo-suma-4': { tipo:'suma', obj:{1:5,2:10,3:15,4:20,5:25} },
   'circulo-suma-6': { tipo:'suma', obj:{1:3,2:6,3:9,4:12,5:15} },
   'circulo-suma-8': { tipo:'suma', obj:{1:2,2:3,3:4,4:5,5:6} },
-  'circulo-handicap-4': { tipo:'deN', n:8, obj:{1:4,2:5,3:6,4:7,5:8} },
-  'circulo-handicap-6': { tipo:'deN', n:8, obj:{1:3,2:4,3:4,4:5,5:6} },
-  'circulo-handicap-8': { tipo:'deN', n:8, obj:{1:2,2:3,3:3,4:4,5:4} },
-  'circulo-record-4': { tipo:'racha', min:10, obj:{1:5,2:10,3:15,4:20,5:25} },
-  'circulo-record-6': { tipo:'racha', min:10, obj:{1:3,2:6,3:9,4:12,5:15} },
-  'circulo-record-8': { tipo:'racha', min:10, obj:{1:2,2:4,3:6,4:8,5:10} },
-  'circulo-velocidades-4': { tipo:'metidas', total:12, obj:{1:6,2:8,3:10,4:11,5:12} },
-  'circulo-velocidades-6': { tipo:'metidas', total:12, obj:{1:5,2:7,3:9,4:10,5:11} },
-  'circulo-velocidades-8': { tipo:'metidas', total:12, obj:{1:4,2:6,3:8,4:9,5:10} },
-  'lineal-esctob-corto': { tipo:'estaciones', veces:2, metas:{ 1:[3,2,1], 2:[4,3,1], 3:[4,3,2], 4:[4,4,2], 5:[4,4,3] }, obj:{1:2,2:2,3:2,4:2,5:2} },
-  'medio-escalera': { tipo:'vueltas', obj:{ 1:[1,1,0,0], 2:[1,1,1,1], 3:[2,2,1,1], 4:[2,2,2,1], 5:[3,3,2,2] } },
-  'medio-tobogan': { tipo:'corridas', min:15, obj:{1:1,2:2,3:3,4:4,5:5} },
+  'circulo-handicap-4': { tipo:'deN', n:8, obj:{1:3,2:4,3:5,4:6,5:7} },
+  'circulo-handicap-6': { tipo:'deN', n:8, obj:{1:2,2:3,3:4,4:5,5:6} },
+  'circulo-handicap-8': { tipo:'deN', n:8, obj:{1:1,2:2,3:3,4:4,5:5} },
+  'circulo-record-4': { tipo:'racha', min:10, obj:{1:3,2:6,3:9,4:12,5:15} },
+  'circulo-record-6': { tipo:'racha', min:10, obj:{1:2,2:4,3:6,4:8,5:10} },
+  'circulo-record-8': { tipo:'racha', min:10, obj:{1:1,2:2,3:3,4:4,5:5} },
+  'circulo-velocidades-4': { tipo:'metidas', total:12, obj:{1:5,2:7,3:9,4:10,5:11} },
+  'circulo-velocidades-6': { tipo:'metidas', total:12, obj:{1:3,2:5,3:7,4:9,5:10} },
+  'circulo-velocidades-8': { tipo:'metidas', total:12, obj:{1:2,2:4,3:6,4:8,5:9} },
+  'lineal-esctob-corto': { tipo:'estaciones', distancias:['4 pies','8 pies','12 pies','16 pies'], metasFijas:[4,3,2,1], obj:{1:0,2:0,3:1,4:2,5:3} },
+  'medio-escalera': { tipo:'vueltas', estaciones:[6,9,12,15], obj:{1:0,2:0,3:1,4:2,5:3} },
+  'medio-tobogan': { tipo:'corridas', min:10, estaciones:[6,9,12,15], obj:{1:0,2:0,3:1,4:2,5:3} },
   'largo-esctob': { tipo:'pares-ronda', min:15, obj:{1:0,2:2,3:4,4:6,5:8} },
-  'approach-escalera': { tipo:'ejec-margen', min:15, obj:{ 1:{ejec:1,margen:5}, 2:{ejec:2,margen:4}, 3:{ejec:2,margen:3}, 4:{ejec:2,margen:2}, 5:{ejec:3,margen:2} } },
-  'approach-tobogan': { tipo:'ejec-margen', min:15, obj:{ 1:{ejec:1,margen:5}, 2:{ejec:2,margen:4}, 3:{ejec:2,margen:3}, 4:{ejec:2,margen:2}, 5:{ejec:3,margen:2} } },
-  'approach-record': { tipo:'racha-hereda', min:15 },
-  'approach-bunker': { tipo:'bunker', min:15, obj:{1:'green',2:'tercios',3:'escalera5',4:'escalera3',5:'tobogan3'} },
-  'approach-ud2d3': { tipo:'ejec-ud', topeMin:30, obj:{1:1,2:2,3:3,4:4,5:5} },
+  'approach-escalera': { tipo:'ejec-margen', min:15, escalones:[10,15,20,25,30], rondas:2, obj:{ 1:{ejec:2,margen:5}, 2:{ejec:2,margen:4}, 3:{ejec:2,margen:3}, 4:{ejec:2,margen:2}, 5:{ejec:2,margen:1} } },
+  'approach-tobogan': { tipo:'ejec-margen', tobogan:true, min:15, escalones:[10,15,20,25,30], rondas:2, obj:{ 1:{ejec:2,margen:5}, 2:{ejec:2,margen:4}, 3:{ejec:2,margen:3}, 4:{ejec:2,margen:2}, 5:{ejec:2,margen:1} } },
+  'approach-record': { tipo:'racha-margen', min:15, rachaMeta:5, obj:{ 1:{margen:5}, 2:{margen:4}, 3:{margen:3}, 4:{margen:2}, 5:{margen:1} } },
+  'approach-bunker': { tipo:'bunker', min:15, obj:{1:'salir',2:'green',3:'centro',4:'dos5',5:'tres5'} },
+  'approach-ud2d3': { tipo:'ejec-ud', total:9, min:15, obj:{1:2,2:3,3:4,4:5,5:6} },
   'drive-handicap': { tipo:'deN', n:10, obj:{1:4,2:5,3:6,4:7,5:8} },
   'drive-record': { tipo:'racha', min:15, obj:{1:2,2:4,3:6,4:8,5:10} },
   'hierro-handicap-corto': { tipo:'deN', n:10, obj:{1:3,2:5,3:7,4:9,5:10} },
   'hierro-handicap-largo': { tipo:'deN', n:10, obj:{1:4,2:5,3:6,4:7,5:8} },
   'hierro-record': { tipo:'racha', min:15, obj:{1:2,2:4,3:6,4:8,5:10} },
   'reto-putt-medio': { tipo:'hoyos-ejec', hoyos:{1:2,2:4,3:6,4:8,5:10}, ejec:{1:5,2:4,3:3,4:2,5:1} },
-  'reto-putt-largo': { tipo:'hoyos-ejec', hoyos:{1:2,2:3,3:4,4:5,5:6}, ejec:{1:5,2:4,3:3,4:2,5:1} }
+  'reto-putt-largo': { tipo:'hoyos-ejec', hoyos:{1:2,2:3,3:4,4:5,5:6}, ejec:{1:5,2:4,3:3,4:2,5:1} },
+  'reto-approach': { tipo:'approach-cerca', pasos:{1:4,2:3,3:3,4:2,5:1}, veces:{1:1,2:1,3:2,4:1,5:1} }
 };
 var DISPERSION_PALO = { 'pitching':10,'9':10,'8':10,'7':15,'6':15,'5':20,'4':20,'madera5':20,'madera3':20 };
 
@@ -2538,6 +2819,7 @@ var MAPA_EJERCICIO_NIVEL = {
   'escalera': 'circulo-escalera-4',
   'retoMedio': 'reto-putt-medio',
   'retoMedioReto': 'reto-putt-largo',
+  'retoApproach': 'reto-approach',
   'tobogan-ap': 'approach-tobogan',
   'escalera-ap': 'approach-escalera',
   'ud2d3': 'approach-ud2d3',
@@ -2602,27 +2884,27 @@ var CATALOGO_NUEVO = {
   'circulo-velocidades': { nom:'Círculo Velocidades', cat:'putt', seccion:'Putt corto', mins:10,
     distancias:[{lbl:'4 pies',k:'4'},{lbl:'6 pies',k:'6'},{lbl:'8 pies',k:'8'}],
     instr:['Pon 4 tees en círculo a la distancia indicada','En cada tee tira 3 bolas (12 en total) con 3 velocidades:','1) que apenas llegue al hoyo, 2) firme contra la parte de atrás, 3) velocidad normal cómoda','Controla línea y velocidad. Anota tu mejor resultado de cuántas metiste de 12'] },
-  'lineal-esctob-corto': { nom:'Escalera + Tobogán', cat:'putt', seccion:'Putt corto', mins:10,
-    instr:['3 estaciones: 4, 6 y 8 pies','En cada estación mete las que pide tu nivel para avanzar','Si fallas, vuelves a la primera estación','Completa el recorrido 2 veces (ver objetivo abajo)'] },
+  'lineal-esctob-corto': { nom:'Putt Línea 4-8-12-16', cat:'putt', seccion:'Putt corto', mins:10, distancias:['12 pies','16 pies'],
+    instr:['4 estaciones: 4, 8, 12 y 16 pies','Juega con 4 bolas en cada una','Mete las que pide cada estación para avanzar','Si fallas, vuelves a empezar desde 4 pies'] },
   // ---- PUTT MEDIO ----
-  'medio-escalera': { nom:'Escalera Putt Medio', cat:'putt', seccion:'Putt medio', mins:10,
-    instr:['4 estaciones: 6, 9, 12 y 15 yardas','3 bolas por estación; par = embocar en 2 golpes','Suma las vueltas que pide tu nivel (ver objetivo abajo)'] },
-  'medio-tobogan': { nom:'Tobogán Putt Medio', cat:'putt', seccion:'Putt medio', mins:10,
-    instr:['1 bola, corrida de 6 → 9 → 12 → 15 yardas','Emboca en cada estación para avanzar a la siguiente','Si fallas, vuelves al inicio','Cuenta tus corridas completas en 15 min (ver objetivo abajo)'] },
+  'medio-escalera': { nom:'Escalera Putt Medio', cat:'putt', seccion:'Putt medio', mins:10, distancias:['12 yardas','15 yardas'],
+    instr:['4 estaciones: 6, 9, 12 y 15 yardas','3 bolas por estación; par = embocar en 2 golpes','Completa la ronda; mide tus rondas completas'] },
+  'medio-tobogan': { nom:'Tobogán Putt Medio', cat:'putt', seccion:'Putt medio', mins:10, distancias:['12 yardas','15 yardas'],
+    instr:['1 bola, corrida de 6 → 9 → 12 → 15 yardas','Emboca en cada estación para avanzar a la siguiente','Si fallas, vuelves al inicio','Cuenta tus rondas completas en 10 min'] },
   // ---- PUTT LARGO ----
   'largo-esctob': { nom:'Escalera + Tobogán Largo', cat:'putt', seccion:'Putt largo', mins:15,
     instr:['4 estaciones: 15, 20, 25 y 30 yardas','3 bolas por estación; evita el 4-putt','Cuenta tus pares (2 putts) en tu mejor ronda (ver objetivo abajo)'] },
   // ---- APPROACH ----
   'approach-escalera': { nom:'Escalera Approach', cat:'approach', seccion:'Approach', mins:15,
-    instr:['Tira approaches de 10 a 30 yardas','Cae dentro del margen objetivo sin pasarte','1 ejecución = caer dentro del margen','Margen y ejecuciones que pide tu nivel (ver objetivo abajo)'] },
+    instr:['5 escalones: 10, 15, 20, 25 y 30 yardas','3 bolas consecutivas dentro del margen para subir','Completa los 5 escalones = 1 ronda','Margen según tu nivel (ver objetivo abajo)'] },
   'approach-tobogan': { nom:'Tobogán Approach', cat:'approach', seccion:'Approach', mins:15,
-    instr:['Tira approaches de 10 a 30 yardas, en escalera','Cae dentro del margen para avanzar; si fallas vuelves al inicio','1 ejecución = recorrido completo dentro del margen','Margen y ejecuciones que pide tu nivel (ver objetivo abajo)'] },
+    instr:['5 distancias: 10, 15, 20, 25 y 30 yardas','1 tiro por distancia, dentro del margen para avanzar','Si fallas, vuelves a empezar desde 10 yardas','Completa las 5 = 1 ronda (ver objetivo abajo)'] },
   'approach-record': { nom:'Récord Approach', cat:'approach', seccion:'Approach', mins:15,
-    instr:['Tira approaches buscando una racha de buenos seguidos','Usa el mismo margen de tu nivel en Escalera Approach','Anota tu mejor racha en 15 minutos (ver objetivo abajo)'] },
+    instr:['Elige 3 banderas (10-20-30 o 15-20-25 yardas)','Cuenta tu racha de tiros dentro del margen','Al fallar, cambia de bandera','Anota tu mejor racha (ver objetivo abajo)'] },
   'approach-bunker': { nom:'Bunker', cat:'approach', seccion:'Approach', mins:15,
     instr:['5 bolas seguidas desde el bunker','Sácalas a green según el objetivo de tu nivel','La exigencia sube por nivel (ver objetivo abajo)'] },
-  'approach-ud2d3': { nom:'Up & Down 2 de 3', cat:'approach', seccion:'Approach', mins:30,
-    instr:['3 bolas desde 20 a 40 yardas','Up & down = approach + 1 putt para embocar','2 up&downs de 3 bolas = 1 ejecución','Cuenta tus ejecuciones (tope 30 min · ver objetivo abajo)'] },
+  'approach-ud2d3': { nom:'Up & Down', cat:'approach', seccion:'Approach', mins:15,
+    instr:['3 rondas de 3 bolas (9 intentos en total)','Up & down = approach + 1 putt para embocar','Equivale a una vuelta de 9 hoyos','Cuenta tus up & downs de 9 (ver objetivo abajo)'] },
   // ---- HIERROS / DRIVE (se eligen por palo aparte) ----
   // ---- RETO PUTT ----
   'reto-putt': { nom:'Reto Putt', cat:'reto', seccion:'Retos', mins:0,
@@ -2768,33 +3050,52 @@ function objetivoGrande(clave, nivel) {
   if (!t) return null;
   var o = t.obj ? t.obj[nivel] : null;
   switch(t.tipo) {
-    case 'tees': return { num: String(o), lbl: (o===1?'vuelta':'vueltas') };
-    case 'pos': return { num: String(o), lbl: (o===1?'bola por posición':'bolas por posición') };
+    case 'tees': return { num: String(o), lbl: (o===1?'vuelta independiente':'vueltas independientes') };
+    case 'pos': return { num: String(o), lbl: (o===1?'vuelta completa':'vueltas completas') };
     case 'suma': return { num: '+' + o, lbl: 'puntos' };
     case 'deN': return { num: o + ' de ' + t.n, lbl: 'metidas' };
     case 'metidas': return { num: o + ' de ' + t.total, lbl: 'metidas' };
-    case 'racha': return { num: String(o), lbl: 'seguidas' };
-    case 'corridas': return { num: String(o), lbl: 'corridas' };
-    case 'pares-ronda': return { num: String(o), lbl: 'pares' };
-    case 'ejec-ud': return { num: String(o), lbl: 'up & down' };
+    case 'approach-cerca':
+      var ps = t.pasos ? t.pasos[nivel] : 3;
+      var vc = t.veces ? t.veces[nivel] : 1;
+      return { num: vc + 'x', lbl: 'a ' + ps + (ps===1?' paso':' pasos') };
+    case 'racha': return { num: String(o), lbl: (o===1?'seguida':'seguidas') };
+    case 'corridas':
+      if (o === 0) { var myd = (nivel === 1) ? '12' : '15'; return { num: myd, lbl: 'yardas' }; }
+      return { num: String(o), lbl: (o===1?'ronda completa':'rondas completas') };
+    case 'pares-ronda':
+      if (o === 0) return { num: 'Sin', lbl: '4-putts' };
+      return { num: String(o), lbl: (o===1?'par':'pares') };
+    case 'ejec-ud': return { num: o + ' de ' + (t.total||9), lbl: 'up & down' };
     case 'ejec-margen':
       var em = t.obj[nivel];
       return { num: String(em.margen) + ' yd', lbl: 'margen' };
-    case 'estaciones': return { num: '4·6·8', lbl: 'pies' };
-    case 'vueltas': return { num: 'Ver', lbl: 'metas' };
+    case 'estaciones':
+      var vEst = t.obj ? t.obj[nivel] : 1;
+      return { num: String(vEst), lbl: vEst === 1 ? 'ronda completa' : 'rondas completas' };
+    case 'vueltas':
+      var ov = t.obj ? t.obj[nivel] : 1;
+      if (ov === 0) {
+        var metaYd = (nivel === 1) ? '12' : '15';
+        return { num: metaYd, lbl: 'yardas' };
+      }
+      return { num: String(ov), lbl: ov === 1 ? 'ronda completa' : 'rondas completas' };
     case 'racha-hereda': return { num: '★', lbl: 'racha' };
+    case 'racha-margen':
+      var omg = t.obj ? t.obj[nivel] : null;
+      return { num: (omg ? String(omg.margen) : '5') + ' yd', lbl: 'margen' };
     case 'hoyos-ejec':
       var h = t.hoyos ? t.hoyos[nivel] : null;
       return h ? { num: String(h), lbl: 'hoyos' } : null;
     case 'bunker':
       var bm = {
-        'green':     { num:'5',   lbl:'al green' },
-        'tercios':   { num:'3+3', lbl:'tercios' },
-        'escalera5': { num:'5 yd', lbl:'escalera' },
-        'escalera3': { num:'3 yd', lbl:'escalera' },
-        'tobogan3':  { num:'3 yd', lbl:'tobogán' }
+        'salir':  { num:'5/5', lbl:'fuera del bunker' },
+        'green':  { num:'5/5', lbl:'al green' },
+        'centro': { num:'5/5', lbl:'al centro' },
+        'dos5':   { num:'2/5', lbl:'a 5 pasos' },
+        'tres5':  { num:'3/5', lbl:'a 5 pasos' }
       };
-      return bm[o] || { num:'5', lbl:'al green' };
+      return bm[o] || { num:'5/5', lbl:'al green' };
     default: return null;
   }
 }
@@ -2803,21 +3104,23 @@ function objetivoGrande(clave, nivel) {
 // Etiqueta corta y clara para niños (lo que ven en el recuadro de resultado).
 function etiquetaMetrica(tipo) {
   switch(tipo) {
-    case 'tees': return 'Vueltas completas';
-    case 'pos': return 'Escaleras completas';
-    case 'suma': return 'Veces que sumaste los puntos';
-    case 'estaciones': return 'Recorridos completos';
-    case 'vueltas': return 'Vueltas completas';
-    case 'corridas': return 'Corridas completas';
-    case 'pares-ronda': return 'Veces que lograste la meta';
-    case 'ejec-margen': return 'Veces dentro del margen';
-    case 'bunker': return 'Veces que lo lograste';
-    case 'ejec-ud': return 'Up & downs logrados';
+    case 'tees': return 'Vueltas';
+    case 'pos': return 'Vueltas';
+    case 'suma': return 'Puntos';
+    case 'estaciones': return 'Rondas';
+    case 'vueltas': return 'Rondas';
+    case 'corridas': return 'Rondas';
+    case 'pares-ronda': return 'Pares (mejor ronda)';
+    case 'ejec-margen': return 'Rondas';
+    case 'bunker': return 'Veces';
+    case 'ejec-ud': return 'Up & downs (de 9)';
     case 'hoyos-ejec': return 'Veces que lograste la meta';
-    case 'deN': return 'Veces que lo lograste';
-    case 'metidas': return 'Cuántas metiste de 12';
-    case 'racha': return 'Tu mejor racha';
+    case 'deN': return 'Metidas';
+    case 'metidas': return 'Metidas (de 12)';
+    case 'approach-cerca': return 'Veces que lo lograste';
+    case 'racha': return 'Mejor racha';
     case 'racha-hereda': return 'Tu mejor racha';
+    case 'racha-margen': return 'Mejor racha';
     default: return 'Veces que lo lograste';
   }
 }
@@ -2855,35 +3158,48 @@ function textoMetaNivel(clave, nivel, item) {
   if (mDist && (clave.indexOf('circulo')===0)) distPies = mDist[1] + ' pies';
   switch(t.tipo) {
     case 'tees': return 'Nivel ' + nivel + ': pon <strong>4 tees</strong> a ' + distPies + ', 1 bola por tee. Logra <strong>' + o + (o===1?' vuelta':' vueltas') + '</strong> completas';
-    case 'pos': return 'Nivel ' + nivel + ': pon <strong>' + (t.pos||4) + ' tees</strong> a ' + distPies + '. Mete <strong>' + o + (o===1?' bola':' seguidas') + '</strong> en cada posición antes de avanzar';
+    case 'pos': return 'Nivel ' + nivel + ': mete <strong>' + (t.bolasMeta||4) + ' de 4 bolas</strong>' + (distPies?(' a ' + distPies):'') + ' por ubicación. Logra <strong>' + o + (o===1?' vuelta':' vueltas') + '</strong>';
     case 'suma': return 'Nivel ' + nivel + ': pon <strong>4 tees</strong> a ' + distPies + '. +1 si metes, −1 si fallas. Llega a <strong>+' + o + '</strong>';
     case 'deN': return 'Nivel ' + nivel + ': tira <strong>' + t.n + ' bolas</strong>' + (distPies?(' desde ' + distPies):'') + '. Mete <strong>' + o + ' de ' + t.n + '</strong>';
     case 'metidas': return 'Nivel ' + nivel + ': <strong>4 tees</strong>' + (distPies?(' a ' + distPies):'') + ', 3 bolas por tee con 3 velocidades (12 en total). Mete <strong>' + o + ' de ' + t.total + '</strong>';
     case 'racha': return 'Nivel ' + nivel + ': pon <strong>4 tees</strong>' + (distPies?(' a ' + distPies):'') + '. Racha de aciertos, cambia de tee al fallar. Meta: <strong>' + o + ' seguidas</strong>';
-    case 'corridas': return 'Nivel ' + nivel + ': <strong>' + o + ' corridas</strong> en 15 min';
-    case 'pares-ronda': return 'Nivel ' + nivel + ': <strong>' + o + ' pares</strong> en tu mejor ronda';
-    case 'vueltas': return 'Nivel ' + nivel + ': completa las vueltas por estación';
+    case 'corridas':
+      if (nivel === 1) return 'Nivel 1: llega hasta la estación de <strong>12 yardas</strong>';
+      if (nivel === 2) return 'Nivel 2: llega hasta la estación de <strong>15 yardas</strong>';
+      return 'Nivel ' + nivel + ': completa <strong>' + o + (o===1?' ronda':' rondas') + '</strong> (4 estaciones)';
+    case 'pares-ronda': return (o===0) ? ('Nivel ' + nivel + ': completa la ronda <strong>sin 4-putt</strong>') : ('Nivel ' + nivel + ': <strong>' + o + (o===1?' par':' pares') + '</strong> en tu mejor ronda');
+    case 'vueltas':
+      if (nivel === 1) return 'Nivel 1: llega hasta la estación de <strong>12 yardas</strong>';
+      if (nivel === 2) return 'Nivel 2: llega hasta la estación de <strong>15 yardas</strong>';
+      var ovT = t.obj ? t.obj[nivel] : 1;
+      return 'Nivel ' + nivel + ': completa <strong>' + ovT + (ovT===1?' ronda':' rondas') + '</strong> (4 estaciones)';
     case 'ejec-margen':
       var em = t.obj[nivel];
-      return 'Nivel ' + nivel + ': <strong>' + em.ejec + ' ' + (em.ejec===1?'ejecución':'ejecuciones') + '</strong> con margen de <strong>' + em.margen + ' yardas</strong>';
-    case 'ejec-ud': return 'Nivel ' + nivel + ': <strong>' + o + ' ' + (o===1?'ejecución':'ejecuciones') + '</strong> (2 de 3 up&down)';
+      var rA = t.rondas || 2;
+      return 'Nivel ' + nivel + ': margen de <strong>' + em.margen + (em.margen===1?' yarda':' yardas') + '</strong> · completa <strong>' + rA + ' rondas</strong>';
+    case 'ejec-ud': return 'Nivel ' + nivel + ': <strong>' + o + (nivel===5?' o más':'') + ' de ' + (t.total||9) + ' up & downs</strong>';
     case 'racha-hereda': return 'Racha máxima · margen heredado de tu nivel de Escalera';
+    case 'racha-margen':
+      var omn = t.obj ? t.obj[nivel] : null;
+      var rm = t.rachaMeta || 5;
+      return 'Nivel ' + nivel + ': margen de <strong>' + (omn?omn.margen:5) + (omn&&omn.margen===1?' yarda':' yardas') + '</strong> · racha meta <strong>' + rm + ' seguidas</strong>';
     case 'estaciones':
-      var m = t.metas ? t.metas[nivel] : null;
-      var metaStr = m ? (m[0]+'-'+m[1]+'-'+m[2]) : '';
-      return 'Nivel ' + nivel + ': completa el recorrido (' + metaStr + ' por estación) <strong>' + (t.obj?t.obj[nivel]:2) + ' veces</strong>';
+      if (nivel === 1) return 'Nivel 1: llega hasta la estación de <strong>12 pies</strong>';
+      if (nivel === 2) return 'Nivel 2: llega hasta la estación de <strong>16 pies</strong>';
+      var rondas = t.obj ? t.obj[nivel] : 1;
+      return 'Nivel ' + nivel + ': completa <strong>' + rondas + (rondas===1?' ronda':' rondas') + '</strong> (4-3-2-1 bolas por estación)';
     case 'hoyos-ejec':
       var h = t.hoyos[nivel], ej = t.ejec[nivel];
       return 'Nivel ' + nivel + ': <strong>' + h + ' hoyos seguidos</strong>, <strong>' + ej + ' ' + (ej===1?'ejecución':'ejecuciones') + '</strong>';
     case 'bunker':
       var bt = {
-        'green':     '<strong>5 bolas seguidas</strong> del bunker, todas al <strong>green</strong>',
-        'tercios':   '<strong>3 seguidas</strong> al <strong>primer tercio</strong> del green + <strong>3 seguidas</strong> al <strong>último tercio</strong>',
-        'escalera5': 'escalera: <strong>3 seguidas</strong> a cada bandera (cerca, centro, lejos), margen <strong>5 yardas</strong>. Si fallas te quedas',
-        'escalera3': 'misma escalera de <strong>3 banderas</strong>, margen de solo <strong>3 yardas</strong>',
-        'tobogan3':  'tobogán: las <strong>3 banderas</strong>, margen <strong>3 yardas</strong>. Si fallas en cualquiera, vuelves al inicio'
+        'salir':  'saca las <strong>5 bolas</strong> del bunker',
+        'green':  'deja las <strong>5 bolas</strong> en el <strong>green</strong>',
+        'centro': 'deja las <strong>5 bolas</strong> en el <strong>centro del green</strong>',
+        'dos5':   'al menos <strong>2 de 5</strong> a <strong>5 pasos</strong> de la bandera (el resto en green)',
+        'tres5':  'al menos <strong>3 de 5</strong> a <strong>5 pasos</strong> de la bandera (el resto en green)'
       };
-      return 'Nivel ' + nivel + ': ' + (bt[o] || bt['green']);
+      return 'Nivel ' + nivel + ': ' + (bt[o] || bt['salir']);
     default: return 'Meta del nivel ' + nivel;
   }
 }
@@ -3086,7 +3402,7 @@ var PROGRAMAS = {
 var BLOQUE_EJERCICIOS = {
   puttCorto: ['circulo-tobogan','circulo-escalera','circulo-suma','circulo-handicap','circulo-record','circulo-velocidades','lineal-esctob-corto'], // 4-6 pasos, 10 min
   puttMedioLargo: ['medio-escalera','medio-tobogan','largo-esctob'], // putt medio/largo, 10-15 min
-  approach: ['approach-escalera','approach-tobogan','approach-record','approach-bunker'], // 15 min (sin ud2d3 que es 30)
+  approach: ['approach-escalera','approach-tobogan','approach-record','approach-bunker'], // 15 min (ud2d3 también 15)
   hierros: ['handicap','record'], // 15 min
   retoPutt: ['reto-putt-medio','reto-putt-largo'] // reto de putt, 15 min
 };
@@ -3542,6 +3858,24 @@ function calcStatsEjercicios(periodo) {
       if (cat === 'approach') { mins = 15; tipo = 'approach'; }
       else if (cat === 'hierros') { mins = 15; tipo = 'hierros'; }
       else if (cat === 'putt') { mins = 10; tipo = 'putt'; }
+      else if (cat === 'clase') {
+        // Clase privada: suma 60 min a las horas de golf, pero no a un tipo de práctica
+        var minsClase = (ej.datos && ej.datos.mins) ? ej.datos.mins : 60;
+        res.totalMin += minsClase;
+        res.dias[diaKey] = true;
+        var dowC = fecha.getDay();
+        res.diasSemana[(dowC === 0) ? 6 : dowC - 1] = true;
+        return;
+      }
+      else if (cat === 'simulador') {
+        // Simulador en casa: suma sus minutos a las horas de golf
+        var minsSim = (ej.datos && ej.datos.mins) ? ej.datos.mins : 15;
+        res.totalMin += minsSim;
+        res.dias[diaKey] = true;
+        var dowS = fecha.getDay();
+        res.diasSemana[(dowS === 0) ? 6 : dowS - 1] = true;
+        return;
+      }
       else return;
       res[tipo].n++; res[tipo].min += mins;
       res.totalN++; res.totalMin += mins;
@@ -3670,6 +4004,8 @@ function renderHome() {
   r.style.setProperty('--player-border', p.color + '66');
   if (p.version === 'light') {
     renderHomeLight();
+  } else if (p.version === 'gamer') {
+    renderHomeGamer();
   } else {
     renderHomePro();
   }
@@ -3691,6 +4027,397 @@ function renderHomePro() {
   renderProNivelMedio();
 
   setTimeout(actualizarStatsPro, 100);
+}
+
+// ── HOME GAMER (modo videojuego) ─────────────────────────────────────────────
+// Calcula cuántas misiones (estrellas) tenía un perfil en la ventana de 7 días
+// que TERMINA en fechaCorte (incluye ese día + los 6 anteriores).
+// Devuelve { estrellas, nPutt, nApp, nSim, op27Sem, rondaSem }.
+function calcularEstrellasGamer(perfilId, fechaCorte) {
+  var entrenos = getHistorialEntreno(perfilId);
+  var op27 = getHistorialOP36(perfilId, '25');
+  var rondas = getHistorialRondas(perfilId) || [];
+  var finVentana = new Date(fechaCorte); finVentana.setHours(23,59,59,999);
+  var iniVentana = new Date(fechaCorte); iniVentana.setHours(0,0,0,0);
+  iniVentana.setDate(iniVentana.getDate() - 6); // 7 días: ese día + 6 anteriores
+  var ini = iniVentana.getTime(), fin = finVentana.getTime();
+  function enVentana(f){ var t = new Date(f).getTime(); return t >= ini && t <= fin; }
+  function diaKey(fecha){ var d = new Date(fecha); return d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate(); }
+  function esRetoPutt(ej){
+    var id = (ej.id||'')+'' , cv = (ej.claveNivel||'')+'';
+    return id.indexOf('reto-putt')>=0 || id==='retoMedio' || id==='retoMedioReto' || cv.indexOf('reto-putt')>=0 || id==='reto-putt' || (ej.retoTipo==='putt');
+  }
+  function esRetoApproach(ej){
+    var id = (ej.id||'')+'' , cv = (ej.claveNivel||'')+'' , cat = (ej.cat||'')+'';
+    return id==='retoApproach' || cv.indexOf('reto-approach')>=0 || ej.retoTipo==='approach' ||
+           id==='retoTrampa' || cv.indexOf('bunker')>=0 || (cat==='approach' && ej.esReto);
+  }
+  function esSim(ej){ return (ej.cat==='simulador') || ej.esSimulador; }
+  function minsEj(ej){ return (ej.datos && ej.datos.mins) ? ej.datos.mins : (ej.mins||0); }
+
+  var dP={}, dA={}, dS={};
+  entrenos.forEach(function(e){
+    if (!enVentana(e.fecha)) return;
+    var dk = diaKey(e.fecha), minsSimDia = 0;
+    (e.ejercicios||[]).forEach(function(ej){
+      if (esRetoPutt(ej)) dP[dk]=true;
+      if (esRetoApproach(ej)) dA[dk]=true;
+      if (esSim(ej)) minsSimDia += minsEj(ej);
+    });
+    if (minsSimDia >= 20) dS[dk]=true;
+  });
+  var nPutt = Object.keys(dP).length, nApp = Object.keys(dA).length, nSim = Object.keys(dS).length;
+  var op27Sem = op27.filter(function(h){ return enVentana(h.fecha); }).length;
+  var rondaSem = rondas.filter(function(r){ return enVentana(r.fecha || r.timestamp); }).length;
+  var estrellas = 0;
+  if (nPutt>=4) estrellas++;
+  if (nApp>=4) estrellas++;
+  if (nSim>=4) estrellas++;
+  if (op27Sem>=1) estrellas++;
+  if (rondaSem>=1) estrellas++;
+  return { estrellas:estrellas, nPutt:nPutt, nApp:nApp, nSim:nSim, op27Sem:op27Sem, rondaSem:rondaSem };
+}
+
+// Devuelve la 'y' del clip del mini-trofeo según las estrellas (mismo criterio del trofeo grande)
+function trofeoClipY(estrellas) {
+  if (estrellas >= 5) return 4;
+  if (estrellas === 4) return 18;
+  if (estrellas === 3) return 30;
+  return 48;
+}
+
+// Pinta la tira de los últimos 7 días con mini-trofeos
+function renderGamerSemana(perfilId) {
+  var cont = document.getElementById('gamer-semana-dias');
+  if (!cont) return;
+  var inicialDia = ['D','L','M','X','J','V','S'];
+  var hoy = new Date(); hoy.setHours(0,0,0,0);
+  var html = '';
+  for (var k = 6; k >= 0; k--) {
+    var f = new Date(hoy); f.setDate(hoy.getDate() - k);
+    var esHoy = (k === 0);
+    var ini = inicialDia[f.getDay()];
+    var num = f.getDate();
+    // Todos los días (incluido hoy) se calculan en tiempo real con su ventana de 7 días.
+    var r = calcularEstrellasGamer(perfilId, f);
+    var clipY = trofeoClipY(r.estrellas);
+    var h = Math.max(0, 48 - clipY);
+    var lleno = r.estrellas >= 5;
+    var algo = r.estrellas >= 3;
+    var strokeColor = lleno ? '#FFD23F' : (algo ? '#8a8a9e' : '#4a4a5e');
+    var gid = 'mtf' + k;
+    var cid = 'mtc' + k;
+    var glow = lleno ? 'filter:drop-shadow(0 0 5px rgba(255,210,63,.8));' : '';
+    var trofeoSvg = '<svg width="26" height="26" viewBox="0 0 48 48" style="' + glow + '">' +
+      '<defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFE680"/><stop offset="0.5" stop-color="#FFD23F"/><stop offset="1" stop-color="#E6A317"/></linearGradient>' +
+      '<clipPath id="' + cid + '"><rect x="0" y="' + clipY + '" width="48" height="' + h + '"/></clipPath></defs>' +
+      '<g clip-path="url(#' + cid + ')">' +
+        '<path d="M14 8 H34 V18 C34 24 30 28 24 28 C18 28 14 24 14 18 Z" fill="url(#' + gid + ')"/>' +
+        '<path d="M24 28 V34" stroke="#FFD23F" stroke-width="2.2" stroke-linecap="round"/>' +
+        '<path d="M17 40 H31 M19 40 C19 36 21 34 24 34 C27 34 29 36 29 40" fill="url(#' + gid + ')" stroke="#FFD23F" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>' +
+      '</g>' +
+      '<path d="M14 8 H34 V18 C34 24 30 28 24 28 C18 28 14 24 14 18 Z" fill="none" stroke="' + strokeColor + '" stroke-width="2.2" stroke-linejoin="round"/>' +
+      '<path d="M14 11 H9 C9 17 11 20 15 20" fill="none" stroke="' + strokeColor + '" stroke-width="2.2" stroke-linecap="round"/>' +
+      '<path d="M34 11 H39 C39 17 37 20 33 20" fill="none" stroke="' + strokeColor + '" stroke-width="2.2" stroke-linecap="round"/>' +
+      '<path d="M24 28 V34" fill="none" stroke="' + strokeColor + '" stroke-width="2.2" stroke-linecap="round"/>' +
+      '<path d="M17 40 H31 M19 40 C19 36 21 34 24 34 C27 34 29 36 29 40" fill="none" stroke="' + strokeColor + '" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>' +
+      '</svg>';
+    // El día de hoy se resalta con un recuadro morado alrededor
+    var wrapStyle = esHoy
+      ? 'flex:1;text-align:center;background:rgba(157,107,255,.15);border:1px solid rgba(157,107,255,.5);border-radius:11px;padding:5px 2px;box-shadow:inset 0 1px 0 rgba(157,107,255,.2);cursor:pointer'
+      : 'flex:1;text-align:center;padding:5px 2px';
+    var onclickHoy = esHoy ? ' onclick="abrirTrofeoGamer()"' : '';
+    html += '<div style="' + wrapStyle + '"' + onclickHoy + '>' +
+      '<div style="color:' + (esHoy ? '#c4a5f8' : '#7a7a95') + ';font-size:11px;font-weight:800;margin-bottom:6px">' + (esHoy ? 'HOY' : ini) + '</div>' +
+      trofeoSvg +
+      '<div style="color:' + (esHoy ? '#9a7ac7' : '#5a5a6e') + ';font-size:9px;font-weight:600;margin-top:4px">' + num + '</div>' +
+      '</div>';
+  }
+  cont.innerHTML = html;
+}
+
+function cerrarTrofeoGamer() {
+  var ov = document.getElementById('overlay-trofeo-gamer');
+  if (ov) ov.style.display = 'none';
+}
+
+// Abre el pop-up del trofeo (al tocar el trofeo de hoy en la tira)
+function abrirTrofeoGamer() {
+  var ov = document.getElementById('overlay-trofeo-gamer');
+  if (ov) ov.style.display = 'flex';
+}
+
+// Muestra el pop-up del trofeo solo la PRIMERA vez que se abre el home en el día
+function quizasMostrarTrofeoGamer(perfilId) {
+  var hoy = new Date();
+  var clave = 'gamer_trofeo_visto_' + perfilId;
+  var hoyStr = hoy.getFullYear() + '-' + hoy.getMonth() + '-' + hoy.getDate();
+  var visto = null;
+  try { visto = localStorage.getItem(clave); } catch(e) {}
+  if (visto !== hoyStr) {
+    var ov = document.getElementById('overlay-trofeo-gamer');
+    if (ov) ov.style.display = 'flex';
+    try { localStorage.setItem(clave, hoyStr); } catch(e) {}
+  }
+}
+
+function renderHomeGamer() {
+  var p = getPerfil();
+  document.getElementById('home-view-pro').style.display = 'none';
+  document.getElementById('home-view-light').style.display = 'none';
+  document.getElementById('home-view-gamer').style.display = 'flex';
+  pintarAvatar(document.getElementById('gamer-avatar'), p);
+  document.getElementById('gamer-nombre').textContent = p.nom;
+
+  var entrenos = getHistorialEntreno(p.id);
+  var op27 = getHistorialOP36(p.id, '25');
+  var limite7 = Date.now() - 7*24*60*60*1000;
+
+  // Helper: clave de día (año-mes-día)
+  function diaKey(fecha){ var d = new Date(fecha); return d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate(); }
+
+  // Identificar tipo de reto por ejercicio
+  function esRetoPutt(ej){
+    var id = (ej.id||'')+'' , cv = (ej.claveNivel||'')+'';
+    return id.indexOf('reto-putt')>=0 || id==='retoMedio' || id==='retoMedioReto' || id==='retoApproachPutt' || cv.indexOf('reto-putt')>=0 || id==='reto-putt' || (ej.retoTipo==='putt');
+  }
+  function esRetoApproach(ej){
+    var id = (ej.id||'')+'' , cv = (ej.claveNivel||'')+'' , cat = (ej.cat||'')+'';
+    // approach incluye búnker
+    return id==='retoApproach' || cv.indexOf('reto-approach')>=0 || ej.retoTipo==='approach' ||
+           id==='retoTrampa' || cv.indexOf('bunker')>=0 || (cat==='approach' && ej.esReto);
+  }
+  function esSimulador(ej){ return (ej.cat==='simulador') || ej.esSimulador; }
+  function minsEj(ej){ return (ej.datos && ej.datos.mins) ? ej.datos.mins : (ej.mins||0); }
+
+  // Contar DÍAS distintos por tipo de reto en la semana
+  var diasPutt = {}, diasApp = {}, diasSimMin = {};
+  entrenos.forEach(function(e){
+    if (new Date(e.fecha).getTime() < limite7) return;
+    var dk = diaKey(e.fecha);
+    var minsSimDia = 0;
+    (e.ejercicios||[]).forEach(function(ej){
+      if (esRetoPutt(ej)) diasPutt[dk] = true;
+      if (esRetoApproach(ej)) diasApp[dk] = true;
+      if (esSimulador(ej)) minsSimDia += minsEj(ej);
+    });
+    // El día de simulador cuenta solo si juntó >= 20 min ese día
+    if (minsSimDia >= 20) diasSimMin[dk] = true;
+  });
+  var nPutt = Object.keys(diasPutt).length;
+  var nApp = Object.keys(diasApp).length;
+  var nSim = Object.keys(diasSimMin).length;
+
+  // VOLUMEN de ejercicios por tipo (putt, approach, hierro) en la ventana de 7 días.
+  // Cada reto vale por 1 ejercicio de su tipo; se suma a los ejercicios normales.
+  function tipoEjercicio(ej){
+    var cat = (ej.cat||'')+'' , id = (ej.id||'')+'' , cv = (ej.claveNivel||'')+'';
+    // Retos cuentan como su tipo
+    if (esRetoPutt(ej)) return 'putt';
+    if (esRetoApproach(ej)) return 'approach';
+    // Ejercicios normales por categoría
+    if (cat==='putt' || id.indexOf('putt')>=0 || id.indexOf('circulo')>=0) return 'putt';
+    if (cat==='approach' || id.indexOf('approach')>=0 || cv.indexOf('bunker')>=0) return 'approach';
+    if (cat==='hierros' || cat==='hierro' || cat==='drive' || id.indexOf('hierro')>=0 || id.indexOf('drive')>=0 || id.indexOf('handicap')>=0 || id.indexOf('record')>=0) return 'hierro';
+    return null;
+  }
+  var volPutt = 0, volApp = 0, volHierro = 0;
+  entrenos.forEach(function(e){
+    if (new Date(e.fecha).getTime() < limite7) return;
+    (e.ejercicios||[]).forEach(function(ej){
+      var t = tipoEjercicio(ej);
+      if (t==='putt') volPutt++;
+      else if (t==='approach') volApp++;
+      else if (t==='hierro') volHierro++;
+    });
+  });
+  var metaPutt = 10, metaApp = 8, metaHierro = 8;
+
+  // Pintar los 3 aros de práctica + medallas
+  function pintarAro(ringId, valId, medId, medTrofeoId, val, meta){
+    var ring = document.getElementById(ringId);
+    var valEl = document.getElementById(valId);
+    var med = document.getElementById(medId);
+    var medT = document.getElementById(medTrofeoId);
+    var circ = 201; // 2*PI*32
+    var frac = Math.min(1, val/meta);
+    if (ring) ring.setAttribute('stroke-dashoffset', circ*(1-frac));
+    if (valEl) valEl.textContent = Math.min(val, meta);
+    var completo = val >= meta;
+    if (med) med.style.display = completo ? 'block' : 'none';
+    // Medalla del trofeo (arriba): encendida si completó ese tipo
+    if (medT){
+      if (completo){ medT.style.filter = 'drop-shadow(0 0 5px rgba(255,210,63,.6))'; medT.style.opacity = '1'; }
+      else { medT.style.filter = 'grayscale(1)'; medT.style.opacity = '.4'; }
+    }
+    return completo;
+  }
+  var medPuttOk = pintarAro('ap-putt-ring','ap-putt-val','ap-putt-med','gamer-med-putt', volPutt, metaPutt);
+  var medAppOk = pintarAro('ap-app-ring','ap-app-val','ap-app-med','gamer-med-app', volApp, metaApp);
+  var medHierroOk = pintarAro('ap-hierro-ring','ap-hierro-val','ap-hierro-med','gamer-med-hierro', volHierro, metaHierro);
+  var medallasCompletas = medPuttOk && medAppOk && medHierroOk;
+
+  // Pintar pelotitas (n llenas de meta)
+  function pintarDots(contId, n, meta, color){
+    var cont = document.getElementById(contId);
+    if (!cont) return;
+    var html = '';
+    for (var i=0; i<meta; i++){
+      if (i < n) html += '<span style="width:15px;height:15px;border-radius:50%;background:radial-gradient(circle at 35% 30%,'+color.claro+','+color.base+');box-shadow:0 0 8px '+color.glow+',inset 0 1px 1px rgba(255,255,255,.4)"></span>';
+      else html += '<span style="width:15px;height:15px;border-radius:50%;background:#26263a;box-shadow:inset 0 2px 4px rgba(0,0,0,.5)"></span>';
+    }
+    cont.innerHTML = html;
+  }
+  pintarDots('gamer-putt-dots', nPutt, 4, {claro:'#f0abfc',base:'#d946ef',glow:'rgba(232,121,249,.8)'});
+  pintarDots('gamer-app-dots', nApp, 4, {claro:'#ffc466',base:'#EF9F27',glow:'rgba(239,159,39,.8)'});
+  pintarDots('gamer-sim-dots', nSim, 4, {claro:'#a5f3fc',base:'#22d3ee',glow:'rgba(34,211,238,.8)'});
+
+  // Estrellas de cada reto cuando completa los 4 días
+  document.getElementById('gamer-putt-star').style.display = (nPutt>=4)?'block':'none';
+  document.getElementById('gamer-app-star').style.display = (nApp>=4)?'block':'none';
+  document.getElementById('gamer-sim-star').style.display = (nSim>=4)?'block':'none';
+
+  // Nivel del jugador en putt y approach (al lado del nombre del reto)
+  function nivelDe(clave){
+    try { return getNivelReg(p, clave).nivel || 1; } catch(e) { return 1; }
+  }
+  // Para putt, usar el mejor nivel entre los retos de putt (medio/largo); para approach, el reto approach
+  var nivPutt = Math.max(nivelDe('reto-putt-medio'), nivelDe('reto-putt-largo'));
+  var nivApp = nivelDe('reto-approach');
+  var puttNivEl = document.getElementById('gamer-putt-nivel');
+  var appNivEl = document.getElementById('gamer-app-nivel');
+  if (puttNivEl) puttNivEl.textContent = 'N' + nivPutt;
+  if (appNivEl) appNivEl.textContent = 'N' + nivApp;
+
+  // OP27 de la semana + récord + último
+  function fmtGolpe(v){ return v===0 ? 'E' : (v>0 ? '+'+v : ''+v); }
+  function fmtFecha(f){ var d=new Date(f); var ms=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic']; return d.getDate()+' '+ms[d.getMonth()]; }
+  var op27Sem = op27.filter(function(h){ return new Date(h.fecha).getTime()>=limite7; }).length;
+  document.getElementById('gamer-op27-sem').textContent = op27Sem;
+  if (op27 && op27.length){
+    var recOp = Math.min.apply(null, op27.map(function(h){return h.acum;}));
+    var recOpObj = op27.filter(function(h){return h.acum===recOp;})[0];
+    // La más reciente: ordenar por fecha descendente
+    var op27Ord = op27.slice().sort(function(a,b){ return new Date(b.fecha) - new Date(a.fecha); });
+    var ultOp = op27Ord[0];
+    document.getElementById('gamer-op27-rec').textContent = fmtGolpe(recOp);
+    document.getElementById('gamer-op27-rec-f').textContent = recOpObj?fmtFecha(recOpObj.fecha):'—';
+    document.getElementById('gamer-op27-ult').textContent = fmtGolpe(ultOp.acum);
+    document.getElementById('gamer-op27-ult-f').textContent = fmtFecha(ultOp.fecha);
+  }
+
+  // Rondas de la semana + récord + última
+  var rondas = getHistorialRondas(p.id) || [];
+  var rondasSemObj = getRondasPeriodo(7) || [];
+  document.getElementById('gamer-ronda-sem').textContent = rondasSemObj.length>0 ? 1 : 0;
+  if (rondas.length){
+    // Las rondas guardan scoreReal (relativo al par). Usar ese campo; fallback a scoreNormalizado/score.
+    function scoreDe(r){
+      if (typeof r.scoreReal === 'number') return r.scoreReal;
+      if (typeof r.scoreNormalizado === 'number') return r.scoreNormalizado;
+      if (typeof r.score === 'number') return r.score;
+      return null;
+    }
+    function fechaDe(r){ return r.fecha || (r.timestamp ? new Date(r.timestamp).toISOString() : null); }
+    var scores = rondas.filter(function(r){ return scoreDe(r) !== null; });
+    if (scores.length){
+      var recR = Math.min.apply(null, scores.map(scoreDe));
+      var recRObj = scores.filter(function(r){return scoreDe(r)===recR;})[0];
+      // La más reciente: ordenar por fecha descendente y tomar la primera
+      var ordenadas = scores.slice().sort(function(a,b){ return new Date(fechaDe(b)) - new Date(fechaDe(a)); });
+      var ultR = ordenadas[0];
+      document.getElementById('gamer-ronda-rec').textContent = fmtGolpe(recR);
+      document.getElementById('gamer-ronda-rec-f').textContent = recRObj?fmtFecha(fechaDe(recRObj)):'—';
+      document.getElementById('gamer-ronda-ult').textContent = fmtGolpe(scoreDe(ultR));
+      document.getElementById('gamer-ronda-ult-f').textContent = fmtFecha(fechaDe(ultR));
+    }
+  }
+
+  // ESTRELLAS (misiones cumplidas): putt 4d, approach 4d, simulador 4d, OP27 1, ronda 1
+  var estrellas = 0;
+  if (nPutt>=4) estrellas++;
+  if (nApp>=4) estrellas++;
+  if (nSim>=4) estrellas++;
+  if (op27Sem>=1) estrellas++;
+  if (rondasSemObj.length>=1) estrellas++;
+
+  var estrCont = document.getElementById('gamer-estrellas');
+  var he = '';
+  for (var s=0; s<5; s++){
+    if (s<estrellas) he += '<span style="font-size:24px;filter:drop-shadow(0 0 8px rgba(255,210,63,.7))">⭐</span>';
+    else he += '<span style="font-size:24px;opacity:.22">⭐</span>';
+  }
+  estrCont.innerHTML = he;
+
+  // Trofeo: se llena con las estrellas, PERO solo llega a completo (dorado) si además
+  // tiene las 3 medallas de práctica. Con 5 estrellas pero medallas incompletas, se queda a media copa.
+  var trofeoSvg = document.getElementById('gamer-trofeo-svg');
+  var clipRect = document.getElementById('trofeo-clip-rect');
+  var partesTrofeo = ['trofeo-copa','trofeo-asaL','trofeo-asaR','trofeo-tallo','trofeo-base'];
+  // El trofeo está COMPLETO solo si tiene las 5 estrellas Y las 3 medallas
+  var trofeoCompleto = (estrellas >= 5) && medallasCompletas;
+  var topY, nivelContorno;
+  if (trofeoCompleto) { topY = 4; nivelContorno = 2; }          // completo dorado
+  else if (estrellas >= 4) { topY = 18; nivelContorno = 1; }    // media copa (le falta algo: estrella o medalla)
+  else if (estrellas === 3) { topY = 30; nivelContorno = 1; }   // parte baja
+  else { topY = 48; nivelContorno = 0; }                        // vacío
+  if (clipRect) {
+    clipRect.setAttribute('y', topY);
+    clipRect.setAttribute('height', Math.max(0, 48 - topY));
+  }
+  if (nivelContorno === 2) {
+    partesTrofeo.forEach(function(id){ var e5 = document.getElementById(id); if (e5) e5.setAttribute('stroke', '#FFD23F'); });
+    if (trofeoSvg) trofeoSvg.style.filter = 'drop-shadow(0 0 14px rgba(255,210,63,.9))';
+  } else if (nivelContorno === 1) {
+    partesTrofeo.forEach(function(id){ var e3 = document.getElementById(id); if (e3) e3.setAttribute('stroke', '#8a8a9e'); });
+    if (trofeoSvg) trofeoSvg.style.filter = 'drop-shadow(0 0 6px rgba(255,210,63,.4))';
+  } else {
+    partesTrofeo.forEach(function(id){ var e0 = document.getElementById(id); if (e0) e0.setAttribute('stroke', '#5a5a6e'); });
+    if (trofeoSvg) trofeoSvg.style.filter = 'none';
+  }
+
+  // Mensajes dinámicos según estrellas
+  var msgEstr, msgCierre;
+  if (estrellas>=5){ msgEstr='¡SEMANA PERFECTA! 🏆'; msgCierre='🏆 ¡ERES CAMPEÓN! 🏆'; }
+  else if (estrellas===4){ msgEstr='¡Solo te falta 1 para ser campeón!'; msgCierre='🌟 ¡CASI LO LOGRAS! 🌟'; }
+  else if (estrellas>=2){ msgEstr='¡Vas muy bien!'; msgCierre='🔥 ¡VAS MUY BIEN, SIGUE ASÍ! 🔥'; }
+  else { msgEstr='¡Vamos empezando, tú puedes! 💪'; msgCierre='💪 ¡VAMOS EMPEZANDO! 💪'; }
+  var cierreEl = document.getElementById('gamer-cierre');
+  if (cierreEl) cierreEl.innerHTML = msgCierre;
+
+  // Frase grande del trofeo según el estado
+  var fraseTrofeo = document.getElementById('gamer-trofeo-frase');
+  if (fraseTrofeo) {
+    var medallasGanadas = (medPuttOk?1:0) + (medAppOk?1:0) + (medHierroOk?1:0);
+    if (trofeoCompleto) fraseTrofeo.textContent = 'MANTÉN TU TROFEO, ENTRENA HOY';
+    else if (estrellas >= 5 && medallasGanadas >= 2) fraseTrofeo.textContent = '¡UNA MEDALLA Y ES TUYO!';
+    else if (estrellas >= 5) fraseTrofeo.textContent = '¡COMPLETA TUS MEDALLAS!';
+    else if (estrellas === 4) fraseTrofeo.textContent = '¡CASI LO LOGRAS!';
+    else if (estrellas >= 2) fraseTrofeo.textContent = '¡VAS POR EL TROFEO!';
+    else if (estrellas === 1) fraseTrofeo.textContent = '¡BUEN COMIENZO!';
+    else fraseTrofeo.textContent = 'VAMOS POR EL TROFEO';
+  }
+
+  // Gran logro de la semana: ¿hizo récord en OP27 o ronda esta semana?
+  var logro = null;
+  if (op27 && op27.length){
+    var recOp2 = Math.min.apply(null, op27.map(function(h){return h.acum;}));
+    var ultOp2 = op27[op27.length-1];
+    if (new Date(ultOp2.fecha).getTime()>=limite7 && ultOp2.acum===recOp2) logro = '¡Hiciste récord en tu reto OP27! 🎉';
+  }
+  var logroCard = document.getElementById('gamer-logro');
+  if (logro){
+    document.getElementById('gamer-logro-txt').textContent = logro;
+    logroCard.style.display = 'flex';
+  } else {
+    logroCard.style.display = 'none';
+  }
+
+  // Tira de los últimos 7 días con mini-trofeos
+  renderGamerSemana(p.id);
+
+  // Mostrar el pop-up del trofeo (solo 1 vez al día)
+  quizasMostrarTrofeoGamer(p.id);
 }
 
 function renderOp36Home() {
@@ -4210,6 +4937,19 @@ function renderAnillos() {
     if (new Date(e.fecha).getTime() >= limite7) {
       (e.ejercicios||[]).forEach(function(ej) {
         var cat = ej.cat || '', id = ej.id || '';
+        if (cat === 'clase') {
+          // Una clase privada = 4 ejercicios y 1 hora (60 min)
+          var minsCl = (ej.datos && ej.datos.mins) ? ej.datos.mins : 60;
+          horas7 += minsCl;
+          ejercicios7 += 4;
+          return;
+        }
+        if (cat === 'simulador' || ej.esSimulador) {
+          // Simulador: suma sus minutos a las horas, pero no al conteo de ejercicios de práctica
+          var minsSim = (ej.datos && ej.datos.mins) ? ej.datos.mins : (ej.mins || 15);
+          horas7 += minsSim;
+          return;
+        }
         var esRetoPutt = (cat === 'reto') || id === 'retoMedio' || id === 'retoMedioReto' || id.indexOf('reto-putt') >= 0;
         if (esRetoPutt) { horas7 += 15; retosPutt7++; }
         else { horas7 += (cat === 'approach' || cat === 'hierros') ? 15 : 10; ejercicios7++; }
@@ -4222,11 +4962,63 @@ function renderAnillos() {
   // "Reto OP27" del anillo = solo los OP27 (los retos de putt cuentan en horas/ejercicios)
   var retos7 = retosOp27;
 
+  // SIMULADOR: días distintos de la semana en que hizo simulador (cualquier cantidad de ejercicios ese día cuenta como 1 día)
+  var diasSimSet = {};
+  entrenos.forEach(function(e) {
+    if (new Date(e.fecha).getTime() >= limite7) {
+      var haySim = (e.ejercicios||[]).some(function(ej){ return (ej.cat === 'simulador') || ej.esSimulador; });
+      if (haySim) {
+        var dk = new Date(e.fecha); dk = dk.getFullYear()+'-'+dk.getMonth()+'-'+dk.getDate();
+        diasSimSet[dk] = true;
+      }
+    }
+  });
+  var diasSim7 = Object.keys(diasSimSet).length;
+  var haySimulador = diasSim7 > 0;
+
+  // Geometría dinámica: sin simulador = 3 aros (versión clásica, sin hueco al centro);
+  // con simulador = 4 aros más delgados para hacer espacio al cuarto.
+  var sw = haySimulador ? 9 : 11;
+  var rEj = haySimulador ? 38 : 37;
+  var rRe = haySimulador ? 28 : 24.5;
+  var rRo = haySimulador ? 18 : 12;
+  var rSim = 8;
+  // Ajustar radios y grosores de los aros de color (principal + capa v2)
+  function setRing(idColor, idV2, r, swv) {
+    [idColor, idV2].forEach(function(id){
+      var c = document.getElementById(id);
+      if (c) { c.setAttribute('r', r); c.setAttribute('stroke-width', swv); }
+    });
+  }
+  setRing('ring-ejercicios', 'ring-ejercicios-v2', rEj, sw);
+  setRing('ring-retos', 'ring-retos-v2', rRe, sw);
+  setRing('ring-rondas', 'ring-rondas-v2', rRo, sw);
+  // Ajustar los círculos de fondo (grises) por sus ids
+  ['bg-ejercicios','bg-retos','bg-rondas'].forEach(function(id, i){
+    var c = document.getElementById(id);
+    if (c) { c.setAttribute('r', [rEj,rRe,rRo][i]); c.setAttribute('stroke-width', sw); }
+  });
+
   // Metas de alto rendimiento: 20 ejercicios (5x4 días), 2 retos OP27, 2 rondas
   var metaEjercicios = 20, metaRetos = 2, metaRondas = 2;
-  actualizarAnillo('ring-ejercicios', ejercicios7, metaEjercicios, 37, 11);
-  actualizarAnillo('ring-retos', retos7, metaRetos, 24.5, 11);
-  actualizarAnillo('ring-rondas', rondas7, metaRondas, 12, 11);
+  actualizarAnillo('ring-ejercicios', ejercicios7, metaEjercicios, rEj, sw);
+  actualizarAnillo('ring-retos', retos7, metaRetos, rRe, sw);
+  actualizarAnillo('ring-rondas', rondas7, metaRondas, rRo, sw);
+  // Aro del simulador: solo se muestra si hubo simulador esta semana. Se llena 1/3 por día (meta 3 días).
+  var simBg = document.getElementById('ring-sim-bg');
+  var simRing = document.getElementById('ring-sim');
+  var simRow = document.getElementById('ring-sim-row');
+  if (haySimulador) {
+    if (simBg) { simBg.style.display = ''; simBg.setAttribute('r', rSim); simBg.setAttribute('stroke-width', sw); }
+    if (simRing) { simRing.style.display = ''; simRing.setAttribute('r', rSim); simRing.setAttribute('stroke-width', sw); }
+    if (simRow) simRow.style.display = '';
+    actualizarAnillo('ring-sim', diasSim7, 3, rSim, sw);
+    var sv = document.getElementById('ring-sim-val'); if (sv) sv.textContent = '' + Math.min(diasSim7, 3);
+  } else {
+    if (simBg) simBg.style.display = 'none';
+    if (simRing) simRing.style.display = 'none';
+    if (simRow) simRow.style.display = 'none';
+  }
   // Quitar el 0 inicial en decimales: 0.3 -> .3, 1.5 -> 1.5, 3 -> 3
   function fmtVal(v) {
     var s = '' + v;
@@ -4236,6 +5028,7 @@ function renderAnillos() {
   var ev = document.getElementById('ring-e-val'); if (ev) ev.textContent = fmtVal(ejercicios7);
   var r = document.getElementById('ring-r-val'); if (r) r.textContent = fmtVal(retos7);
   var ro = document.getElementById('ring-ro-val'); if (ro) ro.textContent = fmtVal(rondas7);
+  var hv = document.getElementById('ring-horas-val'); if (hv) hv.textContent = fmtVal(horas7);
 }
 
 function actualizarAnillo(id, val, meta, r, sw) {
@@ -4598,7 +5391,7 @@ function generarDatosPrueba(silencioso) {
         { id:'nv:approach-tobogan', nom:'Tobogán Approach', cat:'approach', claveNivel:'approach-tobogan' },
         { id:'nv:approach-record', nom:'Récord Approach', cat:'approach', claveNivel:'approach-record' },
         { id:'nv:approach-bunker', nom:'Bunker', cat:'approach', claveNivel:'approach-bunker' },
-        { id:'nv:approach-ud2d3', nom:'Up & Down 2 de 3', cat:'approach', claveNivel:'approach-ud2d3' },
+        { id:'nv:approach-ud2d3', nom:'Up & Down', cat:'approach', claveNivel:'approach-ud2d3' },
         { id:'nv:hierro-handicap-largo:7', nom:'Hierro 7 · Handicap', cat:'hierros', claveNivel:'hierro-handicap-largo' }
       ];
       // Retos de putt (medio y largo) van aparte, para que salgan como tarjeta propia en el historial
@@ -4705,9 +5498,61 @@ function generarDatosPrueba(silencioso) {
           totalProgramados: 1, totalHechos: 1
         });
       }
+      // ---------- ACTIVIDAD GAMER reciente (últimos 7 días): retos putt, approach, simulador ----------
+      // Para que el modo Gamer muestre estrellas, medallas y aros con datos reales.
+      // 4 días distintos de cada reto en la última semana.
+      for (var g = 0; g < 4; g++) {
+        var fg = new Date(); fg.setHours(rnd(9,17), rnd(0,59), 0, 0); fg.setDate(fg.getDate() - g);
+        // Reto de putt
+        entrenos.push({
+          sesionId: 'ses_gamer_putt_' + cfg.id + '_' + g, fecha: fg.toISOString(),
+          ejercicios: [{ id:'retoMedio', nom:'Reto Putt Medio', cat:'reto', retoTipo:'medio', datos:{ mins:15, ejec:rnd(1,5) } }],
+          totalProgramados: 1, totalHechos: 1
+        });
+        // Reto de approach
+        var fga = new Date(fg); fga.setMinutes(fga.getMinutes()+20);
+        entrenos.push({
+          sesionId: 'ses_gamer_app_' + cfg.id + '_' + g, fecha: fga.toISOString(),
+          ejercicios: [{ id:'retoApproach', nom:'Reto Approach', cat:'approach', claveNivel:'reto-approach', esReto:true, datos:{ mins:15, ejec:rnd(1,5) } }],
+          totalProgramados: 1, totalHechos: 1
+        });
+        // Simulador (≥20 min ese día)
+        var fgs = new Date(fg); fgs.setMinutes(fgs.getMinutes()+40);
+        entrenos.push({
+          sesionId: 'ses_gamer_sim_' + cfg.id + '_' + g, fecha: fgs.toISOString(),
+          ejercicios: [{ id:'sim-1', nom:'Simulador en casa', cat:'simulador', esSimulador:true, datos:{ mins:20, ejec:rnd(1,3) } }],
+          totalProgramados: 1, totalHechos: 1
+        });
+      }
+      // Ejercicios de HIERRO recientes (para el aro de práctica de hierro: meta 8)
+      for (var gh = 0; gh < 8; gh++) {
+        var fgh = new Date(); fgh.setHours(rnd(9,17), rnd(0,59), 0, 0); fgh.setDate(fgh.getDate() - (gh % 6));
+        entrenos.push({
+          sesionId: 'ses_gamer_hierro_' + cfg.id + '_' + gh, fecha: fgh.toISOString(),
+          ejercicios: [{ id:'nv:hierro-handicap-largo:7', nom:'Hierro 7 · Handicap', cat:'hierros', claveNivel:'hierro-handicap-largo', datos:{ mins:15, ejec:rnd(1,5) } }],
+          totalProgramados: 1, totalHechos: 1
+        });
+      }
+      // Ejercicios extra de PUTT y APPROACH recientes (para llegar a metas 10 putt / 8 approach)
+      for (var gp = 0; gp < 6; gp++) {
+        var fgp = new Date(); fgp.setHours(rnd(9,17), rnd(0,59), 0, 0); fgp.setDate(fgp.getDate() - (gp % 6));
+        entrenos.push({
+          sesionId: 'ses_gamer_putt2_' + cfg.id + '_' + gp, fecha: fgp.toISOString(),
+          ejercicios: [{ id:'nv:circulo-handicap-4', nom:'Círculo Handicap · 4 pies', cat:'putt', claveNivel:'circulo-handicap-4', datos:{ mins:12, ejec:rnd(1,5) } }],
+          totalProgramados: 1, totalHechos: 1
+        });
+      }
+      for (var ga = 0; ga < 4; ga++) {
+        var fgaa = new Date(); fgaa.setHours(rnd(9,17), rnd(0,59), 0, 0); fgaa.setDate(fgaa.getDate() - (ga % 6));
+        entrenos.push({
+          sesionId: 'ses_gamer_app2_' + cfg.id + '_' + ga, fecha: fgaa.toISOString(),
+          ejercicios: [{ id:'nv:approach-escalera', nom:'Escalera Approach', cat:'approach', claveNivel:'approach-escalera', datos:{ mins:15, ejec:rnd(1,5) } }],
+          totalProgramados: 1, totalHechos: 1
+        });
+      }
+
       entrenos.sort(function(a,b){ return new Date(b.fecha) - new Date(a.fecha); });
       localStorage.setItem('entreno_hist_' + cfg.id, JSON.stringify(entrenos));
-
       // ---------- OP36 (variedad por distancia: cada una con varios registros) ----------
       var op36 = [];
       var distancias = ['25','50','100','150','200'];
@@ -4744,6 +5589,17 @@ function generarDatosPrueba(silencioso) {
             trampaRondas: chance(0.35) ? [rnd(1,4),rnd(1,4),rnd(1,4)] : null
           });
         });
+      });
+      // OP27 reciente (25 yardas, en los últimos 7 días) para que el reto OP27 del gamer cuente esta semana
+      var fOp27Rec = new Date(); fOp27Rec.setHours(rnd(9,17), rnd(0,59), 0, 0); fOp27Rec.setDate(fOp27Rec.getDate() - rnd(1,5));
+      var acumRec = rnd(-2, 4);
+      var hoyosRec = [];
+      for (var hr = 1; hr <= 9; hr++) hoyosRec.push({ num: hr, golpes: rnd(2,5), gir: chance(0.4), pasos: chance(0.7)?rnd(1,11):rnd(12,20), puttCortoFallado: chance(0.2) });
+      op36.push({
+        fecha: fOp27Rec.toISOString(), dist: '25', golpes: 27 + acumRec, acum: acumRec, hoyos: 9,
+        gir: hoyosRec.filter(function(h){return h.gir;}).length,
+        puttsFallados: hoyosRec.filter(function(h){return h.puttCortoFallado;}).length,
+        distPutt: rnd(2,5), hoyosDetalle: hoyosRec, distRondas: null, trampaRondas: null
       });
       op36.sort(function(a,b){ return new Date(b.fecha) - new Date(a.fecha); });
       localStorage.setItem('op36_hist_' + cfg.id, JSON.stringify(op36));
@@ -4919,6 +5775,322 @@ function borrarDatosAntesDe(fechaCorte) {
 }
 
 
+function abrirEnlazarClaude() {
+  var claveActual = '';
+  try { claveActual = localStorage.getItem('claude_api_key') || ''; } catch(e) {}
+  var enlazado = claveActual.length > 0;
+  var claveCorta = enlazado ? (claveActual.substring(0, 12) + '••••••••') : '';
+  var ov = document.createElement('div');
+  ov.id = 'overlay-enlazar-claude';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:850;background:rgba(0,0,0,.6);display:flex;align-items:flex-end;justify-content:center';
+  ov.onclick = function(e) { if (e.target === ov) ov.remove(); };
+  ov.innerHTML =
+    '<div style="background:#1a1a2e;border-radius:24px 24px 0 0;width:100%;max-width:430px;padding:8px 0 30px;max-height:90vh;overflow-y:auto">' +
+      '<div style="display:flex;justify-content:center;padding:10px 0"><div style="width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,.15)"></div></div>' +
+      '<div style="padding:6px 22px 4px;display:flex;align-items:center;gap:10px">' +
+        '<div style="width:34px;height:34px;border-radius:9px;background:rgba(217,119,87,.15);display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D97757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg></div>' +
+        '<div style="color:#e8e8f0;font-size:18px;font-weight:700">Enlazar Claude</div>' +
+      '</div>' +
+      '<div style="padding:8px 22px 0;color:#b8b8c8;font-size:13px;line-height:1.5">' +
+        'Con Claude enlazado, todos los micrófonos de la app (inicio, entrenamiento, Reto 27 y ronda) se vuelven inteligentes: entienden tu dictado natural y llenan todo solos, sin equivocarse.' +
+      '</div>' +
+      (enlazado ?
+        ('<div style="margin:16px 22px;padding:13px 15px;background:rgba(29,158,117,.12);border:1px solid rgba(29,158,117,.35);border-radius:12px;display:flex;align-items:center;gap:10px">' +
+          '<span style="color:#1D9E75;font-size:18px">✓</span>' +
+          '<div style="flex:1"><div style="color:#5FD6AA;font-size:13px;font-weight:700">Claude está enlazado</div>' +
+          '<div style="color:#7a9a8a;font-size:11px;margin-top:1px;font-family:monospace">' + claveCorta + '</div></div>' +
+        '</div>' +
+        '<div style="padding:0 22px"><button onclick="ejecutarPruebaClaude()" id="btn-probar-claude" style="width:100%;background:rgba(217,119,87,.12);border:1px solid rgba(217,119,87,.4);border-radius:11px;padding:12px;color:#D97757;font-size:13px;font-weight:700;cursor:pointer">🔌 Probar conexión</button>' +
+          '<div id="claude-prueba-res" style="margin-top:8px"></div>' +
+        '</div>') : '') +
+      '<div style="padding:14px 22px 0"><div style="color:#9a9ab0;font-size:11px;font-weight:700;letter-spacing:.5px;margin-bottom:7px">' + (enlazado ? 'CAMBIAR CLAVE' : 'PEGA TU CLAVE DE API') + '</div>' +
+        '<input id="claude-key-input" type="password" placeholder="sk-ant-api03-..." autocomplete="off" style="width:100%;box-sizing:border-box;background:#0d1117;border:1px solid #2a2a40;border-radius:10px;padding:13px;color:#e8e8f0;font-size:13px;font-family:monospace" />' +
+      '</div>' +
+      '<div style="padding:12px 22px 0;display:flex;gap:10px">' +
+        '<button onclick="guardarClaveClaude()" style="flex:1;background:linear-gradient(160deg,#D97757,#b85c3e);border:none;border-radius:11px;padding:14px;color:#fff;font-size:14px;font-weight:700;cursor:pointer">Guardar y enlazar</button>' +
+        (enlazado ? '<button onclick="borrarClaveClaude()" style="background:rgba(226,75,74,.12);border:1px solid rgba(226,75,74,.3);border-radius:11px;padding:14px 16px;color:#E24B4A;font-size:14px;font-weight:700;cursor:pointer">Desenlazar</button>' : '') +
+      '</div>' +
+      '<div style="margin:18px 22px 0;padding:14px;background:rgba(255,255,255,.03);border-radius:12px">' +
+        '<div style="color:#cfcfe0;font-size:12px;font-weight:700;margin-bottom:8px">¿No tienes clave? Cómo conseguirla:</div>' +
+        '<div style="color:#9a9ab0;font-size:12px;line-height:1.7">' +
+          '1. Entra a <span style="color:#6EA8FE">console.anthropic.com</span><br>' +
+          '2. Crea tu cuenta y agrega una tarjeta<br>' +
+          '3. Ve a la sección <b>API Keys</b> y crea una<br>' +
+          '4. Cópiala y pégala aquí arriba' +
+        '</div>' +
+        '<div style="color:#6a6a85;font-size:11px;margin-top:10px;line-height:1.5">Tu clave se guarda solo en este teléfono y nunca se comparte. El costo es de centavos por ronda; puedes poner un tope de gasto en tu consola.</div>' +
+      '</div>' +
+    '</div>';
+  document.body.appendChild(ov);
+}
+
+function guardarClaveClaude() {
+  var inp = document.getElementById('claude-key-input');
+  if (!inp) return;
+  var k = (inp.value || '').trim();
+  if (!k) { alert('Pega tu clave primero.'); return; }
+  if (k.indexOf('sk-ant-') !== 0) {
+    if (!confirm('Esa clave no parece de Anthropic (suelen empezar con "sk-ant-"). ¿Guardar de todos modos?')) return;
+  }
+  try { localStorage.setItem('claude_api_key', k); } catch(e) { alert('No se pudo guardar.'); return; }
+  var ov = document.getElementById('overlay-enlazar-claude');
+  if (ov) ov.remove();
+  alert('¡Claude enlazado! Ya puedes usar el dictado por voz.');
+}
+
+async function ejecutarPruebaClaude() {
+  var btn = document.getElementById('btn-probar-claude');
+  var res = document.getElementById('claude-prueba-res');
+  if (btn) { btn.textContent = '⏳ Probando…'; btn.disabled = true; }
+  if (res) res.innerHTML = '';
+  var r = await probarClaude();
+  if (btn) { btn.textContent = '🔌 Probar conexión'; btn.disabled = false; }
+  if (!res) return;
+  if (r.ok) {
+    res.innerHTML = '<div style="padding:11px 13px;background:rgba(29,158,117,.12);border:1px solid rgba(29,158,117,.35);border-radius:10px;color:#5FD6AA;font-size:12px;font-weight:700">✅ ¡Conexión exitosa! Claude respondió: "' + r.respuesta + '"</div>';
+  } else {
+    var msg = r.error;
+    if (msg === 'CLAVE_INVALIDA') msg = 'La clave no es válida. Revisa que la copiaste completa.';
+    else if (msg === 'SIN_CLAVE') msg = 'No hay clave guardada.';
+    res.innerHTML = '<div style="padding:11px 13px;background:rgba(226,75,74,.12);border:1px solid rgba(226,75,74,.35);border-radius:10px;color:#E88;font-size:12px;font-weight:700">❌ Error: ' + msg + '</div>';
+  }
+}
+
+function borrarClaveClaude() {
+  if (!confirm('¿Desenlazar Claude? El dictado volverá al modo básico.')) return;
+  try { localStorage.removeItem('claude_api_key'); } catch(e) {}
+  var ov = document.getElementById('overlay-enlazar-claude');
+  if (ov) ov.remove();
+  alert('Claude desenlazado.');
+}
+
+// ═══════════════════════════════════════════════════════════
+// DICTADO INTELIGENTE · CAPA 1 — función central que habla con Claude
+// ═══════════════════════════════════════════════════════════
+// Ícono de charola con pirámide de bolas de golf (reemplaza la pesa en botones de Entrenar)
+function iconoCharola(tam) {
+  tam = tam || 26;
+  return '<svg width="' + tam + '" height="' + tam + '" viewBox="0 0 32 32" style="display:inline-block;vertical-align:middle">' +
+    '<circle cx="16" cy="6" r="3.5" fill="#fff"/>' +
+    '<circle cx="11" cy="12.5" r="3.5" fill="#fff"/>' +
+    '<circle cx="21" cy="12.5" r="3.5" fill="#f2f2f2"/>' +
+    '<circle cx="6.5" cy="19" r="3.5" fill="#fff"/>' +
+    '<circle cx="16" cy="19" r="3.5" fill="#f2f2f2"/>' +
+    '<circle cx="25.5" cy="19" r="3.5" fill="#fff"/>' +
+    '<circle cx="15.2" cy="5" r="0.55" fill="#c8c8c8"/><circle cx="16.9" cy="6.3" r="0.5" fill="#c8c8c8"/>' +
+    '<circle cx="10.2" cy="11.6" r="0.55" fill="#c8c8c8"/><circle cx="11.6" cy="13" r="0.5" fill="#c8c8c8"/>' +
+    '<path d="M3 22 L29 22 L27.5 26.5 L4.5 26.5 Z" fill="#0d0d0d" stroke="#000" stroke-width="0.5"/>' +
+  '</svg>';
+}
+
+function tieneClaudeEnlazado() {
+  try { return (localStorage.getItem('claude_api_key') || '').length > 0; } catch(e) { return false; }
+}
+
+// Manda texto a Claude y devuelve su respuesta como texto.
+// systemPrompt: instrucción de qué hacer con el texto (extraer datos, etc.)
+// Devuelve una promesa que resuelve con el texto de respuesta de Claude.
+async function dictarAClaude(textoUsuario, systemPrompt, opciones) {
+  opciones = opciones || {};
+  var clave = '';
+  try { clave = localStorage.getItem('claude_api_key') || ''; } catch(e) {}
+  if (!clave) {
+    throw new Error('SIN_CLAVE');
+  }
+  var modelo = opciones.modelo || 'claude-haiku-4-5-20251001';
+  var maxTokens = opciones.maxTokens || 1024;
+
+  var cuerpo = {
+    model: modelo,
+    max_tokens: maxTokens,
+    messages: [{ role: 'user', content: textoUsuario }]
+  };
+  if (systemPrompt) cuerpo.system = systemPrompt;
+
+  var response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': clave,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify(cuerpo)
+  });
+
+  if (!response.ok) {
+    var errTxt = '';
+    try { var ed = await response.json(); errTxt = (ed && ed.error && ed.error.message) ? ed.error.message : ('HTTP ' + response.status); }
+    catch(e) { errTxt = 'HTTP ' + response.status; }
+    if (response.status === 401) throw new Error('CLAVE_INVALIDA');
+    throw new Error(errTxt);
+  }
+
+  var data = await response.json();
+  var textoResp = (data.content || [])
+    .filter(function(b){ return b.type === 'text'; })
+    .map(function(b){ return b.text; })
+    .join('');
+  return textoResp;
+}
+
+// Igual que dictarAClaude pero espera que Claude responda JSON y lo parsea.
+async function dictarAClaudeJSON(textoUsuario, systemPrompt, opciones) {
+  var txt = await dictarAClaude(textoUsuario, systemPrompt, opciones);
+  txt = (txt || '').replace(/```json|```/g, '').trim();
+  // Buscar el primer { y el último } por si viene con texto extra
+  var i = txt.indexOf('{'); var j = txt.lastIndexOf('}');
+  if (i >= 0 && j > i) txt = txt.substring(i, j + 1);
+  return JSON.parse(txt);
+}
+
+// Prueba rápida de conexión: manda un saludo y verifica que responda.
+async function probarClaude() {
+  try {
+    var r = await dictarAClaude('Responde solo con la palabra: LISTO', 'Eres un asistente de prueba. Responde exactamente lo que se te pide, sin nada más.');
+    return { ok: true, respuesta: (r || '').trim() };
+  } catch(e) {
+    return { ok: false, error: e.message };
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// DICTADO GLOBAL · pop-up con micrófono inteligente
+// ═══════════════════════════════════════════════════════════
+var _dictadoReconocimiento = null;
+var _dictadoEscuchando = false;
+var _dictadoTextoAcum = '';
+
+function abrirDictadoGlobal() {
+  // Si Claude no está enlazado, ofrecer enlazarlo
+  if (!tieneClaudeEnlazado()) {
+    if (confirm('Para el dictado inteligente necesitas enlazar Claude primero. ¿Abrir la pantalla para enlazarlo?')) {
+      abrirEnlazarClaude();
+    }
+    return;
+  }
+  var ov = document.createElement('div');
+  ov.id = 'overlay-dictado-global';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.65);display:flex;align-items:flex-end;justify-content:center';
+  ov.onclick = function(e){ if (e.target === ov) cerrarDictadoGlobal(); };
+  ov.innerHTML =
+    '<div style="background:#12121f;border-radius:22px 22px 0 0;width:100%;max-width:430px;padding:8px 0 26px;max-height:88vh;overflow-y:auto">' +
+      '<div style="display:flex;justify-content:center;padding:10px 0"><div style="width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,.15)"></div></div>' +
+      '<div style="padding:6px 20px 14px;border-bottom:0.5px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:11px">' +
+        '<div id="dictado-mic-circ" style="width:44px;height:44px;border-radius:50%;background:#E24B4A;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .2s">' +
+          '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg>' +
+        '</div>' +
+        '<div style="flex:1">' +
+          '<div id="dictado-estado" style="color:#e8e8f0;font-size:15px;font-weight:800">Toca para dictar</div>' +
+          '<div id="dictado-texto-vivo" style="color:#8a8a9a;font-size:11px;font-style:italic;min-height:14px">Di lo que hiciste, natural…</div>' +
+        '</div>' +
+        '<div onclick="cerrarDictadoGlobal()" style="color:#8a8a9a;font-size:22px;cursor:pointer;padding:0 4px">✕</div>' +
+      '</div>' +
+      '<div id="dictado-ondas" style="display:none;padding:10px 0;justify-content:center;gap:4px;align-items:center;height:34px"></div>' +
+      '<div style="padding:16px 20px 0">' +
+        '<button id="dictado-btn-hablar" onclick="toggleDictadoEscuchar()" style="width:100%;background:linear-gradient(160deg,#E24B4A,#b8322f);border:none;border-radius:13px;padding:15px;color:#fff;font-size:15px;font-weight:800;cursor:pointer">🎤 Empezar a dictar</button>' +
+      '</div>' +
+      '<div id="dictado-captado" style="padding:16px 16px 0"></div>' +
+      '<div style="padding:14px 20px 0;color:#6a6a85;font-size:11px;text-align:center;line-height:1.5">Lo que dictes se irá mostrando aquí. Podrás revisarlo y corregirlo antes de guardar.</div>' +
+    '</div>';
+  document.body.appendChild(ov);
+}
+
+function cerrarDictadoGlobal() {
+  detenerDictadoEscuchar();
+  var ov = document.getElementById('overlay-dictado-global');
+  if (ov) ov.remove();
+}
+
+function toggleDictadoEscuchar() {
+  if (_dictadoEscuchando) detenerDictadoEscuchar();
+  else iniciarDictadoEscuchar();
+}
+
+function iniciarDictadoEscuchar() {
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { alert('Tu navegador no soporta dictado por voz. Usa Chrome o Safari.'); return; }
+  try {
+    _dictadoReconocimiento = new SR();
+    _dictadoReconocimiento.lang = 'es-MX';
+    _dictadoReconocimiento.continuous = true;
+    _dictadoReconocimiento.interimResults = true;
+    _dictadoTextoAcum = '';
+    _dictadoReconocimiento.onresult = function(ev) {
+      var interim = '', fin = '';
+      for (var i = ev.resultIndex; i < ev.results.length; i++) {
+        var t = ev.results[i][0].transcript;
+        if (ev.results[i].isFinal) fin += t; else interim += t;
+      }
+      if (fin) _dictadoTextoAcum += fin + ' ';
+      var vivo = document.getElementById('dictado-texto-vivo');
+      if (vivo) vivo.textContent = (_dictadoTextoAcum + interim).trim() || 'Escuchando…';
+    };
+    _dictadoReconocimiento.onend = function() {
+      if (_dictadoEscuchando) { try { _dictadoReconocimiento.start(); } catch(e){} }
+    };
+    _dictadoReconocimiento.onerror = function(ev) {
+      if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed') {
+        alert('Permiso de micrófono denegado. Actívalo en los ajustes del navegador.');
+        detenerDictadoEscuchar();
+      }
+    };
+    _dictadoReconocimiento.start();
+    _dictadoEscuchando = true;
+    var est = document.getElementById('dictado-estado'); if (est) est.textContent = 'Escuchando…';
+    var btn = document.getElementById('dictado-btn-hablar');
+    if (btn) { btn.textContent = '⏹ Detener y procesar'; btn.style.background = 'linear-gradient(160deg,#555,#333)'; }
+    var circ = document.getElementById('dictado-mic-circ'); if (circ) circ.style.transform = 'scale(1.1)';
+    mostrarOndasDictado(true);
+  } catch(e) {
+    alert('No se pudo iniciar el micrófono: ' + e.message);
+  }
+}
+
+function detenerDictadoEscuchar() {
+  _dictadoEscuchando = false;
+  if (_dictadoReconocimiento) { try { _dictadoReconocimiento.stop(); } catch(e){} _dictadoReconocimiento = null; }
+  var btn = document.getElementById('dictado-btn-hablar');
+  if (btn) { btn.textContent = '🎤 Empezar a dictar'; btn.style.background = 'linear-gradient(160deg,#E24B4A,#b8322f)'; }
+  var circ = document.getElementById('dictado-mic-circ'); if (circ) circ.style.transform = 'scale(1)';
+  var est = document.getElementById('dictado-estado'); if (est) est.textContent = 'Toca para dictar';
+  mostrarOndasDictado(false);
+  // Si hay texto acumulado, procesarlo (capa 2 en adelante). Por ahora, mostrarlo.
+  var texto = (_dictadoTextoAcum || '').trim();
+  if (texto) {
+    var cap = document.getElementById('dictado-captado');
+    if (cap) {
+      cap.innerHTML = '<div style="background:#1a1f33;border:0.5px solid rgba(255,255,255,.1);border-radius:12px;padding:13px 14px">' +
+        '<div style="color:#6a6a85;font-size:10px;font-weight:700;letter-spacing:.5px;margin-bottom:5px">LO QUE DICTASTE</div>' +
+        '<div style="color:#e8e8f0;font-size:13px;line-height:1.5">' + texto + '</div>' +
+        '<div style="color:#7a7a95;font-size:10px;margin-top:8px">✓ Micrófono funcionando. (El siguiente paso hará que Claude lo entienda y reparta a cada perfil.)</div>' +
+      '</div>';
+    }
+  }
+}
+
+function mostrarOndasDictado(mostrar) {
+  var ond = document.getElementById('dictado-ondas');
+  if (!ond) return;
+  if (mostrar) {
+    ond.style.display = 'flex';
+    var barras = '';
+    var alturas = [14,22,12,26,15,20,13];
+    for (var i = 0; i < alturas.length; i++) {
+      barras += '<div style="width:3px;height:' + alturas[i] + 'px;background:#E24B4A;border-radius:2px;animation:dictadoPulso 0.8s ease-in-out ' + (i*0.1) + 's infinite"></div>';
+    }
+    ond.innerHTML = barras;
+    if (!document.getElementById('dictado-kf')) {
+      var st = document.createElement('style'); st.id = 'dictado-kf';
+      st.textContent = '@keyframes dictadoPulso{0%,100%{transform:scaleY(0.5)}50%{transform:scaleY(1.3)}}';
+      document.head.appendChild(st);
+    }
+  } else {
+    ond.style.display = 'none';
+    ond.innerHTML = '';
+  }
+}
+
 function abrirMenuPro() {
   var ov = document.createElement('div');
   ov.id = 'overlay-menu-pro';
@@ -4943,6 +6115,10 @@ function abrirMenuPro() {
       '<div onclick="document.getElementById(\'overlay-menu-pro\').remove();abrirNivelInicial()" style="display:flex;align-items:center;gap:14px;padding:15px 20px;cursor:pointer">' +
         '<div style="width:40px;height:40px;border-radius:11px;background:rgba(29,158,117,.15);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.5 7h7l-5.5 4 2 7-6-4.5L6 22l2-7-5.5-4h7z"/></svg></div>' +
         '<div><div style="color:#e8e8f0;font-size:15px;font-weight:700">Nivel inicial de Putt</div><div style="color:#9a9ab0;font-size:11px">Define tu nivel de arranque</div></div>' +
+      '</div>' +
+      '<div onclick="document.getElementById(\'overlay-menu-pro\').remove();abrirEnlazarClaude()" style="display:flex;align-items:center;gap:14px;padding:15px 20px;cursor:pointer;border-top:1px solid rgba(255,255,255,.06);margin-top:6px">' +
+        '<div style="width:40px;height:40px;border-radius:11px;background:rgba(217,119,87,.15);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D97757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg></div>' +
+        '<div><div style="color:#e8e8f0;font-size:15px;font-weight:700">Enlazar Claude</div><div style="color:#9a9ab0;font-size:11px">Dictado por voz inteligente</div></div>' +
       '</div>' +
       '<div onclick="document.getElementById(\'overlay-menu-pro\').remove();generarDatosPrueba()" style="display:flex;align-items:center;gap:14px;padding:15px 20px;cursor:pointer;border-top:1px solid rgba(255,255,255,.06);margin-top:6px">' +
         '<div style="width:40px;height:40px;border-radius:11px;background:rgba(96,165,250,.15);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6EA8FE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3M9 20h6M12 4v16"/><rect x="3" y="9" width="18" height="6" rx="1"/></svg></div>' +
@@ -5204,6 +6380,134 @@ function borrarRondaIndividual(i) {
   });
 }
 
+// ── SIMULADOR (ejercicios en casa, editables por el usuario) ──────────────────
+// Cada perfil guarda la config de sus 3 ejercicios de simulador (nombre, instrucciones, minutos).
+function getSimConfig(simId) {
+  try {
+    var p = getPerfil();
+    if (!p) return { nombre:'', instrucciones:'', mins:15 };
+    var raw = localStorage.getItem('sim_config_' + p.id);
+    var all = raw ? JSON.parse(raw) : {};
+    return all[simId] || { nombre:'', instrucciones:'', mins:15 };
+  } catch(e) { return { nombre:'', instrucciones:'', mins:15 }; }
+}
+
+function guardarSimConfig(simId, cfg) {
+  try {
+    var p = getPerfil();
+    if (!p) return;
+    var raw = localStorage.getItem('sim_config_' + p.id);
+    var all = raw ? JSON.parse(raw) : {};
+    all[simId] = cfg;
+    localStorage.setItem('sim_config_' + p.id, JSON.stringify(all));
+  } catch(e) {}
+}
+
+// Abre el editor del ejercicio de simulador (nombre, instrucciones, minutos)
+function abrirEditorSimulador(simId, agregarAlGuardar) {
+  var cfg = getSimConfig(simId);
+  var prev = document.getElementById('overlay-sim-editor');
+  if (prev) prev.remove();
+  var ov = document.createElement('div');
+  ov.id = 'overlay-sim-editor';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:600;display:flex;align-items:flex-end;justify-content:center';
+  function opt(m){ return '<button type="button" class="sim-min-opt" data-min="'+m+'" style="flex:1;padding:11px 0;border-radius:11px;border:1.5px solid '+(cfg.mins===m?'#9D6BFF':'rgba(255,255,255,.12)')+';background:'+(cfg.mins===m?'rgba(125,58,237,.25)':'#13131f')+';color:'+(cfg.mins===m?'#c4a5f8':'#9a9ab0')+';font-size:14px;font-weight:800;cursor:pointer">'+m+' min</button>'; }
+  ov.innerHTML = '<div style="background:#1a1f2e;border-radius:24px 24px 0 0;width:100%;max-width:430px;max-height:88vh;overflow-y:auto">' +
+    '<div style="display:flex;justify-content:center;padding:12px 0"><div style="width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:2px"></div></div>' +
+    '<div style="padding:4px 20px 20px">' +
+      '<div style="color:#c4a5f8;font-size:17px;font-weight:800;margin-bottom:3px">🏠 Mi tarea del simulador</div>' +
+      '<div style="color:#7a7a95;font-size:12px;margin-bottom:16px">Ponle el nombre que te encargó tu profe y guárdalo</div>' +
+      '<div style="color:#9a9ab0;font-size:12px;font-weight:700;margin-bottom:6px">Nombre del ejercicio</div>' +
+      '<input id="sim-in-nombre" type="text" maxlength="40" placeholder="Ej. Swing de adentro hacia afuera" value="' + (cfg.nombre||'').replace(/"/g,'&quot;') + '" style="width:100%;box-sizing:border-box;background:#13131f;border:1px solid rgba(255,255,255,.12);border-radius:11px;padding:12px 13px;color:#fff;font-size:14px;font-weight:600;margin-bottom:15px;outline:none" />' +
+      '<div style="color:#9a9ab0;font-size:12px;font-weight:700;margin-bottom:6px">Instrucciones (lo que tienes que hacer)</div>' +
+      '<textarea id="sim-in-instr" maxlength="220" rows="3" placeholder="Ej. 20 swings lentos enfocando el camino del palo de adentro hacia afuera" style="width:100%;box-sizing:border-box;background:#13131f;border:1px solid rgba(255,255,255,.12);border-radius:11px;padding:12px 13px;color:#fff;font-size:14px;font-weight:500;margin-bottom:15px;outline:none;resize:none;font-family:inherit">' + (cfg.instrucciones||'') + '</textarea>' +
+      '<div style="color:#9a9ab0;font-size:12px;font-weight:700;margin-bottom:6px">Tiempo</div>' +
+      '<div style="display:flex;gap:8px;margin-bottom:20px">' + opt(10) + opt(15) + opt(20) + '</div>' +
+      '<button id="sim-guardar" type="button" style="width:100%;padding:14px;border-radius:13px;border:none;background:linear-gradient(135deg,#7C3AED,#9D6BFF);color:#fff;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 16px rgba(125,58,237,.4)">Guardar</button>' +
+    '</div></div>';
+  ov.onclick = function(e){ if (e.target === ov) ov.remove(); };
+  document.body.appendChild(ov);
+  var minSel = cfg.mins || 15;
+  ov.querySelectorAll('.sim-min-opt').forEach(function(b){
+    b.addEventListener('click', function(){
+      minSel = parseInt(b.getAttribute('data-min'), 10);
+      ov.querySelectorAll('.sim-min-opt').forEach(function(x){
+        var on = parseInt(x.getAttribute('data-min'),10) === minSel;
+        x.style.border = '1.5px solid ' + (on?'#9D6BFF':'rgba(255,255,255,.12)');
+        x.style.background = on?'rgba(125,58,237,.25)':'#13131f';
+        x.style.color = on?'#c4a5f8':'#9a9ab0';
+      });
+    });
+  });
+  document.getElementById('sim-guardar').addEventListener('click', function(){
+    var nombre = document.getElementById('sim-in-nombre').value.trim();
+    var instr = document.getElementById('sim-in-instr').value.trim();
+    if (!nombre) { alert('Ponle un nombre a tu ejercicio'); return; }
+    guardarSimConfig(simId, { nombre:nombre, instrucciones:instr, mins:minSel });
+    ov.remove();
+    var menu = document.getElementById('overlay-menu-ej');
+    if (menu) menu.remove();
+    if (agregarAlGuardar) {
+      // Vino de tocar el ejercicio: agregarlo directo a la sesión
+      agregarSimuladorAlPrograma(simId);
+    } else {
+      // Vino del lápiz (solo editar): volver a abrir el menú para que vea el nombre nuevo
+      abrirMenuEjercicios(false);
+    }
+  });
+}
+
+// Agrega un ejercicio de simulador a la sesión de entrenamiento
+function agregarSimuladorAlPrograma(simId) {
+  var cfg = getSimConfig(simId);
+  if (!cfg.nombre) { abrirEditorSimulador(simId, true); return; }
+  if (!estadoSesion.programa) estadoSesion.programa = [];
+  if (!estadoSesion.completados) estadoSesion.completados = [];
+  estadoSesion.programa.push({
+    id: simId, nom: cfg.nombre, cat: 'simulador', mins: cfg.mins,
+    instr: cfg.instrucciones ? [cfg.instrucciones] : [], esSimulador: true
+  });
+  estadoSesion.completados[estadoSesion.programa.length - 1] = null;
+  if (typeof guardarEstadoSesion === 'function') guardarEstadoSesion();
+  if (typeof renderSesion === 'function') renderSesion();
+  irVista('view-programa');
+}
+
+function registrarEstrella1v1() {
+  try {
+    if (typeof estadoSesion === 'undefined' || !estadoSesion) return;
+    if (!estadoSesion.programa) estadoSesion.programa = [];
+    if (!estadoSesion.completados) estadoSesion.completados = [];
+    var idx = estadoSesion.programa.length;
+    estadoSesion.programa.push({ id: 'estrella-1v1', nom: 'Estrella 1 vs 1', cat: 'putt', mins: 10, esEstrella: true });
+    estadoSesion.completados[idx] = { mins: 10, ejec: 1, estrella: true };
+    if (typeof guardarEstadoSesion === 'function') guardarEstadoSesion();
+    if (typeof renderSesion === 'function') renderSesion();
+    setTimeout(function(){ try { renderActividadSemanaEntreno(); } catch(e){} }, 60);
+  } catch(err) {
+    alert('No se pudo registrar el ejercicio: ' + err.message);
+  }
+}
+
+function registrarClasePrivada() {
+  try {
+    // Agregar la clase a la sesión de entrenamiento activa como ejercicio YA COMPLETADO,
+    // para que aparezca en la lista de la ventana de entrenamiento (igual que un ejercicio hecho).
+    if (typeof estadoSesion === 'undefined' || !estadoSesion) return;
+    if (!estadoSesion.programa) estadoSesion.programa = [];
+    if (!estadoSesion.completados) estadoSesion.completados = [];
+    var idx = estadoSesion.programa.length;
+    estadoSesion.programa.push({ id: 'clase-privada', nom: 'Clase privada', cat: 'clase', mins: 60, esClase: true });
+    estadoSesion.completados[idx] = { mins: 60, ejec: 1, clase: true };
+    if (typeof guardarEstadoSesion === 'function') guardarEstadoSesion();
+    // Re-render para que se vea en la lista y en el tablero al momento
+    if (typeof renderSesion === 'function') renderSesion();
+    setTimeout(function(){ try { renderActividadSemanaEntreno(); } catch(e){} }, 60);
+  } catch(err) {
+    alert('No se pudo registrar la clase: ' + err.message);
+  }
+}
+
 function borrarEntrenoIndividual(i) {
   var p = getPerfil();
   var entrenos = getHistorialEntreno(p.id);
@@ -5319,11 +6623,17 @@ function abrirDesgloseDia(idx) {
     // Acumular TODOS los ejercicios del día (incluidos los retos de putt, que cuentan como
     // ejercicio de entreno igual que en el historial). Puede haber varios entrenamientos el mismo día.
     var totalEj = 0, minEj = 0;
+    var totalClases = 0, minClases = 0;
     entrenos.forEach(function(e){
       if (!mismoDia(e.fecha)) return;
       var ejs = e.ejercicios || [];
       ejs.forEach(function(ej){
         var cat = ej.cat || '', id = ej.id || '';
+        if (cat === 'clase') {
+          totalClases++;
+          minClases += (ej.datos && ej.datos.mins) ? ej.datos.mins : 60;
+          return;
+        }
         var esRetoPutt = id === 'retoMedio' || id === 'retoMedioReto' || id.indexOf('reto-putt') >= 0;
         totalEj++;
         if (esRetoPutt) minEj += 15;
@@ -5334,6 +6644,11 @@ function abrirDesgloseDia(idx) {
     if (totalEj > 0) {
       items.push({ color:'#1D4ED8', titulo:totalEj + (totalEj===1?' ejercicio':' ejercicios'), sub:'Práctica de putt, approach, hierros y retos de putt', tiempo:minEj });
       totalMin += minEj; hayPractica = true;
+    }
+    // Fila de clases privadas
+    if (totalClases > 0) {
+      items.push({ color:'#7C3AED', titulo:totalClases + (totalClases===1?' clase privada':' clases privadas'), sub:'Clase con profesor', tiempo:minClases });
+      totalMin += minClases; hayPractica = true;
     }
 
     // Retos OP27 del día
@@ -5734,24 +7049,34 @@ function abrirPerfiles() {
 function actualizarVerBtns(ver) {
   var lightBtn = document.getElementById('pf-ver-light');
   var proBtn = document.getElementById('pf-ver-pro');
+  var gamerBtn = document.getElementById('pf-ver-gamer');
   var desc = document.getElementById('pf-ver-desc');
   if (!lightBtn || !proBtn) return;
+
+  // Resetear los tres a estado inactivo
+  function reset(btn){
+    if (!btn) return;
+    btn.style.background = 'rgba(255,255,255,.04)';
+    btn.style.border = '0.5px solid rgba(255,255,255,.1)';
+    var t = btn.querySelector('div:nth-child(2)');
+    if (t) t.style.color = '#e8e8f0';
+  }
+  reset(lightBtn); reset(proBtn); reset(gamerBtn);
 
   if (ver === 'light') {
     lightBtn.style.background = 'rgba(234,179,8,.12)';
     lightBtn.style.border = '1.5px solid #EF9F27';
-    lightBtn.querySelector('div:last-child').style.color = '#EF9F27';
-    proBtn.style.background = 'rgba(255,255,255,.04)';
-    proBtn.style.border = '0.5px solid rgba(255,255,255,.1)';
-    proBtn.querySelector('div:last-child').style.color = '#4a4a6a';
+    var tl = lightBtn.querySelector('div:nth-child(2)'); if (tl) tl.style.color = '#EF9F27';
     desc.textContent = 'Para jugadores que disfrutan el golf y quieren llevar sus estadísticas de ronda de forma simple.';
+  } else if (ver === 'gamer') {
+    gamerBtn.style.background = 'rgba(125,58,237,.18)';
+    gamerBtn.style.border = '1.5px solid #9D6BFF';
+    var tg = gamerBtn.querySelector('div:nth-child(2)'); if (tg) tg.style.color = '#c4a5f8';
+    desc.textContent = 'Modo videojuego: misiones, retos y logros de la semana para hacer el entrenamiento más divertido.';
   } else {
     proBtn.style.background = 'rgba(15,110,86,.15)';
     proBtn.style.border = '1.5px solid #0F6E56';
-    proBtn.querySelector('div:last-child').style.color = '#1D9E75';
-    lightBtn.style.background = 'rgba(255,255,255,.04)';
-    lightBtn.style.border = '0.5px solid rgba(255,255,255,.1)';
-    lightBtn.querySelector('div:last-child').style.color = '#4a4a6a';
+    var tp = proBtn.querySelector('div:nth-child(2)'); if (tp) tp.style.color = '#1D9E75';
     desc.textContent = 'Para jugadores que entrenan varios días a la semana y ejecutan ejercicios medibles para mejorar sus habilidades.';
   }
 }
@@ -6146,7 +7471,7 @@ function verificarSesionPrevia() {
   card.innerHTML =
     '<div onclick="continuarSesionPrevia()" style="background:linear-gradient(135deg,#A32D2D,#E24B4A);border-radius:16px;padding:16px;margin-bottom:14px;cursor:pointer;box-shadow:0 4px 16px rgba(226,75,74,.35)">' +
       '<div style="display:flex;align-items:center;gap:13px">' +
-        '<div style="width:46px;height:46px;border-radius:13px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:24px">🏋️</div>' +
+        '<div style="width:46px;height:46px;border-radius:13px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:24px">' + iconoCharola(26) + '</div>' +
         '<div style="flex:1">' +
           '<div style="color:white;font-size:15px;font-weight:800">Entrenamiento en curso</div>' +
           '<div style="color:rgba(255,255,255,.85);font-size:12px;margin-top:2px">Llevas ' + sesion.hechos + ' de ' + sesion.total + ' ejercicios · toca para continuar</div>' +
@@ -7049,7 +8374,7 @@ function renderStatsEntreno() {
   var p = getPerfil();
   var entrenos = getHistorialEntreno(p.id);
   if (entrenos.length === 0) {
-    return '<div style="text-align:center;padding:50px 20px"><div style="font-size:36px;margin-bottom:12px">🏋️</div><div style="color:#e8e8f0;font-size:15px;font-weight:700;margin-bottom:6px">Aún no hay entrenamientos</div><div style="color:#4a4a6a;font-size:12px;line-height:1.5">Completa un entrenamiento para ver<br>tu progreso de práctica aquí</div></div>';
+    return '<div style="text-align:center;padding:50px 20px"><div style="margin-bottom:12px">' + iconoCharola(40) + '</div><div style="color:#e8e8f0;font-size:15px;font-weight:700;margin-bottom:6px">Aún no hay entrenamientos</div><div style="color:#4a4a6a;font-size:12px;line-height:1.5">Completa un entrenamiento para ver<br>tu progreso de práctica aquí</div></div>';
   }
 
   // Contar ejercicios por categoría
@@ -7204,10 +8529,11 @@ var EJERCICIOS_DEF = {
   'escalera':   { nom: 'Escalera clasica',     cat: 'putt',     instrucciones: ['Distancias: 6,9,12,15,18 pasos','3 veces seguidas en 2 tiros para avanzar','Si fallas, te quedas'], distancias: ['6 pasos','9 pasos','12 pasos','15 pasos','18 pasos'] },
   'retoMedio':  { nom: 'Reto Putt Medio',      cat: 'putt',     instrucciones: ['Elige hoyos a ~8-10 pasos de distancia','Emboca cada hoyo en 2 golpes (acercas y metes)','Logra varios hoyos seguidos de 2 golpes sin fallar','__NIVEL_MEDIO__'], esReto: true, retoTipo: 'medio' },
   'retoMedioReto': { nom: 'Reto Putt Largo',  cat: 'putt',     instrucciones: ['Elige hoyos largos: entre 12 y 20 pasos','Emboca cada hoyo en 2 golpes (acercas y metes)','Logra varios hoyos seguidos de 2 golpes sin fallar','__NIVEL_LARGO__'], esReto: true, retoTipo: 'largo' },
+  'retoApproach': { nom: 'Reto Approach',      cat: 'approach', instrucciones: ['__RETO_APPROACH__'], esReto: true, retoTipo: 'approach' },
   'tobogan-ap': { nom: 'Tobogan approach',     cat: 'approach', instrucciones: ['Distancias: 10,15,20,25,30,35 yardas','Chip al green para avanzar','Si fallas, regresa al inicio'], distancias: ['10y','15y','20y','25y','30y','35y'] },
   'escalera-ap':{ nom: 'Escalera approach',    cat: 'approach', instrucciones: ['Distancias: 10,15,20,25,30,35 yardas','3 tiros al green para avanzar','Si fallas, te quedas'], distancias: ['10y','15y','20y','25y','30y','35y'] },
   'approach-bunker': { nom: 'Bunker', cat: 'approach', instrucciones: ['5 bolas seguidas desde el bunker','Sácalas a green según tu nivel','Cada vez más cerca del hoyo'] },
-  'ud2d3':      { nom: 'Up and Down 2d3',      cat: 'approach', instrucciones: ['Desde 20-40 yardas, tira 3 bolas','2 de 3 en up and down = 1 punto','Approach + 1 putt = up and down'] },
+  'ud2d3':      { nom: 'Up & Down',      cat: 'approach', instrucciones: ['3 rondas de 3 bolas (9 intentos, como 9 hoyos)','Up & down = approach + 1 putt para embocar','Cuenta tus up & downs de 9'] },
   'hierros':    { nom: 'Escalera hierros',     cat: 'hierros',  instrucciones: ['Palos: 9H-8H-7H-6H','5 bolas consecutivas en zona objetivo','Si fallas, reinicia el contador'] },
   'drive':      { nom: 'Drive',                cat: 'drive',    instrucciones: ['5 tiros consecutivos en zona objetivo','1 ejecucion = 5 tiros en zona','Cuenta madera 3 y drive por separado'] },
   'op36-25':    { nom: 'OP 27 - 25y',   cat: 'reto',     instrucciones: ['9 hoyos par 3 desde 25 yardas','Par del campo = 27 golpes','Meta alto rendimiento: -5'], esReto: true },
@@ -7229,8 +8555,12 @@ var PROGRAMAS = {
 // ── SELECCIONAR TIEMPO ───────────────────────────────────────────────────────
 function guardarEstadoSesion() {
   try {
-    // Solo guardar si hay un programa activo con al menos un ejercicio
-    if (!estadoSesion.programa || estadoSesion.programa.length === 0) return;
+    // Si el programa quedó vacío (borraron todo), eliminar el estado guardado
+    // para que al recargar NO reviva un ejercicio ya borrado.
+    if (!estadoSesion.programa || estadoSesion.programa.length === 0) {
+      localStorage.removeItem('entreno_estado');
+      return;
+    }
     var estado = {
       fecha: new Date().toISOString(),
       tiempo: estadoSesion.tiempo,
@@ -7285,16 +8615,22 @@ var vieneDeRetos = false; // marca si el flujo actual viene del botón Retos del
 
 // Punto de entrada al picar "Retos": abre directo el menú de retos sobre el home
 function entrarARetos() {
-  // Si hay sesión pendiente del mismo día, retomarla directo (no perder progreso)
-  if (obtenerSesionPreviaHoy()) {
-    continuarSesionPrevia();
-    return;
+  // El botón Retos del home SIEMPRE abre el menú de solo retos sobre el home,
+  // sin entrar al entrenamiento completo. Si hay sesión previa del día, la retomamos
+  // por debajo (para no perder progreso) pero mostramos el menú de retos encima.
+  var prev = obtenerSesionPreviaHoy();
+  if (prev) {
+    // Cargar la sesión previa en memoria sin cambiar de vista (seguir en el home)
+    estadoSesion.tiempo = prev.estado.tiempo;
+    estadoSesion.programa = prev.estado.programa;
+    estadoSesion.completados = prev.estado.completados;
+    estadoSesion.sesionId = prev.estado.sesionId || ('ses_' + Date.now());
+  } else {
+    estadoSesion.tiempo = 0;
+    estadoSesion.programa = [];
+    estadoSesion.completados = [];
+    estadoSesion.sesionId = 'ses_' + Date.now();
   }
-  // Preparar una sesión vacía (por si elige un reto), pero quedarse en el home de fondo
-  estadoSesion.tiempo = 0;
-  estadoSesion.programa = [];
-  estadoSesion.completados = [];
-  estadoSesion.sesionId = 'ses_' + Date.now();
   vieneDeRetos = true;
   // Abrir el menú SOLO con retos (ya viene expandido, sin cabeceras) sobre el home
   abrirMenuEjercicios(true);
@@ -7395,26 +8731,41 @@ function arrancarBloqueRecomendado() {
 }
 
 function _arrancarBloque() {
-  var segundo = hizoBloqueCompletoHoy();
-  bloqueRecomendadoActual = generarBloqueEjercicios(segundo);
+  // Arrancar con el entrenamiento VACÍO. El niño agrega sus ejercicios o pide
+  // "Sugerir entrenamiento" si quiere el plan automático.
   estadoSesion.tiempo = 0;
-  estadoSesion.programa = JSON.parse(JSON.stringify(bloqueRecomendadoActual));
-  estadoSesion.completados = estadoSesion.programa.map(function() { return null; });
+  estadoSesion.programa = [];
+  estadoSesion.completados = [];
   estadoSesion.sesionId = 'ses_' + Date.now();
-  // Título según primer o siguiente bloque
   var tit = document.getElementById('prog-titulo');
   var sub = document.getElementById('prog-subtitulo');
   if (tit && sub) {
-    if (segundo) {
-      tit.innerHTML = 'Tu siguiente bloque de hoy 🔥';
-      sub.innerHTML = '¡Vas con todo! Tu plan personalizado te armó otro bloque para seguir sumando.';
-    } else {
-      tit.innerHTML = 'Tu primer bloque de hoy 🎯';
-      sub.innerHTML = 'Tu plan personalizado armó este bloque para ti. Quita o agrega lo que quieras y ¡a entrenar!';
-    }
+    tit.innerHTML = 'Tu entrenamiento de hoy 🎯';
+    sub.innerHTML = 'Agrega tus ejercicios, o pide que te sugiramos un entrenamiento completo.';
   }
   renderSesion();
   irVista('view-programa');
+}
+
+// Genera el plan automático y lo agrega a la sesión actual (botón "Sugerir entrenamiento")
+function sugerirEntrenamiento() {
+  var segundo = hizoBloqueCompletoHoy();
+  var bloque = generarBloqueEjercicios(segundo);
+  if (!estadoSesion.programa) estadoSesion.programa = [];
+  if (!estadoSesion.completados) estadoSesion.completados = [];
+  // Agregar los ejercicios sugeridos a lo que ya haya (sin borrar lo que el niño puso)
+  bloque.forEach(function(ej) {
+    estadoSesion.programa.push(JSON.parse(JSON.stringify(ej)));
+    estadoSesion.completados.push(null);
+  });
+  var tit = document.getElementById('prog-titulo');
+  var sub = document.getElementById('prog-subtitulo');
+  if (tit && sub) {
+    tit.innerHTML = 'Tu entrenamiento de hoy 🎯';
+    sub.innerHTML = 'Te sugerimos estos ejercicios. Quita o agrega lo que quieras y ¡a entrenar!';
+  }
+  if (typeof guardarEstadoSesion === 'function') guardarEstadoSesion();
+  renderSesion();
 }
 
 // Modal: preguntar si puede salir al campo al reto OP27
@@ -7474,7 +8825,7 @@ function avisarSesionPendiente(onEmpezarNuevo) {
   ov.onclick = function(e) { if (e.target === ov) ov.remove(); };
   ov.innerHTML =
     '<div style="background:#1a1f2e;border-radius:24px;width:100%;max-width:340px;padding:24px 22px;text-align:center">' +
-      '<div style="font-size:36px;margin-bottom:10px">🏋️</div>' +
+      '<div style="margin-bottom:10px">' + iconoCharola(40) + '</div>' +
       '<div style="color:#e8e8f0;font-size:18px;font-weight:700;margin-bottom:8px">Ya tienes un entrenamiento sin terminar</div>' +
       '<div style="color:#9a9ab0;font-size:13px;line-height:1.5;margin-bottom:22px">Llevas ' + hechos + ' de ' + total + ' ejercicios. Si empiezas uno nuevo, el anterior se cerrará (los ejercicios que hiciste ya quedaron guardados en tus estadísticas).</div>' +
       '<div style="display:flex;flex-direction:column;gap:9px">' +
@@ -7505,8 +8856,8 @@ function renderPrograma() {
   if (badge) badge.textContent = t > 0 ? (t + ' hora' + (t > 1 ? 's' : '')) : 'Manual';
   var html = '';
   var n = 1;
-  var catC = { putt:'#185FA5', approach:'#854F0B', hierros:'#3B6D11', drive:'#0F6E56', reto:'#412402' };
-  var catT = { putt:'#B5D4F4', approach:'#FAC775', hierros:'#C0DD97', drive:'#9FE1CB', reto:'#EF9F27' };
+  var catC = { putt:'#185FA5', approach:'#854F0B', hierros:'#3B6D11', drive:'#0F6E56', reto:'#412402', simulador:'#5B2C9D', clase:'#5B2C9D' };
+  var catT = { putt:'#B5D4F4', approach:'#FAC775', hierros:'#C0DD97', drive:'#9FE1CB', reto:'#EF9F27', simulador:'#C4A5F8', clase:'#C4A5F8' };
 
   estadoSesion.programa.forEach(function(item, idx) {
     var def = getDefItem(item);
@@ -7570,8 +8921,12 @@ function abrirMenuEjercicios(soloRetos) {
       items:['approach-escalera','approach-tobogan','approach-record','approach-bunker','approach-ud2d3'] },
     { key:'hierros', lbl:'Hierros, maderas y drive', icon:'🏌️', iconBg:'rgba(59,109,17,.2)', tipo:'palos',
       items:['handicap','record'] },
+    { key:'simulador', lbl:'Simulador', icon:'🏠', iconBg:'rgba(125,58,237,.18)', tipo:'simulador',
+      items:['sim-1','sim-2','sim-3'] },
     { key:'retos', lbl:'Retos', icon:'🔥', iconBg:'rgba(239,159,39,.18)', tipo:'retos',
-      items:['op36','reto-putt','retoDist','retoTrampa'] }
+      items:['op36','reto-putt','reto-approach','retoDist','retoTrampa'] },
+    { key:'clases', lbl:'Clase privada', icon:'🎓', iconBg:'rgba(125,58,237,.18)', tipo:'clase',
+      items:['clase-privada'] }
   ];
 
   // Si se pidió solo retos (desde el botón Retos del home), filtrar
@@ -7609,6 +8964,7 @@ function abrirMenuEjercicios(soloRetos) {
       if (def) { nom = def.nom; dataAttr = 'data-cat-item="' + it + '"'; }
       else if (esRetoSec) {
         if (it === 'reto-putt') { nom = 'Reto Putt'; dataAttr = 'data-cat-item="reto-putt"'; }
+        else if (it === 'reto-approach') { nom = 'Reto Approach'; dataAttr = 'data-reto-approach="1"'; }
         else if (it === 'op36') { nom = 'OP 27'; dataAttr = 'data-reto-op36="1"'; }
         else if (it === 'retoDist') { nom = 'Reto Distancia'; dataAttr = 'data-reto-viejo="retoDist"'; }
         else if (it === 'retoTrampa') { nom = 'Reto Bunker'; dataAttr = 'data-reto-viejo="retoTrampa"'; }
@@ -7625,6 +8981,17 @@ function abrirMenuEjercicios(soloRetos) {
       sec.subgrupos.forEach(function(g) {
         html += '<div style="color:#6EA8FE;font-size:11px;font-weight:700;letter-spacing:.5px;padding:10px 4px 6px">' + g.sub.toUpperCase() + '</div>';
         g.items.forEach(function(it){ html += pintarItem(it, false); });
+        // El Estrella 1 vs 1 va dentro de Putt corto (ejercicio especial de registro directo)
+        if (g.sub === 'Putt corto') {
+          html += '<div class="mej-estrella-directa" data-estrella-directa="1" style="background:#0d1117;border:0.5px solid rgba(255,255,255,.06);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:6px;cursor:pointer">' +
+            '<div style="flex:1"><div style="color:#e8e8f0;font-size:13px;font-weight:700">Estrella 1 vs 1</div></div>' +
+            '<span style="color:#888;font-size:22px;width:24px;text-align:center;flex-shrink:0">\u203A</span>' +
+          '</div>';
+          html += '<div class="mej-lineal-directa" data-lineal-directa="1" style="background:#0d1117;border:0.5px solid rgba(255,255,255,.06);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:6px;cursor:pointer">' +
+            '<div style="flex:1"><div style="color:#e8e8f0;font-size:13px;font-weight:700">Lineal 1 vs 1</div></div>' +
+            '<span style="color:#888;font-size:22px;width:24px;text-align:center;flex-shrink:0">\u203A</span>' +
+          '</div>';
+        }
       });
     } else if (sec.tipo === 'palos') {
       sec.items.forEach(function(it) {
@@ -7632,6 +8999,22 @@ function abrirMenuEjercicios(soloRetos) {
         html += '<div class="mej-nuevo" data-palo-mec="' + it + '" style="background:#0d1117;border:0.5px solid rgba(255,255,255,.06);border-radius:10px;padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:6px;cursor:pointer">' +
           '<div style="flex:1"><div style="color:#e8e8f0;font-size:13px;font-weight:700">' + nom + '</div></div>' +
           '<span style="color:#888;font-size:22px;width:24px;text-align:center;flex-shrink:0">\u203A</span></div>';
+      });
+    } else if (sec.tipo === 'clase') {
+      html += '<div class="mej-clase-directa" data-clase-directa="1" style="background:rgba(125,58,237,.12);border:1px solid rgba(125,58,237,.35);border-radius:10px;padding:14px;display:flex;align-items:center;gap:10px;margin-bottom:6px;cursor:pointer">' +
+        '<div style="flex:1"><div style="color:#b794f6;font-size:13px;font-weight:700">Registrar clase (1 hora)</div>' +
+        '<div style="color:#7a7a95;font-size:11px;margin-top:2px">Suma 60 min a tus horas de golf</div></div>' +
+        '<span style="color:#b794f6;font-size:22px;width:24px;text-align:center;flex-shrink:0">+</span></div>';
+    } else if (sec.tipo === 'simulador') {
+      sec.items.forEach(function(it, i) {
+        var cfg = getSimConfig(it);
+        var titulo = cfg.nombre || ('Ejercicio ' + (i+1));
+        var subt = cfg.nombre ? (cfg.mins + ' min · tu tarea del simulador') : 'Sin configurar · toca el lápiz para ponerle nombre';
+        html += '<div style="background:rgba(125,58,237,.10);border:1px solid rgba(125,58,237,.3);border-radius:10px;padding:12px 13px;display:flex;align-items:center;gap:10px;margin-bottom:6px">' +
+          '<div class="mej-sim-sel" data-sim-sel="' + it + '" style="flex:1;cursor:pointer">' +
+            '<div style="color:#c4a5f8;font-size:13px;font-weight:700">🏠 ' + titulo + '</div>' +
+            '<div style="color:#7a7a95;font-size:11px;margin-top:2px">' + subt + '</div></div>' +
+          '<div class="mej-sim-editar" data-sim-edit="' + it + '" style="padding:6px 8px;cursor:pointer;color:#8fc0f5;font-size:17px;flex-shrink:0">✏️</div></div>';
       });
     } else { // catalogo o retos
       var esRetoSec = (sec.key === 'retos');
@@ -7642,6 +9025,8 @@ function abrirMenuEjercicios(soloRetos) {
   // (fin construcción de secciones)
 
   var ov = document.createElement('div');
+  var prevMenu = document.getElementById('overlay-menu-ej');
+  if (prevMenu) prevMenu.remove();
   ov.id = 'overlay-menu-ej';
   ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;display:flex;align-items:flex-end;justify-content:center';
   var tituloHeader = soloRetos ? 'Elige tu reto' : 'Agregar ejercicio';
@@ -7669,15 +9054,74 @@ function abrirMenuEjercicios(soloRetos) {
         if (body) { var ab = body.style.display === 'block'; body.style.display = ab?'none':'block'; if(chev) chev.style.transform = ab?'rotate(0deg)':'rotate(90deg)'; }
         return;
       }
+      if (el.classList && el.classList.contains('mej-clase-directa')) {
+        registrarClasePrivada();
+        ov.remove();
+        return;
+      }
+      if (el.classList && el.classList.contains('mej-estrella-directa')) {
+        if (!estadoSesion.programa) estadoSesion.programa = [];
+        if (!estadoSesion.completados) estadoSesion.completados = [];
+        estadoSesion.ejActivo = estadoSesion.programa.length;
+        estadoSesion.programa.push({ id: 'estrella-1v1', nom: 'Estrella 1 vs 1', cat: 'putt', mins: 10, esEstrella: true });
+        estadoSesion.completados[estadoSesion.programa.length - 1] = null;
+        if (typeof guardarEstadoSesion === 'function') guardarEstadoSesion();
+        ov.remove();
+        vieneDeRetos = false;
+        if (typeof renderSesion === 'function') renderSesion();
+        irVista('view-programa');
+        return;
+      }
+      if (el.classList && el.classList.contains('mej-lineal-directa')) {
+        if (!estadoSesion.programa) estadoSesion.programa = [];
+        if (!estadoSesion.completados) estadoSesion.completados = [];
+        estadoSesion.ejActivo = estadoSesion.programa.length;
+        estadoSesion.programa.push({ id: 'lineal-1v1', nom: 'Lineal 1 vs 1', cat: 'putt', mins: 10, esLineal: true });
+        estadoSesion.completados[estadoSesion.programa.length - 1] = null;
+        if (typeof guardarEstadoSesion === 'function') guardarEstadoSesion();
+        ov.remove();
+        vieneDeRetos = false;
+        if (typeof renderSesion === 'function') renderSesion();
+        irVista('view-programa');
+        return;
+      }
+      // Editar un ejercicio de simulador (lápiz)
+      var elEdit = el.closest ? el.closest('.mej-sim-editar') : null;
+      if (elEdit) {
+        var simIdE = elEdit.getAttribute('data-sim-edit');
+        abrirEditorSimulador(simIdE);
+        return;
+      }
+      // Seleccionar un ejercicio de simulador (agregarlo a la sesión)
+      var elSel = el.closest ? el.closest('.mej-sim-sel') : null;
+      if (elSel) {
+        var simIdS = elSel.getAttribute('data-sim-sel');
+        agregarSimuladorAlPrograma(simIdS);
+        ov.remove();
+        return;
+      }
       if (el.classList && el.classList.contains('mej-nuevo')) {
         var catItem = el.getAttribute('data-cat-item');
         var paloMec = el.getAttribute('data-palo-mec');
         var retoOp36 = el.getAttribute('data-reto-op36');
         var retoViejo = el.getAttribute('data-reto-viejo');
+        var retoApp = el.getAttribute('data-reto-approach');
         if (catItem) { elegirEjercicioCatalogo(catItem); }
         else if (paloMec) { elegirPaloHierro(paloMec); }
         else if (retoOp36) { agregarEjercicioAlPrograma('op36-25'); ov.remove(); }
         else if (retoViejo) { agregarEjercicioAlPrograma(retoViejo); ov.remove(); }
+        else if (retoApp) {
+          if (!estadoSesion.programa) estadoSesion.programa = [];
+          if (!estadoSesion.completados) estadoSesion.completados = [];
+          estadoSesion.ejActivo = estadoSesion.programa.length;
+          estadoSesion.programa.push({ id: 'retoApproach', nom: 'Reto Approach', cat: 'approach', claveNivel: 'reto-approach', mins: 15, esReto: true });
+          estadoSesion.completados[estadoSesion.programa.length - 1] = null;
+          if (typeof guardarEstadoSesion === 'function') guardarEstadoSesion();
+          ov.remove();
+          vieneDeRetos = false;
+          if (typeof renderSesion === 'function') renderSesion();
+          irVista('view-programa');
+        }
         return;
       }
       el = el.parentElement;
@@ -7873,6 +9317,22 @@ function _pushEjercicioHierro(clave, nom, cat, paloK, mecanica) {
 // Helper: obtener la "definición" de un item del programa (nuevo o viejo)
 function getDefItem(item) {
   if (!item) return null;
+  if (item.esSimulador || item.cat === 'simulador') {
+    return { nom: item.nom || 'Ejercicio en casa', cat: 'simulador', instrucciones: item.instr || [] };
+  }
+  if (item.esLineal || item.id === 'lineal-1v1') {
+    return { nom: item.nom || 'Lineal 1 vs 1', cat: 'putt', instrucciones: [
+      '🎯 Objetivo: juego de 2 jugadores, cada uno con un hoyo, colocados de forma lineal (uno frente al otro). Cada jugador tira hacia el hoyo del contrario; cada vez que la metes es 1 punto a tu favor. Gana el primero que llegue a 5 puntos (o a lo que se pongan de acuerdo). ¡Diviértanse!'
+    ] };
+  }
+  if (item.esEstrella || item.id === 'estrella-1v1') {
+    return { nom: item.nom || 'Estrella 1 vs 1', cat: 'putt', instrucciones: [
+      '🎯 Objetivo: juego de 2 jugadores. Pongan 8 tees alrededor del hoyo formando una estrella, y cada uno empieza en un extremo opuesto. Por turnos, avanzas 1 tee solo si metes tu putt (si fallas, te quedas). Ganas cuando alcanzas al otro (llegas al mismo tee donde está). Jueguen 3 enfrentamientos. ¡Diviértanse!'
+    ] };
+  }
+  if (item.esClase || item.cat === 'clase') {
+    return { nom: item.nom || 'Clase privada', cat: 'clase', instrucciones: [] };
+  }
   if (item.esNuevo) {
     var instr = item.instr || [];
     // Si el item se guardó sin instrucciones, recuperarlas del catálogo por su clave
@@ -7909,8 +9369,8 @@ function mostrarInfoEjercicio(id) {
   var def = EJERCICIOS_DEF[id];
   if (!def) return;
 
-  var catColors = { putt:'#185FA5', approach:'#854F0B', hierros:'#3B6D11', drive:'#0F6E56', reto:'#412402' };
-  var catText = { putt:'#B5D4F4', approach:'#FAC775', hierros:'#C0DD97', drive:'#9FE1CB', reto:'#EF9F27' };
+  var catColors = { putt:'#185FA5', approach:'#854F0B', hierros:'#3B6D11', drive:'#0F6E56', reto:'#412402', simulador:'#5B2C9D', clase:'#5B2C9D' };
+  var catText = { putt:'#B5D4F4', approach:'#FAC775', hierros:'#C0DD97', drive:'#9FE1CB', reto:'#EF9F27', simulador:'#C4A5F8', clase:'#C4A5F8' };
   var acento = catColors[def.cat] || '#185FA5';
   var acentoTxt = catText[def.cat] || '#B5D4F4';
 
@@ -8424,7 +9884,7 @@ function renderSesion() {
   // Progreso por categoría
   var catNombres = { putt:'PUTT', approach:'APPROACH', hierros:'HIERROS', drive:'DRIVE', reto:'RETO' };
   var catColor = { putt:'#185FA5', approach:'#854F0B', hierros:'#3B6D11', drive:'#0F6E56', reto:'#EF9F27' };
-  var catTextC = { putt:'#B5D4F4', approach:'#FAC775', hierros:'#C0DD97', drive:'#9FE1CB', reto:'#EF9F27' };
+  var catTextC = { putt:'#B5D4F4', approach:'#FAC775', hierros:'#C0DD97', drive:'#9FE1CB', reto:'#EF9F27', simulador:'#C4A5F8', clase:'#C4A5F8' };
   var catBgA = { putt:'rgba(24,95,165,.15)', approach:'rgba(133,79,11,.15)', hierros:'rgba(59,109,17,.15)', drive:'rgba(15,110,86,.15)', reto:'rgba(239,159,39,.15)' };
 
   var cats = {};
@@ -8453,14 +9913,16 @@ function renderSesion() {
 
   // Lista de ejercicios
   var html = '';
-  var catC = { putt:'#185FA5', approach:'#854F0B', hierros:'#3B6D11', drive:'#0F6E56', reto:'#412402' };
-  var catT = { putt:'#B5D4F4', approach:'#FAC775', hierros:'#C0DD97', drive:'#9FE1CB', reto:'#EF9F27' };
-  estadoSesion.programa.forEach(function(item, idx) {
+  var catC = { putt:'#185FA5', approach:'#854F0B', hierros:'#3B6D11', drive:'#0F6E56', reto:'#412402', simulador:'#5B2C9D', clase:'#5B2C9D' };
+  var catT = { putt:'#B5D4F4', approach:'#FAC775', hierros:'#C0DD97', drive:'#9FE1CB', reto:'#EF9F27', simulador:'#C4A5F8', clase:'#C4A5F8' };
+  // Renderizar en dos pasadas: primero los COMPLETADOS (arriba), luego los PENDIENTES.
+  // Así los ejercicios ya ejecutados (incluida la clase privada) siempre salen arriba.
+  function pintarItem(item, idx) {
     var def = getDefItem(item);
     if (!def) return;
     var comp = estadoSesion.completados[idx];
-    var hecho = comp !== null;
-    var esReto = def.cat === 'reto';
+    var hecho = comp !== null && comp !== undefined;
+    var esReto = def.cat === 'reto' || item.esReto || item.retoTipo === 'approach' || item.id === 'retoApproach';
     var bg = catC[def.cat]||'#185FA5';
     var tc = catT[def.cat]||'#B5D4F4';
     var trash = '<div onclick="event.stopPropagation();event.preventDefault();eliminarEjercicio(' + idx + ');return false;" style="padding:6px 8px;cursor:pointer;flex-shrink:0;color:#E24B4A;font-size:18px;position:relative;z-index:2">🗑</div>';
@@ -8470,18 +9932,23 @@ function renderSesion() {
       var resTxt;
       if (comp.acum !== undefined) {
         resTxt = (comp.acum===0?'E':comp.acum>0?'+'+comp.acum:comp.acum) + ' golpes';
+      } else if (comp.clase) {
+        resTxt = (comp.mins||60) + ' min de clase';
       } else {
         var ejecTxt = (comp.ejec !== null && comp.ejec !== undefined) ? comp.ejec + ' ejec' : '';
         var minTxt = (comp.mins||0) + ' min';
         resTxt = ejecTxt ? (ejecTxt + ' · ' + minTxt) : minTxt;
       }
+      var iconHecho = comp.clase ? '🎓' : '✓';
+      var bgIcon = comp.clase ? '#7C3AED' : '#1D9E75';
       html += '<div style="display:flex;align-items:center;gap:11px;background:rgba(29,158,117,.12);border:0.5px solid rgba(29,158,117,.35);border-radius:14px;padding:13px 14px;margin-bottom:8px">';
-      html += '<div style="width:30px;height:30px;border-radius:9px;background:#1D9E75;display:flex;align-items:center;justify-content:center;color:white;font-size:15px;font-weight:700">✓</div>';
+      html += '<div style="width:30px;height:30px;border-radius:9px;background:' + bgIcon + ';display:flex;align-items:center;justify-content:center;color:white;font-size:15px;font-weight:700">' + iconHecho + '</div>';
       html += '<div style="flex:1"><div style="color:#e8e8f0;font-size:13px;font-weight:700">' + def.nom + '</div><div style="color:#1D9E75;font-size:10px;font-weight:600">' + resTxt + ' · completado</div></div>';
       html += lapiz + '</div>';
     } else if (esReto) {
       var sub = 'Reto en campo';
-      if (item.id.indexOf('op36') === 0) sub = 'OP27 · ' + (item.op36dist || item.id.split('-')[1]) + 'y';
+      if (item.id === 'retoApproach') sub = 'Approach · 3 banderas';
+      else if (item.id.indexOf('op36') === 0) sub = 'OP27 · ' + (item.op36dist || item.id.split('-')[1]) + 'y';
       else if (item.yardas) sub = item.yardas + 'y · ' + (item.rondas||3) + ' rondas';
       html += '<div onclick="abrirRegistro(' + idx + ')" style="display:flex;align-items:center;gap:11px;background:rgba(65,36,2,.3);border:0.5px solid #633806;border-radius:14px;padding:13px 14px;margin-bottom:8px;cursor:pointer">';
       html += '<div style="width:30px;height:30px;border-radius:9px;background:#412402;display:flex;align-items:center;justify-content:center;font-size:15px">🏆</div>';
@@ -8493,63 +9960,210 @@ function renderSesion() {
       html += '<div style="flex:1"><div style="color:#e8e8f0;font-size:13px;font-weight:700">' + def.nom + '</div><div style="color:#4a4a6a;font-size:10px">' + item.mins + ' min</div></div>';
       html += trash + '</div>';
     }
+  }
+  // Pasada 1: completados (arriba)
+  estadoSesion.programa.forEach(function(item, idx) {
+    if (estadoSesion.completados[idx] !== null) pintarItem(item, idx);
+  });
+  // Pasada 2: pendientes (abajo)
+  estadoSesion.programa.forEach(function(item, idx) {
+    if (estadoSesion.completados[idx] === null) pintarItem(item, idx);
   });
   if (total === 0) {
-    html = '<div style="text-align:center;padding:24px 20px;color:#4a4a6a;font-size:13px">Agrega ejercicios para comenzar</div>';
+    html = '';
   }
   var lista = document.getElementById('sesion-lista');
   if (lista) lista.innerHTML = html;
+  // Mostrar la tarjeta "Generar bloque inteligente" solo si el entrenamiento está vacío
+  var genCard = document.getElementById('prog-generar-card');
+  if (genCard) genCard.style.display = (total === 0) ? 'block' : 'none';
 }
 
 // Genera instrucciones ESPECÍFICAS con los números reales del nivel del jugador.
 // Para los círculos: dice cuántos tees, a qué distancia y la meta concreta.
 // Devuelve un array de strings, o null si el ejercicio usa sus instrucciones fijas.
+// Récord de un ejercicio: el mayor número de bolas metidas (ejec) en el historial, con su fecha
+function recordEjercicio(clave) {
+  try {
+    var p = getPerfil();
+    var entrenos = getHistorialEntreno(p.id);
+    var mejor = null, mejorFecha = null;
+    entrenos.forEach(function(e){
+      (e.ejercicios || []).forEach(function(ej){
+        var cv = ej.claveNivel || normalizarClaveNivel(MAPA_EJERCICIO_NIVEL[ej.id] || ej.id);
+        if (cv === clave && ej.datos && typeof ej.datos.ejec === 'number') {
+          if (mejor === null || ej.datos.ejec > mejor) { mejor = ej.datos.ejec; mejorFecha = e.fecha; }
+        }
+      });
+    });
+    if (mejor === null) return null;
+    return { valor: mejor, fecha: mejorFecha };
+  } catch(e) { return null; }
+}
+
 function instruccionesDinamicas(item, clave) {
   if (!clave) return null;
   var t = TABLAS_NIVELES[clave];
   if (!t) return null;
   var perfil = getPerfil();
-  var nivel = perfil ? getNivelReg(perfil, clave).nivel : 3;
+  var nivel = perfil ? getNivelReg(perfil, clave).nivel : 1;
   // Extraer la distancia en pies de la clave (ej. circulo-tobogan-6 -> "6 pies")
   var mDist = clave.match(/-(\d+)$/);
   var pies = (mDist && clave.indexOf('circulo') === 0) ? mDist[1] : null;
   var o = t.obj ? t.obj[nivel] : null;
 
   switch (t.tipo) {
+    case 'approach-cerca': // Reto de Approach
+      var pasos = t.pasos ? t.pasos[nivel] : 3;
+      var veces = t.veces ? t.veces[nivel] : 1;
+      var pasoTxt = pasos === 1 ? '1 paso' : pasos + ' pasos';
+      var vecesTxt = veces === 1 ? '1 vez' : veces + ' veces';
+      return [
+        '🎯 Objetivo: pega los 3 tiros (uno a cada bandera) y que los 3 queden a menos de ' + pasoTxt + ' de la bandera. Lograrlo ' + vecesTxt + ' completa tu reto.',
+        '📍 Montaje: elige 3 banderas a distancias diferentes en el green de práctica. Tira 1 bola a cada una (3 tiros en total).',
+        '⭐ Tu nivel ' + nivel + ': deja los 3 tiros a menos de ' + pasoTxt + (veces > 1 ? (', y lógralo ' + vecesTxt) : '') + '. Anota cuántas veces lo lograste (con ' + vecesTxt + ' subes de nivel).'
+      ];
+    case 'vueltas': // Escalera Putt Medio (estaciones 6, 9, 12, 15 yardas; 3 pares consecutivos por estación)
+      var ests = t.estaciones || [6,9,12,15];
+      var listaEst = ests.join(', ').replace(/,([^,]*)$/, ' y$1') + ' yardas';
+      return [
+        '🎯 Objetivo: se juega con 3 bolas en cada estación (' + listaEst + '). Empieza en la más corta y mete los 3 pares consecutivos (embocar en 2 golpes 3 veces seguidas); si lo logras, pasas a la siguiente. Si fallas, te quedas en esa estación hasta lograrlo. Completar las 4 estaciones es 1 ronda. Anota cuántas rondas completas lograste en 10 minutos.'
+      ];
+    case 'ejec-margen': // Escalera/Tobogán Approach (escalones 10-30 yardas)
+      var om = t.obj ? t.obj[nivel] : null;
+      var escA = t.escalones || [10,15,20,25,30];
+      var rondasA = t.rondas || 2;
+      if (om) {
+        var listaEsc = escA.join(', ').replace(/,([^,]*)$/, ' y$1') + ' yardas';
+        var margenTxt = om.margen + (om.margen===1 ? ' yarda' : ' yardas');
+        if (t.tobogan) {
+          return [
+            '🎯 Objetivo (nivel ' + nivel + '): tira a 5 distancias (' + listaEsc + '), 1 tiro en cada una. Empieza en la más corta; si tu tiro queda a menos de ' + margenTxt + ' del hoyo, avanzas a la siguiente. Si fallas en cualquier distancia, vuelves a empezar desde 10 yardas. Lograr las 5 seguidas es 1 ronda. Tu meta en 15 minutos es completar ' + rondasA + ' rondas.'
+          ];
+        }
+        return [
+          '🎯 Objetivo (nivel ' + nivel + '): tira approaches en 5 escalones (' + listaEsc + '). En cada escalón debes pegar 3 bolas consecutivas que caigan a menos de ' + margenTxt + ' del hoyo para subir al siguiente; si fallas, te quedas en ese escalón hasta lograrlo. Completar los 5 escalones es 1 ronda. Tu meta en 15 minutos es completar ' + rondasA + ' rondas.'
+        ];
+      }
+      return null;
+    case 'pares-ronda': // Escalera + Tobogán Largo (15, 20, 25, 30 yardas; 3 bolas; cuenta pares)
+      var paresMeta = t.obj ? t.obj[nivel] : 0;
+      if (paresMeta === 0) {
+        return [
+          '🎯 Objetivo (nivel ' + nivel + '): juega con 3 bolas en cada estación (15, 20, 25 y 30 yardas). En cada una mete en par o bogey (2 o 3 putts) para avanzar. Si haces un 4-putt, vuelves a empezar desde 15 yardas. Tu meta es completar la ronda entera sin ningún 4-putt. Al final, anota cuántos pares lograste.'
+        ];
+      }
+      var paresTxt = paresMeta + (paresMeta===1 ? ' par' : ' pares');
+      return [
+        '🎯 Objetivo (nivel ' + nivel + '): juega con 3 bolas en cada estación (15, 20, 25 y 30 yardas). En cada una mete en par o bogey (2 o 3 putts) para avanzar. Si haces un 4-putt, vuelves a empezar desde 15 yardas. Tu meta es lograr ' + paresTxt + ' (2 putts) en tu ronda completa. Anota cuántos pares conseguiste.'
+      ];
+    case 'corridas': // Tobogán Putt Medio (1 bola, corrida 6→9→12→15 yardas; cuenta rondas)
+      var ests3 = t.estaciones || [6,9,12,15];
+      var listaE3 = ests3.join(', ').replace(/,([^,]*)$/, ' y$1') + ' yardas';
+      return [
+        '🎯 Objetivo: con una sola bola, mete de manera consecutiva el par de ' + listaE3 + '. Empieza en la más corta; si fallas en cualquier estación, vuelves a empezar desde 6 yardas. Completar las 4 estaciones es 1 ronda. Anota cuántas rondas completas lograste en 10 minutos.'
+      ];
     case 'tees': // Círculo Tobogán
       var nTees = t.tees || 4;
+      var vueltasTxt = o + (o===1?' vuelta':' vueltas');
       return [
-        '🎯 Objetivo: dar una vuelta completa metiendo los ' + nTees + ' putts seguidos (1 bola en cada tee, sin fallar) es 1 vuelta.',
-        '📍 Montaje: pon ' + nTees + ' tees en círculo a ' + pies + ' pies del hoyo. Da la vuelta metiendo 1 bola en cada uno. Si fallas una, esa vuelta no cuenta y empiezas otra.',
-        '⭐ En tus 10 minutos: tu meta es lograr ' + o + (o===1?' vuelta':' vueltas') + ' completas. Anota cuántas vueltas lograste.'
+        '🎯 Objetivo (nivel ' + nivel + '): pon ' + nTees + ' tees en círculo a ' + pies + ' pies del hoyo. Da la vuelta metiendo 1 bola en cada tee, sin fallar ningún tiro. Si fallas uno, esa vuelta no cuenta y empiezas otra. Tu meta en 10 minutos es completar ' + vueltasTxt + ' (no tienen que ser seguidas, cuentan aunque falles entre una y otra).'
       ];
     case 'pos': // Círculo Escalera
       var nPos = t.pos || 4;
-      var totalBolas = o * nPos;
+      var bMeta = t.bolasMeta || 4;
+      var escaleras = o;
+      var escTxt = escaleras + (escaleras===1 ? ' vuelta' : ' vueltas');
       return [
-        '🎯 Objetivo: metiendo ' + o + (o===1?' bola seguida':' bolas seguidas') + ' en cada una de las 4 posiciones (' + totalBolas + ' bolas en total) completas 1 escalera.',
-        '📍 Montaje: pon 4 tees en círculo a ' + pies + ' pies del hoyo. En cada posición mete ' + o + (o===1?' bola':' bolas seguidas') + ' y avanza a la siguiente. Si fallas una, vuelves a empezar las ' + o + ' de ESA posición (las posiciones que ya pasaste no se pierden).',
-        '⭐ En tus 10 minutos: anota cuántas escaleras completas lograste (con 1 ya cuenta para subir de nivel).'
+        '🎯 Objetivo (nivel ' + nivel + '): se juega con 4 bolas en ' + nPos + ' ubicaciones alrededor del hoyo, a ' + pies + ' pies de distancia. En cada ubicación tienes que meter ' + bMeta + ' de 4 bolas consecutivas sin fallar; si lo logras, pasas a la siguiente. Cuando completas las ' + nPos + ' ubicaciones, es 1 vuelta. Trata de hacer el mayor número de vueltas que puedas en 10 minutos.'
       ];
     case 'suma': // Círculo Suma
       return [
-        '🎯 Objetivo: sumar ' + o + ' puntos en total. Ganas +1 cada vez que metes y pierdes −1 cada vez que fallas (nunca bajas de 0).',
-        '📍 Montaje: pon 4 tees en círculo a ' + pies + ' pies del hoyo. Ve rotando entre ellos tirando putts y llevando tu cuenta de puntos.',
-        '⭐ En tus 10 minutos: cada vez que llegas a ' + o + ' puntos completaste 1. Anota cuántas veces llegaste a la meta (con 1 ya cuenta para subir de nivel).'
+        '🎯 Objetivo (nivel ' + nivel + '): se juega con 1 bola en cada tee, son 4 tees alrededor del hoyo a ' + pies + ' pies de distancia. Ve rotando entre ellos y haz la mayor cantidad de puntos que puedas: cada putt metido suma +1 y cada putt fallado resta −1 (lo más bajo que puedes estar es 0). Tu meta en 10 minutos es llegar a ' + o + ' puntos.'
       ];
     case 'deN': // Círculo Handicap (n bolas)
-      if (pies) return [
-        'Tira ' + t.n + ' bolas desde ' + pies + ' pies',
-        'Mete ' + o + ' de las ' + t.n
-      ];
+      if (pies) {
+        var rec = recordEjercicio(clave);
+        var recTxt = '';
+        if (rec) {
+          var df = new Date(rec.fecha);
+          var meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+          var fechaRec = df.getDate() + ' de ' + meses[df.getMonth()];
+          recTxt = ' Tu récord es ' + rec.valor + ' de ' + t.n + ', logrado el ' + fechaRec + '. ¡Trata de superarlo!';
+        } else {
+          recTxt = ' Aún no tienes récord: ¡hoy puedes hacer el primero!';
+        }
+        return [
+          '🎯 Objetivo (nivel ' + nivel + '): coloca ' + t.n + ' tees alrededor del hoyo a ' + pies + ' pies y tira 1 bola desde cada posición. Al terminar la vuelta de ' + t.n + ' golpes, cuenta cuántas metiste.' + recTxt + ' Haz los intentos que alcances en 10 minutos y anota cuál fue tu mejor resultado.'
+        ];
+      }
       return null;
+    case 'metidas': // Círculo Velocidades (4 tees × 3 bolas con 3 velocidades)
+      if (pies) {
+        return [
+          '🎯 Objetivo (nivel ' + nivel + '): pon 4 tees alrededor del hoyo a ' + pies + ' pies y tira 3 bolas desde cada uno (12 en total). En cada tee cambia la velocidad: la 1ª muy suave (que apenas llegue al hoyo), la 2ª agresiva (que pegue en el fondo del hoyo) y la 3ª a velocidad normal (que entre cómoda). Es para regular tus velocidades. Cuenta cuántas metiste de las 12.'
+        ];
+      }
+      return null;
+    case 'racha-margen': // Récord Approach (3 banderas, racha dentro del margen)
+      var omr = t.obj ? t.obj[nivel] : null;
+      if (omr) {
+        var margenR = omr.margen + (omr.margen===1 ? ' yarda' : ' yardas');
+        var recAp = recordEjercicio(clave);
+        var recApTxt = '';
+        if (recAp) {
+          var dfa = new Date(recAp.fecha);
+          var mesesA = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+          recApTxt = ' Tu récord es una racha de ' + recAp.valor + ', lograda el ' + dfa.getDate() + ' de ' + mesesA[dfa.getMonth()] + '. ¡Trata de superarla!';
+        } else {
+          recApTxt = ' Aún no tienes récord: ¡hoy puedes hacer el primero!';
+        }
+        return [
+          '🎯 Objetivo (nivel ' + nivel + '): elige 3 banderas en el green (por ejemplo 10, 20 y 30 yardas, o 15, 20 y 25). Empieza en la más corta y cuenta cuántos tiros seguidos quedan a menos de ' + margenR + ' del hoyo; cuando falles, cambia de bandera y sigue. Haz los intentos que alcances en 15 minutos y anota cuál fue tu mejor racha a una misma bandera.' + recApTxt
+        ];
+      }
+      return null;
+    case 'ejec-ud': // Up & Down (3 rondas de 3 bolas = 9 intentos)
+      var totalUd = t.total || 9;
+      var metaUd = t.obj ? t.obj[nivel] : 2;
+      return [
+        '🎯 Objetivo (nivel ' + nivel + '): haz 3 rondas de 3 bolas (' + totalUd + ' intentos en total, como una vuelta de 9 hoyos). En cada bola haz up & down: un approach y luego 1 putt para embocar en 2 golpes. Cuenta cuántos up & downs lograste de los ' + totalUd + '.'
+      ];
+    case 'bunker': // Bunker (5 bolas, objetivo según nivel)
+      var bo = t.obj ? t.obj[nivel] : 'salir';
+      var metaBunker = {
+        'salir':  'saca las 5 bolas del bunker',
+        'green':  'deja las 5 bolas en el green',
+        'centro': 'deja las 5 bolas en el centro del green',
+        'dos5':   'deja al menos 2 de las 5 bolas a 5 pasos de la bandera (el resto en el green)',
+        'tres5':  'deja al menos 3 de las 5 bolas a 5 pasos de la bandera (el resto en el green)'
+      };
+      return [
+        '🎯 Objetivo (nivel ' + nivel + '): tira 5 bolas desde el bunker y ' + (metaBunker[bo] || metaBunker['salir']) + '. Haz los intentos que alcances en 15 minutos y anota cuántas veces lograste el objetivo.'
+      ];
     case 'racha': // Círculo Récord
-      if (pies) return [
-        'Pon 4 tees a ' + pies + ' pies',
-        'Mete seguidas contando tu racha; al fallar cambia de tee y reinicia',
-        'Tu meta: ' + o + ' seguidas (en 10 min)'
-      ];
+      if (pies) {
+        var recR = recordEjercicio(clave);
+        var recRTxt = '';
+        if (recR) {
+          var dfr = new Date(recR.fecha);
+          var mesesR = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+          recRTxt = ' Tu récord es una racha de ' + recR.valor + ', lograda el ' + dfr.getDate() + ' de ' + mesesR[dfr.getMonth()] + '. ¡Trata de superarla!';
+        } else {
+          recRTxt = ' Aún no tienes récord: ¡hoy puedes hacer el primero!';
+        }
+        return [
+          '🎯 Objetivo (nivel ' + nivel + '): pon 4 tees alrededor del hoyo a ' + pies + ' pies. En cada posición tira y cuenta cuántas metes seguidas; al fallar, cambia de posición y sigue. Haz los intentos que alcances en 10 minutos y anota cuál fue tu racha más grande.' + recRTxt
+        ];
+      }
       return null;
+    case 'estaciones': // 4-8-12-16 (putt corto: 4, 8, 12 y 16 pies). Siempre 4 bolas por estación.
+      var mf = t.metasFijas || [4,3,2,1];
+      var dists4 = ['4 pies','8 pies','12 pies','16 pies'];
+      var lineas = dists4.map(function(d, i){ return '• Mete ' + mf[i] + ' de 4 bolas a ' + d; }).join('\n');
+      return [
+        '🎯 Objetivo: se juega con 4 bolas en cada distancia. Empieza en la más corta; si no logras la meta de una estación, vuelves a empezar desde 4 pies.\n' + lineas + '\nCompletar las 4 estaciones es 1 ronda. Anota cuántas rondas completas lograste en 10 minutos.'
+      ];
     default:
       return null;
   }
@@ -8571,8 +10185,8 @@ function abrirRegistro(idx) {
   }
 
   document.getElementById('reg-titulo').textContent = def.nom;
-  var catC = { putt:'#185FA5', approach:'#854F0B', hierros:'#3B6D11', drive:'#0F6E56', reto:'#412402' };
-  var catT = { putt:'#B5D4F4', approach:'#FAC775', hierros:'#C0DD97', drive:'#9FE1CB', reto:'#EF9F27' };
+  var catC = { putt:'#185FA5', approach:'#854F0B', hierros:'#3B6D11', drive:'#0F6E56', reto:'#412402', simulador:'#5B2C9D', clase:'#5B2C9D' };
+  var catT = { putt:'#B5D4F4', approach:'#FAC775', hierros:'#C0DD97', drive:'#9FE1CB', reto:'#EF9F27', simulador:'#C4A5F8', clase:'#C4A5F8' };
   document.getElementById('reg-badge').style.background = catC[def.cat]||'#185FA5';
   document.getElementById('reg-badge-txt').style.color = catT[def.cat]||'#B5D4F4';
   document.getElementById('reg-badge-txt').textContent = def.cat.toUpperCase();
@@ -8593,13 +10207,14 @@ function abrirRegistro(idx) {
       ins = textoNivelReto(ins, item);
       // Si es la instrucción de "Objetivo a X yardas" de un hierro, agregar botón editar a la derecha
       var esObjetivoDist = (item.paloK && item.paloK !== 'drive' && ins.indexOf('Objetivo a') === 0);
+      var insHtml = ins.replace(/\n/g, '<br>');
       instHtml += '<div style="display:flex;align-items:flex-start;gap:10px;margin-bottom:8px">';
       instHtml += '<div style="width:22px;height:22px;border-radius:6px;background:#185FA5;display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="color:#B5D4F4;font-size:11px;font-weight:700">'+(i+1)+'</span></div>';
       if (esObjetivoDist) {
-        instHtml += '<span style="color:#e8e8f0;font-size:13px;line-height:1.4;flex:1">'+ins+'</span>';
+        instHtml += '<span style="color:#e8e8f0;font-size:13px;line-height:1.4;flex:1">'+insHtml+'</span>';
         instHtml += '<span onclick="editarDistanciaPalo(\''+item.paloK+'\')" style="color:#6EA8FE;font-size:11px;font-weight:700;cursor:pointer;flex-shrink:0;display:flex;align-items:center;gap:3px"><span style="font-size:12px">✎</span>editar</span>';
       } else {
-        instHtml += '<span style="color:#e8e8f0;font-size:13px;line-height:1.4">'+ins+'</span>';
+        instHtml += '<span style="color:#e8e8f0;font-size:13px;line-height:1.4">'+insHtml+'</span>';
       }
       instHtml += '</div>';
     });
@@ -8629,6 +10244,9 @@ function abrirRegistro(idx) {
   try { mostrarNivelEnRegistro(item); } catch(e) { var nw=document.getElementById('reg-nivel-wrap'); if(nw) nw.style.display='none'; }
 
   var lbl1 = 'Minutos', lbl2 = 'Ejecuciones';
+  // Estrella 1 vs 1: ejercicio de diversión, registra enfrentamientos jugados
+  if (item.esEstrella || item.id === 'estrella-1v1') { lbl2 = 'Enfrentamientos'; }
+  if (item.esLineal || item.id === 'lineal-1v1') { lbl2 = 'Partidas'; }
   // Si el ejercicio tiene nivel, la etiqueta de la métrica depende del tipo de ejercicio
   try {
     var claveLbl = null;
