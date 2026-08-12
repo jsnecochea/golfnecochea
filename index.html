@@ -869,7 +869,11 @@
 
   <!-- Bottom Nav -->
   <div style="margin-top:12px; padding-bottom: calc(env(safe-area-inset-bottom, 16px) + 12px);">
-    <div class="action-btns">
+    <div style="position:relative;padding-top:24px">
+      <div onclick="abrirDictadoGlobal()" style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:50px;height:50px;border-radius:50%;background:linear-gradient(160deg,#E24B4A,#b8322f);display:flex;align-items:center;justify-content:center;border:4px solid var(--bg, #0a0e14);box-shadow:0 4px 14px rgba(226,75,74,.6);z-index:5;cursor:pointer">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg>
+      </div>
+      <div class="action-btns">
       <div class="action-btn-primary" onclick="iniciarRondaPerfilActivo()">
         <div style="font-size:22px;line-height:1">🏌️</div>
         <div class="action-btn-lbl" style="color:white;margin-top:3px">Ronda</div>
@@ -882,6 +886,7 @@
         <div style="font-size:22px;line-height:1">🔥</div>
         <div class="action-btn-lbl" style="color:white;margin-top:3px">Retos</div>
       </div>
+    </div>
     </div>
   </div>
   </div><!-- /home-view-pro -->
@@ -924,6 +929,10 @@
 
     <!-- Botones de acción -->
     <div style="margin-top:auto;padding:18px 0 calc(env(safe-area-inset-bottom, 16px) + 20px)">
+      <div style="position:relative;padding-top:24px">
+      <div onclick="abrirDictadoGlobal()" style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:50px;height:50px;border-radius:50%;background:linear-gradient(160deg,#E24B4A,#b8322f);display:flex;align-items:center;justify-content:center;border:4px solid #e4e4e1;box-shadow:0 4px 14px rgba(226,75,74,.5);z-index:5;cursor:pointer">
+        <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg>
+      </div>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
         <div onclick="iniciarRondaPerfilActivo()" style="background:var(--player-main, #1D9E75);border-radius:14px;padding:14px 8px;text-align:center;cursor:pointer">
           <div style="font-size:22px;line-height:1">🏌️</div>
@@ -937,6 +946,7 @@
           <div style="font-size:22px;line-height:1">🔥</div>
           <div style="color:white;font-size:10px;font-weight:700;margin-top:5px">Retos</div>
         </div>
+      </div>
       </div>
     </div>
 
@@ -1126,7 +1136,7 @@
           <div style="color:white;font-size:11px;font-weight:800;margin-top:4px">Ronda</div>
         </div>
         <div onclick="entrarAEntrenar()" style="background:linear-gradient(160deg,#1D9E75,#0F6E56);border:1px solid rgba(95,214,170,.5);border-radius:15px;padding:22px 6px 13px;text-align:center;cursor:pointer;box-shadow:0 6px 16px rgba(10,50,40,.5),inset 0 1px 0 rgba(95,214,170,.3)">
-          <div style="font-size:23px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))"><svg width="25" height="25" viewBox="0 0 32 32" style="display:inline-block;vertical-align:middle"><circle cx="16" cy="6" r="3.5" fill="#fff"/><circle cx="11" cy="12.5" r="3.5" fill="#fff"/><circle cx="21" cy="12.5" r="3.5" fill="#f2f2f2"/><circle cx="6.5" cy="19" r="3.5" fill="#fff"/><circle cx="16" cy="19" r="3.5" fill="#f2f2f2"/><circle cx="25.5" cy="19" r="3.5" fill="#fff"/><circle cx="15.2" cy="5" r="0.55" fill="#c8c8c8"/><circle cx="16.9" cy="6.3" r="0.5" fill="#c8c8c8"/><circle cx="10.2" cy="11.6" r="0.55" fill="#c8c8c8"/><circle cx="11.6" cy="13" r="0.5" fill="#c8c8c8"/><path d="M3 22 L29 22 L27.5 26.5 L4.5 26.5 Z" fill="#0d0d0d" stroke="#000" stroke-width="0.5"/></svg></div>
+          <div style="font-size:23px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4));transform:translateY(7px)"><svg width="25" height="25" viewBox="0 0 32 32" style="display:inline-block;vertical-align:middle"><circle cx="16" cy="6" r="3.5" fill="#fff"/><circle cx="11" cy="12.5" r="3.5" fill="#fff"/><circle cx="21" cy="12.5" r="3.5" fill="#f2f2f2"/><circle cx="6.5" cy="19" r="3.5" fill="#fff"/><circle cx="16" cy="19" r="3.5" fill="#f2f2f2"/><circle cx="25.5" cy="19" r="3.5" fill="#fff"/><circle cx="15.2" cy="5" r="0.55" fill="#c8c8c8"/><circle cx="16.9" cy="6.3" r="0.5" fill="#c8c8c8"/><circle cx="10.2" cy="11.6" r="0.55" fill="#c8c8c8"/><circle cx="11.6" cy="13" r="0.5" fill="#c8c8c8"/><path d="M3 22 L29 22 L27.5 26.5 L4.5 26.5 Z" fill="#0d0d0d" stroke="#000" stroke-width="0.5"/></svg></div>
           <div style="color:white;font-size:11px;font-weight:800;margin-top:4px">Entrenar</div>
         </div>
         <div onclick="entrarARetos()" style="background:linear-gradient(160deg,#1D9E75,#0F6E56);border:1px solid rgba(95,214,170,.5);border-radius:15px;padding:22px 6px 13px;text-align:center;cursor:pointer;box-shadow:0 6px 16px rgba(10,50,40,.5),inset 0 1px 0 rgba(95,214,170,.3)">
@@ -1214,7 +1224,7 @@
     <div id="prog-titulo" style="color:white;font-size:26px;font-weight:800;line-height:1.1;margin-bottom:6px;letter-spacing:-.5px">Tu entrenamiento de hoy 🎯</div>
     <div id="prog-subtitulo" style="color:#888;font-size:12px;line-height:1.4;margin-bottom:16px">Agrega tus ejercicios, o deja que te armemos un bloque inteligente.</div>
 
-    <!-- Agregar -->
+    <!-- Agregar ejercicio -->
     <button onclick="abrirMenuEjercicios()" style="width:100%;background:transparent;border:1.5px solid #60a5fa;border-radius:14px;padding:15px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;margin-bottom:14px">
       <span style="color:#60a5fa;font-size:20px">+</span>
       <span style="color:#60a5fa;font-size:13px;font-weight:600">Agregar ejercicio</span>
@@ -2742,7 +2752,7 @@ var TABLAS_NIVELES = {
   'hierro-record': { tipo:'racha', min:15, obj:{1:2,2:4,3:6,4:8,5:10} },
   'reto-putt-medio': { tipo:'hoyos-ejec', hoyos:{1:2,2:4,3:6,4:8,5:10}, ejec:{1:5,2:4,3:3,4:2,5:1} },
   'reto-putt-largo': { tipo:'hoyos-ejec', hoyos:{1:2,2:3,3:4,4:5,5:6}, ejec:{1:5,2:4,3:3,4:2,5:1} },
-  'reto-approach': { tipo:'approach-cerca', pasos:{1:4,2:3,3:3,4:2,5:1}, veces:{1:1,2:1,3:2,4:1,5:1} }
+  'reto-approach': { tipo:'approach-cerca', pasos:{1:5,2:4,3:3,4:2,5:1}, metaLogros:2 }
 };
 var DISPERSION_PALO = { 'pitching':10,'9':10,'8':10,'7':15,'6':15,'5':20,'4':20,'madera5':20,'madera3':20 };
 
@@ -2775,7 +2785,9 @@ function nivelCumplido(clave, valor){
 function registrarEstaciones(perfil, clave, vecesCompletadas, fechaISO){
   var reg = getNivelReg(perfil, clave);
   var nivelActual = reg.nivel;
-  var meta = VECES_PARA_VALIDAR; // universal: 1 vez valida la sesión
+  // Meta de veces: por defecto universal (1), pero un ejercicio puede pedir más (ej. reto approach = 2)
+  var tabla = TABLAS_NIVELES[clave];
+  var meta = (tabla && tabla.metaLogros) ? tabla.metaLogros : VECES_PARA_VALIDAR;
   // Si completó la meta de veces en su nivel, la sesión cuenta como cumplir el nivel SIGUIENTE
   // (eso permite que, al juntar sesiones, suba de 1 en 1). Si no, no respalda nada.
   var cumplio = (vecesCompletadas >= meta);
@@ -2864,6 +2876,89 @@ function infoNivelEjercicio(ejercicioId){
 /* ===== CATÁLOGO NUEVO DE EJERCICIOS (menú Forma 2: mecánica → distancia) ===== */
 // Cada entrada describe una MECÁNICA. Si tiene 'distancias', al tocarla se pregunta cuál.
 // 'claveBase' + distancia forma la clave del motor (ej. circulo-tobogan + '-4').
+// ═══════════════════════════════════════════════════════════
+// BIBLIOTECA DE EJERCICIOS Y RETOS (catálogo compartido)
+// Cada entrada: clave, nombre, grupo ('ejercicio'|'reto'), categoría, cómo agregarlo.
+// Los favoritos ⭐ se guardan por perfil y son los que aparecen al armar el entrenamiento.
+// ═══════════════════════════════════════════════════════════
+var BIBLIOTECA = [
+  // ---- EJERCICIOS · PUTT CORTO ----
+  { clave:'circulo-tobogan', nom:'Círculo Tobogán', grupo:'ejercicio', cat:'Putt corto', mins:10, dist:[{lbl:'4 pies',k:'4'},{lbl:'6 pies',k:'6'},{lbl:'8 pies',k:'8'}] },
+  { clave:'circulo-escalera', nom:'Círculo Escalera', grupo:'ejercicio', cat:'Putt corto', mins:10, dist:[{lbl:'4 pies',k:'4'},{lbl:'6 pies',k:'6'},{lbl:'8 pies',k:'8'}] },
+  { clave:'circulo-suma', nom:'Círculo Suma', grupo:'ejercicio', cat:'Putt corto', mins:10, dist:[{lbl:'4 pies',k:'4'},{lbl:'6 pies',k:'6'},{lbl:'8 pies',k:'8'}] },
+  { clave:'circulo-handicap', nom:'Círculo Handicap', grupo:'ejercicio', cat:'Putt corto', mins:10, dist:[{lbl:'4 pies',k:'4'},{lbl:'6 pies',k:'6'},{lbl:'8 pies',k:'8'}] },
+  { clave:'circulo-record', nom:'Círculo Récord', grupo:'ejercicio', cat:'Putt corto', mins:10, dist:[{lbl:'4 pies',k:'4'},{lbl:'6 pies',k:'6'},{lbl:'8 pies',k:'8'}] },
+  { clave:'circulo-velocidades', nom:'Círculo Velocidades', grupo:'ejercicio', cat:'Putt corto', mins:10, dist:[{lbl:'4 pies',k:'4'},{lbl:'6 pies',k:'6'},{lbl:'8 pies',k:'8'}] },
+  { clave:'lineal-esctob-corto', nom:'Putt Línea 4-8-12-16', grupo:'ejercicio', cat:'Putt corto', mins:10 },
+  // ---- EJERCICIOS · PUTT MEDIO ----
+  { clave:'medio-escalera', nom:'Escalera Putt Medio', grupo:'ejercicio', cat:'Putt medio', mins:10 },
+  { clave:'medio-tobogan', nom:'Tobogán Putt Medio', grupo:'ejercicio', cat:'Putt medio', mins:10 },
+  // ---- EJERCICIOS · PUTT LARGO ----
+  { clave:'largo-esctob', nom:'Escalera + Tobogán Largo', grupo:'ejercicio', cat:'Putt largo', mins:15 },
+  // ---- EJERCICIOS · APPROACH ----
+  { clave:'approach-escalera', nom:'Escalera Approach', grupo:'ejercicio', cat:'Approach', mins:15 },
+  { clave:'approach-tobogan', nom:'Tobogán Approach', grupo:'ejercicio', cat:'Approach', mins:15 },
+  { clave:'approach-bunker', nom:'Bunker', grupo:'ejercicio', cat:'Approach', mins:15 },
+  { clave:'approach-ud2d3', nom:'Up & Down', grupo:'ejercicio', cat:'Approach', mins:15 },
+  // ---- EJERCICIOS · HIERROS ----
+  { clave:'hierro-handicap-corto', nom:'Hierro corto · Handicap', grupo:'ejercicio', cat:'Hierros', mins:15 },
+  { clave:'hierro-handicap-largo', nom:'Hierro largo · Handicap', grupo:'ejercicio', cat:'Hierros', mins:15 },
+  { clave:'hierro-record', nom:'Hierro · Récord', grupo:'ejercicio', cat:'Hierros', mins:15 },
+  // ---- EJERCICIOS · DRIVE ----
+  { clave:'drive-handicap', nom:'Drive · Handicap', grupo:'ejercicio', cat:'Drive', mins:15 },
+  { clave:'drive-record', nom:'Drive · Récord', grupo:'ejercicio', cat:'Drive', mins:15 },
+
+  // ---- RETOS (medibles, recurrentes, con estadística en el Home) ----
+  { clave:'op36', nom:'Reto 27', grupo:'reto', cat:'Reto', mins:60 },
+  { clave:'reto-approach', nom:'Reto Approach', grupo:'reto', cat:'Reto', mins:15 },
+  { clave:'approach-record', nom:'Récord Approach', grupo:'reto', cat:'Reto', mins:15 }
+];
+
+// ─── EJERCICIOS PERSONALIZADOS (creados con Claude, compartidos vía localStorage) ───
+// Se guardan en 'biblio_custom' y se fusionan con BIBLIOTECA/TABLAS_NIVELES al cargar.
+function getEjerciciosCustom() {
+  try { return JSON.parse(localStorage.getItem('biblio_custom') || '[]'); } catch(e) { return []; }
+}
+function guardarEjercicioCustom(ej) {
+  var lista = getEjerciciosCustom();
+  lista.push(ej);
+  try { localStorage.setItem('biblio_custom', JSON.stringify(lista)); } catch(e) {}
+  integrarEjerciciosCustom();
+}
+// Fusiona los ejercicios personalizados con las estructuras del catálogo
+function integrarEjerciciosCustom() {
+  var lista = getEjerciciosCustom();
+  lista.forEach(function(ej) {
+    // Agregar a TABLAS_NIVELES si no está
+    if (!TABLAS_NIVELES[ej.clave]) {
+      TABLAS_NIVELES[ej.clave] = ej.tabla; // { tipo, n?/min?, obj:{1..5} }
+    }
+    // Agregar a la BIBLIOTECA si no está
+    if (!BIBLIOTECA.find(function(x){ return x.clave === ej.clave; })) {
+      BIBLIOTECA.push({ clave: ej.clave, nom: ej.nom, grupo: ej.grupo, cat: ej.cat, mins: ej.mins, custom: true, instrCustom: ej.instrucciones });
+    }
+  });
+}
+
+// Favoritos por perfil: se guardan en localStorage con la clave biblio_fav_{idPerfil}
+function getFavoritosBiblio(perfilId) {
+  try { return JSON.parse(localStorage.getItem('biblio_fav_' + perfilId) || '[]'); } catch(e) { return []; }
+}
+function setFavoritosBiblio(perfilId, favs) {
+  try { localStorage.setItem('biblio_fav_' + perfilId, JSON.stringify(favs)); } catch(e) {}
+}
+function esFavoritoBiblio(perfilId, clave) {
+  return getFavoritosBiblio(perfilId).indexOf(clave) >= 0;
+}
+function toggleFavoritoBiblio(perfilId, clave) {
+  var favs = getFavoritosBiblio(perfilId);
+  var i = favs.indexOf(clave);
+  if (i >= 0) favs.splice(i, 1);
+  else favs.push(clave);
+  setFavoritosBiblio(perfilId, favs);
+  return favs.indexOf(clave) >= 0;
+}
+
 var CATALOGO_NUEVO = {
   // ---- PUTT CORTO ----
   'circulo-tobogan': { nom:'Círculo Tobogán', cat:'putt', seccion:'Putt corto', mins:10,
@@ -3057,8 +3152,7 @@ function objetivoGrande(clave, nivel) {
     case 'metidas': return { num: o + ' de ' + t.total, lbl: 'metidas' };
     case 'approach-cerca':
       var ps = t.pasos ? t.pasos[nivel] : 3;
-      var vc = t.veces ? t.veces[nivel] : 1;
-      return { num: vc + 'x', lbl: 'a ' + ps + (ps===1?' paso':' pasos') };
+      return { num: 'a ' + ps, lbl: (ps===1?'paso':'pasos') };
     case 'racha': return { num: String(o), lbl: (o===1?'seguida':'seguidas') };
     case 'corridas':
       if (o === 0) { var myd = (nivel === 1) ? '12' : '15'; return { num: myd, lbl: 'yardas' }; }
@@ -3117,7 +3211,7 @@ function etiquetaMetrica(tipo) {
     case 'hoyos-ejec': return 'Veces que lograste la meta';
     case 'deN': return 'Metidas';
     case 'metidas': return 'Metidas (de 12)';
-    case 'approach-cerca': return 'Veces que lo lograste';
+    case 'approach-cerca': return 'Veces';
     case 'racha': return 'Mejor racha';
     case 'racha-hereda': return 'Tu mejor racha';
     case 'racha-margen': return 'Mejor racha';
@@ -3162,7 +3256,11 @@ function textoMetaNivel(clave, nivel, item) {
     case 'suma': return 'Nivel ' + nivel + ': pon <strong>4 tees</strong> a ' + distPies + '. +1 si metes, −1 si fallas. Llega a <strong>+' + o + '</strong>';
     case 'deN': return 'Nivel ' + nivel + ': tira <strong>' + t.n + ' bolas</strong>' + (distPies?(' desde ' + distPies):'') + '. Mete <strong>' + o + ' de ' + t.n + '</strong>';
     case 'metidas': return 'Nivel ' + nivel + ': <strong>4 tees</strong>' + (distPies?(' a ' + distPies):'') + ', 3 bolas por tee con 3 velocidades (12 en total). Mete <strong>' + o + ' de ' + t.total + '</strong>';
-    case 'racha': return 'Nivel ' + nivel + ': pon <strong>4 tees</strong>' + (distPies?(' a ' + distPies):'') + '. Racha de aciertos, cambia de tee al fallar. Meta: <strong>' + o + ' seguidas</strong>';
+    case 'racha':
+      if (clave && (clave.indexOf('hierro') === 0 || clave.indexOf('drive') === 0)) {
+        return 'Nivel ' + nivel + ': racha de <strong>' + o + ' seguidas</strong> dentro de tu zona';
+      }
+      return 'Nivel ' + nivel + ': pon <strong>4 tees</strong>' + (distPies?(' a ' + distPies):'') + '. Racha de aciertos, cambia de tee al fallar. Meta: <strong>' + o + ' seguidas</strong>';
     case 'corridas':
       if (nivel === 1) return 'Nivel 1: llega hasta la estación de <strong>12 yardas</strong>';
       if (nivel === 2) return 'Nivel 2: llega hasta la estación de <strong>15 yardas</strong>';
@@ -3200,6 +3298,10 @@ function textoMetaNivel(clave, nivel, item) {
         'tres5':  'al menos <strong>3 de 5</strong> a <strong>5 pasos</strong> de la bandera (el resto en green)'
       };
       return 'Nivel ' + nivel + ': ' + (bt[o] || bt['salir']);
+    case 'approach-cerca':
+      var pasosN = t.pasos ? t.pasos[nivel] : 3;
+      var pasoN = pasosN === 1 ? '1 paso' : pasosN + ' pasos';
+      return 'Nivel ' + nivel + ': los <strong>3 tiros</strong> a menos de <strong>' + pasoN + '</strong>';
     default: return 'Meta del nivel ' + nivel;
   }
 }
@@ -4148,7 +4250,172 @@ function abrirTrofeoGamer() {
 }
 
 // Muestra el pop-up del trofeo solo la PRIMERA vez que se abre el home en el día
+// ═══════════════════════════════════════════════════════════
+// SISTEMA DE POP-UPS ROTATIVOS DE FESTEJO (modo Gamer)
+// Máximo 1 pop-up por apertura. Rota entre los pendientes sin repetir.
+// Cada festejo se guarda en una cola por perfil; al mostrarse, se marca visto y sale.
+// ═══════════════════════════════════════════════════════════
+
+// Estructura de un festejo: { id, tipo:'nivel'|'racha'|'medalla'|'record', titulo, sub, emoji }
+function _colaFestejosKey(perfilId) { return 'gamer_festejos_' + perfilId; }
+function getColaFestejos(perfilId) {
+  try { return JSON.parse(localStorage.getItem(_colaFestejosKey(perfilId)) || '[]'); } catch(e) { return []; }
+}
+function setColaFestejos(perfilId, cola) {
+  try { localStorage.setItem(_colaFestejosKey(perfilId), JSON.stringify(cola)); } catch(e) {}
+}
+// Agrega un festejo a la cola si su id no está ya (evita duplicados)
+function agregarFestejo(perfilId, festejo) {
+  var cola = getColaFestejos(perfilId);
+  if (cola.find(function(f){ return f.id === festejo.id; })) return; // ya en cola
+  // Verificar que no se haya mostrado antes (histórico)
+  var vistos = _getFestejosVistos(perfilId);
+  if (vistos.indexOf(festejo.id) >= 0) return;
+  cola.push(festejo);
+  setColaFestejos(perfilId, cola);
+}
+function _festejosVistosKey(perfilId) { return 'gamer_festejos_vistos_' + perfilId; }
+function _getFestejosVistos(perfilId) {
+  try { return JSON.parse(localStorage.getItem(_festejosVistosKey(perfilId)) || '[]'); } catch(e) { return []; }
+}
+function _marcarFestejoVisto(perfilId, id) {
+  var vistos = _getFestejosVistos(perfilId);
+  if (vistos.indexOf(id) < 0) { vistos.push(id); }
+  try { localStorage.setItem(_festejosVistosKey(perfilId), JSON.stringify(vistos)); } catch(e) {}
+}
+
+// Detecta logros nuevos y los agrega a la cola (se llama al abrir el gamer)
+function detectarFestejos(perfilId) {
+  var perfil = PERFILES.find(function(p){ return p.id === perfilId; });
+  if (!perfil) return;
+
+  // 1) RACHA de días seguidos entrenando
+  try {
+    var racha = _calcularRachaDias(perfilId);
+    if (racha >= 3) {
+      // Festejar hitos de racha: 3, 5, 7, 10, 15, 20, 30...
+      var hitos = [3,5,7,10,15,20,30,50,100];
+      if (hitos.indexOf(racha) >= 0) {
+        agregarFestejo(perfilId, {
+          id: 'racha-' + racha,
+          tipo: 'racha',
+          emoji: '🔥',
+          titulo: '¡' + racha + ' días seguidos!',
+          sub: 'Llevas ' + racha + ' días entrenando sin parar. ¡No rompas la racha!'
+        });
+      }
+    }
+  } catch(e) {}
+
+  // 2) NIVELES: revisar si algún ejercicio subió de nivel desde la última revisión
+  try {
+    var nivelesGuardados = _getNivelesSnapshot(perfilId);
+    var nivelesActuales = {};
+    if (perfil.niveles) {
+      Object.keys(perfil.niveles).forEach(function(clave){
+        var nv = perfil.niveles[clave] && perfil.niveles[clave].nivel ? perfil.niveles[clave].nivel : 1;
+        nivelesActuales[clave] = nv;
+        var antes = nivelesGuardados[clave] || 1;
+        if (nv > antes) {
+          var nomEj = _nombreEjercicioPorClave(clave);
+          agregarFestejo(perfilId, {
+            id: 'nivel-' + clave + '-' + nv,
+            tipo: 'nivel',
+            emoji: '🏆',
+            titulo: '¡Subiste de nivel!',
+            sub: 'Ahora eres Nivel ' + nv + ' en ' + nomEj + '. ¡Sigue así!'
+          });
+        }
+      });
+    }
+    _setNivelesSnapshot(perfilId, nivelesActuales);
+  } catch(e) {}
+}
+
+function _getNivelesSnapshot(perfilId) {
+  try { return JSON.parse(localStorage.getItem('gamer_niveles_snap_' + perfilId) || '{}'); } catch(e) { return {}; }
+}
+function _setNivelesSnapshot(perfilId, snap) {
+  try { localStorage.setItem('gamer_niveles_snap_' + perfilId, JSON.stringify(snap)); } catch(e) {}
+}
+
+function _nombreEjercicioPorClave(clave) {
+  // Buscar en la biblioteca o catálogo un nombre bonito
+  if (typeof BIBLIOTECA !== 'undefined') {
+    var b = BIBLIOTECA.find(function(x){ return x.clave === clave || clave.indexOf(x.clave) === 0; });
+    if (b) return b.nom;
+  }
+  if (typeof CATALOGO_NUEVO !== 'undefined' && CATALOGO_NUEVO[clave]) return CATALOGO_NUEVO[clave].nom;
+  return 'tu ejercicio';
+}
+
+// Calcula cuántos días seguidos (hasta hoy) ha entrenado el perfil
+function _calcularRachaDias(perfilId) {
+  var hist = [];
+  try { hist = JSON.parse(localStorage.getItem('entreno_hist_' + perfilId) || '[]'); } catch(e) {}
+  if (!hist.length) return 0;
+  // Set de días con entrenamiento (YYYY-MM-DD)
+  var dias = {};
+  hist.forEach(function(h){
+    if (h.fecha) { var d = new Date(h.fecha); dias[d.getFullYear()+'-'+d.getMonth()+'-'+d.getDate()] = true; }
+  });
+  // Contar hacia atrás desde hoy
+  var racha = 0;
+  var cursor = new Date();
+  for (var i = 0; i < 400; i++) {
+    var k = cursor.getFullYear()+'-'+cursor.getMonth()+'-'+cursor.getDate();
+    if (dias[k]) { racha++; }
+    else if (i > 0) { break; } // se rompió la racha (hoy puede no haber entrenado aún)
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return racha;
+}
+
+// Muestra el SIGUIENTE festejo pendiente (máximo 1). Rota sin repetir.
+function mostrarSiguienteFestejo(perfilId) {
+  var cola = getColaFestejos(perfilId);
+  if (!cola.length) return false; // nada que festejar
+  var festejo = cola.shift(); // el primero
+  setColaFestejos(perfilId, cola); // guardar cola sin ese
+  _marcarFestejoVisto(perfilId, festejo.id);
+  _renderPopupFestejo(festejo);
+  return true;
+}
+
+function _renderPopupFestejo(f) {
+  var prev = document.getElementById('overlay-festejo');
+  if (prev) prev.remove();
+  var ov = document.createElement('div');
+  ov.id = 'overlay-festejo';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9200;display:flex;align-items:center;justify-content:center;padding:28px';
+  var colorBorde = f.tipo === 'racha' ? 'rgba(255,120,40,.4)' : 'rgba(239,159,39,.4)';
+  var colorTit = f.tipo === 'racha' ? '#ff7828' : '#EF9F27';
+  ov.innerHTML = '<div style="background:linear-gradient(160deg,#2a2440,#1a1a2e);border:1px solid ' + colorBorde + ';border-radius:24px;padding:30px 26px;max-width:320px;width:100%;text-align:center">' +
+    '<div style="font-size:60px;margin-bottom:12px;animation:festejoFlota 2s ease-in-out infinite">' + f.emoji + '</div>' +
+    '<div style="color:' + colorTit + ';font-size:21px;font-weight:900;margin-bottom:8px">' + f.titulo + '</div>' +
+    '<div style="color:#c8c8d5;font-size:13px;line-height:1.5;margin-bottom:22px">' + f.sub + '</div>' +
+    '<div onclick="document.getElementById(\'overlay-festejo\').remove()" style="background:linear-gradient(160deg,' + colorTit + ',#c9821a);border-radius:14px;padding:14px;cursor:pointer;color:#000;font-size:15px;font-weight:800">¡Genial!</div>' +
+  '</div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click', function(e){ if (e.target === ov) ov.remove(); });
+  // Asegurar la animación CSS
+  if (!document.getElementById('festejo-anim-style')) {
+    var st = document.createElement('style');
+    st.id = 'festejo-anim-style';
+    st.textContent = '@keyframes festejoFlota { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-6px);} }';
+    document.head.appendChild(st);
+  }
+}
+
 function quizasMostrarTrofeoGamer(perfilId) {
+  // Detectar logros nuevos y mostrar el siguiente festejo pendiente (rota, máx 1)
+  try {
+    detectarFestejos(perfilId);
+    mostrarSiguienteFestejo(perfilId);
+  } catch(e) {}
+}
+
+function quizasMostrarTrofeoGamer_ORIGINAL(perfilId) {
   var hoy = new Date();
   var clave = 'gamer_trofeo_visto_' + perfilId;
   var hoyStr = hoy.getFullYear() + '-' + hoy.getMonth() + '-' + hoy.getDate();
@@ -5972,6 +6239,37 @@ async function dictarAClaudeJSON(textoUsuario, systemPrompt, opciones) {
   return JSON.parse(txt);
 }
 
+// Conversación con Claude manteniendo historial (para el ida y vuelta al crear formatos)
+async function conversarConClaude(mensajes, systemPrompt, opciones) {
+  opciones = opciones || {};
+  var clave = '';
+  try { clave = localStorage.getItem('claude_api_key') || ''; } catch(e) {}
+  if (!clave) throw new Error('SIN_CLAVE');
+  var cuerpo = {
+    model: opciones.modelo || 'claude-haiku-4-5-20251001',
+    max_tokens: opciones.maxTokens || 1024,
+    messages: mensajes
+  };
+  if (systemPrompt) cuerpo.system = systemPrompt;
+  var response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': clave,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify(cuerpo)
+  });
+  if (!response.ok) throw new Error('Error API: ' + response.status);
+  var data = await response.json();
+  var texto = '';
+  if (data.content && data.content.length) {
+    data.content.forEach(function(bloque){ if (bloque.type === 'text') texto += bloque.text; });
+  }
+  return texto;
+}
+
 // Prueba rápida de conexión: manda un saludo y verifica que responda.
 async function probarClaude() {
   try {
@@ -6105,6 +6403,96 @@ function detenerDictadoEscuchar() {
 // Acumulador de actividades captadas hoy (en memoria durante la sesión del pop-up)
 var _dictadoActividades = [];
 
+// ── PERSISTENCIA Y AUTO-SUBIDA A MEDIANOCHE ──────────────────────────
+// Las actividades pendientes se guardan en localStorage con la fecha del día,
+// para que sobrevivan si se cierra la app y para poder auto-subirlas.
+function _fechaHoyDictado() {
+  var h = new Date();
+  return h.getFullYear() + '-' + String(h.getMonth()+1).padStart(2,'0') + '-' + String(h.getDate()).padStart(2,'0');
+}
+
+function _guardarBorradorDictado() {
+  try {
+    // Solo guardar las que NO están subidas todavía
+    var pend = _dictadoActividades.filter(function(a){ return !a._guardada; });
+    var data = { fecha: _fechaHoyDictado(), actividades: pend };
+    localStorage.setItem('dictado_borrador', JSON.stringify(data));
+  } catch(e) {}
+}
+
+function _cargarBorradorDictado() {
+  try {
+    var raw = localStorage.getItem('dictado_borrador');
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch(e) { return null; }
+}
+
+// Al abrir la app: si hay un borrador de un día ANTERIOR, subir automáticamente
+// las actividades completas (esto cumple la "auto-subida a medianoche" de forma práctica).
+function revisarAutoSubidaDictado() {
+  var borr = _cargarBorradorDictado();
+  if (!borr || !borr.actividades || !borr.actividades.length) return;
+  if (borr.fecha === _fechaHoyDictado()) return; // es de hoy, no auto-subir todavía
+
+  // Es de un día anterior: subir las completas automáticamente
+  var subidas = 0;
+  borr.actividades.forEach(function(a) {
+    if (a._guardada) return;
+    if (!_actividadCompleta(a)) return; // incompletas no se suben
+    if (!a.perfilId) return;
+    try {
+      if (a.tipo === 'entrenamiento') _guardarEntrenamientoDictado(a);
+      else if (a.tipo === 'reto27') _guardarReto27Dictado(a);
+      else if (a.tipo === 'ronda') _guardarRondaDictado(a);
+      subidas++;
+    } catch(e) {}
+  });
+  // Limpiar el borrador viejo (ya se procesó)
+  try { localStorage.removeItem('dictado_borrador'); } catch(e) {}
+  // Avisar discretamente si se subió algo
+  if (subidas > 0) {
+    setTimeout(function() {
+      _avisoAutoSubida(subidas);
+    }, 800);
+  }
+}
+
+function _avisoAutoSubida(n) {
+  var ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:950;background:#1D9E75;color:#fff;padding:12px 20px;border-radius:14px;font-size:13px;font-weight:700;box-shadow:0 6px 20px rgba(0,0,0,.4);max-width:90%;text-align:center';
+  ov.textContent = '✓ Se guardaron ' + n + ' actividad' + (n !== 1 ? 'es' : '') + ' del dictado de ayer';
+  document.body.appendChild(ov);
+  setTimeout(function(){ try { ov.remove(); } catch(e){} }, 4000);
+}
+
+// Timer para auto-subir a las 00:00 si la app queda abierta
+var _timerMedianoche = null;
+function programarAutoSubidaMedianoche() {
+  if (_timerMedianoche) clearTimeout(_timerMedianoche);
+  var ahora = new Date();
+  var medianoche = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate() + 1, 0, 0, 30);
+  var ms = medianoche - ahora;
+  _timerMedianoche = setTimeout(function() {
+    // Al llegar la medianoche: subir lo completo del día que termina
+    if (_dictadoActividades.length) {
+      _dictadoActividades.forEach(function(a) {
+        if (a._guardada || !_actividadCompleta(a) || !a.perfilId) return;
+        try {
+          if (a.tipo === 'entrenamiento') _guardarEntrenamientoDictado(a);
+          else if (a.tipo === 'reto27') _guardarReto27Dictado(a);
+          else if (a.tipo === 'ronda') _guardarRondaDictado(a);
+          a._guardada = true;
+        } catch(e) {}
+      });
+      try { if (typeof renderHome === 'function') renderHome(); } catch(e) {}
+    }
+    try { localStorage.removeItem('dictado_borrador'); } catch(e) {}
+    // Reprogramar para la siguiente medianoche
+    programarAutoSubidaMedianoche();
+  }, ms);
+}
+
 async function procesarDictadoConClaude(texto) {
   _dictadoProcesando = true;
   var est = document.getElementById('dictado-estado');
@@ -6121,6 +6509,7 @@ async function procesarDictadoConClaude(texto) {
     if (est) est.textContent = 'Toca para dictar más';
     if (sub) sub.textContent = '';
     renderDictadoFichas(r.dudas);
+    _guardarBorradorDictado();
   } catch(e) {
     if (est) est.textContent = 'Toca para dictar más';
     if (sub) sub.textContent = '';
@@ -6339,6 +6728,7 @@ function borrarActividadDictado(idx) {
   if (a && a._guardada) return; // no borrar las ya guardadas
   _dictadoActividades.splice(idx, 1);
   renderDictadoFichas('');
+  _guardarBorradorDictado();
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -6490,6 +6880,7 @@ function _ejecutarSubidaDictado() {
 
   // Refrescar las fichas (las guardadas aparecerán apagadas con "✓ Ya guardado")
   renderDictadoFichas('');
+  _guardarBorradorDictado();
 
   // Mensaje breve de confirmación arriba de las fichas
   var cont = document.getElementById('dictado-captado');
@@ -6519,6 +6910,13 @@ function abrirDictadoGlobal() {
     }
     return;
   }
+  // Recuperar el borrador de HOY si el acumulador en memoria está vacío
+  if (!_dictadoActividades.length) {
+    var borr = _cargarBorradorDictado();
+    if (borr && borr.fecha === _fechaHoyDictado() && borr.actividades && borr.actividades.length) {
+      _dictadoActividades = borr.actividades;
+    }
+  }
   var ov = document.createElement('div');
   ov.id = 'overlay-dictado-global';
   ov.style.cssText = 'position:fixed;inset:0;z-index:900;background:rgba(0,0,0,.65);display:flex;align-items:flex-end;justify-content:center';
@@ -6542,6 +6940,8 @@ function abrirDictadoGlobal() {
     '</div>';
   document.body.appendChild(ov);
   // Empezar a escuchar de inmediato (sin botón intermedio)
+  // Si hay actividades recuperadas del borrador, mostrarlas
+  if (_dictadoActividades.length) { try { renderDictadoFichas(''); } catch(e){} }
   setTimeout(function(){ iniciarDictadoEscuchar(); }, 250);
 }
 
@@ -9100,6 +9500,7 @@ var EJERCICIOS_DEF = {
   'hierros':    { nom: 'Escalera hierros',     cat: 'hierros',  instrucciones: ['Palos: 9H-8H-7H-6H','5 bolas consecutivas en zona objetivo','Si fallas, reinicia el contador'] },
   'drive':      { nom: 'Drive',                cat: 'drive',    instrucciones: ['5 tiros consecutivos en zona objetivo','1 ejecucion = 5 tiros en zona','Cuenta madera 3 y drive por separado'] },
   'op36-25':    { nom: 'OP 27 - 25y',   cat: 'reto',     instrucciones: ['9 hoyos par 3 desde 25 yardas','Par del campo = 27 golpes','Meta alto rendimiento: -5'], esReto: true },
+  'op36':       { nom: 'Reto 27',   cat: 'reto',     instrucciones: ['9 hoyos par 3 desde 25 yardas','Par del campo = 27 golpes','Anota tus golpes por hoyo'], esReto: true },
   'op36-50':    { nom: 'OP 27 - 50y',   cat: 'reto',     instrucciones: ['9 hoyos par 3 desde 50 yardas','Par del campo = 27 golpes','Meta alto rendimiento: -3'], esReto: true },
   'op36-100':   { nom: 'OP 27 - 100y',  cat: 'reto',     instrucciones: ['9 hoyos par 3 desde 100 yardas','Par del campo = 27 golpes','Meta alto rendimiento: -1'], esReto: true },
   'op36-150':   { nom: 'OP 27 - 150y',  cat: 'reto',     instrucciones: ['9 hoyos par 3 desde 150 yardas','Par del campo = 27 golpes','Meta alto rendimiento: +2'], esReto: true },
@@ -9453,10 +9854,20 @@ function renderPrograma() {
   if (lista) lista.innerHTML = html;
 }
 
+// Manejador robusto del bote de basura: detiene la propagación al div padre (abrirRegistro)
+function eliminarEjercicioClick(ev, idx) {
+  if (ev) {
+    if (ev.stopPropagation) ev.stopPropagation();
+    if (ev.preventDefault) ev.preventDefault();
+  }
+  eliminarEjercicio(idx);
+  return false;
+}
+
 function eliminarEjercicio(idx) {
   if (!estadoSesion || !estadoSesion.programa || idx < 0 || idx >= estadoSesion.programa.length) return;
   var def = getDefItem(estadoSesion.programa[idx]);
-  if (confirm('Quitar ' + (def ? def.nom : 'este ejercicio') + '?')) {
+  confirmarBorrado('¿Quitar ' + (def ? def.nom : 'este ejercicio') + ' de tu entrenamiento?', function() {
     estadoSesion.programa.splice(idx, 1);
     if (estadoSesion.completados) estadoSesion.completados.splice(idx, 1);
     // Ajustar el índice del ejercicio activo si se borró uno antes o el mismo
@@ -9467,11 +9878,587 @@ function eliminarEjercicio(idx) {
     }
     guardarEstadoSesion();
     renderSesionSync();
-  }
+  });
 }
 
 // ── MENU EJERCICIOS (catálogo nuevo, Forma 2) ───────────────────────────────
+// ═══════════════════════════════════════════════════════════
+// BIBLIOTECA DE EJERCICIOS — pantalla con pestañas Ejercicios / Retos
+// ═══════════════════════════════════════════════════════════
+var _biblioPestana = 'ejercicio'; // 'ejercicio' | 'reto'
+
+// Crear ejercicio personalizado con Claude (Etapa 3 — próximamente)
+// ═══════════════════════════════════════════════════════════
+// CREAR MI EJERCICIO CON CLAUDE
+// ═══════════════════════════════════════════════════════════
+var _crearEjPropuesta = null; // guarda la última propuesta de Claude
+
+function _systemPromptCrearEjercicio() {
+  return 'Eres un entrenador de golf que ayuda a crear ejercicios de práctica para una app. ' +
+    'El usuario te describe un ejercicio (o el que le dio su entrenador) y tú lo conviertes en un ejercicio ESTRUCTURADO y UNIFICADO con el resto de la app.\n\n' +
+    'REGLAS DE UNIFICACIÓN (muy importante):\n' +
+    '1. La forma de medir SOLO puede ser uno de estos dos tipos:\n' +
+    '   - "deN": el jugador tira N bolas/intentos y cuenta cuántas logra (ej. mete 7 de 10). Usa esto para casi todo.\n' +
+    '   - "racha": el jugador cuenta cuántas logra SEGUIDAS sin fallar, en un tiempo dado (ej. racha de 8). Usa esto solo si el ejercicio es de aciertos consecutivos.\n' +
+    '2. Los 5 niveles van de fácil (nivel 1) a difícil (nivel 5), aumentando gradualmente la meta. La progresión debe ser realista para un golfista que mejora.\n' +
+    '3. La categoría debe ser una de: "Putt corto", "Putt medio", "Putt largo", "Approach", "Hierros", "Drive".\n' +
+    '4. Las instrucciones deben ser claras, cortas y motivadoras, como para un niño de 10 años. Explica cómo se coloca y qué cuenta.\n\n' +
+    'Responde SOLO con un JSON (sin texto extra, sin markdown) con esta forma exacta:\n' +
+    '{\n' +
+    '  "nombre": "nombre corto del ejercicio",\n' +
+    '  "categoria": "una de las 6 categorías",\n' +
+    '  "instrucciones": "cómo se juega, 1-2 frases claras",\n' +
+    '  "tipo": "deN" o "racha",\n' +
+    '  "n": (solo si tipo deN) número de bolas por ronda, ej 10,\n' +
+    '  "minutos_racha": (solo si tipo racha) minutos de práctica, ej 15,\n' +
+    '  "niveles": [meta1, meta2, meta3, meta4, meta5],\n' +
+    '  "duracion_min": minutos que dura la sesión, ej 10,\n' +
+    '  "resumen": "una frase amistosa explicando tu propuesta al usuario"\n' +
+    '}\n' +
+    'Ejemplo: si el usuario dice "tirar 10 chips a un aro desde 20 metros y contar cuántos caen dentro", responde con tipo "deN", n 10, niveles [3,4,5,6,7], categoria "Approach".';
+}
+
+function crearMiEjercicio() {
+  if (!tieneClaudeEnlazado()) {
+    confirmarBorrado('Para crear tus propios ejercicios con Claude necesitas enlazarlo primero. ¿Abrir la pantalla para enlazarlo?', function(){ abrirEnlazarClaude(); });
+    return;
+  }
+  _crearEjPropuesta = null;
+  var prev = document.getElementById('overlay-crear-ej');
+  if (prev) prev.remove();
+  var ov = document.createElement('div');
+  ov.id = 'overlay-crear-ej';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:580;display:flex;align-items:flex-end;justify-content:center';
+  ov.innerHTML = '<div style="background:#12151f;border-radius:24px 24px 0 0;width:100%;max-width:430px;max-height:90vh;overflow-y:auto">' +
+    '<div style="display:flex;justify-content:center;padding:12px 0"><div style="width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:2px"></div></div>' +
+    '<div style="padding:0 22px 30px">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">' +
+        '<div style="color:#a78bfa;font-size:20px;font-weight:800">🧪 Crear mi ejercicio</div>' +
+        '<div id="cerrar-crear-ej" style="color:#4a4a6a;font-size:28px;cursor:pointer;padding:2px 6px">×</div>' +
+      '</div>' +
+      '<div style="color:#8a8a9a;font-size:12px;line-height:1.5;margin-bottom:16px">Describe el ejercicio que quieras (o el que te dio tu entrenador). Claude lo convertirá en un ejercicio con sus 5 niveles.</div>' +
+      '<div id="crear-ej-cuerpo">' +
+        '<textarea id="crear-ej-texto" placeholder="Ej: Tirar 10 chips desde 20 metros a un aro y contar cuántos caen dentro" style="width:100%;min-height:90px;background:#1a1f2e;border:0.5px solid rgba(255,255,255,.12);border-radius:12px;padding:13px;color:#e8e8f0;font-size:14px;font-family:inherit;resize:vertical;box-sizing:border-box"></textarea>' +
+        '<div style="display:flex;gap:8px;margin-top:10px">' +
+          '<div id="crear-ej-mic" onclick="_dictarDescripcionEjercicio()" style="width:52px;height:48px;background:#1a1f2e;border:0.5px solid rgba(255,255,255,.12);border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4"/></svg></div>' +
+          '<div onclick="_pedirPropuestaEjercicio()" style="flex:1;background:linear-gradient(160deg,#7d3aed,#5b21b6);border-radius:12px;padding:14px;text-align:center;cursor:pointer;color:#fff;font-size:14px;font-weight:800">✨ Crear con Claude</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+  '</div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click', function(e){
+    if (e.target.id === 'cerrar-crear-ej' || e.target === ov) { ov.remove(); }
+  });
+}
+
+// Dictado por voz de la descripción (reutiliza reconocimiento de voz)
+function _dictarDescripcionEjercicio() {
+  if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+    return;
+  }
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  var rec = new SR();
+  rec.lang = 'es-MX'; rec.interimResults = false; rec.continuous = false;
+  var mic = document.getElementById('crear-ej-mic');
+  if (mic) mic.style.background = '#7d3aed';
+  rec.onresult = function(e) {
+    var texto = e.results[0][0].transcript;
+    var ta = document.getElementById('crear-ej-texto');
+    if (ta) ta.value = (ta.value ? ta.value + ' ' : '') + texto;
+  };
+  rec.onend = function() { if (mic) mic.style.background = '#1a1f2e'; };
+  rec.onerror = function() { if (mic) mic.style.background = '#1a1f2e'; };
+  try { rec.start(); } catch(e) {}
+}
+
+async function _pedirPropuestaEjercicio() {
+  var ta = document.getElementById('crear-ej-texto');
+  var texto = ta ? ta.value.trim() : '';
+  if (!texto) { return; }
+  var cuerpo = document.getElementById('crear-ej-cuerpo');
+  if (cuerpo) cuerpo.innerHTML = '<div style="text-align:center;padding:30px 10px"><div style="font-size:32px;margin-bottom:10px">🧪</div><div style="color:#a78bfa;font-size:14px;font-weight:700">Claude está diseñando tu ejercicio…</div></div>';
+  try {
+    var json = await dictarAClaudeJSON(texto, _systemPromptCrearEjercicio());
+    if (!json || !json.nombre) throw new Error('sin propuesta');
+    _crearEjPropuesta = json;
+    _mostrarPropuestaEjercicio(json);
+  } catch(e) {
+    if (cuerpo) cuerpo.innerHTML = '<div style="text-align:center;padding:24px 10px"><div style="color:#E24B4A;font-size:14px;font-weight:700;margin-bottom:8px">No pude crear el ejercicio</div><div style="color:#8a8a9a;font-size:12px;margin-bottom:16px">Intenta describirlo con más detalle.</div><div onclick="crearMiEjercicio()" style="background:#7d3aed;border-radius:12px;padding:13px;text-align:center;cursor:pointer;color:#fff;font-size:14px;font-weight:800">Volver a intentar</div></div>';
+  }
+}
+
+function _mostrarPropuestaEjercicio(p) {
+  var cuerpo = document.getElementById('crear-ej-cuerpo');
+  if (!cuerpo) return;
+  var nivelesTxt = '';
+  var esRacha = p.tipo === 'racha';
+  (p.niveles || []).forEach(function(meta, i) {
+    var txt = esRacha ? ('racha de ' + meta) : (meta + ' de ' + (p.n || 10));
+    nivelesTxt += '<div style="display:flex;gap:8px;padding:5px 0;border-bottom:0.5px solid rgba(255,255,255,.05)"><span style="color:#a78bfa;font-weight:800;font-size:12px;min-width:52px">Nivel ' + (i+1) + '</span><span style="color:#c8c8d5;font-size:12px">' + txt + '</span></div>';
+  });
+  cuerpo.innerHTML =
+    '<div style="background:rgba(125,58,237,.1);border:1px solid rgba(125,58,237,.3);border-radius:14px;padding:16px;margin-bottom:14px">' +
+      (p.resumen ? '<div style="color:#c9b6f0;font-size:12px;line-height:1.5;margin-bottom:14px;font-style:italic">' + p.resumen + '</div>' : '') +
+      '<div style="color:#fff;font-size:18px;font-weight:800;margin-bottom:2px">' + p.nombre + '</div>' +
+      '<div style="color:#8a8a9a;font-size:11px;margin-bottom:12px">' + p.categoria + ' · ' + (p.duracion_min || 10) + ' min · mide "' + (esRacha ? 'racha' : 'cuántas de ' + (p.n||10)) + '"</div>' +
+      '<div style="color:#c8c8d5;font-size:13px;line-height:1.5;margin-bottom:14px">' + p.instrucciones + '</div>' +
+      '<div style="color:#a78bfa;font-size:11px;font-weight:800;margin-bottom:4px">LOS 5 NIVELES</div>' +
+      nivelesTxt +
+    '</div>' +
+    '<div style="display:flex;gap:8px;margin-bottom:10px">' +
+      '<div onclick="crearMiEjercicio()" style="flex:1;background:#1a1f2e;border:0.5px solid rgba(255,255,255,.12);border-radius:12px;padding:13px;text-align:center;cursor:pointer;color:#8a8a9a;font-size:13px;font-weight:700">↻ Rehacer</div>' +
+      '<div onclick="_preguntarSiEsReto()" style="flex:2;background:linear-gradient(160deg,#1D9E75,#0F6E56);border-radius:12px;padding:13px;text-align:center;cursor:pointer;color:#fff;font-size:14px;font-weight:800">Guardar ejercicio</div>' +
+    '</div>';
+}
+
+// Preguntar si quiere que sea Reto (medible, recurrente, con estadística en Home)
+function _preguntarSiEsReto() {
+  var cuerpo = document.getElementById('crear-ej-cuerpo');
+  if (!cuerpo) return;
+  cuerpo.innerHTML =
+    '<div style="text-align:center;padding:6px 4px">' +
+      '<div style="font-size:30px;margin-bottom:10px">🏆</div>' +
+      '<div style="color:#e8e8f0;font-size:15px;font-weight:800;margin-bottom:10px">¿Quieres que sea un Reto?</div>' +
+      '<div style="color:#8a8a9a;font-size:13px;line-height:1.5;margin-bottom:18px">Un Reto es un ejercicio 100% medible y recurrente, que quieres hacer constantemente para medir tu progreso. Los retos llevan su propia estadística en tu Home.</div>' +
+      '<div onclick="_guardarEjercicioFinal(true)" style="background:linear-gradient(160deg,#EF9F27,#c9821a);border-radius:12px;padding:14px;text-align:center;cursor:pointer;color:#000;font-size:14px;font-weight:800;margin-bottom:9px">🏆 Sí, es un Reto (con estadística)</div>' +
+      '<div onclick="_guardarEjercicioFinal(false)" style="background:linear-gradient(160deg,#1D9E75,#0F6E56);border-radius:12px;padding:14px;text-align:center;cursor:pointer;color:#fff;font-size:14px;font-weight:800">Es un ejercicio normal</div>' +
+    '</div>';
+}
+
+function _guardarEjercicioFinal(esReto) {
+  var p = _crearEjPropuesta;
+  if (!p) return;
+  // Generar clave única
+  var base = 'custom-' + (p.nombre || 'ej').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').substring(0, 24);
+  var clave = base;
+  var n = 1;
+  while (TABLAS_NIVELES[clave] || BIBLIOTECA.find(function(x){ return x.clave === clave; })) {
+    clave = base + '-' + n; n++;
+  }
+  // Construir tabla de niveles
+  var obj = {};
+  (p.niveles || [3,4,5,6,7]).forEach(function(m, i){ obj[i+1] = m; });
+  var tabla = { tipo: p.tipo === 'racha' ? 'racha' : 'deN', obj: obj };
+  if (p.tipo === 'racha') tabla.min = p.minutos_racha || 15;
+  else tabla.n = p.n || 10;
+
+  var ejercicio = {
+    clave: clave,
+    nom: p.nombre,
+    grupo: esReto ? 'reto' : 'ejercicio',
+    cat: esReto ? 'Reto' : (p.categoria || 'Approach'),
+    mins: p.duracion_min || 10,
+    instrucciones: p.instrucciones,
+    tabla: tabla
+  };
+  guardarEjercicioCustom(ejercicio);
+
+  // Marcar como favorito automáticamente para quien lo creó
+  var perfil = getPerfil();
+  if (perfil) toggleFavoritoBiblio(perfil.id, clave);
+
+  // Confirmación
+  var cuerpo = document.getElementById('crear-ej-cuerpo');
+  if (cuerpo) cuerpo.innerHTML =
+    '<div style="text-align:center;padding:16px 4px">' +
+      '<div style="font-size:40px;margin-bottom:12px">✅</div>' +
+      '<div style="color:#e8e8f0;font-size:16px;font-weight:800;margin-bottom:6px">¡' + p.nombre + ' creado!</div>' +
+      '<div style="color:#8a8a9a;font-size:13px;line-height:1.5;margin-bottom:20px">Ya está en la Biblioteca' + (esReto ? ' como Reto' : '') + ' y lo marcamos como tu favorito ⭐. Aparecerá al armar tu entrenamiento.</div>' +
+      '<div onclick="document.getElementById(\'overlay-crear-ej\').remove();if(document.getElementById(\'biblio-contenido\'))renderBiblioteca();" style="background:#1D9E75;border-radius:12px;padding:14px;text-align:center;cursor:pointer;color:#fff;font-size:14px;font-weight:800">Listo</div>' +
+    '</div>';
+}
+
+function abrirBiblioteca() {
+  var prev = document.getElementById('overlay-biblioteca');
+  if (prev) prev.remove();
+  var ov = document.createElement('div');
+  ov.id = 'overlay-biblioteca';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:520;display:flex;align-items:flex-end;justify-content:center';
+  ov.innerHTML = '<div style="background:#12151f;border-radius:24px 24px 0 0;width:100%;max-width:430px;max-height:88vh;overflow-y:auto;display:flex;flex-direction:column">' +
+    '<div style="display:flex;justify-content:center;padding:12px 0"><div style="width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:2px"></div></div>' +
+    '<div style="padding:0 20px 12px;display:flex;align-items:center;justify-content:space-between">' +
+      '<div><div style="color:#e8e8f0;font-size:18px;font-weight:800">📚 Biblioteca</div>' +
+      '<div style="color:#8a8a9a;font-size:11px;margin-top:2px">Marca tus favoritos ⭐ para que aparezcan en tu menú de entrenamiento</div></div>' +
+      '<div id="cerrar-biblio" style="color:#4a4a6a;font-size:28px;cursor:pointer;padding:4px 8px">×</div>' +
+    '</div>' +
+    '<div style="padding:0 16px 10px">' +
+      '<div onclick="crearMiEjercicio()" style="background:transparent;border:1.5px solid #7d3aed;border-radius:13px;padding:12px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer">' +
+        '<span style="font-size:15px">🧪</span><span style="color:#a78bfa;font-size:13px;font-weight:700">Crear mi ejercicio</span>' +
+      '</div>' +
+    '</div>' +
+    '<div id="biblio-contenido" style="padding:0 16px 40px;overflow-y:auto"></div>' +
+  '</div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click', function(e){
+    if (e.target.id === 'cerrar-biblio' || e.target === ov) { ov.remove(); return; }
+  });
+  renderBiblioteca();
+}
+
+function renderBiblioteca() {
+  var cont = document.getElementById('biblio-contenido');
+  if (!cont) return;
+  var p = getPerfil();
+  var pid = p ? p.id : 0;
+
+  // Pestañas
+  var tabEj = _biblioPestana === 'ejercicio';
+  var html = '<div style="display:flex;gap:8px;margin:6px 0 16px;position:sticky;top:0">' +
+    '<div onclick="_biblioPestana=\'ejercicio\';renderBiblioteca()" style="flex:1;text-align:center;padding:11px;border-radius:12px;cursor:pointer;font-size:13px;font-weight:800;' + (tabEj ? 'background:var(--player-main,#1D9E75);color:#fff' : 'background:#1a1f2e;color:#8a8a9a') + '">Ejercicios</div>' +
+    '<div onclick="_biblioPestana=\'reto\';renderBiblioteca()" style="flex:1;text-align:center;padding:11px;border-radius:12px;cursor:pointer;font-size:13px;font-weight:800;' + (!tabEj ? 'background:#EF9F27;color:#000' : 'background:#1a1f2e;color:#8a8a9a') + '">Retos</div>' +
+  '</div>';
+
+  // Filtrar por pestaña y agrupar por categoría
+  var lista = BIBLIOTECA.filter(function(x){ return x.grupo === _biblioPestana; });
+  var cats = [];
+  lista.forEach(function(x){ if (cats.indexOf(x.cat) < 0) cats.push(x.cat); });
+
+  cats.forEach(function(cat){
+    html += '<div style="color:#6a6a85;font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;margin:14px 4px 8px">' + cat + '</div>';
+    lista.filter(function(x){ return x.cat === cat; }).forEach(function(ej){
+      var fav = esFavoritoBiblio(pid, ej.clave);
+      var estrella = fav ? '⭐' : '☆';
+      var estColor = fav ? '#EF9F27' : '#4a4a6a';
+      var distTxt = ej.dist ? (' · ' + ej.dist.map(function(d){ return d.lbl.replace(' pies','').replace(' yardas','y'); }).join(', ') + ' pies') : '';
+      // Ajuste: si son yardas, no forzar "pies"
+      if (ej.dist && ej.dist[0] && ej.dist[0].lbl.indexOf('yarda') >= 0) {
+        distTxt = ' · ' + ej.dist.map(function(d){ return d.lbl; }).join(', ');
+      }
+      html += '<div style="background:#1a1f2e;border:0.5px solid rgba(255,255,255,.06);border-radius:13px;padding:13px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px">' +
+        '<div onclick="verFichaBiblio(\'' + ej.clave + '\')" style="flex:1;cursor:pointer">' +
+          '<div style="color:#e8e8f0;font-size:14px;font-weight:700">' + ej.nom + '</div>' +
+          '<div style="color:#7a7a95;font-size:11px;margin-top:2px">' + ej.mins + ' min' + distTxt + ' · toca para ver</div>' +
+        '</div>' +
+        '<div onclick="toggleFavBiblioUI(\'' + ej.clave + '\')" style="font-size:22px;color:' + estColor + ';cursor:pointer;padding:2px 4px">' + estrella + '</div>' +
+      '</div>';
+    });
+  });
+
+  cont.innerHTML = html;
+}
+
+function toggleFavBiblioUI(clave) {
+  var p = getPerfil();
+  if (!p) return;
+  toggleFavoritoBiblio(p.id, clave);
+  renderBiblioteca();
+}
+
+// Ficha detallada de un ejercicio de la biblioteca
+var _biblioDistSel = {}; // recuerda la distancia elegida por ejercicio
+function verFichaBiblio(clave, distK) {
+  var ej = BIBLIOTECA.find(function(x){ return x.clave === clave; });
+  if (!ej) return;
+  var p = getPerfil();
+  var pid = p ? p.id : 0;
+  var fav = esFavoritoBiblio(pid, clave);
+
+  // Distancia: si el ejercicio tiene, elegir la seleccionada o la primera
+  var tieneDist = ej.dist && ej.dist.length;
+  if (tieneDist) {
+    if (!distK) distK = _biblioDistSel[clave] || ej.dist[0].k;
+    _biblioDistSel[clave] = distK;
+  }
+  // Clave de nivel efectiva (con distancia si aplica)
+  var claveNivel = tieneDist ? (clave + '-' + distK) : clave;
+  var distLbl = tieneDist ? (ej.dist.find(function(d){ return d.k === distK; }) || ej.dist[0]).lbl : '';
+
+  // Instrucciones dinámicas para esa clave/distancia
+  var instrucciones = [];
+  try {
+    var instr = instruccionesDinamicas({ claveNivel: claveNivel }, claveNivel);
+    if (instr && instr.length) instrucciones = instr;
+  } catch(e) {}
+  if (!instrucciones.length && CATALOGO_NUEVO[clave] && CATALOGO_NUEVO[clave].instr) {
+    instrucciones = CATALOGO_NUEVO[clave].instr;
+  }
+
+  // Tabla de niveles para esa distancia
+  var nivelesHtml = '';
+  try {
+    for (var nv = 1; nv <= 5; nv++) {
+      var meta = textoMetaNivel(claveNivel, nv, { claveNivel: claveNivel });
+      if (meta) nivelesHtml += '<div style="display:flex;gap:8px;padding:6px 0;border-bottom:0.5px solid rgba(255,255,255,.05)"><span style="color:var(--player-main,#5FD6AA);font-weight:800;font-size:12px;min-width:52px">Nivel ' + nv + '</span><span style="color:#c8c8d5;font-size:12px">' + meta.replace(/Nivel \d+:\s*/, '') + '</span></div>';
+    }
+  } catch(e) {}
+
+  // Selector de distancia (pastillas)
+  var distSelHtml = '';
+  if (tieneDist) {
+    distSelHtml = '<div style="color:#8a8a9a;font-size:11px;font-weight:700;margin:16px 0 8px;text-transform:uppercase;letter-spacing:.4px">Elige la distancia</div>' +
+      '<div style="display:flex;gap:8px;margin-bottom:6px">';
+    ej.dist.forEach(function(d){
+      var on = d.k === distK;
+      distSelHtml += '<div onclick="verFichaBiblio(\'' + clave + '\',\'' + d.k + '\')" style="flex:1;text-align:center;padding:10px;border-radius:11px;font-size:13px;font-weight:800;cursor:pointer;' + (on ? 'background:var(--player-main,#1D9E75);color:#fff' : 'background:#1a1f2e;color:#8a8a9a;border:0.5px solid rgba(255,255,255,.08)') + '">' + d.lbl + '</div>';
+    });
+    distSelHtml += '</div>';
+  }
+
+  var prev = document.getElementById('overlay-ficha-biblio');
+  if (prev) prev.remove();
+  var ov = document.createElement('div');
+  ov.id = 'overlay-ficha-biblio';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:540;display:flex;align-items:flex-end;justify-content:center';
+  var esReto = ej.grupo === 'reto';
+  var badge = esReto ? '<span style="background:#EF9F27;color:#000;font-size:9px;font-weight:800;padding:2px 8px;border-radius:6px">RETO</span>' : '<span style="background:rgba(29,158,117,.2);color:#5FD6AA;font-size:9px;font-weight:800;padding:2px 8px;border-radius:6px">EJERCICIO</span>';
+  var instrHtml = instrucciones.map(function(i){ return '<div style="color:#c8c8d5;font-size:13px;line-height:1.6;margin-bottom:8px">' + i + '</div>'; }).join('');
+  var nivelesTitulo = tieneDist ? ('Los 5 niveles <span style="color:var(--player-main,#5FD6AA);font-weight:600">(' + distLbl + ')</span>') : 'Los 5 niveles';
+
+  ov.innerHTML = '<div style="background:#12151f;border-radius:24px 24px 0 0;width:100%;max-width:430px;max-height:88vh;overflow-y:auto">' +
+    '<div style="display:flex;justify-content:center;padding:12px 0"><div style="width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:2px"></div></div>' +
+    '<div style="padding:0 22px 30px">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">' +
+        badge +
+        '<div id="cerrar-ficha-biblio" style="color:#4a4a6a;font-size:28px;cursor:pointer;padding:2px 6px">×</div>' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">' +
+        '<div style="color:#fff;font-size:22px;font-weight:800">' + ej.nom + '</div>' +
+        '<div onclick="toggleFavFichaBiblio(\'' + clave + '\')" id="ficha-estrella" style="font-size:28px;color:' + (fav ? '#EF9F27' : '#4a4a6a') + ';cursor:pointer">' + (fav ? '⭐' : '☆') + '</div>' +
+      '</div>' +
+      '<div style="color:#8a8a9a;font-size:12px;margin-bottom:6px">' + ej.cat + ' · ' + ej.mins + ' min</div>' +
+      distSelHtml +
+      '<div style="color:#e8e8f0;font-size:13px;font-weight:800;margin:18px 0 8px">Cómo se juega</div>' +
+      (instrHtml || '<div style="color:#7a7a95;font-size:12px">Instrucciones disponibles al agregarlo.</div>') +
+      (nivelesHtml ? ('<div style="color:#e8e8f0;font-size:13px;font-weight:800;margin:18px 0 6px">' + nivelesTitulo + '</div>' + nivelesHtml) : '') +
+      '<div onclick="toggleFavFichaBiblio(\'' + clave + '\')" style="margin-top:22px;background:' + (fav ? 'rgba(239,159,39,.15)' : 'var(--player-main,#1D9E75)') + ';border:' + (fav ? '1px solid rgba(239,159,39,.4)' : 'none') + ';border-radius:14px;padding:14px;text-align:center;cursor:pointer;color:' + (fav ? '#EF9F27' : '#fff') + ';font-size:14px;font-weight:800">' + (fav ? '⭐ En tus favoritos (toca para quitar)' : '☆ Agregar a mis favoritos') + '</div>' +
+    '</div>' +
+  '</div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click', function(e){
+    if (e.target.id === 'cerrar-ficha-biblio' || e.target === ov) { ov.remove(); }
+  });
+}
+
+function toggleFavFichaBiblio(clave) {
+  var p = getPerfil();
+  if (!p) return;
+  toggleFavoritoBiblio(p.id, clave);
+  // Refrescar la ficha y la lista de atrás
+  verFichaBiblio(clave);
+  if (document.getElementById('biblio-contenido')) renderBiblioteca();
+}
+
+// Menú "Agregar ejercicio": muestra los FAVORITOS del perfil (elegidos en la Biblioteca)
+var _favSeleccionados = [];
+function abrirMenuFavoritos() {
+  var p = getPerfil();
+  var pid = p ? p.id : 0;
+  var favs = getFavoritosBiblio(pid);
+  _favSeleccionados = [];
+
+  var prev = document.getElementById('overlay-menu-ej');
+  if (prev) prev.remove();
+  var ov = document.createElement('div');
+  ov.id = 'overlay-menu-ej';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;display:flex;align-items:flex-end;justify-content:center';
+
+  ov.innerHTML = '<div style="background:#1a1f2e;border-radius:24px 24px 0 0;width:100%;max-width:430px;max-height:85vh;overflow-y:auto;display:flex;flex-direction:column">' +
+    '<div style="display:flex;justify-content:center;padding:12px 0"><div style="width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:2px"></div></div>' +
+    '<div style="padding:0 20px 14px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid rgba(255,255,255,.07)">' +
+    '<div style="color:#e8e8f0;font-size:16px;font-weight:700">Selecciona ejercicios para hoy</div>' +
+    '<div id="cerrar-mej" style="color:#4a4a6a;font-size:28px;cursor:pointer;padding:4px 8px">×</div></div>' +
+    '<div id="fav-lista" style="padding:14px 16px 40px"></div></div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click', function(e){
+    if (e.target.id === 'cerrar-mej' || e.target === ov) { ov.remove(); }
+  });
+  renderMenuFavoritos();
+}
+
+function renderMenuFavoritos() {
+  var cont = document.getElementById('fav-lista');
+  if (!cont) return;
+  var p = getPerfil();
+  var pid = p ? p.id : 0;
+  var favs = getFavoritosBiblio(pid);
+
+  var cuerpo = '';
+  if (!favs.length) {
+    cuerpo = '<div style="text-align:center;padding:20px 10px 8px">' +
+      '<div style="font-size:38px;margin-bottom:10px">⭐</div>' +
+      '<div style="color:#e8e8f0;font-size:15px;font-weight:700;margin-bottom:8px">Aún no tienes ejercicios favoritos</div>' +
+      '<div style="color:#8a8a9a;font-size:13px;line-height:1.5;margin-bottom:6px">Agrega ejercicios y retos a tus favoritos ⭐ desde la Biblioteca, o crea los tuyos propios. Los favoritos aparecerán aquí para armar tu entrenamiento.</div>' +
+      '</div>';
+  } else {
+    cuerpo = '<div style="color:#6a6a85;font-size:10px;font-weight:800;letter-spacing:.5px;padding:0 4px 8px">TUS FAVORITOS · toca para seleccionar</div>';
+    var favEntradas = favs.map(function(cl){ return BIBLIOTECA.find(function(x){ return x.clave === cl; }); }).filter(Boolean);
+    var cats = [];
+    favEntradas.forEach(function(e){ if (cats.indexOf(e.cat) < 0) cats.push(e.cat); });
+    cats.forEach(function(cat){
+      cuerpo += '<div style="color:#7a7a95;font-size:10px;font-weight:700;margin:10px 4px 6px;text-transform:uppercase">' + cat + '</div>';
+      favEntradas.filter(function(e){ return e.cat === cat; }).forEach(function(ej){
+        var sel = _favSeleccionados.indexOf(ej.clave) >= 0;
+        var esReto = ej.grupo === 'reto';
+        var col = esReto ? '#EF9F27' : '#5FD6AA';
+        var colNom = esReto ? '#EF9F27' : '#e8e8f0'; // nombre de reto en amarillo
+        // círculo de selección
+        var circulo = sel
+          ? '<div style="width:24px;height:24px;border-radius:50%;background:' + col + ';display:flex;align-items:center;justify-content:center;flex-shrink:0"><span style="color:#0a0a12;font-size:15px;font-weight:900">✓</span></div>'
+          : '<div style="width:24px;height:24px;border-radius:50%;border:2px solid #3a3a50;flex-shrink:0"></div>';
+        // ícono de nota: abre la ficha con la explicación (no selecciona)
+        var iconoNota = '<div onclick="event.stopPropagation();verFichaBiblio(\'' + ej.clave + '\')" style="width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer" title="Ver de qué se trata"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8fb4e8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg></div>';
+        cuerpo += '<div onclick="toggleFavSeleccion(\'' + ej.clave + '\')" style="background:' + (sel ? 'rgba(29,158,117,.08)' : '#13131f') + ';border:0.5px solid ' + (sel ? col : 'rgba(255,255,255,.08)') + ';border-radius:13px;padding:13px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer">' +
+          '<div style="flex:1"><div style="color:' + colNom + ';font-size:14px;font-weight:700">' + ej.nom + '</div>' +
+          '<div style="color:#7a7a95;font-size:11px;margin-top:1px">' + ej.mins + ' min' + (ej.dist ? ' · elige distancia al agregar' : '') + '</div></div>' +
+          iconoNota +
+          circulo +
+        '</div>';
+      });
+    });
+  }
+
+  // Botón agregar seleccionados (solo si hay selección)
+  var nSel = _favSeleccionados.length;
+  var btnAgregar = '';
+  if (nSel > 0) {
+    btnAgregar = '<div onclick="agregarSeleccionados()" style="background:linear-gradient(160deg,#1D9E75,#0F6E56);border-radius:14px;padding:15px;text-align:center;cursor:pointer;margin-top:6px;margin-bottom:12px;color:#fff;font-size:14px;font-weight:800">+ Agregar ' + nSel + ' a mi entrenamiento</div>';
+  }
+
+  var accesoBiblio = '<div onclick="cerrarMenuEjYAbrirBiblio()" style="background:linear-gradient(160deg,rgba(239,159,39,.18),rgba(239,159,39,.05));border:1.5px solid rgba(239,159,39,.5);border-radius:14px;padding:14px;text-align:center;cursor:pointer;margin-top:' + (nSel>0?'0':'14px') + '">' +
+    '<span style="font-size:15px">📚</span> <span style="color:#EF9F27;font-size:14px;font-weight:800">Ir a la Biblioteca</span>' +
+    '<div style="color:#c99a4e;font-size:10px;margin-top:2px">Marca favoritos ⭐ o crea tus propios ejercicios</div>' +
+  '</div>';
+
+  cont.innerHTML = cuerpo + btnAgregar + accesoBiblio;
+}
+
+function toggleFavSeleccion(clave) {
+  var i = _favSeleccionados.indexOf(clave);
+  if (i >= 0) _favSeleccionados.splice(i, 1);
+  else _favSeleccionados.push(clave);
+  renderMenuFavoritos();
+}
+
+// Agrega todos los seleccionados. Los que tienen distancia se preguntan en cadena.
+function agregarSeleccionados() {
+  var pendientes = _favSeleccionados.slice();
+  _procesarSiguienteFav(pendientes);
+}
+
+function _procesarSiguienteFav(pendientes) {
+  if (!pendientes.length) {
+    // Terminó: cerrar el menú
+    var ov = document.getElementById('overlay-menu-ej');
+    if (ov) ov.remove();
+    _favSeleccionados = [];
+    return;
+  }
+  var clave = pendientes.shift();
+  var ej = BIBLIOTECA.find(function(x){ return x.clave === clave; });
+  if (!ej) { _procesarSiguienteFav(pendientes); return; }
+
+  // Retos especiales que getDefItem reconoce con estructura propia
+  if (clave === 'op36') {
+    // Reto 27: agregar con su estructura (par 3, 25 yardas por defecto)
+    estadoSesion.programa.push({ id: 'op36', nom: 'Reto 27', cat: 'reto', mins: 60, esReto: true, op36dist: '25' });
+    if (estadoSesion.completados) estadoSesion.completados.push(null);
+    renderSesionSync(); guardarEstadoSesion();
+    _procesarSiguienteFav(pendientes);
+    return;
+  }
+  if (clave === 'reto-approach') {
+    estadoSesion.programa.push({ id: 'retoApproach', nom: 'Reto Approach', cat: 'approach', claveNivel: 'reto-approach', mins: 15, esReto: true });
+    if (estadoSesion.completados) estadoSesion.completados.push(null);
+    renderSesionSync(); guardarEstadoSesion();
+    _procesarSiguienteFav(pendientes);
+    return;
+  }
+
+  var def = CATALOGO_NUEVO[clave] || { nom: ej.nom, cat: (ej.grupo==='reto'?'reto':'putt'), mins: ej.mins, instr: [] };
+
+  if (ej.dist && ej.dist.length) {
+    // Preguntar distancia; al elegir, continúa con el resto
+    elegirDistanciaFavoritoMulti(ej, def, pendientes);
+  } else {
+    agregarEjercicioNivel(null, def, clave, null);
+    _procesarSiguienteFav(pendientes);
+  }
+}
+
+function elegirDistanciaFavoritoMulti(ej, def, pendientes) {
+  var prev = document.getElementById('overlay-dist-fav');
+  if (prev) prev.remove();
+  var ov = document.createElement('div');
+  ov.id = 'overlay-dist-fav';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:560;display:flex;align-items:center;justify-content:center;padding:24px';
+  var pills = ej.dist.map(function(d){
+    return '<div class="dist-pill-fav" data-k="' + d.k + '" style="background:#1a1f2e;border:0.5px solid rgba(255,255,255,.1);border-radius:12px;padding:16px;text-align:center;cursor:pointer;color:#e8e8f0;font-size:15px;font-weight:800;margin-bottom:8px">' + d.lbl + '</div>';
+  }).join('');
+  ov.innerHTML = '<div style="background:#12151f;border-radius:20px;width:100%;max-width:320px;padding:22px">' +
+    '<div style="color:#fff;font-size:17px;font-weight:800;text-align:center;margin-bottom:4px">' + ej.nom + '</div>' +
+    '<div style="color:#8a8a9a;font-size:12px;text-align:center;margin-bottom:16px">¿A qué distancia lo quieres?</div>' +
+    pills +
+  '</div>';
+  document.body.appendChild(ov);
+  // Al elegir una distancia, agregar y continuar con los pendientes
+  ov.querySelectorAll('.dist-pill-fav').forEach(function(pill){
+    pill.onclick = function(){
+      var distK = pill.getAttribute('data-k');
+      ov.remove();
+      var claveNivel = ej.clave + '-' + distK;
+      agregarEjercicioNivel(null, def, claveNivel, distK);
+      _procesarSiguienteFav(pendientes);
+    };
+  });
+}
+
+function cerrarMenuEjYAbrirBiblio() {
+  var ov = document.getElementById('overlay-menu-ej');
+  if (ov) ov.remove();
+  abrirBiblioteca();
+}
+
+// Agrega un favorito al programa. Si tiene distancias, pregunta cuál.
+function agregarFavoritoAlPrograma(clave) {
+  var ej = BIBLIOTECA.find(function(x){ return x.clave === clave; });
+  if (!ej) return;
+  // Reto: usar su flujo propio si aplica
+  var def = CATALOGO_NUEVO[clave] || { nom: ej.nom, cat: (ej.grupo==='reto'?'reto':'putt'), mins: ej.mins, instr: [] };
+
+  if (ej.dist && ej.dist.length) {
+    // Preguntar distancia con pastillas rápidas
+    elegirDistanciaFavorito(ej, def);
+    return;
+  }
+  agregarEjercicioNivel(null, def, clave, null);
+  var ov = document.getElementById('overlay-menu-ej');
+  if (ov) ov.remove();
+}
+
+function elegirDistanciaFavorito(ej, def) {
+  var prev = document.getElementById('overlay-dist-fav');
+  if (prev) prev.remove();
+  var ov = document.createElement('div');
+  ov.id = 'overlay-dist-fav';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:560;display:flex;align-items:center;justify-content:center;padding:24px';
+  var pills = ej.dist.map(function(d){
+    return '<div onclick="_confirmarDistFav(\'' + ej.clave + '\',\'' + d.k + '\')" style="background:#1a1f2e;border:0.5px solid rgba(255,255,255,.1);border-radius:12px;padding:16px;text-align:center;cursor:pointer;color:#e8e8f0;font-size:15px;font-weight:800;margin-bottom:8px">' + d.lbl + '</div>';
+  }).join('');
+  ov.innerHTML = '<div style="background:#12151f;border-radius:20px;width:100%;max-width:320px;padding:22px">' +
+    '<div style="color:#fff;font-size:17px;font-weight:800;text-align:center;margin-bottom:4px">' + ej.nom + '</div>' +
+    '<div style="color:#8a8a9a;font-size:12px;text-align:center;margin-bottom:16px">¿A qué distancia lo quieres?</div>' +
+    pills +
+    '<div onclick="document.getElementById(\'overlay-dist-fav\').remove()" style="text-align:center;color:#6a6a85;font-size:13px;padding:10px;cursor:pointer;margin-top:4px">Cancelar</div>' +
+  '</div>';
+  document.body.appendChild(ov);
+}
+
+function _confirmarDistFav(clave, distK) {
+  var ej = BIBLIOTECA.find(function(x){ return x.clave === clave; });
+  var def = CATALOGO_NUEVO[clave];
+  var ovd = document.getElementById('overlay-dist-fav');
+  if (ovd) ovd.remove();
+  var claveNivel = clave + '-' + distK;
+  if (def) agregarEjercicioNivel(null, def, claveNivel, distK);
+  var ov = document.getElementById('overlay-menu-ej');
+  if (ov) ov.remove();
+}
+
 function abrirMenuEjercicios(soloRetos) {
+  // Flujo nuevo: al agregar ejercicio (no retos) se muestran los FAVORITOS del perfil.
+  // Los favoritos se eligen desde la Biblioteca.
+  if (!soloRetos) { abrirMenuFavoritos(); return; }
   // Secciones del menú. Putt es una sola puerta con sub-secciones (corto/medio/largo).
   var secciones = [
     { key:'putt', lbl:'Putt', icon:'⛳', iconBg:'rgba(24,95,165,.15)', tipo:'subgrupos',
@@ -10488,7 +11475,7 @@ function renderSesion() {
     var esReto = def.cat === 'reto' || item.esReto || item.retoTipo === 'approach' || item.id === 'retoApproach';
     var bg = catC[def.cat]||'#185FA5';
     var tc = catT[def.cat]||'#B5D4F4';
-    var trash = '<div onclick="event.stopPropagation();event.preventDefault();eliminarEjercicio(' + idx + ');return false;" style="padding:6px 8px;cursor:pointer;flex-shrink:0;color:#E24B4A;font-size:18px;position:relative;z-index:2">🗑</div>';
+    var trash = '<div onclick="eliminarEjercicioClick(event,' + idx + ')" style="padding:6px 8px;cursor:pointer;flex-shrink:0;color:#E24B4A;font-size:18px;position:relative;z-index:5">🗑</div>';
     var lapiz = '<div onclick="event.stopPropagation();event.preventDefault();abrirRegistro(' + idx + ');return false;" style="padding:6px 8px;cursor:pointer;flex-shrink:0;color:#8fc0f5;font-size:17px;position:relative;z-index:2">✏️</div>';
 
     if (hecho) {
@@ -10513,14 +11500,18 @@ function renderSesion() {
       if (item.id === 'retoApproach') sub = 'Approach · 3 banderas';
       else if (item.id.indexOf('op36') === 0) sub = 'OP27 · ' + (item.op36dist || item.id.split('-')[1]) + 'y';
       else if (item.yardas) sub = item.yardas + 'y · ' + (item.rondas||3) + ' rondas';
-      html += '<div onclick="abrirRegistro(' + idx + ')" style="display:flex;align-items:center;gap:11px;background:rgba(65,36,2,.3);border:0.5px solid #633806;border-radius:14px;padding:13px 14px;margin-bottom:8px;cursor:pointer">';
+      html += '<div style="display:flex;align-items:center;gap:11px;background:rgba(65,36,2,.3);border:0.5px solid #633806;border-radius:14px;padding:13px 14px;margin-bottom:8px">';
+      html += '<div onclick="abrirRegistro(' + idx + ')" style="display:flex;align-items:center;gap:11px;flex:1;cursor:pointer">';
       html += '<div style="width:30px;height:30px;border-radius:9px;background:#412402;display:flex;align-items:center;justify-content:center;font-size:15px">🏆</div>';
       html += '<div style="flex:1"><div style="color:#EF9F27;font-size:13px;font-weight:700">' + def.nom + '</div><div style="color:#633806;font-size:10px">' + sub + '</div></div>';
+      html += '</div>';
       html += trash + '</div>';
     } else {
-      html += '<div onclick="abrirRegistro(' + idx + ')" style="display:flex;align-items:center;gap:11px;background:#13131f;border:0.5px solid rgba(255,255,255,.06);border-radius:14px;padding:13px 14px;margin-bottom:8px;cursor:pointer">';
+      html += '<div style="display:flex;align-items:center;gap:11px;background:#13131f;border:0.5px solid rgba(255,255,255,.06);border-radius:14px;padding:13px 14px;margin-bottom:8px">';
+      html += '<div onclick="abrirRegistro(' + idx + ')" style="display:flex;align-items:center;gap:11px;flex:1;cursor:pointer">';
       html += '<div style="width:30px;height:30px;border-radius:9px;background:' + bg + ';display:flex;align-items:center;justify-content:center;color:' + tc + ';font-size:13px;font-weight:700">' + (idx+1) + '</div>';
       html += '<div style="flex:1"><div style="color:#e8e8f0;font-size:13px;font-weight:700">' + def.nom + '</div><div style="color:#4a4a6a;font-size:10px">' + item.mins + ' min</div></div>';
+      html += '</div>';
       html += trash + '</div>';
     }
   }
@@ -10570,6 +11561,15 @@ function instruccionesDinamicas(item, clave) {
   if (!t) return null;
   var perfil = getPerfil();
   var nivel = perfil ? getNivelReg(perfil, clave).nivel : 1;
+  // Ejercicio personalizado (creado con Claude): usa su instrucción propia + objetivo del nivel
+  var bibEj = (typeof BIBLIOTECA !== 'undefined') ? BIBLIOTECA.find(function(x){ return x.clave === clave && x.custom; }) : null;
+  if (bibEj && bibEj.instrCustom) {
+    var oCustom = t.obj ? t.obj[nivel] : null;
+    var metaTxt = '';
+    if (t.tipo === 'deN') metaTxt = ' Meta del nivel ' + nivel + ': lograr ' + oCustom + ' de ' + t.n + '.';
+    else if (t.tipo === 'racha') metaTxt = ' Meta del nivel ' + nivel + ': racha de ' + oCustom + '.';
+    return [bibEj.instrCustom + metaTxt];
+  }
   // Extraer la distancia en pies de la clave (ej. circulo-tobogan-6 -> "6 pies")
   var mDist = clave.match(/-(\d+)$/);
   var pies = (mDist && clave.indexOf('circulo') === 0) ? mDist[1] : null;
@@ -10578,13 +11578,10 @@ function instruccionesDinamicas(item, clave) {
   switch (t.tipo) {
     case 'approach-cerca': // Reto de Approach
       var pasos = t.pasos ? t.pasos[nivel] : 3;
-      var veces = t.veces ? t.veces[nivel] : 1;
       var pasoTxt = pasos === 1 ? '1 paso' : pasos + ' pasos';
-      var vecesTxt = veces === 1 ? '1 vez' : veces + ' veces';
+      var metaLog = t.metaLogros || 2;
       return [
-        '🎯 Objetivo: pega los 3 tiros (uno a cada bandera) y que los 3 queden a menos de ' + pasoTxt + ' de la bandera. Lograrlo ' + vecesTxt + ' completa tu reto.',
-        '📍 Montaje: elige 3 banderas a distancias diferentes en el green de práctica. Tira 1 bola a cada una (3 tiros en total).',
-        '⭐ Tu nivel ' + nivel + ': deja los 3 tiros a menos de ' + pasoTxt + (veces > 1 ? (', y lógralo ' + vecesTxt) : '') + '. Anota cuántas veces lo lograste (con ' + vecesTxt + ' subes de nivel).'
+        '🎯 Objetivo (nivel ' + nivel + '): elige 3 banderas a distintas distancias en el green de práctica y tira 1 bola a cada una (3 tiros). Si las 3 quedan a menos de ' + pasoTxt + ' de su bandera, lograste el objetivo una vez. Tu meta en 15 minutos es lograrlo ' + metaLog + ' veces. Anota cuántas veces lo lograste.'
       ];
     case 'vueltas': // Escalera Putt Medio (estaciones 6, 9, 12, 15 yardas; 3 pares consecutivos por estación)
       var ests = t.estaciones || [6,9,12,15];
@@ -10644,7 +11641,7 @@ function instruccionesDinamicas(item, clave) {
       return [
         '🎯 Objetivo (nivel ' + nivel + '): se juega con 1 bola en cada tee, son 4 tees alrededor del hoyo a ' + pies + ' pies de distancia. Ve rotando entre ellos y haz la mayor cantidad de puntos que puedas: cada putt metido suma +1 y cada putt fallado resta −1 (lo más bajo que puedes estar es 0). Tu meta en 10 minutos es llegar a ' + o + ' puntos.'
       ];
-    case 'deN': // Círculo Handicap (n bolas)
+    case 'deN': // Círculo Handicap (n bolas) / Hierro-Drive Handicap
       if (pies) {
         var rec = recordEjercicio(clave);
         var recTxt = '';
@@ -10658,6 +11655,18 @@ function instruccionesDinamicas(item, clave) {
         }
         return [
           '🎯 Objetivo (nivel ' + nivel + '): coloca ' + t.n + ' tees alrededor del hoyo a ' + pies + ' pies y tira 1 bola desde cada posición. Al terminar la vuelta de ' + t.n + ' golpes, cuenta cuántas metiste.' + recTxt + ' Haz los intentos que alcances en 10 minutos y anota cuál fue tu mejor resultado.'
+        ];
+      }
+      // Hierro / Drive Handicap
+      if (clave.indexOf('hierro') === 0 || clave.indexOf('drive') === 0) {
+        var esDrive = clave.indexOf('drive') === 0;
+        var zonaTxt = esDrive
+          ? 'caigan dentro de la calle (ancho de una calle normal)'
+          : 'caigan dentro de tu zona objetivo (la dispersión aceptable de ese hierro: cuanto más corto el hierro, más chica la zona)';
+        var recH = recordEjercicio(clave);
+        var recHTxt = recH ? (' Tu récord es ' + recH.valor + ' de ' + t.n + '. ¡Supéralo!') : ' Aún no tienes récord: ¡hoy puedes hacer el primero!';
+        return [
+          '🎯 Objetivo (nivel ' + nivel + '): tira ' + t.n + ' bolas con ' + (esDrive ? 'el driver' : 'ese hierro') + ' hacia tu objetivo y cuenta cuántas ' + zonaTxt + '. Tu meta es meter ' + o + ' de ' + t.n + '.' + recHTxt + ' Anota cuántas lograste.'
         ];
       }
       return null;
@@ -10717,6 +11726,16 @@ function instruccionesDinamicas(item, clave) {
         }
         return [
           '🎯 Objetivo (nivel ' + nivel + '): pon 4 tees alrededor del hoyo a ' + pies + ' pies. En cada posición tira y cuenta cuántas metes seguidas; al fallar, cambia de posición y sigue. Haz los intentos que alcances en 10 minutos y anota cuál fue tu racha más grande.' + recRTxt
+        ];
+      }
+      // Hierro / Drive Récord (racha de aciertos)
+      if (clave.indexOf('hierro') === 0 || clave.indexOf('drive') === 0) {
+        var esDriveR = clave.indexOf('drive') === 0;
+        var zonaR = esDriveR ? 'caiga dentro de la calle' : 'caiga dentro de tu zona objetivo (la dispersión aceptable del hierro)';
+        var recHR = recordEjercicio(clave);
+        var recHRTxt = recHR ? (' Tu récord es una racha de ' + recHR.valor + '. ¡Supérala!') : ' Aún no tienes récord: ¡hoy puedes hacer el primero!';
+        return [
+          '🎯 Objetivo (nivel ' + nivel + '): tira con ' + (esDriveR ? 'el driver' : 'ese hierro') + ' y cuenta cuántas bolas seguidas logras que ' + zonaR + '. Al fallar, la racha se reinicia. Tu meta es una racha de ' + o + '.' + recHRTxt + ' En 15 minutos, anota tu mejor racha.'
         ];
       }
       return null;
@@ -11548,7 +12567,7 @@ function toggleVozOp36() {
     op36TextoVoz = '';
     if (op36Reconocimiento) { try { op36Reconocimiento.stop(); } catch(e) {} op36Reconocimiento = null; }
     resetMicOp36();
-    procesarVozOp36(texto);
+    procesarVozOp36ConClaude(texto);
   }
 }
 
@@ -11612,6 +12631,81 @@ function mostrarDiagnosticoDictado() {
       '<div style="color:#666;font-size:11px;text-align:center;line-height:1.5;margin-top:14px">Si el texto de arriba no es lo que dijiste, el micrófono te entendió mal. Si el texto está bien pero la interpretación no, avísame qué dice exactamente.</div>' +
     '</div>';
   document.body.appendChild(ov);
+}
+
+// ═══════════════════════════════════════════════════════════
+// RETO 27 · dictado inteligente con Claude (múltiples hoyos)
+// ═══════════════════════════════════════════════════════════
+// Llena un hoyo ESPECÍFICO del reto (no solo el actual)
+function op36LlenarHoyoNum(num, golpes, gir, pasos, puttCortoFallado, putts) {
+  var h = op36Estado.hoyos[num - 1];
+  if (!h) return;
+  h.golpes = golpes;
+  h.res = golpes - 3;
+  h.ok = true;
+  if (gir !== undefined && gir !== null) h.gir = gir;
+  if (pasos !== undefined && pasos !== null) h.pasosPrimerPutt = pasos;
+  if (puttCortoFallado !== undefined && puttCortoFallado !== null) h.puttCortoFallado = puttCortoFallado;
+  if (putts !== undefined && putts !== null) h.putts = putts;
+  else h.putts = gir ? Math.max(0, golpes - 1) : Math.max(0, golpes - 2);
+}
+
+// System prompt para interpretar un dictado del reto 27 como lista de hoyos
+function _systemPromptOp36() {
+  return 'Interpretas el dictado por voz de un jugador registrando su Reto 27 (Operation 27), que se juega a 25 yardas y CADA HOYO ES PAR 3. ' +
+    'El jugador puede dictar UNO O VARIOS hoyos seguidos, en cualquier orden. Tu trabajo es identificar cada hoyo mencionado con su resultado.\n\n' +
+    'TÉRMINOS (score relativo al par 3, conviértelo a GOLPES sumando 3): "águila"/"eagle"/"menos dos" = -2 (1 golpe); "birdie"/"verde"/"verdi"/"menos uno" = -1 (2 golpes); "par"/"empate" = 0 (3 golpes); "bogey"/"bogui"/"más uno" = +1 (4 golpes); "doble bogey"/"sopi"/"más dos" = +2 (5 golpes); "triple bogey"/"doble sopi"/"más tres" = +3 (6 golpes). ' +
+    'Los "pasos" o "yardas" son la distancia a la que quedó su primer putt del hoyo. ' +
+    '"un putt"/"un solo putt" = 1 putt (metió de largo). Si menciona que falló un putt corto (≤2 pasos), anótalo.\n\n' +
+    'Errores comunes de dictado por voz: "precio/presión/presios 27" = Reto 27; "verde"/"verdi" = birdie; "bogui" = bogey; "sopi" = doble bogey.\n\n' +
+    'Devuelve SOLO un JSON válido (sin markdown) con esta estructura:\n' +
+    '{ "hoyos": [ { "num": <número de hoyo 1-9>, "golpes": <número de golpes reales, ej. par=3, birdie=2, bogey=4>, "pasos": <distancia en pasos del primer putt, o null si no se dijo>, "puttCortoFallado": <true si falló un putt corto, false si lo metió, null si no se mencionó> } ], "dudas": "<vacío si todo claro>" }\n\n' +
+    'Reglas: (1) Incluye SOLO los hoyos mencionados en este dictado. (2) Si el jugador no dice el número de hoyo pero es evidente por contexto, dedúcelo; si no, usa el campo "num" con el hoyo que corresponda en secuencia. (3) NO inventes hoyos ni datos.';
+}
+
+async function procesarVozOp36ConClaude(texto) {
+  if (!texto || !texto.trim()) return;
+  var debug = document.getElementById('op36-mic-debug');
+  // Si Claude no está enlazado, usar el intérprete rígido de siempre
+  if (!tieneClaudeEnlazado()) { procesarVozOp36(texto); return; }
+
+  if (debug) debug.textContent = '🧠 Entendiendo…';
+  var hoyoContexto = op36Estado.hoyoActual;
+  var prompt = _systemPromptOp36() + '\n\nEl jugador está actualmente en el hoyo ' + hoyoContexto + '. Si dicta sin número de hoyo, empieza por el ' + hoyoContexto + '.';
+
+  try {
+    var r = await dictarAClaudeJSON(texto, prompt, { maxTokens: 1024 });
+    var hoyos = (r && r.hoyos) || [];
+    if (!hoyos.length) {
+      if (debug) debug.textContent = 'No entendí. Intenta de nuevo.';
+      return;
+    }
+    var llenados = [];
+    hoyos.forEach(function(h) {
+      if (!h || typeof h.num !== 'number' || h.num < 1 || h.num > 9) return;
+      if (typeof h.golpes !== 'number') return;
+      var pasos = (typeof h.pasos === 'number') ? h.pasos : null;
+      var pcf = (h.puttCortoFallado === true || h.puttCortoFallado === false) ? h.puttCortoFallado : null;
+      // deducir gir: en op27 par 3, gir si llegó al green en 1 (birdie o mejor con putt)
+      var gir = (h.golpes <= 3 && pasos !== null) ? true : (h.golpes <= 2);
+      op36LlenarHoyoNum(h.num, h.golpes, gir, pasos, pcf, null);
+      llenados.push(h.num);
+    });
+    renderOp36Hoyos();
+    // Avanzar al siguiente hoyo sin completar
+    setTimeout(function() {
+      var next = op36Estado.hoyos.find(function(x){ return !x.ok; });
+      if (next) { op36Estado.hoyoActual = next.num; renderOp36Hoyos(); }
+    }, 350);
+    if (debug) {
+      debug.textContent = '✓ ' + llenados.length + ' hoyo' + (llenados.length !== 1 ? 's' : '') + ' registrado' + (llenados.length !== 1 ? 's' : '') + ' (' + llenados.join(', ') + ')';
+      setTimeout(function() { var d = document.getElementById('op36-mic-debug'); if (d) d.textContent = ''; }, 2500);
+    }
+  } catch(e) {
+    // Si Claude falla, caer al intérprete rígido
+    if (debug) debug.textContent = '';
+    procesarVozOp36(texto);
+  }
 }
 
 function procesarVozOp36(texto) {
@@ -12060,6 +13154,10 @@ function mostrarResumenOp36(golpes, acum, hoyos) {
 // ── INIT ──────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
   cargarPerfilesLocal();
+  // Integrar ejercicios personalizados creados con Claude
+  try { integrarEjerciciosCustom(); } catch(e) {}
+  // Integrar formatos de torneo personalizados
+  try { T_integrarFormatosCustom(); } catch(e) {}
   // La PRIMERA vez que se abre la app, generar automáticamente los datos del perfil Prueba (id 5).
   // Se usa una bandera para no volver a generarlos (así si el usuario los borra, no reaparecen).
   try {
@@ -12069,6 +13167,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   } catch(e) {}
   renderHome();
+  // Dictado: revisar si hay actividades de ayer sin subir (auto-subida) y programar la de medianoche
+  try { revisarAutoSubidaDictado(); } catch(e) {}
+  try { programarAutoSubidaMedianoche(); } catch(e) {}
 });
 
 function cargarPerfilesLocal() {
@@ -12287,11 +13388,58 @@ function renderHoyos(){
 function abrirSelectorScore(numHoyo){
   cambiarHoyo(numHoyo);
   if(E.torneoActivo){
+    // Wolf: si aún no hay decisión del Lobo para este hoyo, pedirla primero
+    if(window.T_formatoActivo === 'wolf' && (!window.T_wolfDecisiones || !window.T_wolfDecisiones[numHoyo])){
+      T_abrirDecisionWolf(numHoyo);
+      return;
+    }
     abrirSelectorScoreTorneo(numHoyo);
   } else {
     cambiarScore();
   }
 }
+
+// Pantallita: el Lobo del hoyo elige compañero o va solo
+function T_abrirDecisionWolf(numHoyo){
+  var viejo = document.getElementById('overlay-wolf');
+  if(viejo) viejo.remove();
+  var jugadores = T_getJugadores();
+  var n = jugadores.length;
+  var loboIdx = (numHoyo - 1) % n;
+  var lobo = jugadores[loboIdx];
+
+  var overlay = document.createElement('div');
+  overlay.id = 'overlay-wolf';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px';
+
+  // Opciones de compañero (los que no son el lobo)
+  var opcionesComp = '';
+  jugadores.forEach(function(j, idx){
+    if(idx === loboIdx) return;
+    opcionesComp += '<div onclick="T_decidirWolf(' + numHoyo + ',' + idx + ')" style="background:rgba(24,95,165,.15);border:1px solid rgba(24,95,165,.4);border-radius:13px;padding:14px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:10px">' +
+      '<span style="font-size:18px">🤝</span><span style="color:#e8e8f0;font-size:14px;font-weight:700">Con ' + j.nom + '</span></div>';
+  });
+
+  overlay.innerHTML = '<div style="background:#1a1f2e;border-radius:20px;padding:22px;width:100%;max-width:360px;border:1px solid rgba(255,255,255,.1)">' +
+    '<div style="text-align:center;margin-bottom:6px"><span style="font-size:34px">🐺</span></div>' +
+    '<div style="color:#fff;font-size:18px;font-weight:800;text-align:center;margin-bottom:2px">Hoyo ' + numHoyo + ' · El Lobo es ' + lobo.nom + '</div>' +
+    '<div style="color:#8a8a9a;font-size:12px;text-align:center;margin-bottom:18px">Elige un compañero para jugar 2 contra 2, o ve solo (vale doble).</div>' +
+    opcionesComp +
+    '<div onclick="T_decidirWolf(' + numHoyo + ',null,true)" style="background:linear-gradient(160deg,rgba(239,159,39,.25),rgba(239,159,39,.1));border:1px solid rgba(239,159,39,.5);border-radius:13px;padding:14px;margin-top:4px;cursor:pointer;display:flex;align-items:center;gap:10px;justify-content:center">' +
+      '<span style="font-size:18px">🐺</span><span style="color:#EF9F27;font-size:14px;font-weight:800">¡Lobo solitario! (vale doble)</span></div>' +
+  '</div>';
+  document.body.appendChild(overlay);
+}
+
+function T_decidirWolf(numHoyo, companeroIdx, solo){
+  if(!window.T_wolfDecisiones) window.T_wolfDecisiones = {};
+  window.T_wolfDecisiones[numHoyo] = { solo: !!solo, companero: (solo ? null : companeroIdx) };
+  var ov = document.getElementById('overlay-wolf');
+  if(ov) ov.remove();
+  // Continuar con la anotación de scores del hoyo
+  abrirSelectorScoreTorneo(numHoyo);
+}
+
 
 function abrirSelectorScoreTorneo(numHoyo){
   var viejo = document.getElementById('overlay-score-torneo');
@@ -12860,14 +14008,290 @@ var T_config = {
 var T_hcpValues = {}; // {yo: 0, rival_0: 0, rival_1: 0, ...}
 
 var T_FORMATOS_DEF = [
-  {id:'sin_apuesta',     label:'Sin apuesta',               desc:'Solo anotan scores — con o sin handicap', jugMin:2, jugMax:4},
-  {id:'nassau',          label:'Nassau',                    desc:'Front 9 · Back 9 · Total',               jugMin:2, jugMax:4},
-  {id:'skins_sin',       label:'Skins · Sin Handicap',      desc:'Hoyo a hoyo sin ventaja',                jugMin:2, jugMax:4},
-  {id:'skins_con',       label:'Skins · Con Handicap',      desc:'Hoyo a hoyo con ventaja',                jugMin:2, jugMax:4},
-  {id:'stableford_uno',  label:'Stableford · Un ganador',   desc:'El mejor puntaje cobra a todos',         jugMin:2, jugMax:4},
-  {id:'stableford_todos',label:'Stableford · Todos contra todos', desc:'Cada jugador contra cada rival',   jugMin:2, jugMax:4},
-  {id:'wolf',            label:'Wolf / Loba',               desc:'El Lobo elige compañero cada hoyo',      jugMin:3, jugMax:4},
+  {id:'sin_apuesta',     label:'Sin apuesta',               desc:'Solo anotan scores — con o sin handicap', jugMin:2, jugMax:4,
+   reglas:['Todos anotan su score hoyo por hoyo, sin dinero de por medio.','Sirve para llevar la tarjeta y comparar resultados.','Puedes activar handicap para nivelar entre jugadores de distinto nivel.']},
+  {id:'nassau',          label:'Nassau',                    desc:'Front 9 · Back 9 · Total',               jugMin:2, jugMax:4,
+   reglas:['Son 3 apuestas en una: los primeros 9 hoyos (Front), los últimos 9 (Back), y el total de los 18.','Gana cada parte quien tenga mejor score en esos hoyos.','Se puede ganar el Front pero perder el Back — cada sección paga aparte.','Con handicap se usa el score neto de cada jugador.']},
+  {id:'skins_sin',       label:'Skins · Sin Handicap',      desc:'Hoyo a hoyo sin ventaja',                jugMin:2, jugMax:4,
+   reglas:['Cada hoyo vale un "skin" (el monto apostado).','Gana el skin quien haga el mejor score del hoyo ÉL SOLO (sin empatar).','Si dos o más empatan en el mejor score, nadie gana y el skin se acumula al siguiente hoyo.','Sin handicap: se juega con el score real, sin ventajas.']},
+  {id:'skins_con',       label:'Skins · Con Handicap',      desc:'Hoyo a hoyo con ventaja',                jugMin:2, jugMax:4,
+   reglas:['Igual que Skins normal: cada hoyo vale un skin y los empates acumulan.','La diferencia: se usa el score neto (con los golpes de ventaja del handicap).','Ideal cuando juegan personas de distinto nivel.']},
+  {id:'stableford_uno',  label:'Stableford · Un ganador',   desc:'El mejor puntaje cobra a todos',         jugMin:2, jugMax:4,
+   reglas:['Ganas puntos por hoyo: bogey=1, par=2, birdie=3, eagle=4, albatros=5. Doble bogey o peor=0.','Al final, quien junte MÁS puntos le cobra a todos los demás.','Cobra la diferencia de puntos contra cada rival, por el valor del punto.','Premia jugar consistente y arriesgar en los hoyos buenos.']},
+  {id:'stableford_todos',label:'Stableford · Todos contra todos', desc:'Cada jugador contra cada rival',   jugMin:2, jugMax:4,
+   reglas:['Mismos puntos por hoyo que el Stableford normal (bogey=1, par=2, birdie=3...).','La diferencia: cada jugador se compara contra CADA rival por separado.','Puedes ganarle a uno y perder con otro en la misma ronda.','Cada duelo se paga según la diferencia de puntos.']},
+  {id:'wolf',            label:'Wolf / Loba',               desc:'El Lobo elige compañero cada hoyo',      jugMin:3, jugMax:4,
+   reglas:['En cada hoyo hay un "Lobo" que va rotando (hoyo 1 el jugador 1, hoyo 2 el jugador 2...).','El Lobo elige un compañero para jugar 2 contra 2 en ese hoyo.','O puede jugar de "Lobo solitario": él solo contra todos, y el hoyo vale DOBLE.','Gana el equipo con el mejor score del hoyo. El solitario que gana cobra doble a cada uno.']},
 ];
+
+// ═══════════════════════════════════════════════════════════
+// CREAR MIS PROPIAS REGLAS DE TORNEO (con Claude, conversacional)
+// ═══════════════════════════════════════════════════════════
+var _T_crearHistorial = [];   // historial de la conversación con Claude
+var _T_crearConfig = null;    // config final generada
+
+function _T_systemPromptCrearTorneo() {
+  var jugadores = [];
+  try { jugadores = T_getJugadores().map(function(j){ return j.nom; }); } catch(e) {}
+  return 'Eres un asistente experto en apuestas de golf. Un jugador quiere registrar SU forma de jugar torneos/apuestas con sus amigos para que la app la calcule automáticamente.\n\n' +
+    'TU TRABAJO: hacer preguntas CLARAS y UNA A LA VEZ hasta entender perfectamente todas las variables. NO inventes reglas: solo entiende las del usuario y complétalas preguntando.\n\n' +
+    'Variables que DEBES dejar claras antes de terminar:\n' +
+    '- Cómo se ganan puntos o dinero en cada hoyo (ej. birdie=X, par=Y, o "gana el de menor score").\n' +
+    '- Si usan handicap y cómo dan las ventajas.\n' +
+    '- Si hay bonos especiales (ej. más pares, más birdies, ganar los primeros 9, etc.).\n' +
+    '- El valor en dinero de cada punto o unidad.\n' +
+    '- Cómo se liquida al final: "un_ganador" (el mejor cobra a todos) o "todos_contra_todos" (cada quien contra cada quien).\n\n' +
+    (jugadores.length ? ('Jugadores de este torneo: ' + jugadores.join(', ') + '.\n\n') : '') +
+    'FORMATO DE TUS RESPUESTAS: responde SIEMPRE con un JSON (sin texto extra, sin markdown):\n' +
+    '{\n' +
+    '  "listo": false,\n' +
+    '  "pregunta": "tu siguiente pregunta clara al usuario (si aún falta info)",\n' +
+    '  "resumen": "breve resumen de lo que ya entendiste hasta ahora"\n' +
+    '}\n' +
+    'Cuando YA tengas TODO claro, responde con:\n' +
+    '{\n' +
+    '  "listo": true,\n' +
+    '  "config": {\n' +
+    '    "nombre": "nombre corto del formato",\n' +
+    '    "reglasTexto": ["regla 1 clara", "regla 2", "..."],\n' +
+    '    "conHcp": true o false,\n' +
+    '    "puntos": { "porResultado": { "aguila":N, "birdie":N, "par":N, "bogey":N, "doble":N, "triple":N } },\n' +
+    '    "bonos": [ { "tipo": "mas_pares"|"mas_birdies"|"gana_front"|"gana_back"|"gana_total", "valor": N } ],\n' +
+    '    "liquidacion": "un_ganador" o "todos_contra_todos",\n' +
+    '    "valorUnidad": N\n' +
+    '  },\n' +
+    '  "explicacion": "explicación amistosa de cómo quedó el formato"\n' +
+    '}\n' +
+    'Los puntos por resultado son los que gana un jugador por su score en el hoyo. Si el usuario no usa algún bono, deja "bonos" como []. Pregunta hasta estar seguro; no adivines los montos.';
+}
+
+function T_crearFormatoTorneo() {
+  if (!tieneClaudeEnlazado()) {
+    confirmarBorrado('Para crear tus propias reglas con Claude necesitas enlazarlo primero. ¿Abrir la pantalla para enlazarlo?', function(){ abrirEnlazarClaude(); });
+    return;
+  }
+  _T_crearHistorial = [];
+  _T_crearConfig = null;
+  var prev = document.getElementById('overlay-crear-torneo');
+  if (prev) prev.remove();
+  var ov = document.createElement('div');
+  ov.id = 'overlay-crear-torneo';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:1015;display:flex;align-items:flex-end;justify-content:center';
+  ov.innerHTML = '<div style="background:#12151f;border-radius:24px 24px 0 0;width:100%;max-width:430px;height:88vh;display:flex;flex-direction:column">' +
+    '<div style="display:flex;justify-content:center;padding:12px 0"><div style="width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:2px"></div></div>' +
+    '<div style="padding:0 20px 12px;display:flex;align-items:center;justify-content:space-between;border-bottom:0.5px solid rgba(255,255,255,.08)">' +
+      '<div><div style="color:#EF9F27;font-size:18px;font-weight:800">✨ Crear mis reglas</div>' +
+      '<div style="color:#8a8a9a;font-size:11px;margin-top:1px">Cuéntale a Claude cómo juegas y él lo arma</div></div>' +
+      '<div id="cerrar-crear-torneo" style="color:#4a4a6a;font-size:28px;cursor:pointer;padding:4px 8px">×</div>' +
+    '</div>' +
+    '<div id="T_crear-chat" style="flex:1;overflow-y:auto;padding:16px 18px;display:flex;flex-direction:column;gap:12px"></div>' +
+    '<div style="padding:12px 16px 20px;border-top:0.5px solid rgba(255,255,255,.08);display:flex;gap:8px;align-items:flex-end">' +
+      '<textarea id="T_crear-input" placeholder="Escribe aquí…" style="flex:1;min-height:44px;max-height:100px;background:#1a1f2e;border:0.5px solid rgba(255,255,255,.12);border-radius:12px;padding:11px;color:#e8e8f0;font-size:14px;font-family:inherit;resize:none;box-sizing:border-box"></textarea>' +
+      '<div id="T_crear-mic" onclick="_T_dictarMensajeTorneo()" style="width:44px;height:44px;background:#1a1f2e;border:0.5px solid rgba(255,255,255,.12);border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8fb4e8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v4"/></svg></div>' +
+      '<div onclick="_T_enviarMensajeTorneo()" style="width:44px;height:44px;background:linear-gradient(160deg,#EF9F27,#c9821a);border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></div>' +
+    '</div>' +
+  '</div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click', function(e){ if (e.target.id === 'cerrar-crear-torneo') ov.remove(); });
+  // Mensaje inicial de Claude
+  _T_pintarMensajeTorneo('claude', '¡Hola! Cuéntame cómo juegan tus torneos o apuestas con tus amigos. Por ejemplo: cuánto vale un birdie, si usan handicap, si hay bonos… Yo te voy preguntando lo que falte. 🏌️');
+}
+
+function _T_pintarMensajeTorneo(quien, texto) {
+  var chat = document.getElementById('T_crear-chat');
+  if (!chat) return;
+  var esClaude = quien === 'claude';
+  var burbuja = document.createElement('div');
+  burbuja.style.cssText = 'max-width:82%;padding:11px 14px;border-radius:14px;font-size:13px;line-height:1.5;' +
+    (esClaude ? 'align-self:flex-start;background:#1a1f2e;color:#e8e8f0;border:0.5px solid rgba(255,255,255,.08)' : 'align-self:flex-end;background:linear-gradient(160deg,#EF9F27,#c9821a);color:#000;font-weight:600');
+  burbuja.textContent = texto;
+  chat.appendChild(burbuja);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function _T_dictarMensajeTorneo() {
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return;
+  var rec = new SR(); rec.lang = 'es-MX'; rec.interimResults = false; rec.continuous = false;
+  var mic = document.getElementById('T_crear-mic');
+  if (mic) mic.style.background = '#EF9F27';
+  rec.onresult = function(e){ var ta = document.getElementById('T_crear-input'); if (ta) ta.value = (ta.value?ta.value+' ':'') + e.results[0][0].transcript; };
+  rec.onend = function(){ if (mic) mic.style.background = '#1a1f2e'; };
+  rec.onerror = function(){ if (mic) mic.style.background = '#1a1f2e'; };
+  try { rec.start(); } catch(e) {}
+}
+
+async function _T_enviarMensajeTorneo() {
+  var ta = document.getElementById('T_crear-input');
+  var texto = ta ? ta.value.trim() : '';
+  if (!texto) return;
+  ta.value = '';
+  _T_pintarMensajeTorneo('user', texto);
+  _T_crearHistorial.push({ role: 'user', content: texto });
+
+  // Indicador de que Claude piensa
+  var chat = document.getElementById('T_crear-chat');
+  var pensando = document.createElement('div');
+  pensando.id = 'T_pensando';
+  pensando.style.cssText = 'align-self:flex-start;color:#8a8a9a;font-size:12px;padding:6px 10px';
+  pensando.textContent = 'Claude está pensando…';
+  if (chat) { chat.appendChild(pensando); chat.scrollTop = chat.scrollHeight; }
+
+  try {
+    var respTexto = await conversarConClaude(_T_crearHistorial, _T_systemPromptCrearTorneo());
+    if (pensando) pensando.remove();
+    _T_crearHistorial.push({ role: 'assistant', content: respTexto });
+    // Parsear JSON
+    var limpio = respTexto.replace(/```json|```/g, '').trim();
+    var i = limpio.indexOf('{'); var j = limpio.lastIndexOf('}');
+    if (i >= 0 && j > i) limpio = limpio.substring(i, j+1);
+    var resp = JSON.parse(limpio);
+    if (resp.listo && resp.config) {
+      _T_crearConfig = resp.config;
+      _T_mostrarResumenTorneo(resp.config, resp.explicacion);
+    } else {
+      _T_pintarMensajeTorneo('claude', resp.pregunta || 'Cuéntame más, por favor.');
+    }
+  } catch(e) {
+    if (pensando) pensando.remove();
+    _T_pintarMensajeTorneo('claude', 'Ups, no te entendí bien. ¿Me lo explicas de otra forma?');
+  }
+}
+
+function _T_mostrarResumenTorneo(cfg, explicacion) {
+  var chat = document.getElementById('T_crear-chat');
+  if (!chat) return;
+  var reglasHtml = (cfg.reglasTexto || []).map(function(r){ return '<div style="display:flex;gap:8px;margin-bottom:6px"><span style="color:#EF9F27">•</span><span style="color:#c8c8d5;font-size:12px;line-height:1.4">' + r + '</span></div>'; }).join('');
+  var card = document.createElement('div');
+  card.style.cssText = 'align-self:stretch;background:rgba(239,159,39,.1);border:1px solid rgba(239,159,39,.35);border-radius:16px;padding:16px;margin-top:6px';
+  card.innerHTML =
+    (explicacion ? '<div style="color:#c9b6a0;font-size:12px;font-style:italic;line-height:1.5;margin-bottom:12px">' + explicacion + '</div>' : '') +
+    '<div style="color:#fff;font-size:17px;font-weight:800;margin-bottom:4px">' + (cfg.nombre || 'Mi formato') + '</div>' +
+    '<div style="color:#8a8a9a;font-size:11px;margin-bottom:12px">' + (cfg.conHcp ? 'Con handicap' : 'Sin handicap') + ' · $' + (cfg.valorUnidad||0) + ' por punto</div>' +
+    reglasHtml +
+    '<div style="display:flex;gap:8px;margin-top:14px">' +
+      '<div onclick="_T_reiniciarCrearTorneo()" style="flex:1;background:#1a1f2e;border:0.5px solid rgba(255,255,255,.12);border-radius:12px;padding:12px;text-align:center;cursor:pointer;color:#8a8a9a;font-size:13px;font-weight:700">↻ Ajustar</div>' +
+      '<div onclick="_T_guardarFormatoTorneo()" style="flex:2;background:linear-gradient(160deg,#1D9E75,#0F6E56);border-radius:12px;padding:12px;text-align:center;cursor:pointer;color:#fff;font-size:14px;font-weight:800">Guardar formato</div>' +
+    '</div>';
+  chat.appendChild(card);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function _T_reiniciarCrearTorneo() {
+  _T_pintarMensajeTorneo('claude', 'Claro, dime qué quieres ajustar.');
+}
+
+function _T_guardarFormatoTorneo() {
+  var cfg = _T_crearConfig;
+  if (!cfg) return;
+  // Guardar en localStorage (formatos custom compartidos)
+  var lista = [];
+  try { lista = JSON.parse(localStorage.getItem('torneo_custom') || '[]'); } catch(e) {}
+  var id = 'custom-t-' + Date.now();
+  var formato = {
+    id: id,
+    label: cfg.nombre || 'Mi formato',
+    desc: 'Formato propio',
+    jugMin: 2, jugMax: 4,
+    reglas: cfg.reglasTexto || [],
+    custom: true,
+    config: cfg
+  };
+  lista.push(formato);
+  try { localStorage.setItem('torneo_custom', JSON.stringify(lista)); } catch(e) {}
+  T_integrarFormatosCustom();
+  // Marcar como favorito
+  var p = getPerfil();
+  if (p) toggleFavoritoTorneo(p.id, id);
+
+  var ov = document.getElementById('overlay-crear-torneo');
+  if (ov) ov.remove();
+  confirmarBorrado('✅ "' + (cfg.nombre||'Tu formato') + '" quedó guardado y marcado como favorito ⭐. Aparecerá al elegir formato de torneo. ¿Cerrar?', function(){});
+  if (document.getElementById('T_formatos-lista')) T_renderPaso2();
+}
+
+// Integra los formatos custom a T_FORMATOS_DEF
+function T_integrarFormatosCustom() {
+  var lista = [];
+  try { lista = JSON.parse(localStorage.getItem('torneo_custom') || '[]'); } catch(e) {}
+  lista.forEach(function(f){
+    if (!T_FORMATOS_DEF.find(function(x){ return x.id === f.id; })) {
+      T_FORMATOS_DEF.push(f);
+    }
+  });
+}
+
+// ─── FAVORITOS DE TORNEOS (por perfil) ───
+function getFavoritosTorneo(perfilId) {
+  try { return JSON.parse(localStorage.getItem('torneo_fav_' + perfilId) || '[]'); } catch(e) { return []; }
+}
+function setFavoritosTorneo(perfilId, favs) {
+  try { localStorage.setItem('torneo_fav_' + perfilId, JSON.stringify(favs)); } catch(e) {}
+}
+function esFavoritoTorneo(perfilId, id) {
+  return getFavoritosTorneo(perfilId).indexOf(id) >= 0;
+}
+function toggleFavoritoTorneo(perfilId, id) {
+  var favs = getFavoritosTorneo(perfilId);
+  var i = favs.indexOf(id);
+  if (i >= 0) favs.splice(i, 1);
+  else favs.push(id);
+  setFavoritosTorneo(perfilId, favs);
+  return favs.indexOf(id) >= 0;
+}
+
+// Ficha detallada de un formato de torneo
+function T_verFichaFormato(id) {
+  var f = T_FORMATOS_DEF.find(function(x){ return x.id === id; });
+  if (!f) return;
+  var p = getPerfil();
+  var pid = p ? p.id : 0;
+  var fav = esFavoritoTorneo(pid, id);
+  var prev = document.getElementById('overlay-ficha-torneo');
+  if (prev) prev.remove();
+  var ov = document.createElement('div');
+  ov.id = 'overlay-ficha-torneo';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:1010;display:flex;align-items:flex-end;justify-content:center';
+  var reglasHtml = (f.reglas || []).map(function(r){
+    return '<div style="display:flex;gap:9px;margin-bottom:10px"><span style="color:#EF9F27;font-size:13px;flex-shrink:0">•</span><span style="color:#c8c8d5;font-size:13px;line-height:1.5">' + r + '</span></div>';
+  }).join('');
+  ov.innerHTML = '<div style="background:#12151f;border-radius:24px 24px 0 0;width:100%;max-width:430px;max-height:88vh;overflow-y:auto">' +
+    '<div style="display:flex;justify-content:center;padding:12px 0"><div style="width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:2px"></div></div>' +
+    '<div style="padding:0 22px 30px">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">' +
+        '<span style="background:rgba(217,119,6,.25);color:#EF9F27;font-size:9px;font-weight:800;padding:3px 9px;border-radius:6px">FORMATO DE JUEGO</span>' +
+        '<div id="cerrar-ficha-torneo" style="color:#4a4a6a;font-size:28px;cursor:pointer;padding:2px 6px">×</div>' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">' +
+        '<div style="color:#fff;font-size:22px;font-weight:800">' + f.label + '</div>' +
+        '<div onclick="T_toggleFavFichaFormato(\'' + id + '\')" style="font-size:28px;color:' + (fav ? '#EF9F27' : '#4a4a6a') + ';cursor:pointer">' + (fav ? '⭐' : '☆') + '</div>' +
+      '</div>' +
+      '<div style="color:#8a8a9a;font-size:12px;margin-bottom:18px">' + (f.jugMin) + ' a ' + f.jugMax + ' jugadores</div>' +
+      '<div style="color:#e8e8f0;font-size:13px;font-weight:800;margin-bottom:12px">Cómo se juega</div>' +
+      reglasHtml +
+      '<div onclick="T_toggleFavFichaFormato(\'' + id + '\')" style="margin-top:22px;background:' + (fav ? 'rgba(239,159,39,.15)' : 'var(--amber,#D97706)') + ';border:' + (fav ? '1px solid rgba(239,159,39,.4)' : 'none') + ';border-radius:14px;padding:14px;text-align:center;cursor:pointer;color:' + (fav ? '#EF9F27' : '#fff') + ';font-size:14px;font-weight:800">' + (fav ? '⭐ En tus favoritos (toca para quitar)' : '☆ Agregar a mis favoritos') + '</div>' +
+    '</div>' +
+  '</div>';
+  document.body.appendChild(ov);
+  ov.addEventListener('click', function(e){ if (e.target.id === 'cerrar-ficha-torneo' || e.target === ov) ov.remove(); });
+}
+
+function T_toggleFavFichaFormato(id) {
+  var p = getPerfil();
+  if (!p) return;
+  toggleFavoritoTorneo(p.id, id);
+  T_verFichaFormato(id);
+  if (document.getElementById('T_formatos-lista')) T_renderPaso2();
+}
+
+function T_toggleFavFormato(id) {
+  var p = getPerfil();
+  if (!p) return;
+  toggleFavoritoTorneo(p.id, id);
+  T_renderPaso2();
+}
+
+
 
 // Campo precargado por defecto — Campestre Torreón
 var T_CAMPO_DEFECTO = {
@@ -13546,20 +14970,37 @@ function T_renderPaso2() {
       '</div>';
   }
 
-  // Formatos
+  // Formatos — favoritos primero, con estrella e info
   var fmtLista = document.getElementById('T_formatos-lista');
   fmtLista.innerHTML = '';
-  T_FORMATOS_DEF.forEach(function(f) {
+  var pFav = getPerfil();
+  var pidFav = pFav ? pFav.id : 0;
+  // Ordenar: favoritos primero
+  var formatosOrdenados = T_FORMATOS_DEF.slice().sort(function(a, b){
+    var fa = esFavoritoTorneo(pidFav, a.id) ? 0 : 1;
+    var fb = esFavoritoTorneo(pidFav, b.id) ? 0 : 1;
+    return fa - fb;
+  });
+  formatosOrdenados.forEach(function(f) {
     var sel = (T_config.formato === f.id);
+    var fav = esFavoritoTorneo(pidFav, f.id);
+    var estrella = fav ? '⭐' : '☆';
+    var estColor = fav ? '#EF9F27' : '#4a4a6a';
     fmtLista.innerHTML +=
-      '<div onclick="T_elegirFormato(\''+f.id+'\')" style="background:'+(sel?'rgba(15,110,86,.15)':'rgba(255,255,255,.04)')+';border:1.5px solid '+(sel?'rgba(15,110,86,.5)':'rgba(255,255,255,.08)')+';border-radius:12px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;cursor:pointer">' +
-        '<div>' +
+      '<div style="background:'+(sel?'rgba(15,110,86,.15)':'rgba(255,255,255,.04)')+';border:1.5px solid '+(sel?'rgba(15,110,86,.5)':'rgba(255,255,255,.08)')+';border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;margin-bottom:8px">' +
+        '<div onclick="T_elegirFormato(\''+f.id+'\')" style="flex:1;cursor:pointer">' +
           '<div style="color:white;font-size:13px;font-weight:700">'+f.label+'</div>' +
           '<div style="color:rgba(255,255,255,.35);font-size:11px;margin-top:2px">'+f.desc+'</div>' +
         '</div>' +
         (sel ? '<span style="color:#34d399;font-size:18px">✓</span>' : '') +
+        '<div onclick="T_verFichaFormato(\''+f.id+'\')" style="width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;cursor:pointer" title="Ver reglas"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8fb4e8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></svg></div>' +
+        '<div onclick="T_toggleFavFormato(\''+f.id+'\')" style="font-size:20px;color:'+estColor+';cursor:pointer">'+estrella+'</div>' +
       '</div>';
   });
+
+  // Botón: crear mis propias reglas con Claude
+  fmtLista.innerHTML += '<div onclick="T_crearFormatoTorneo()" style="background:transparent;border:1.5px dashed rgba(239,159,39,.5);border-radius:12px;padding:13px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;margin-top:4px">' +
+    '<span style="font-size:15px">✨</span><span style="color:#EF9F27;font-size:13px;font-weight:700">Crear mis propias reglas</span></div>';
 
   T_renderApuesta();
 }
@@ -13637,7 +15078,18 @@ function T_confirmarTorneo() {
   T_config.apuesta = ap;
   window.T_hcpYo = hcpYo;
   window.T_apuesta = ap;
-  window.T_formatoActivo = f;
+  // Formato personalizado: activar el motor custom con su config
+  if (f && f.indexOf('custom-t-') === 0) {
+    var fmtCustom = T_FORMATOS_DEF.find(function(x){ return x.id === f; });
+    if (fmtCustom && fmtCustom.config) {
+      window.T_customConfig = fmtCustom.config;
+      window.T_formatoActivo = 'custom';
+    } else {
+      window.T_formatoActivo = f;
+    }
+  } else {
+    window.T_formatoActivo = f;
+  }
   window.T_scoresRivales = {};
 
   // Activar torneo (llama función existente adaptada)
@@ -13782,6 +15234,319 @@ function T_calcularNassau() {
   return resultados;
 }
 
+// ── SKINS ──────────────────────────────────────
+// Cada hoyo vale un skin. Gana quien tenga el score más bajo SOLO (sin empate).
+// Si hay empate en el mejor score, el skin se acumula (carry-over) al siguiente hoyo.
+function T_calcularSkins() {
+  var jugadores = T_getJugadores();
+  var apuesta = window.T_apuesta || {};
+  var montoSkin = apuesta.skin || 0;
+  var conHcp = (window.T_formatoActivo === 'skins_con');
+
+  var ganancias = jugadores.map(function(){ return 0; }); // acumulado por jugador
+  var skinsGanados = jugadores.map(function(){ return 0; }); // cuántos hoyos ganó
+  var detalleHoyos = [];
+  var acumulado = 0; // skins que se arrastran por empates
+
+  for (var h = 1; h <= 18; h++) {
+    var scores = T_getScores(h);
+    // ¿Todos anotaron?
+    var validos = scores.filter(function(s){ return s !== null && s !== undefined; });
+    if (validos.length < jugadores.length) { continue; } // hoyo incompleto, se ignora
+
+    // Aplicar handicap si corresponde
+    var netos = scores.map(function(s, idx){
+      return conHcp ? T_scoreNeto(s, jugadores[idx].hcp, h) : s;
+    });
+    // Encontrar el mejor (menor) score
+    var mejor = Math.min.apply(null, netos);
+    var conMejor = [];
+    netos.forEach(function(s, idx){ if (s === mejor) conMejor.push(idx); });
+
+    var enJuego = montoSkin * (1 + acumulado); // skin del hoyo + acumulados
+    if (conMejor.length === 1) {
+      // Ganador único: se lleva el skin + acumulados
+      var g = conMejor[0];
+      ganancias[g] += enJuego;
+      skinsGanados[g] += (1 + acumulado);
+      detalleHoyos.push({ hoyo: h, ganador: jugadores[g].nom, monto: enJuego, acum: acumulado });
+      acumulado = 0;
+    } else {
+      // Empate: nadie gana, se acumula
+      acumulado++;
+      detalleHoyos.push({ hoyo: h, ganador: null, monto: 0, acum: acumulado });
+    }
+  }
+
+  // Como cada skin ganado lo pagan los demás: el neto de cada jugador es
+  // (lo que ganó) menos (su parte proporcional de lo que ganaron los otros).
+  // En Skins clásico: cada jugador paga el valor del skin por cada skin que perdió.
+  var totalJug = jugadores.length;
+  var netos = jugadores.map(function(_, idx){
+    var gano = ganancias[idx];
+    // paga: por cada skin que ganó OTRO jugador, este pone montoSkin
+    var pagaPorOtros = 0;
+    jugadores.forEach(function(_, j){
+      if (j !== idx) pagaPorOtros += ganancias[j];
+    });
+    // El que ganó recibe de cada rival; el que no, paga su parte
+    return gano * (totalJug - 1) - pagaPorOtros;
+  });
+
+  return {
+    jugadores: jugadores,
+    ganancias: ganancias,
+    skinsGanados: skinsGanados,
+    netos: netos,
+    detalleHoyos: detalleHoyos,
+    montoSkin: montoSkin,
+    acumuladoFinal: acumulado
+  };
+}
+
+// ── STABLEFORD ──────────────────────────────────
+// Puntos por hoyo: doble bogey o peor=0, bogey=1, par=2, birdie=3, eagle=4, albatros=5
+function T_puntosStableford(scoreVsPar) {
+  // scoreVsPar: 0=par, -1=birdie, +1=bogey, etc.
+  var pts = 2 - scoreVsPar; // par(0)->2, birdie(-1)->3, bogey(+1)->1, eagle(-2)->4
+  if (pts < 0) pts = 0;
+  return pts;
+}
+
+function T_calcularStableford() {
+  var jugadores = T_getJugadores();
+  var apuesta = window.T_apuesta || {};
+  var valorPunto = apuesta.punto || 0;
+  var conHcp = T_config.conHcp;
+  var modoTodos = (window.T_formatoActivo === 'stableford_todos');
+
+  // Puntos totales por jugador
+  var puntos = jugadores.map(function(){ return 0; });
+  for (var h = 1; h <= 18; h++) {
+    var scores = T_getScores(h);
+    scores.forEach(function(s, idx){
+      if (s === null || s === undefined) return;
+      var sv = conHcp ? T_scoreNeto(s, jugadores[idx].hcp, h) : s;
+      puntos[idx] += T_puntosStableford(sv);
+    });
+  }
+
+  var netos = jugadores.map(function(){ return 0; });
+  var detalle = [];
+
+  if (modoTodos) {
+    // Todos contra todos: cada par compara puntos; el de más puntos cobra la diferencia
+    for (var a = 0; a < jugadores.length; a++) {
+      for (var b = a+1; b < jugadores.length; b++) {
+        var dif = puntos[a] - puntos[b];
+        var pago = dif * valorPunto; // positivo: a le gana a b
+        netos[a] += pago;
+        netos[b] -= pago;
+        detalle.push({ jugA: jugadores[a].nom, jugB: jugadores[b].nom, ptsA: puntos[a], ptsB: puntos[b], pago: pago });
+      }
+    }
+  } else {
+    // Un ganador: el de más puntos cobra a cada rival la diferencia de puntos
+    var maxPts = Math.max.apply(null, puntos);
+    var ganadores = [];
+    puntos.forEach(function(p, idx){ if (p === maxPts) ganadores.push(idx); });
+    // Si hay empate en el 1er lugar, se reparte (o nadie cobra). Aquí: empate = nadie cobra.
+    if (ganadores.length === 1) {
+      var g = ganadores[0];
+      jugadores.forEach(function(_, idx){
+        if (idx === g) return;
+        var dif = puntos[g] - puntos[idx];
+        var pago = dif * valorPunto;
+        netos[g] += pago;
+        netos[idx] -= pago;
+        detalle.push({ jugA: jugadores[g].nom, jugB: jugadores[idx].nom, ptsA: puntos[g], ptsB: puntos[idx], pago: pago });
+      });
+    }
+  }
+
+  return {
+    jugadores: jugadores,
+    puntos: puntos,
+    netos: netos,
+    detalle: detalle,
+    valorPunto: valorPunto,
+    modoTodos: modoTodos
+  };
+}
+
+// ── WOLF / LOBA ─────────────────────────────────
+// El Lobo rota cada hoyo (hoyo 1 = jugador 0, hoyo 2 = jugador 1...).
+// El Lobo elige compañero (2v2) o va solo (1 vs todos, vale doble).
+// Estas elecciones se guardan en window.T_wolfDecisiones[hoyo] = { solo:bool, companero:idx }.
+function T_calcularWolf() {
+  var jugadores = T_getJugadores();
+  var apuesta = window.T_apuesta || {};
+  var montoHoyo = apuesta.hoyo || 0;
+  var n = jugadores.length;
+  var decisiones = window.T_wolfDecisiones || {};
+
+  var netos = jugadores.map(function(){ return 0; });
+  var detalleHoyos = [];
+
+  for (var h = 1; h <= 18; h++) {
+    var scores = T_getScores(h);
+    var validos = scores.filter(function(s){ return s !== null && s !== undefined; });
+    if (validos.length < n) continue;
+
+    var loboIdx = (h - 1) % n; // rota
+    var dec = decisiones[h] || {};
+    var vaSolo = !!dec.solo;
+    var companeroIdx = (dec.companero !== undefined && dec.companero !== null) ? dec.companero : null;
+
+    // Formar equipos
+    var equipoLobo = [loboIdx];
+    var equipoRival = [];
+    for (var j = 0; j < n; j++) {
+      if (j === loboIdx) continue;
+      if (!vaSolo && j === companeroIdx) equipoLobo.push(j);
+      else equipoRival.push(j);
+    }
+
+    // Mejor score de cada equipo
+    function mejorDe(equipo){ return Math.min.apply(null, equipo.map(function(i){ return scores[i]; })); }
+    var scoreLobo = mejorDe(equipoLobo);
+    var scoreRival = mejorDe(equipoRival);
+
+    var multiplicador = vaSolo ? 2 : 1;
+    var resultado = 0; // 1 gana lobo, -1 gana rival, 0 empate
+    if (scoreLobo < scoreRival) resultado = 1;
+    else if (scoreRival < scoreLobo) resultado = -1;
+
+    if (resultado !== 0) {
+      var montoBase = montoHoyo * multiplicador;
+      if (resultado === 1) {
+        // Gana equipo lobo: cada rival paga montoBase, se reparte entre el equipo lobo
+        var totalGanado = montoBase * equipoRival.length;
+        equipoRival.forEach(function(i){ netos[i] -= montoBase; });
+        equipoLobo.forEach(function(i){ netos[i] += totalGanado / equipoLobo.length; });
+      } else {
+        // Gana equipo rival: cada miembro del equipo lobo paga; se reparte entre rivales
+        var totalGanadoR = montoBase * equipoLobo.length;
+        equipoLobo.forEach(function(i){ netos[i] -= montoBase; });
+        equipoRival.forEach(function(i){ netos[i] += totalGanadoR / equipoRival.length; });
+      }
+    }
+
+    detalleHoyos.push({
+      hoyo: h,
+      lobo: jugadores[loboIdx].nom,
+      solo: vaSolo,
+      companero: (!vaSolo && companeroIdx !== null) ? jugadores[companeroIdx].nom : null,
+      resultado: resultado,
+      multiplicador: multiplicador
+    });
+  }
+
+  return {
+    jugadores: jugadores,
+    netos: netos,
+    detalleHoyos: detalleHoyos,
+    montoHoyo: montoHoyo
+  };
+}
+
+// ── MOTOR GENÉRICO PARA FORMATOS PERSONALIZADOS ──
+// Claude traduce las reglas del usuario a esta config (T_customConfig), que este motor calcula.
+// config = {
+//   nombre, reglasTexto,
+//   conHcp: bool,
+//   puntos: { porResultado: {aguila,birdie,par,bogey,doble,triple}, ... },  // puntos que gana un jugador por su score en el hoyo
+//   bonos: [ { tipo:'mas_pares'|'mas_birdies'|'menos_putts'|'gana_front'|'gana_back'|'gana_total', valor:N } ],
+//   liquidacion: 'diferencia_puntos' | 'un_ganador' | 'todos_contra_todos',
+//   valorUnidad: N   // valor en $ de cada punto/unidad
+// }
+function T_calcularCustom() {
+  var cfg = window.T_customConfig || {};
+  var jugadores = T_getJugadores();
+  var n = jugadores.length;
+  var conHcp = !!cfg.conHcp;
+  var valorUnidad = cfg.valorUnidad || 0;
+
+  // 1) Puntos por hoyo según el resultado (score vs par)
+  var pr = (cfg.puntos && cfg.puntos.porResultado) ? cfg.puntos.porResultado : null;
+  function puntosPorScore(sv) {
+    if (!pr) return 0;
+    if (sv <= -2) return pr.aguila || 0;
+    if (sv === -1) return pr.birdie || 0;
+    if (sv === 0) return pr.par || 0;
+    if (sv === 1) return pr.bogey || 0;
+    if (sv === 2) return pr.doble || 0;
+    return pr.triple || 0; // +3 o peor
+  }
+
+  var puntos = jugadores.map(function(){ return 0; });
+  var paresPorJ = jugadores.map(function(){ return 0; });
+  var birdiesPorJ = jugadores.map(function(){ return 0; });
+  var scoreTotalJ = jugadores.map(function(){ return 0; });
+  var frontJ = jugadores.map(function(){ return 0; });
+  var backJ = jugadores.map(function(){ return 0; });
+
+  for (var h = 1; h <= 18; h++) {
+    var scores = T_getScores(h);
+    scores.forEach(function(s, idx){
+      if (s === null || s === undefined) return;
+      var sv = conHcp ? T_scoreNeto(s, jugadores[idx].hcp, h) : s;
+      puntos[idx] += puntosPorScore(sv);
+      scoreTotalJ[idx] += sv;
+      if (sv <= 0) { if (sv === 0) paresPorJ[idx]++; }
+      if (sv <= -1) birdiesPorJ[idx]++;
+      if (h <= 9) frontJ[idx] += sv; else backJ[idx] += sv;
+    });
+  }
+
+  // 2) Bonos (se suman como puntos)
+  (cfg.bonos || []).forEach(function(bono){
+    var valores;
+    if (bono.tipo === 'mas_pares') valores = paresPorJ;
+    else if (bono.tipo === 'mas_birdies') valores = birdiesPorJ;
+    else if (bono.tipo === 'gana_front') valores = frontJ.map(function(v){ return -v; }); // menos score = mejor
+    else if (bono.tipo === 'gana_back') valores = backJ.map(function(v){ return -v; });
+    else if (bono.tipo === 'gana_total') valores = scoreTotalJ.map(function(v){ return -v; });
+    else return;
+    // El mejor en esa categoría se lleva el bono (en puntos)
+    var mejor = Math.max.apply(null, valores);
+    var lideres = [];
+    valores.forEach(function(v, idx){ if (v === mejor) lideres.push(idx); });
+    if (lideres.length === 1) puntos[lideres[0]] += (bono.valor || 0);
+  });
+
+  // 3) Liquidación (matriz de pagos entre jugadores)
+  var netos = jugadores.map(function(){ return 0; });
+  var detalle = [];
+  var modo = cfg.liquidacion || 'todos_contra_todos';
+
+  if (modo === 'un_ganador') {
+    var maxP = Math.max.apply(null, puntos);
+    var gan = [];
+    puntos.forEach(function(p, idx){ if (p === maxP) gan.push(idx); });
+    if (gan.length === 1) {
+      var g = gan[0];
+      jugadores.forEach(function(_, idx){
+        if (idx === g) return;
+        var pago = (puntos[g] - puntos[idx]) * valorUnidad;
+        netos[g] += pago; netos[idx] -= pago;
+        detalle.push({ jugA: jugadores[g].nom, jugB: jugadores[idx].nom, pago: pago });
+      });
+    }
+  } else {
+    // todos contra todos (o diferencia_puntos)
+    for (var a = 0; a < n; a++) {
+      for (var b = a+1; b < n; b++) {
+        var pago2 = (puntos[a] - puntos[b]) * valorUnidad;
+        netos[a] += pago2; netos[b] -= pago2;
+        detalle.push({ jugA: jugadores[a].nom, jugB: jugadores[b].nom, pago: pago2 });
+      }
+    }
+  }
+
+  return { jugadores: jugadores, puntos: puntos, netos: netos, detalle: detalle, valorUnidad: valorUnidad };
+}
+
 function T_renderPanelNassau() {
   var resultados = T_calcularNassau();
   var apuesta = window.T_apuesta || {};
@@ -13920,6 +15685,61 @@ function T_mostrarLiquidacion(){
         matriz[iA][iB] += -pagoNeto;  // A paga a B
       }
     }
+  }
+  else if(formato === 'skins_sin' || formato === 'skins_con'){
+    // Cada skin ganado lo pagan TODOS los demás: repartir a la matriz
+    var rSkins = T_calcularSkins();
+    for(var gi=0; gi<n; gi++){
+      var montoGanado = rSkins.ganancias[gi]; // lo que ganó gi en total
+      if(montoGanado <= 0) continue;
+      // cada rival le paga montoGanado
+      for(var pj=0; pj<n; pj++){
+        if(pj===gi) continue;
+        matriz[pj][gi] += montoGanado;  // pj paga a gi
+        matriz[gi][pj] += -montoGanado; // gi recibe
+      }
+    }
+  }
+  else if(formato === 'stableford_uno' || formato === 'stableford_todos'){
+    var rStb = T_calcularStableford();
+    // rStb.detalle tiene { jugA, jugB, pago } donde pago>0 = A cobra a B
+    rStb.detalle.forEach(function(d){
+      var iA2 = jugadores.findIndex(function(j){ return j.nom === d.jugA; });
+      var iB2 = jugadores.findIndex(function(j){ return j.nom === d.jugB; });
+      if(iA2<0 || iB2<0) return;
+      matriz[iB2][iA2] += d.pago;   // B paga a A (si pago>0)
+      matriz[iA2][iB2] += -d.pago;
+    });
+  }
+  else if(formato === 'wolf'){
+    var rWolf = T_calcularWolf();
+    // rWolf.netos: neto de cada jugador. Repartir proporcionalmente en la matriz.
+    // Los que ganan (neto>0) reciben; los que pierden (neto<0) pagan.
+    var ganadores2 = [], perdedores2 = [];
+    rWolf.netos.forEach(function(neto, idx){
+      if(neto > 0.001) ganadores2.push({idx:idx, monto:neto});
+      else if(neto < -0.001) perdedores2.push({idx:idx, monto:-neto});
+    });
+    var totalGan = ganadores2.reduce(function(a,g){return a+g.monto;},0);
+    // Cada perdedor paga a los ganadores en proporción
+    perdedores2.forEach(function(p){
+      ganadores2.forEach(function(g){
+        var parte = totalGan>0 ? (p.monto * (g.monto/totalGan)) : 0;
+        matriz[p.idx][g.idx] += parte;   // p paga a g
+        matriz[g.idx][p.idx] += -parte;
+      });
+    });
+  }
+  else if(formato === 'custom'){
+    // Formato personalizado creado con Claude
+    var rC = T_calcularCustom();
+    rC.detalle.forEach(function(d){
+      var iA3 = jugadores.findIndex(function(j){ return j.nom === d.jugA; });
+      var iB3 = jugadores.findIndex(function(j){ return j.nom === d.jugB; });
+      if(iA3<0 || iB3<0) return;
+      matriz[iB3][iA3] += d.pago;
+      matriz[iA3][iB3] += -d.pago;
+    });
   }
 
   // Para cada jugador: cuánto cobra/paga en total y desglose
@@ -14847,6 +16667,49 @@ function combinarDatos(nuevos, anteriores) {
 // ===================================================
 // BOTÓN MICRÓFONO — UN TOQUE INICIA, OTRO PARA
 // ===================================================
+// ═══════════════════════════════════════════════════════════
+// RONDA · dictado inteligente con Claude (un hoyo con confirmación)
+// ═══════════════════════════════════════════════════════════
+function _systemPromptRonda() {
+  return 'Interpretas el dictado por voz de un golfista registrando UN hoyo de su ronda de golf. Extrae los datos que mencione.\n\n' +
+    'SCORE relativo al par: "águila"/"eagle" = -2; "birdie"/"verde"/"verdi" = -1; "par"/"empate" = 0; "bogey"/"bogui" = +1; "doble bogey"/"sopi" = +2; "triple"/"doble sopi" = +3; también acepta "más N"/"menos N".\n' +
+    'DRIVE: si menciona el drive puede ser "fairway"/"calle" (en la calle), "izquierda", "derecha", "búnker", "rough"/"pasto", "agua". \n' +
+    'HIERROS: puede mencionar uno o más tiros de hierro y a dónde fueron (green, cerca, corto, largo, izquierda, derecha, búnker).\n' +
+    'APPROACH: tiro de approach y resultado.\n' +
+    'PUTTS: cuántos putts hizo (número). PASOS: distancia del primer putt en pasos. Si dice "un putt" = 1 putt.\n' +
+    '"la metí de fuera"/"chip in" = metió sin putt (putts:0, pasos:0).\n\n' +
+    'Errores de voz: "verde"/"verdi" = birdie; "bogui" = bogey; "sopi" = doble bogey.\n\n' +
+    'Devuelve SOLO JSON válido (sin markdown):\n' +
+    '{ "score": <número relativo al par, ej -1, 0, 1, o null>, "drive": "<descripción corta o null>", "hierros": [<lista de strings o vacío>], "approach": "<o null>", "putts": <número o null>, "pasos": <número o null>, "puttCorto": "<no-hubo|metido|fallado o null>", "metidaFuera": <true|false> }\n\n' +
+    'Incluye SOLO lo que se mencione; lo no dicho va como null (o [] para hierros, false para metidaFuera). No inventes.';
+}
+
+async function interpretarHoyoConClaude(texto, callback) {
+  // Si Claude no está enlazado, usar el intérprete rígido
+  if (!tieneClaudeEnlazado()) { callback(interpretarHoyo(texto)); return; }
+  // Comandos de notas: dejar que el rígido los maneje (son especiales)
+  if (/notas?/i.test(texto)) { callback(interpretarHoyo(texto)); return; }
+  try {
+    var r = await dictarAClaudeJSON(texto, _systemPromptRonda(), { maxTokens: 1024 });
+    // Normalizar al formato que espera la app
+    var datos = {
+      score: (typeof r.score === 'number') ? r.score : null,
+      drive: r.drive || null,
+      hierros: Array.isArray(r.hierros) ? r.hierros : [],
+      approach: r.approach || null,
+      putts: (typeof r.putts === 'number') ? r.putts : null,
+      pasos: (typeof r.pasos === 'number') ? r.pasos : null,
+      puttCorto: r.puttCorto || null,
+      metidaFuera: r.metidaFuera === true
+    };
+    window._rondaUltimoTextoCrudo = texto;
+    callback(datos);
+  } catch(e) {
+    // Si Claude falla, caer al intérprete rígido
+    callback(interpretarHoyo(texto));
+  }
+}
+
 function toggleVoz() {
   if (!modoGrabando) {
     // INICIAR
@@ -14907,8 +16770,8 @@ function toggleVoz() {
     if (dbg) dbg.textContent = '';
 
     // 4. Procesar y mostrar tarjeta
-    try {
-      var datos = interpretarHoyo(texto);
+    interpretarHoyoConClaude(texto, function(datos) {
+     try {
 
       // ¿Es un comando de notas?
       if (datos._esNota) {
@@ -14949,9 +16812,10 @@ function toggleVoz() {
       E.ultimosDatos = datos;
       E.ultimoTextoVoz = texto;
       mostrarConfirmacion(texto, datos);
-    } catch(err) {
+     } catch(err) {
       alert('Error: ' + err.message);
-    }
+     }
+    });
   }
 }
 
