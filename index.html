@@ -1029,27 +1029,27 @@
     <!-- Separador retos -->
     <div style="display:flex;align-items:center;gap:11px;margin-bottom:13px">
       <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(138,170,240,.4))"></div>
-      <div style="color:#8AAAF0;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;text-shadow:0 0 12px rgba(138,170,240,.4);white-space:nowrap">⭐ Mis retos</div>
+      <div style="color:#8AAAF0;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;text-shadow:0 0 12px rgba(138,170,240,.4);white-space:nowrap">⭐ Mis retos / evaluación</div>
       <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(138,170,240,.4),transparent)"></div>
     </div>
 
     <!-- 3 retos -->
     <div style="display:flex;gap:9px;margin-bottom:18px">
-      <div style="flex:1;background:linear-gradient(160deg,#3d1040 0%,#0f1320 100%);border:1px solid rgba(232,121,249,.6);border-radius:17px;padding:14px 6px;text-align:center;position:relative;overflow:hidden;box-shadow:0 6px 18px rgba(50,10,55,.55),inset 0 1px 0 rgba(240,171,252,.2)">
+      <div onclick="abrirBibliotecaFiltrada('putt')" style="flex:1;background:linear-gradient(160deg,#3d1040 0%,#0f1320 100%);border:1px solid rgba(232,121,249,.6);border-radius:17px;padding:14px 6px;text-align:center;position:relative;overflow:hidden;box-shadow:0 6px 18px rgba(50,10,55,.55),inset 0 1px 0 rgba(240,171,252,.2);cursor:pointer">
         <div style="position:absolute;top:-18px;right:-18px;width:55px;height:55px;background:radial-gradient(circle,rgba(232,121,249,.3),transparent 70%)"></div>
         <div id="gamer-putt-star" style="position:absolute;top:8px;right:8px;font-size:15px;filter:drop-shadow(0 0 5px rgba(255,210,63,.8));display:none">⭐</div>
         <div style="font-size:28px;line-height:1;filter:drop-shadow(0 2px 5px rgba(0,0,0,.4))">🚀</div>
         <div style="color:#fff;font-size:12px;font-weight:800;margin-top:6px">Putt <span id="gamer-putt-nivel" style="color:#f0abfc;font-size:12px;font-weight:800">N1</span></div>
         <div id="gamer-putt-dots" style="display:flex;gap:6px;justify-content:center;margin-top:9px"></div>
       </div>
-      <div style="flex:1;background:linear-gradient(160deg,#4a3810 0%,#0f1320 100%);border:1px solid rgba(239,159,39,.55);border-radius:17px;padding:14px 6px;text-align:center;position:relative;overflow:hidden;box-shadow:0 6px 18px rgba(60,45,15,.5),inset 0 1px 0 rgba(239,159,39,.2)">
+      <div onclick="abrirBibliotecaFiltrada('approach')" style="flex:1;background:linear-gradient(160deg,#4a3810 0%,#0f1320 100%);border:1px solid rgba(239,159,39,.55);border-radius:17px;padding:14px 6px;text-align:center;position:relative;overflow:hidden;box-shadow:0 6px 18px rgba(60,45,15,.5),inset 0 1px 0 rgba(239,159,39,.2);cursor:pointer">
         <div style="position:absolute;top:-18px;right:-18px;width:55px;height:55px;background:radial-gradient(circle,rgba(239,159,39,.25),transparent 70%)"></div>
         <div id="gamer-app-star" style="position:absolute;top:8px;right:8px;font-size:15px;filter:drop-shadow(0 0 5px rgba(255,210,63,.8));display:none">⭐</div>
         <div style="font-size:28px;line-height:1;filter:drop-shadow(0 2px 5px rgba(0,0,0,.4))">💥</div>
         <div style="color:#fff;font-size:12px;font-weight:800;margin-top:6px">Approach <span id="gamer-app-nivel" style="color:#ffc466;font-size:12px;font-weight:800">N1</span></div>
         <div id="gamer-app-dots" style="display:flex;gap:6px;justify-content:center;margin-top:9px"></div>
       </div>
-      <div style="flex:1;background:linear-gradient(160deg,#0a3d45 0%,#0f1320 100%);border:1px solid rgba(34,211,238,.55);border-radius:17px;padding:14px 6px;text-align:center;position:relative;overflow:hidden;box-shadow:0 6px 18px rgba(10,50,55,.5),inset 0 1px 0 rgba(103,232,249,.2)">
+      <div onclick="abrirBibliotecaFiltrada('simulador')" style="flex:1;background:linear-gradient(160deg,#0a3d45 0%,#0f1320 100%);border:1px solid rgba(34,211,238,.55);border-radius:17px;padding:14px 6px;text-align:center;position:relative;overflow:hidden;box-shadow:0 6px 18px rgba(10,50,55,.5),inset 0 1px 0 rgba(103,232,249,.2);cursor:pointer">
         <div style="position:absolute;top:-18px;right:-18px;width:55px;height:55px;background:radial-gradient(circle,rgba(34,211,238,.25),transparent 70%)"></div>
         <div id="gamer-sim-star" style="position:absolute;top:8px;right:8px;font-size:15px;filter:drop-shadow(0 0 5px rgba(255,210,63,.8));display:none">⭐</div>
         <div style="height:28px;display:flex;align-items:center;justify-content:center">
@@ -2891,8 +2891,8 @@ var BIBLIOTECA = [
   { clave:'circulo-velocidades', nom:'Círculo Velocidades', grupo:'ejercicio', cat:'Putt corto', mins:10, dist:[{lbl:'4 pies',k:'4'},{lbl:'6 pies',k:'6'},{lbl:'8 pies',k:'8'}] },
   { clave:'lineal-esctob-corto', nom:'Putt Línea 4-8-12-16', grupo:'ejercicio', cat:'Putt corto', mins:10 },
   // ---- EJERCICIOS · PUTT MEDIO ----
-  { clave:'medio-escalera', nom:'Escalera Putt Medio', grupo:'ejercicio', cat:'Putt medio', mins:10 },
-  { clave:'medio-tobogan', nom:'Tobogán Putt Medio', grupo:'ejercicio', cat:'Putt medio', mins:10 },
+  { clave:'medio-escalera', nom:'Escalera Putt Corto', grupo:'ejercicio', cat:'Putt corto', mins:10 },
+  { clave:'medio-tobogan', nom:'Tobogán Putt Corto', grupo:'ejercicio', cat:'Putt corto', mins:10 },
   // ---- EJERCICIOS · PUTT LARGO ----
   { clave:'largo-esctob', nom:'Escalera + Tobogán Largo', grupo:'ejercicio', cat:'Putt largo', mins:15 },
   // ---- EJERCICIOS · APPROACH ----
@@ -2909,9 +2909,11 @@ var BIBLIOTECA = [
   { clave:'drive-record', nom:'Drive · Récord', grupo:'ejercicio', cat:'Drive', mins:15 },
 
   // ---- RETOS (medibles, recurrentes, con estadística en el Home) ----
-  { clave:'op36', nom:'Reto 27', grupo:'reto', cat:'Reto', mins:60 },
-  { clave:'reto-approach', nom:'Reto Approach', grupo:'reto', cat:'Reto', mins:15 },
-  { clave:'approach-record', nom:'Récord Approach', grupo:'reto', cat:'Reto', mins:15 }
+  { clave:'op36', nom:'Reto 27', grupo:'reto', cat:'Reto', catGolf:'putt', mins:60 },
+  { clave:'reto-putt-medio', nom:'Reto Putt Corto', grupo:'reto', cat:'Reto', catGolf:'putt', mins:15 },
+  { clave:'reto-putt-largo', nom:'Reto Putt Largo', grupo:'reto', cat:'Reto', catGolf:'putt', mins:15 },
+  { clave:'reto-approach', nom:'Reto Approach', grupo:'reto', cat:'Reto', catGolf:'approach', mins:15 },
+  { clave:'approach-record', nom:'Récord Approach', grupo:'reto', cat:'Reto', catGolf:'approach', mins:15 }
 ];
 
 // ─── EJERCICIOS PERSONALIZADOS (creados con Claude, compartidos vía localStorage) ───
@@ -2982,9 +2984,9 @@ var CATALOGO_NUEVO = {
   'lineal-esctob-corto': { nom:'Putt Línea 4-8-12-16', cat:'putt', seccion:'Putt corto', mins:10, distancias:['12 pies','16 pies'],
     instr:['4 estaciones: 4, 8, 12 y 16 pies','Juega con 4 bolas en cada una','Mete las que pide cada estación para avanzar','Si fallas, vuelves a empezar desde 4 pies'] },
   // ---- PUTT MEDIO ----
-  'medio-escalera': { nom:'Escalera Putt Medio', cat:'putt', seccion:'Putt medio', mins:10, distancias:['12 yardas','15 yardas'],
+  'medio-escalera': { nom:'Escalera Putt Corto', cat:'putt', seccion:'Putt corto', mins:10, distancias:['12 yardas','15 yardas'],
     instr:['4 estaciones: 6, 9, 12 y 15 yardas','3 bolas por estación; par = embocar en 2 golpes','Completa la ronda; mide tus rondas completas'] },
-  'medio-tobogan': { nom:'Tobogán Putt Medio', cat:'putt', seccion:'Putt medio', mins:10, distancias:['12 yardas','15 yardas'],
+  'medio-tobogan': { nom:'Tobogán Putt Corto', cat:'putt', seccion:'Putt corto', mins:10, distancias:['12 yardas','15 yardas'],
     instr:['1 bola, corrida de 6 → 9 → 12 → 15 yardas','Emboca en cada estación para avanzar a la siguiente','Si fallas, vuelves al inicio','Cuenta tus rondas completas en 10 min'] },
   // ---- PUTT LARGO ----
   'largo-esctob': { nom:'Escalera + Tobogán Largo', cat:'putt', seccion:'Putt largo', mins:15,
@@ -3003,7 +3005,7 @@ var CATALOGO_NUEVO = {
   // ---- HIERROS / DRIVE (se eligen por palo aparte) ----
   // ---- RETO PUTT ----
   'reto-putt': { nom:'Reto Putt', cat:'reto', seccion:'Retos', mins:0,
-    distancias:[{lbl:'Putt Medio',k:'medio'},{lbl:'Putt Largo',k:'largo'}],
+    distancias:[{lbl:'Putt Corto',k:'medio'},{lbl:'Putt Largo',k:'largo'}],
     instr:['Hoyos seguidos de 2 golpes','Ejecuciones según tu nivel'] }
 };
 
@@ -5651,8 +5653,8 @@ function generarDatosPrueba(silencioso) {
         { id:'nv:circulo-velocidades-4', nom:'Círculo Velocidades · 4 pies', cat:'putt', claveNivel:'circulo-velocidades-4' },
         { id:'nv:circulo-velocidades-6', nom:'Círculo Velocidades · 6 pies', cat:'putt', claveNivel:'circulo-velocidades-6' },
         { id:'nv:circulo-velocidades-8', nom:'Círculo Velocidades · 8 pies', cat:'putt', claveNivel:'circulo-velocidades-8' },
-        { id:'nv:medio-escalera', nom:'Escalera Putt Medio', cat:'putt', claveNivel:'medio-escalera' },
-        { id:'nv:medio-tobogan', nom:'Tobogán Putt Medio', cat:'putt', claveNivel:'medio-tobogan' },
+        { id:'nv:medio-escalera', nom:'Escalera Putt Corto', cat:'putt', claveNivel:'medio-escalera' },
+        { id:'nv:medio-tobogan', nom:'Tobogán Putt Corto', cat:'putt', claveNivel:'medio-tobogan' },
         { id:'nv:largo-esctob', nom:'Escalera + Tobogán Largo', cat:'putt', claveNivel:'largo-esctob' },
         { id:'nv:approach-escalera', nom:'Escalera Approach', cat:'approach', claveNivel:'approach-escalera' },
         { id:'nv:approach-tobogan', nom:'Tobogán Approach', cat:'approach', claveNivel:'approach-tobogan' },
@@ -5663,7 +5665,7 @@ function generarDatosPrueba(silencioso) {
       ];
       // Retos de putt (medio y largo) van aparte, para que salgan como tarjeta propia en el historial
       var retosPuttPrueba = [
-        { id:'retoMedio', nom:'Reto Putt Medio', cat:'reto', retoTipo:'medio' },
+        { id:'retoMedio', nom:'Reto Putt Corto', cat:'reto', retoTipo:'medio' },
         { id:'retoMedioReto', nom:'Reto Putt Largo', cat:'reto', retoTipo:'largo' }
       ];
       // días: repartidos hasta 39 días atrás
@@ -5733,7 +5735,7 @@ function generarDatosPrueba(silencioso) {
         var ejE = ejerciciosPrueba[rnd(0, ejerciciosPrueba.length - 1)];
         hechosEpico.push({ id: ejE.id, nom: ejE.nom, cat: ejE.cat, datos: { mins: ejE.cat==='putt'?10:15, ejec: rnd(1,5) } });
       }
-      hechosEpico.push({ id:'retoMedio', nom:'Reto Putt Medio', cat:'reto', retoTipo:'medio', datos:{ mins:15, ejec:rnd(1,5) } });
+      hechosEpico.push({ id:'retoMedio', nom:'Reto Putt Corto', cat:'reto', retoTipo:'medio', datos:{ mins:15, ejec:rnd(1,5) } });
       hechosEpico.push({ id:'retoMedioReto', nom:'Reto Putt Largo', cat:'reto', retoTipo:'largo', datos:{ mins:15, ejec:rnd(1,5) } });
       entrenos.push({
         sesionId: 'ses_epico_' + cfg.id,
@@ -5750,7 +5752,7 @@ function generarDatosPrueba(silencioso) {
         entrenos.push({
           sesionId: 'ses_retomedio_' + cfg.id + '_' + rm,
           fecha: frm.toISOString(),
-          ejercicios: [{ id:'retoMedio', nom:'Reto Putt Medio', cat:'reto', retoTipo:'medio', datos:{ mins:15, ejec:rnd(1,5) } }],
+          ejercicios: [{ id:'retoMedio', nom:'Reto Putt Corto', cat:'reto', retoTipo:'medio', datos:{ mins:15, ejec:rnd(1,5) } }],
           totalProgramados: 1, totalHechos: 1
         });
       }
@@ -5773,7 +5775,7 @@ function generarDatosPrueba(silencioso) {
         // Reto de putt
         entrenos.push({
           sesionId: 'ses_gamer_putt_' + cfg.id + '_' + g, fecha: fg.toISOString(),
-          ejercicios: [{ id:'retoMedio', nom:'Reto Putt Medio', cat:'reto', retoTipo:'medio', datos:{ mins:15, ejec:rnd(1,5) } }],
+          ejercicios: [{ id:'retoMedio', nom:'Reto Putt Corto', cat:'reto', retoTipo:'medio', datos:{ mins:15, ejec:rnd(1,5) } }],
           totalProgramados: 1, totalHechos: 1
         });
         // Reto de approach
@@ -6318,8 +6320,8 @@ function _catalogoParaClaude() {
     '- estrella-1v1: "Estrella 1 vs 1" (juego 2 jugadores, mide: enfrentamientos)',
     '- lineal-1v1: "Lineal 1 vs 1" (juego 2 jugadores, mide: partidas)',
     'PUTT MEDIO:',
-    '- medio-escalera: "Escalera Putt Medio" (mide: rondas)',
-    '- medio-tobogan: "Tobogán Putt Medio" (mide: rondas)',
+    '- medio-escalera: "Escalera Putt Corto" (mide: rondas)',
+    '- medio-tobogan: "Tobogán Putt Corto" (mide: rondas)',
     'PUTT LARGO:',
     '- largo-esctob: "Escalera + Tobogán Largo" (mide: pares en la mejor ronda)',
     'APPROACH:',
@@ -8140,7 +8142,7 @@ function abrirNivelInicial() {
         '<span style="color:#e8e8f0;font-size:18px;font-weight:700">Nivel inicial de Putt</span>' +
         '<div onclick="document.getElementById(\'overlay-nivel-inicial\').remove()" style="width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#888;font-size:18px">\u00D7</div>' +
       '</div>' +
-      '<div style="color:#9a9ab0;font-size:13px;line-height:1.5;margin-bottom:18px">Elige el nivel en el que arrancas. Es tu punto de partida para los retos de Putt Medio y Largo.</div>' +
+      '<div style="color:#9a9ab0;font-size:13px;line-height:1.5;margin-bottom:18px">Elige el nivel en el que arrancas. Es tu punto de partida para los retos de Putt Corto y Largo.</div>' +
       fila(1, 5) + fila(6, 10) +
       '<div style="color:#5DCAA5;font-size:11px;text-align:center;margin-top:12px;line-height:1.5">Al fijar tu nivel, tienes 30 días de gracia<br>antes de que aplique la regla de bajar.</div>' +
     '</div>';
@@ -9490,7 +9492,7 @@ var EJERCICIOS_DEF = {
   'reloj8':     { nom: 'Reloj 8 pies',        cat: 'putt',     instrucciones: ['Pon 3 tees a 8 pies del hoyo','Mete las 3 seguidas sin fallar','1 ejecucion = 3 putts metidos'] },
   'tobogan':    { nom: 'Tobogan clasico',      cat: 'putt',     instrucciones: ['Distancias: 6,9,12,15,18 pasos','Mete en 2 tiros o menos','Si fallas, regresa al inicio'], distancias: ['6 pasos','9 pasos','12 pasos','15 pasos','18 pasos'] },
   'escalera':   { nom: 'Escalera clasica',     cat: 'putt',     instrucciones: ['Distancias: 6,9,12,15,18 pasos','3 veces seguidas en 2 tiros para avanzar','Si fallas, te quedas'], distancias: ['6 pasos','9 pasos','12 pasos','15 pasos','18 pasos'] },
-  'retoMedio':  { nom: 'Reto Putt Medio',      cat: 'putt',     instrucciones: ['Elige hoyos a ~8-10 pasos de distancia','Emboca cada hoyo en 2 golpes (acercas y metes)','Logra varios hoyos seguidos de 2 golpes sin fallar','__NIVEL_MEDIO__'], esReto: true, retoTipo: 'medio' },
+  'retoMedio':  { nom: 'Reto Putt Corto',      cat: 'putt',     instrucciones: ['Elige hoyos a ~8-10 pasos de distancia','Emboca cada hoyo en 2 golpes (acercas y metes)','Logra varios hoyos seguidos de 2 golpes sin fallar','__NIVEL_MEDIO__'], esReto: true, retoTipo: 'medio' },
   'retoMedioReto': { nom: 'Reto Putt Largo',  cat: 'putt',     instrucciones: ['Elige hoyos largos: entre 12 y 20 pasos','Emboca cada hoyo en 2 golpes (acercas y metes)','Logra varios hoyos seguidos de 2 golpes sin fallar','__NIVEL_LARGO__'], esReto: true, retoTipo: 'largo' },
   'retoApproach': { nom: 'Reto Approach',      cat: 'approach', instrucciones: ['__RETO_APPROACH__'], esReto: true, retoTipo: 'approach' },
   'tobogan-ap': { nom: 'Tobogan approach',     cat: 'approach', instrucciones: ['Distancias: 10,15,20,25,30,35 yardas','Chip al green para avanzar','Si fallas, regresa al inicio'], distancias: ['10y','15y','20y','25y','30y','35y'] },
@@ -9901,7 +9903,7 @@ function _systemPromptCrearEjercicio() {
     '   - "deN": el jugador tira N bolas/intentos y cuenta cuántas logra (ej. mete 7 de 10). Usa esto para casi todo.\n' +
     '   - "racha": el jugador cuenta cuántas logra SEGUIDAS sin fallar, en un tiempo dado (ej. racha de 8). Usa esto solo si el ejercicio es de aciertos consecutivos.\n' +
     '2. Los 5 niveles van de fácil (nivel 1) a difícil (nivel 5), aumentando gradualmente la meta. La progresión debe ser realista para un golfista que mejora.\n' +
-    '3. La categoría debe ser una de: "Putt corto", "Putt medio", "Putt largo", "Approach", "Hierros", "Drive".\n' +
+    '3. La categoría debe ser una de: "Putt corto", "Putt largo", "Approach", "Hierros", "Drive".\n' +
     '4. Las instrucciones deben ser claras, cortas y motivadoras, como para un niño de 10 años. Explica cómo se coloca y qué cuenta.\n\n' +
     'Responde SOLO con un JSON (sin texto extra, sin markdown) con esta forma exacta:\n' +
     '{\n' +
@@ -10069,6 +10071,33 @@ function _guardarEjercicioFinal(esReto) {
     '</div>';
 }
 
+// Filtro de categoría de golf activo en la biblioteca (null = todas)
+var _biblioFiltroCat = null;
+
+// ¿El ejercicio/reto (por clave) ya está en el entrenamiento de hoy?
+function yaEnEntrenamientoHoy(clave) {
+  if (!estadoSesion || !estadoSesion.programa) return false;
+  return estadoSesion.programa.some(function(item){
+    // Comparar por claveNivel, por id con prefijo nv:, o por ids de retos especiales
+    if (item.claveNivel === clave) return true;
+    if (item.id === 'nv:' + clave) return true;
+    if (clave === 'op36' && item.id === 'op36') return true;
+    if (clave === 'reto-approach' && item.id === 'retoApproach') return true;
+    if (clave === 'reto-putt-medio' && item.id === 'retoMedio') return true;
+    if (clave === 'reto-putt-largo' && item.id === 'retoMedioReto') return true;
+    if (item.id === clave) return true;
+    return false;
+  });
+}
+
+// Abre la biblioteca en la pestaña de RETOS, filtrada por categoría (putt/approach/hierros/simulador)
+// Se usa al picar las tarjetas del home (Mis retos / evaluación)
+function abrirBibliotecaFiltrada(catGolf) {
+  _biblioPestana = 'reto';
+  _biblioFiltroCat = catGolf;
+  abrirBiblioteca();
+}
+
 function abrirBiblioteca() {
   var prev = document.getElementById('overlay-biblioteca');
   if (prev) prev.remove();
@@ -10105,12 +10134,34 @@ function renderBiblioteca() {
   // Pestañas
   var tabEj = _biblioPestana === 'ejercicio';
   var html = '<div style="display:flex;gap:8px;margin:6px 0 16px;position:sticky;top:0">' +
-    '<div onclick="_biblioPestana=\'ejercicio\';renderBiblioteca()" style="flex:1;text-align:center;padding:11px;border-radius:12px;cursor:pointer;font-size:13px;font-weight:800;' + (tabEj ? 'background:var(--player-main,#1D9E75);color:#fff' : 'background:#1a1f2e;color:#8a8a9a') + '">Ejercicios</div>' +
-    '<div onclick="_biblioPestana=\'reto\';renderBiblioteca()" style="flex:1;text-align:center;padding:11px;border-radius:12px;cursor:pointer;font-size:13px;font-weight:800;' + (!tabEj ? 'background:#EF9F27;color:#000' : 'background:#1a1f2e;color:#8a8a9a') + '">Retos</div>' +
+    '<div onclick="_biblioPestana=\'ejercicio\';_biblioFiltroCat=null;renderBiblioteca()" style="flex:1;text-align:center;padding:11px;border-radius:12px;cursor:pointer;font-size:13px;font-weight:800;' + (tabEj ? 'background:var(--player-main,#1D9E75);color:#fff' : 'background:#1a1f2e;color:#8a8a9a') + '">Ejercicios</div>' +
+    '<div onclick="_biblioPestana=\'reto\';_biblioFiltroCat=null;renderBiblioteca()" style="flex:1;text-align:center;padding:11px;border-radius:12px;cursor:pointer;font-size:13px;font-weight:800;' + (!tabEj ? 'background:#EF9F27;color:#000' : 'background:#1a1f2e;color:#8a8a9a') + '">Retos</div>' +
   '</div>';
 
   // Filtrar por pestaña y agrupar por categoría
   var lista = BIBLIOTECA.filter(function(x){ return x.grupo === _biblioPestana; });
+  // Filtro por categoría de golf (cuando se abre desde una tarjeta del home)
+  if (_biblioFiltroCat) {
+    lista = lista.filter(function(x){ return x.catGolf === _biblioFiltroCat; });
+  }
+  // Encabezado de filtro activo + mensaje si está vacío
+  if (_biblioFiltroCat) {
+    var nombreCat = { putt:'Putt', approach:'Approach', hierros:'Hierros', drive:'Drive', simulador:'Simulador' }[_biblioFiltroCat] || _biblioFiltroCat;
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(239,159,39,.12);border:1px solid rgba(239,159,39,.3);border-radius:12px;padding:10px 14px;margin-bottom:12px">' +
+      '<span style="color:#EF9F27;font-size:12px;font-weight:800">Mostrando retos de ' + nombreCat + '</span>' +
+      '<span onclick="_biblioFiltroCat=null;renderBiblioteca()" style="color:#8a8a9a;font-size:11px;cursor:pointer;text-decoration:underline">Ver todos</span>' +
+    '</div>';
+    if (!lista.length) {
+      html += '<div style="text-align:center;padding:26px 16px">' +
+        '<div style="font-size:34px;margin-bottom:10px">🎯</div>' +
+        '<div style="color:#e8e8f0;font-size:14px;font-weight:700;margin-bottom:6px">Aún no hay retos de ' + nombreCat + '</div>' +
+        '<div style="color:#8a8a9a;font-size:12px;line-height:1.5;margin-bottom:18px">Puedes crear el tuyo con Claude: descríbelo y él arma los niveles.</div>' +
+        '<div onclick="crearMiEjercicio()" style="background:linear-gradient(160deg,#7d3aed,#5b21b6);border-radius:13px;padding:13px;cursor:pointer;color:#fff;font-size:14px;font-weight:800">🧪 Crear mi reto</div>' +
+      '</div>';
+      cont.innerHTML = html;
+      return;
+    }
+  }
   var cats = [];
   lista.forEach(function(x){ if (cats.indexOf(x.cat) < 0) cats.push(x.cat); });
 
@@ -10120,15 +10171,16 @@ function renderBiblioteca() {
       var fav = esFavoritoBiblio(pid, ej.clave);
       var estrella = fav ? '⭐' : '☆';
       var estColor = fav ? '#EF9F27' : '#4a4a6a';
+      var yaAgregado = yaEnEntrenamientoHoy(ej.clave);
       var distTxt = ej.dist ? (' · ' + ej.dist.map(function(d){ return d.lbl.replace(' pies','').replace(' yardas','y'); }).join(', ') + ' pies') : '';
       // Ajuste: si son yardas, no forzar "pies"
       if (ej.dist && ej.dist[0] && ej.dist[0].lbl.indexOf('yarda') >= 0) {
         distTxt = ' · ' + ej.dist.map(function(d){ return d.lbl; }).join(', ');
       }
-      html += '<div style="background:#1a1f2e;border:0.5px solid rgba(255,255,255,.06);border-radius:13px;padding:13px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px">' +
+      html += '<div style="background:' + (yaAgregado ? 'rgba(29,158,117,.12)' : '#1a1f2e') + ';border:' + (yaAgregado ? '1px solid rgba(29,158,117,.5)' : '0.5px solid rgba(255,255,255,.06)') + ';border-radius:13px;padding:13px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px">' +
         '<div onclick="verFichaBiblio(\'' + ej.clave + '\')" style="flex:1;cursor:pointer">' +
-          '<div style="color:#e8e8f0;font-size:14px;font-weight:700">' + ej.nom + '</div>' +
-          '<div style="color:#7a7a95;font-size:11px;margin-top:2px">' + ej.mins + ' min' + distTxt + ' · toca para ver</div>' +
+          '<div style="color:' + (yaAgregado ? '#5FD6AA' : '#e8e8f0') + ';font-size:14px;font-weight:700">' + (yaAgregado ? '✓ ' : '') + ej.nom + '</div>' +
+          '<div style="color:#7a7a95;font-size:11px;margin-top:2px">' + (yaAgregado ? 'Ya en tu entrenamiento de hoy' : (ej.mins + ' min' + distTxt + ' · toca para ver')) + '</div>' +
         '</div>' +
         '<div onclick="toggleFavBiblioUI(\'' + ej.clave + '\')" style="font-size:22px;color:' + estColor + ';cursor:pointer;padding:2px 4px">' + estrella + '</div>' +
       '</div>';
@@ -10147,6 +10199,37 @@ function toggleFavBiblioUI(clave) {
 
 // Ficha detallada de un ejercicio de la biblioteca
 var _biblioDistSel = {}; // recuerda la distancia elegida por ejercicio
+// Agrega un ejercicio/reto al entrenamiento de hoy directo desde su ficha
+// Reutiliza el mismo flujo que el menú de favoritos (incluido preguntar distancia)
+function agregarAlEntrenamientoDesdeFicha(clave) {
+  // Cerrar la ficha
+  var ficha = document.getElementById('overlay-ficha-biblio');
+  if (ficha) ficha.remove();
+  // Asegurar que el estado de sesión esté bien inicializado
+  if (!estadoSesion.programa) estadoSesion.programa = [];
+  if (!estadoSesion.completados) estadoSesion.completados = estadoSesion.programa.map(function(){ return null; });
+  if (!estadoSesion.sesionId) estadoSesion.sesionId = 'ses_' + Date.now();
+  if (!estadoSesion.tiempo) estadoSesion.tiempo = 30;
+  // Reutilizar el flujo existente del menú de favoritos (maneja retos especiales y distancia)
+  _procesarSiguienteFav([clave]);
+  // Refrescar la lista de la biblioteca (para marcar en verde lo ya agregado)
+  if (document.getElementById('biblio-contenido')) renderBiblioteca();
+  // Confirmación visual
+  _toastEntrenamiento('✅ Agregado a tu entrenamiento de hoy');
+}
+
+// Pequeño aviso flotante temporal
+function _toastEntrenamiento(msg) {
+  var prev = document.getElementById('toast-entreno');
+  if (prev) prev.remove();
+  var t = document.createElement('div');
+  t.id = 'toast-entreno';
+  t.style.cssText = 'position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#1D9E75;color:#fff;padding:13px 22px;border-radius:14px;font-size:14px;font-weight:700;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.4);max-width:85%;text-align:center';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(function(){ if (t) { t.style.transition = 'opacity .4s'; t.style.opacity = '0'; setTimeout(function(){ if(t) t.remove(); }, 400); } }, 2200);
+}
+
 function verFichaBiblio(clave, distK) {
   var ej = BIBLIOTECA.find(function(x){ return x.clave === clave; });
   if (!ej) return;
@@ -10221,7 +10304,8 @@ function verFichaBiblio(clave, distK) {
       '<div style="color:#e8e8f0;font-size:13px;font-weight:800;margin:18px 0 8px">Cómo se juega</div>' +
       (instrHtml || '<div style="color:#7a7a95;font-size:12px">Instrucciones disponibles al agregarlo.</div>') +
       (nivelesHtml ? ('<div style="color:#e8e8f0;font-size:13px;font-weight:800;margin:18px 0 6px">' + nivelesTitulo + '</div>' + nivelesHtml) : '') +
-      '<div onclick="toggleFavFichaBiblio(\'' + clave + '\')" style="margin-top:22px;background:' + (fav ? 'rgba(239,159,39,.15)' : 'var(--player-main,#1D9E75)') + ';border:' + (fav ? '1px solid rgba(239,159,39,.4)' : 'none') + ';border-radius:14px;padding:14px;text-align:center;cursor:pointer;color:' + (fav ? '#EF9F27' : '#fff') + ';font-size:14px;font-weight:800">' + (fav ? '⭐ En tus favoritos (toca para quitar)' : '☆ Agregar a mis favoritos') + '</div>' +
+      '<div onclick="agregarAlEntrenamientoDesdeFicha(\'' + clave + '\')" style="margin-top:22px;background:linear-gradient(160deg,#1D9E75,#0F6E56);border-radius:14px;padding:15px;text-align:center;cursor:pointer;color:#fff;font-size:15px;font-weight:800;box-shadow:0 4px 14px rgba(29,158,117,.4)">➕ Agregar a mi entrenamiento de hoy</div>' +
+      '<div onclick="toggleFavFichaBiblio(\'' + clave + '\')" style="margin-top:10px;background:' + (fav ? 'rgba(239,159,39,.15)' : 'rgba(255,255,255,.06)') + ';border:1px solid ' + (fav ? 'rgba(239,159,39,.4)' : 'rgba(255,255,255,.12)') + ';border-radius:14px;padding:13px;text-align:center;cursor:pointer;color:' + (fav ? '#EF9F27' : '#c8c8d5') + ';font-size:14px;font-weight:700">' + (fav ? '⭐ En tus favoritos (toca para quitar)' : '☆ Agregar a mis favoritos') + '</div>' +
     '</div>' +
   '</div>';
   document.body.appendChild(ov);
@@ -10352,14 +10436,28 @@ function _procesarSiguienteFav(pendientes) {
   if (clave === 'op36') {
     // Reto 27: agregar con su estructura (par 3, 25 yardas por defecto)
     estadoSesion.programa.push({ id: 'op36', nom: 'Reto 27', cat: 'reto', mins: 60, esReto: true, op36dist: '25' });
-    if (estadoSesion.completados) estadoSesion.completados.push(null);
+    if (!estadoSesion.completados) estadoSesion.completados = []; estadoSesion.completados.push(null);
     renderSesionSync(); guardarEstadoSesion();
     _procesarSiguienteFav(pendientes);
     return;
   }
   if (clave === 'reto-approach') {
     estadoSesion.programa.push({ id: 'retoApproach', nom: 'Reto Approach', cat: 'approach', claveNivel: 'reto-approach', mins: 15, esReto: true });
-    if (estadoSesion.completados) estadoSesion.completados.push(null);
+    if (!estadoSesion.completados) estadoSesion.completados = []; estadoSesion.completados.push(null);
+    renderSesionSync(); guardarEstadoSesion();
+    _procesarSiguienteFav(pendientes);
+    return;
+  }
+  if (clave === 'reto-putt-medio') {
+    estadoSesion.programa.push({ id: 'retoMedio', nom: 'Reto Putt Corto', cat: 'reto', claveNivel: 'reto-putt-medio', mins: 15, esReto: true, retoTipo: 'medio' });
+    if (!estadoSesion.completados) estadoSesion.completados = []; estadoSesion.completados.push(null);
+    renderSesionSync(); guardarEstadoSesion();
+    _procesarSiguienteFav(pendientes);
+    return;
+  }
+  if (clave === 'reto-putt-largo') {
+    estadoSesion.programa.push({ id: 'retoMedioReto', nom: 'Reto Putt Largo', cat: 'reto', claveNivel: 'reto-putt-largo', mins: 15, esReto: true, retoTipo: 'largo' });
+    if (!estadoSesion.completados) estadoSesion.completados = []; estadoSesion.completados.push(null);
     renderSesionSync(); guardarEstadoSesion();
     _procesarSiguienteFav(pendientes);
     return;
@@ -10464,7 +10562,7 @@ function abrirMenuEjercicios(soloRetos) {
     { key:'putt', lbl:'Putt', icon:'⛳', iconBg:'rgba(24,95,165,.15)', tipo:'subgrupos',
       subgrupos:[
         { sub:'Putt corto', items:['circulo-tobogan','circulo-escalera','circulo-suma','circulo-handicap','circulo-record','circulo-velocidades','lineal-esctob-corto'] },
-        { sub:'Putt medio', items:['medio-escalera','medio-tobogan'] },
+        { sub:'Putt corto', items:['medio-escalera','medio-tobogan'] },
         { sub:'Putt largo', items:['largo-esctob'] }
       ] },
     { key:'approach', lbl:'Approach', icon:'🎯', iconBg:'rgba(133,79,11,.18)', tipo:'catalogo',
@@ -10812,6 +10910,10 @@ function agregarEjercicioNivel(catItem, def, clave, distK) {
     if (dd) nom = def.nom + ' · ' + dd.lbl;
   }
   // Reto Putt necesita configuración especial (medio/largo ya viene en distK)
+  if (!estadoSesion.programa) estadoSesion.programa = [];
+  if (!estadoSesion.completados) estadoSesion.completados = estadoSesion.programa.map(function(){ return null; });
+  if (!estadoSesion.sesionId) estadoSesion.sesionId = 'ses_' + Date.now();
+  if (!estadoSesion.tiempo) estadoSesion.tiempo = 30;
   estadoSesion.programa.push({
     id: 'nv:' + clave,        // prefijo nv: para identificar ejercicios de nivel
     claveNivel: clave,
@@ -10821,6 +10923,7 @@ function agregarEjercicioNivel(catItem, def, clave, distK) {
     instr: def.instr || [],
     esNuevo: true
   });
+  estadoSesion.completados.push(null);
   renderSesionSync();
   guardarEstadoSesion();
 }
@@ -11576,6 +11679,15 @@ function instruccionesDinamicas(item, clave) {
   var o = t.obj ? t.obj[nivel] : null;
 
   switch (t.tipo) {
+    case 'hoyos-ejec': // Reto Putt Corto / Largo (hoyos seguidos en 2 golpes)
+      var nHoyos = t.hoyos ? t.hoyos[nivel] : 2;
+      var nEjec = t.ejec ? t.ejec[nivel] : 1;
+      var esLargo = clave.indexOf('largo') >= 0;
+      var distTxt = esLargo ? 'hoyos largos, entre 12 y 20 pasos' : 'hoyos cortos, a 8-10 pasos';
+      var ejecTxt = nEjec === 1 ? '1 vez' : nEjec + ' veces';
+      return [
+        '🎯 Objetivo (nivel ' + nivel + '): elige ' + distTxt + ' en el green. Emboca cada hoyo en 2 golpes (acercas y metes). Tu meta es lograr ' + nHoyos + ' hoyos seguidos en 2 golpes sin fallar, y conseguirlo ' + ejecTxt + '. Anota cuántas veces lograste la meta.'
+      ];
     case 'approach-cerca': // Reto de Approach
       var pasos = t.pasos ? t.pasos[nivel] : 3;
       var pasoTxt = pasos === 1 ? '1 paso' : pasos + ' pasos';
