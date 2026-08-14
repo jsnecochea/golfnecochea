@@ -1000,7 +1000,7 @@
     <div style="display:flex;gap:9px;justify-content:space-around;background:linear-gradient(160deg,#0a2545 0%,#0f1320 100%);border:1px solid rgba(77,155,255,.45);border-radius:17px;padding:18px 12px;margin-bottom:18px;position:relative;overflow:hidden;box-shadow:0 6px 18px rgba(10,37,69,.5),inset 0 1px 0 rgba(133,183,235,.2)">
       <div style="position:absolute;top:-25px;right:-25px;width:90px;height:90px;background:radial-gradient(circle,rgba(77,155,255,.22),transparent 70%)"></div>
       <div style="position:absolute;bottom:-25px;left:-25px;width:80px;height:80px;background:radial-gradient(circle,rgba(77,155,255,.15),transparent 70%)"></div>
-      <div style="text-align:center;position:relative">
+      <div onclick="abrirBibliotecaFiltradaEjercicios('putt')" style="text-align:center;position:relative;cursor:pointer">
         <div style="position:relative;width:62px;height:62px;margin:0 auto">
           <svg width="62" height="62" viewBox="0 0 80 80"><defs><linearGradient id="apg-putt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f0abfc"/><stop offset="1" stop-color="#c026d3"/></linearGradient></defs><circle cx="40" cy="40" r="32" fill="none" stroke="#16213a" stroke-width="9"/><circle id="ap-putt-ring" cx="40" cy="40" r="32" fill="none" stroke="url(#apg-putt)" stroke-width="9" stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round" transform="rotate(-90 40 40)" style="filter:drop-shadow(0 0 4px rgba(232,121,249,.7))"/></svg>
           <div id="ap-putt-med" style="position:absolute;top:-4px;right:-2px;font-size:17px;filter:drop-shadow(0 0 5px rgba(240,171,252,.9));display:none">🏅</div>
@@ -1008,7 +1008,7 @@
         </div>
         <div style="color:#f0abfc;font-size:11px;font-weight:800;margin-top:7px">Putt</div>
       </div>
-      <div style="text-align:center;position:relative">
+      <div onclick="abrirBibliotecaFiltradaEjercicios('approach')" style="text-align:center;position:relative;cursor:pointer">
         <div style="position:relative;width:62px;height:62px;margin:0 auto">
           <svg width="62" height="62" viewBox="0 0 80 80"><defs><linearGradient id="apg-app" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFC466"/><stop offset="1" stop-color="#EF9F27"/></linearGradient></defs><circle cx="40" cy="40" r="32" fill="none" stroke="#16213a" stroke-width="9"/><circle id="ap-app-ring" cx="40" cy="40" r="32" fill="none" stroke="url(#apg-app)" stroke-width="9" stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round" transform="rotate(-90 40 40)" style="filter:drop-shadow(0 0 4px rgba(239,159,39,.7))"/></svg>
           <div id="ap-app-med" style="position:absolute;top:-4px;right:-2px;font-size:17px;filter:drop-shadow(0 0 5px rgba(239,159,39,.9));display:none">🏅</div>
@@ -1016,7 +1016,7 @@
         </div>
         <div style="color:#FAC775;font-size:11px;font-weight:800;margin-top:7px">Approach</div>
       </div>
-      <div style="text-align:center;position:relative">
+      <div onclick="abrirBibliotecaFiltradaEjercicios('hierros')" style="text-align:center;position:relative;cursor:pointer">
         <div style="position:relative;width:62px;height:62px;margin:0 auto">
           <svg width="62" height="62" viewBox="0 0 80 80"><defs><linearGradient id="apg-hierro" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5FD6AA"/><stop offset="1" stop-color="#1D9E75"/></linearGradient></defs><circle cx="40" cy="40" r="32" fill="none" stroke="#16213a" stroke-width="9"/><circle id="ap-hierro-ring" cx="40" cy="40" r="32" fill="none" stroke="url(#apg-hierro)" stroke-width="9" stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round" transform="rotate(-90 40 40)" style="filter:drop-shadow(0 0 4px rgba(29,158,117,.7))"/></svg>
           <div id="ap-hierro-med" style="position:absolute;top:-4px;right:-2px;font-size:17px;filter:drop-shadow(0 0 5px rgba(29,158,117,.9));display:none">🏅</div>
@@ -1246,12 +1246,6 @@
       </div>
     </div>
 
-    <!-- Actividad de esta semana -->
-    <div style="background:#2a2a34;border:0.5px solid rgba(255,255,255,.1);border-radius:16px;padding:16px;margin-top:18px;margin-bottom:20px">
-      <div style="color:#c5c5d5;font-size:13px;font-weight:700;text-align:center;margin-bottom:13px">Tu actividad · últimos 7 días</div>
-      <div id="prog-actividad-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px"></div>
-    </div>
-
   </div>
 </div>
 
@@ -1288,7 +1282,7 @@
   <div style="padding: 24px 20px; padding-bottom: 90px;">
 
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
-      <div style="color:var(--text-muted);font-size:13px;cursor:pointer" onclick="cerrarRegistro()">← Cancelar</div>
+      <div style="color:var(--text-muted);font-size:14px;font-weight:700;cursor:pointer;background:rgba(255,255,255,.06);padding:7px 14px;border-radius:10px" onclick="cerrarRegistro()">← Cancelar</div>
       <div id="reg-badge" style="background:var(--blue);border-radius:8px;padding:4px 12px"><span id="reg-badge-txt" style="color:var(--blue-light);font-size:10px;font-weight:700">PUTT</span></div>
     </div>
 
@@ -2909,7 +2903,7 @@ var BIBLIOTECA = [
   { clave:'drive-record', nom:'Drive · Récord', grupo:'ejercicio', cat:'Drive', mins:15 },
 
   // ---- RETOS (medibles, recurrentes, con estadística en el Home) ----
-  { clave:'op36', nom:'Reto 27', grupo:'reto', cat:'Reto', catGolf:'approach', mins:60 },
+  { clave:'op36', nom:'Reto OP27', grupo:'reto', cat:'Reto', catGolf:'op27', mins:60 },
   { clave:'reto-putt-medio', nom:'Reto Putt Corto', grupo:'reto', cat:'Reto', catGolf:'putt', mins:15 },
   { clave:'reto-putt-largo', nom:'Reto Putt Largo', grupo:'reto', cat:'Reto', catGolf:'putt', mins:15 },
   { clave:'reto-approach', nom:'Reto Approach', grupo:'reto', cat:'Reto', catGolf:'approach', mins:15 },
@@ -2959,6 +2953,28 @@ function toggleFavoritoBiblio(perfilId, clave) {
   else favs.push(clave);
   setFavoritosBiblio(perfilId, favs);
   return favs.indexOf(clave) >= 0;
+}
+
+// ===== FICHA DEL HIERRO (carry + notas, por bastón, compartida entre ejercicios de hierro) =====
+// Los bastones disponibles
+var HIERROS_DISPONIBLES = ['4','5','6','7','8','9','PW'];
+// Lee todas las fichas de hierro de un perfil: { '7': {carry:'150 yardas', notas:'...'}, ... }
+function getFichasHierro(perfilId) {
+  try { return JSON.parse(localStorage.getItem('hierro_ficha_' + perfilId) || '{}'); } catch(e) { return {}; }
+}
+function setFichasHierro(perfilId, fichas) {
+  try { localStorage.setItem('hierro_ficha_' + perfilId, JSON.stringify(fichas)); } catch(e) {}
+}
+// Lee la ficha de un bastón específico
+function getFichaHierro(perfilId, baston) {
+  var f = getFichasHierro(perfilId);
+  return f[baston] || { carry: '', notas: '' };
+}
+// Guarda la ficha de un bastón
+function setFichaHierro(perfilId, baston, ficha) {
+  var f = getFichasHierro(perfilId);
+  f[baston] = ficha;
+  setFichasHierro(perfilId, f);
 }
 
 var CATALOGO_NUEVO = {
@@ -5163,7 +5179,7 @@ function renderProNivelMedio() {
         '<div style="color:#1D9E75;font-size:30px;font-weight:800;line-height:1">N' + nivel + '</div>' +
         '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:5px">' + dotsHtml + '</div>' +
         '<div style="background:#E24B4A;border-radius:8px;padding:4px 10px"><span style="color:white;font-size:13px;font-weight:800">' + diasParaBajar + ' días</span></div>' +
-        '<div style="color:#888;font-size:10px;font-weight:700;line-height:1.3">NIVEL PUTT<br>MEDIO</div>' +
+        '<div style="color:#888;font-size:10px;font-weight:700;line-height:1.3">NIVEL PUTT<br>CORTO</div>' +
       '</div>';
   } else {
     var faltanSubir = 10 - progreso;
@@ -5173,7 +5189,7 @@ function renderProNivelMedio() {
           '<div style="color:#1D9E75;font-size:32px;font-weight:800;line-height:1">N' + nivel + '</div>' +
           '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:5px">' + dotsHtml + '</div>' +
         '</div>' +
-        '<div style="color:#888;font-size:10px;font-weight:700;line-height:1.3">NIVEL PUTT<br>MEDIO</div>' +
+        '<div style="color:#888;font-size:10px;font-weight:700;line-height:1.3">NIVEL PUTT<br>CORTO</div>' +
       '</div>';
   }
 }
@@ -9502,7 +9518,7 @@ var EJERCICIOS_DEF = {
   'hierros':    { nom: 'Escalera hierros',     cat: 'hierros',  instrucciones: ['Palos: 9H-8H-7H-6H','5 bolas consecutivas en zona objetivo','Si fallas, reinicia el contador'] },
   'drive':      { nom: 'Drive',                cat: 'drive',    instrucciones: ['5 tiros consecutivos en zona objetivo','1 ejecucion = 5 tiros en zona','Cuenta madera 3 y drive por separado'] },
   'op36-25':    { nom: 'OP 27 - 25y',   cat: 'reto',     instrucciones: ['9 hoyos par 3 desde 25 yardas','Par del campo = 27 golpes','Meta alto rendimiento: -5'], esReto: true },
-  'op36':       { nom: 'Reto 27',   cat: 'reto',     instrucciones: ['9 hoyos par 3 desde 25 yardas','Par del campo = 27 golpes','Anota tus golpes por hoyo'], esReto: true },
+  'op36':       { nom: 'Reto OP27',   cat: 'reto',     instrucciones: ['9 hoyos par 3 desde 25 yardas','Par del campo = 27 golpes','Anota tus golpes por hoyo'], esReto: true },
   'op36-50':    { nom: 'OP 27 - 50y',   cat: 'reto',     instrucciones: ['9 hoyos par 3 desde 50 yardas','Par del campo = 27 golpes','Meta alto rendimiento: -3'], esReto: true },
   'op36-100':   { nom: 'OP 27 - 100y',  cat: 'reto',     instrucciones: ['9 hoyos par 3 desde 100 yardas','Par del campo = 27 golpes','Meta alto rendimiento: -1'], esReto: true },
   'op36-150':   { nom: 'OP 27 - 150y',  cat: 'reto',     instrucciones: ['9 hoyos par 3 desde 150 yardas','Par del campo = 27 golpes','Meta alto rendimiento: +2'], esReto: true },
@@ -9896,28 +9912,38 @@ var _biblioPestana = 'ejercicio'; // 'ejercicio' | 'reto'
 var _crearEjPropuesta = null; // guarda la última propuesta de Claude
 
 function _systemPromptCrearEjercicio() {
-  return 'Eres un entrenador de golf que ayuda a crear ejercicios de práctica para una app. ' +
-    'El usuario te describe un ejercicio (o el que le dio su entrenador) y tú lo conviertes en un ejercicio ESTRUCTURADO y UNIFICADO con el resto de la app.\n\n' +
-    'REGLAS DE UNIFICACIÓN (muy importante):\n' +
-    '1. La forma de medir SOLO puede ser uno de estos dos tipos:\n' +
-    '   - "deN": el jugador tira N bolas/intentos y cuenta cuántas logra (ej. mete 7 de 10). Usa esto para casi todo.\n' +
-    '   - "racha": el jugador cuenta cuántas logra SEGUIDAS sin fallar, en un tiempo dado (ej. racha de 8). Usa esto solo si el ejercicio es de aciertos consecutivos.\n' +
-    '2. Los 5 niveles van de fácil (nivel 1) a difícil (nivel 5), aumentando gradualmente la meta. La progresión debe ser realista para un golfista que mejora.\n' +
-    '3. La categoría debe ser una de: "Putt corto", "Putt largo", "Approach", "Hierros", "Drive".\n' +
-    '4. Las instrucciones deben ser claras, cortas y motivadoras, como para un niño de 10 años. Explica cómo se coloca y qué cuenta.\n\n' +
-    'Responde SOLO con un JSON (sin texto extra, sin markdown) con esta forma exacta:\n' +
-    '{\n' +
-    '  "nombre": "nombre corto del ejercicio",\n' +
-    '  "categoria": "una de las 6 categorías",\n' +
-    '  "instrucciones": "cómo se juega, 1-2 frases claras",\n' +
-    '  "tipo": "deN" o "racha",\n' +
-    '  "n": (solo si tipo deN) número de bolas por ronda, ej 10,\n' +
-    '  "minutos_racha": (solo si tipo racha) minutos de práctica, ej 15,\n' +
-    '  "niveles": [meta1, meta2, meta3, meta4, meta5],\n' +
-    '  "duracion_min": minutos que dura la sesión, ej 10,\n' +
-    '  "resumen": "una frase amistosa explicando tu propuesta al usuario"\n' +
-    '}\n' +
-    'Ejemplo: si el usuario dice "tirar 10 chips a un aro desde 20 metros y contar cuántos caen dentro", responde con tipo "deN", n 10, niveles [3,4,5,6,7], categoria "Approach".';
+  // Construir la lista de lo que YA existe, para que Claude detecte duplicados
+  var existentes = [];
+  try {
+    BIBLIOTECA.forEach(function(x){
+      existentes.push('- "' + x.nom + '" (' + (x.grupo === 'reto' ? 'RETO' : 'ejercicio') + ', ' + (x.cat || '') + ')');
+    });
+  } catch(e){}
+  var listaExistente = existentes.join('\n');
+
+  return 'Eres un entrenador de golf experto que ayuda a crear practica ESTRUCTURADA para una app usada por adultos y ninos. ' +
+    'Tu trabajo es entrevistar bien al usuario y convertir lo que describe en algo ordenado y congruente. La app debe mantener ORDEN: es tu responsabilidad evitar que se llene de cosas desordenadas o repetidas.\n\n' +
+    'PASO 1 - DISTINGUE RETO vs EJERCICIO (critico):\n' +
+    '- EJERCICIO: practica libre para mejorar una destreza. Se mide con "deN" (cuantas logras de N) o "racha" (cuantas seguidas). Ej: "meter putts de 2 metros".\n' +
+    '- RETO: prueba medible y recurrente tipo examen, que mide el NIVEL del jugador y se repite para ver progreso. Suele jugarse como recorrido con hoyos o estaciones. Ej: "9 hoyos desde 25 yardas".\n' +
+    'Si no queda claro cual es, preguntale al usuario antes de decidir (usa accion "pregunta").\n\n' +
+    'PASO 2 - REVISA SI YA EXISTE ALGO IGUAL O MUY PARECIDO:\n' +
+    'Esto es lo que el jugador YA tiene en su biblioteca:\n' + listaExistente + '\n' +
+    'Si lo que describe es practicamente lo mismo que algo de la lista, NO lo dupliques. Responde con accion "duplicado" indicando el nombre del que ya existe y explicando en "resumen" que ya existe uno igual, que hace y ofreciendo usar el existente (y renombrarlo si quiere).\n\n' +
+    'PASO 3 - SI ES NUEVO, ESTRUCTURALO BIEN:\n' +
+    '1. Forma de medir (solo una): "deN" (tira N y cuenta aciertos) o "racha" (aciertos seguidos en un tiempo).\n' +
+    '2. Los 5 niveles van de facil (nivel 1) a dificil (nivel 5), con progresion GRADUAL y REALISTA. Cada nivel un poco mas dificil que el anterior. Piensa que meta corresponde a un principiante (nivel 1) y a un experto (nivel 5) para ESA destreza.\n' +
+    '3. CATEGORIA (MUY IMPORTANTE - define donde aparecera): elige con cuidado una segun la destreza principal:\n' +
+    '   - "Putt corto": putts en el green a distancias cortas. "Putt largo": putts largos en el green.\n' +
+    '   - "Approach": tiros cortos al green (chips, pitches, wedges, bunker cerca del green).\n' +
+    '   - "Hierros": tiros con hierros a media/larga distancia. "Drive": tiros de salida con driver o madera.\n' +
+    '   Un nino que practica putt SOLO vera ejercicios de putt; si clasificas mal, no lo encontrara donde lo busca. Si dudas entre dos, elige la destreza dominante y menciona tu decision en el resumen.\n' +
+    '4. Instrucciones claras, cortas y motivadoras (como para un nino de 10 anos): como se coloca y que cuenta.\n\n' +
+    'RESPONDE SOLO con un JSON (sin texto extra ni markdown). Una de estas tres formas:\n' +
+    'A) Si necesitas aclarar algo: { "accion": "pregunta", "pregunta": "tu pregunta clara" }\n' +
+    'B) Si ya existe algo igual: { "accion": "duplicado", "existente": "nombre del que ya existe", "resumen": "explica que ya existe uno que hace eso, como se llama, y ofrece usarlo o renombrarlo" }\n' +
+    'C) Si es nuevo: { "accion": "crear", "es_reto": true/false, "nombre": "nombre corto", "categoria": "una de las 5", "instrucciones": "1-2 frases", "tipo": "deN" o "racha", "n": (si deN) ej 10, "minutos_racha": (si racha) ej 15, "niveles": [m1,m2,m3,m4,m5], "duracion_min": ej 10, "resumen": "frase amistosa explicando tu propuesta" }\n' +
+    'Ejemplo C: "tirar 10 chips a un aro desde 20 metros y contar cuantos caen" -> { "accion":"crear", "es_reto":false, "tipo":"deN", "n":10, "niveles":[3,4,5,6,7], "categoria":"Approach", ... }';
 }
 
 function crearMiEjercicio() {
@@ -9979,15 +10005,80 @@ async function _pedirPropuestaEjercicio() {
   var texto = ta ? ta.value.trim() : '';
   if (!texto) { return; }
   var cuerpo = document.getElementById('crear-ej-cuerpo');
-  if (cuerpo) cuerpo.innerHTML = '<div style="text-align:center;padding:30px 10px"><div style="font-size:32px;margin-bottom:10px">🧪</div><div style="color:#a78bfa;font-size:14px;font-weight:700">Claude está diseñando tu ejercicio…</div></div>';
+  if (cuerpo) cuerpo.innerHTML = '<div style="text-align:center;padding:30px 10px"><div style="font-size:32px;margin-bottom:10px">🧪</div><div style="color:#a78bfa;font-size:14px;font-weight:700">Claude está revisando tu idea…</div></div>';
   try {
     var json = await dictarAClaudeJSON(texto, _systemPromptCrearEjercicio());
-    if (!json || !json.nombre) throw new Error('sin propuesta');
-    _crearEjPropuesta = json;
-    _mostrarPropuestaEjercicio(json);
+    if (!json) throw new Error('sin respuesta');
+    var accion = json.accion || (json.nombre ? 'crear' : null);
+
+    // A) Claude necesita aclarar algo → mostrar su pregunta y dejar responder
+    if (accion === 'pregunta' && json.pregunta) {
+      _mostrarPreguntaClaude(json.pregunta, texto);
+      return;
+    }
+    // B) Ya existe algo igual → avisar y ofrecer opciones
+    if (accion === 'duplicado') {
+      _mostrarDuplicado(json);
+      return;
+    }
+    // C) Propuesta de crear
+    if (accion === 'crear' && json.nombre) {
+      json.es_reto_sugerido = !!json.es_reto;
+      _crearEjPropuesta = json;
+      _mostrarPropuestaEjercicio(json);
+      return;
+    }
+    throw new Error('respuesta no reconocida');
   } catch(e) {
     if (cuerpo) cuerpo.innerHTML = '<div style="text-align:center;padding:24px 10px"><div style="color:#E24B4A;font-size:14px;font-weight:700;margin-bottom:8px">No pude crear el ejercicio</div><div style="color:#8a8a9a;font-size:12px;margin-bottom:16px">Intenta describirlo con más detalle.</div><div onclick="crearMiEjercicio()" style="background:#7d3aed;border-radius:12px;padding:13px;text-align:center;cursor:pointer;color:#fff;font-size:14px;font-weight:800">Volver a intentar</div></div>';
   }
+}
+
+// Claude hace una pregunta de aclaración; el usuario responde y se reenvía junto con el texto original
+function _mostrarPreguntaClaude(pregunta, textoOriginal) {
+  var cuerpo = document.getElementById('crear-ej-cuerpo');
+  if (!cuerpo) return;
+  window._crearEjTextoPrevio = textoOriginal;
+  cuerpo.innerHTML =
+    '<div style="background:rgba(125,58,237,.1);border:1px solid rgba(125,58,237,.3);border-radius:14px;padding:16px;margin-bottom:12px">' +
+      '<div style="color:#a78bfa;font-size:12px;font-weight:800;margin-bottom:8px">🤔 Claude pregunta:</div>' +
+      '<div style="color:#e8e8f0;font-size:14px;line-height:1.5">' + pregunta + '</div>' +
+    '</div>' +
+    '<textarea id="crear-ej-respuesta" placeholder="Tu respuesta…" style="width:100%;min-height:70px;background:#1a1f2e;border:0.5px solid rgba(255,255,255,.12);border-radius:12px;padding:13px;color:#e8e8f0;font-size:14px;font-family:inherit;resize:vertical;box-sizing:border-box"></textarea>' +
+    '<div onclick="_responderPreguntaClaude()" style="margin-top:10px;background:linear-gradient(160deg,#7d3aed,#5b21b6);border-radius:12px;padding:14px;text-align:center;cursor:pointer;color:#fff;font-size:14px;font-weight:800">Enviar respuesta</div>';
+}
+
+async function _responderPreguntaClaude() {
+  var ta = document.getElementById('crear-ej-respuesta');
+  var resp = ta ? ta.value.trim() : '';
+  if (!resp) return;
+  var textoCompleto = (window._crearEjTextoPrevio || '') + '\n\nAclaración del usuario: ' + resp;
+  var cuerpo = document.getElementById('crear-ej-cuerpo');
+  if (cuerpo) cuerpo.innerHTML = '<div style="text-align:center;padding:30px 10px"><div style="font-size:32px;margin-bottom:10px">🧪</div><div style="color:#a78bfa;font-size:14px;font-weight:700">Claude está diseñando…</div></div>';
+  try {
+    var json = await dictarAClaudeJSON(textoCompleto, _systemPromptCrearEjercicio());
+    var accion = json.accion || (json.nombre ? 'crear' : null);
+    if (accion === 'pregunta' && json.pregunta) { _mostrarPreguntaClaude(json.pregunta, textoCompleto); return; }
+    if (accion === 'duplicado') { _mostrarDuplicado(json); return; }
+    if (accion === 'crear' && json.nombre) { json.es_reto_sugerido = !!json.es_reto; _crearEjPropuesta = json; _mostrarPropuestaEjercicio(json); return; }
+    throw new Error('no reconocida');
+  } catch(e) {
+    if (cuerpo) cuerpo.innerHTML = '<div style="text-align:center;padding:24px 10px"><div style="color:#E24B4A;font-size:14px;font-weight:700;margin-bottom:8px">Hubo un problema</div><div onclick="crearMiEjercicio()" style="background:#7d3aed;border-radius:12px;padding:13px;text-align:center;cursor:pointer;color:#fff;font-size:14px;font-weight:800;margin-top:10px">Volver a intentar</div></div>';
+  }
+}
+
+// Claude detectó que ya existe algo igual o muy parecido
+function _mostrarDuplicado(json) {
+  var cuerpo = document.getElementById('crear-ej-cuerpo');
+  if (!cuerpo) return;
+  cuerpo.innerHTML =
+    '<div style="background:rgba(239,159,39,.1);border:1px solid rgba(239,159,39,.35);border-radius:14px;padding:16px;margin-bottom:14px">' +
+      '<div style="color:#EF9F27;font-size:12px;font-weight:800;margin-bottom:8px">⚠️ Ya existe algo parecido</div>' +
+      (json.existente ? '<div style="color:#fff;font-size:15px;font-weight:800;margin-bottom:8px">' + json.existente + '</div>' : '') +
+      '<div style="color:#c8c8d5;font-size:13px;line-height:1.5">' + (json.resumen || 'Ya tienes un ejercicio que hace prácticamente lo mismo.') + '</div>' +
+    '</div>' +
+    '<div style="color:#8a8a9a;font-size:12px;line-height:1.5;margin-bottom:12px;text-align:center">Para no llenar tu biblioteca de cosas repetidas, mejor usa el que ya tienes. Si quieres, puedes crear algo distinto.</div>' +
+    '<div onclick="crearMiEjercicio()" style="background:#1a1f2e;border:0.5px solid rgba(255,255,255,.12);border-radius:12px;padding:13px;text-align:center;cursor:pointer;color:#c8c8d5;font-size:13px;font-weight:700">Describir otra cosa</div>';
 }
 
 function _mostrarPropuestaEjercicio(p) {
@@ -10073,6 +10164,9 @@ function _guardarEjercicioFinal(esReto) {
 
 // Filtro de categoría de golf activo en la biblioteca (null = todas)
 var _biblioFiltroCat = null;
+// Cuando true, la vista filtrada de ejercicios muestra SOLO favoritos (desde tarjeta Mi Práctica).
+// Cuando false, muestra TODOS los ejercicios de esa categoría (al picar "Ir a la biblioteca").
+var _biblioSoloFav = false;
 
 // ¿El ejercicio/reto (por clave) ya está en el entrenamiento de hoy?
 function yaEnEntrenamientoHoy(clave) {
@@ -10081,6 +10175,10 @@ function yaEnEntrenamientoHoy(clave) {
     // Comparar por claveNivel, por id con prefijo nv:, o por ids de retos especiales
     if (item.claveNivel === clave) return true;
     if (item.id === 'nv:' + clave) return true;
+    // Ejercicios con distancia: se guardan como 'clave-4', 'clave-6', etc.
+    // Coinciden si la claveNivel del item empieza con "clave-"
+    if (item.claveNivel && item.claveNivel.indexOf(clave + '-') === 0) return true;
+    if (item.id && item.id.indexOf('nv:' + clave + '-') === 0) return true;
     if (clave === 'op36' && item.id === 'op36') return true;
     if (clave === 'reto-approach' && item.id === 'retoApproach') return true;
     if (clave === 'reto-putt-medio' && item.id === 'retoMedio') return true;
@@ -10095,6 +10193,26 @@ function yaEnEntrenamientoHoy(clave) {
 function abrirBibliotecaFiltrada(catGolf) {
   _biblioPestana = 'reto';
   _biblioFiltroCat = catGolf;
+  _biblioSoloFav = false;
+  abrirBiblioteca();
+}
+
+// Deriva la categoría de tarjeta (putt/approach/hierros/drive) desde el 'cat' del ejercicio
+function catGolfDeEjercicio(ej) {
+  var cat = (ej.cat || '').toLowerCase();
+  if (cat.indexOf('putt') >= 0) return 'putt';
+  if (cat.indexOf('approach') >= 0) return 'approach';
+  if (cat.indexOf('hierro') >= 0) return 'hierros';
+  if (cat.indexOf('drive') >= 0) return 'drive';
+  return null;
+}
+
+// Abre la biblioteca en pestaña EJERCICIOS, filtrada por categoría (para las tarjetas de Mi Práctica)
+// Muestra solo los FAVORITOS de esa categoría (vista rápida para el niño)
+function abrirBibliotecaFiltradaEjercicios(catGolf) {
+  _biblioPestana = 'ejercicio';
+  _biblioFiltroCat = catGolf;
+  _biblioSoloFav = true;
   abrirBiblioteca();
 }
 
@@ -10111,7 +10229,7 @@ function abrirBiblioteca() {
       '<div style="color:#8a8a9a;font-size:11px;margin-top:2px">Marca tus favoritos ⭐ para que aparezcan en tu menú de entrenamiento</div></div>' +
       '<div id="cerrar-biblio" style="color:#4a4a6a;font-size:28px;cursor:pointer;padding:4px 8px">×</div>' +
     '</div>' +
-    '<div style="padding:0 16px 10px">' +
+    '<div id="biblio-crear-header" style="padding:0 16px 10px">' +
       '<div onclick="crearMiEjercicio()" style="background:transparent;border:1.5px solid #7d3aed;border-radius:13px;padding:12px;display:flex;align-items:center;justify-content:center;gap:8px;cursor:pointer">' +
         '<span style="font-size:15px">🧪</span><span style="color:#a78bfa;font-size:13px;font-weight:700">Crear mi ejercicio</span>' +
       '</div>' +
@@ -10128,38 +10246,82 @@ function abrirBiblioteca() {
 function renderBiblioteca() {
   var cont = document.getElementById('biblio-contenido');
   if (!cont) return;
+  try {
   var p = getPerfil();
   var pid = p ? p.id : 0;
 
-  // Pestañas
+  // Ocultar el botón "Crear mi ejercicio" de la cabecera cuando hay filtro por categoría
+  // (en vista filtrada usamos el botón "Crear mi reto", para no duplicar)
+  var crearHeader = document.getElementById('biblio-crear-header');
+  if (crearHeader) crearHeader.style.display = _biblioFiltroCat ? 'none' : '';
+
+  // Pestañas — solo se muestran cuando NO hay filtro por categoría (vista general)
   var tabEj = _biblioPestana === 'ejercicio';
-  var html = '<div style="display:flex;gap:8px;margin:6px 0 16px;position:sticky;top:0">' +
-    '<div onclick="_biblioPestana=\'ejercicio\';_biblioFiltroCat=null;renderBiblioteca()" style="flex:1;text-align:center;padding:11px;border-radius:12px;cursor:pointer;font-size:13px;font-weight:800;' + (tabEj ? 'background:var(--player-main,#1D9E75);color:#fff' : 'background:#1a1f2e;color:#8a8a9a') + '">Ejercicios</div>' +
-    '<div onclick="_biblioPestana=\'reto\';_biblioFiltroCat=null;renderBiblioteca()" style="flex:1;text-align:center;padding:11px;border-radius:12px;cursor:pointer;font-size:13px;font-weight:800;' + (!tabEj ? 'background:#EF9F27;color:#000' : 'background:#1a1f2e;color:#8a8a9a') + '">Retos</div>' +
-  '</div>';
+  var html = '';
+  if (!_biblioFiltroCat) {
+    html += '<div style="display:flex;gap:8px;margin:6px 0 16px;position:sticky;top:0">' +
+      '<div onclick="_biblioPestana=\'ejercicio\';_biblioFiltroCat=null;renderBiblioteca()" style="flex:1;text-align:center;padding:11px;border-radius:12px;cursor:pointer;font-size:13px;font-weight:800;' + (tabEj ? 'background:var(--player-main,#1D9E75);color:#fff' : 'background:#1a1f2e;color:#8a8a9a') + '">Ejercicios</div>' +
+      '<div onclick="_biblioPestana=\'reto\';_biblioFiltroCat=null;renderBiblioteca()" style="flex:1;text-align:center;padding:11px;border-radius:12px;cursor:pointer;font-size:13px;font-weight:800;' + (!tabEj ? 'background:#EF9F27;color:#000' : 'background:#1a1f2e;color:#8a8a9a') + '">Retos</div>' +
+    '</div>';
+  }
 
   // Filtrar por pestaña y agrupar por categoría
   var lista = BIBLIOTECA.filter(function(x){ return x.grupo === _biblioPestana; });
   // Filtro por categoría de golf (cuando se abre desde una tarjeta del home)
   if (_biblioFiltroCat) {
-    lista = lista.filter(function(x){ return x.catGolf === _biblioFiltroCat; });
+    if (_biblioPestana === 'ejercicio') {
+      // Los ejercicios derivan su categoría de su campo 'cat'
+      lista = lista.filter(function(x){ return catGolfDeEjercicio(x) === _biblioFiltroCat; });
+    } else {
+      // Los retos usan su campo catGolf
+      lista = lista.filter(function(x){ return x.catGolf === _biblioFiltroCat; });
+    }
   }
-  // Encabezado de filtro activo + mensaje si está vacío
+  // Vista filtrada (desde una tarjeta del home): encabezado limpio + botón crear arriba
   if (_biblioFiltroCat) {
     var nombreCat = { putt:'Putt', approach:'Approach', hierros:'Hierros', drive:'Drive', simulador:'Simulador' }[_biblioFiltroCat] || _biblioFiltroCat;
-    html += '<div style="display:flex;align-items:center;justify-content:space-between;background:rgba(239,159,39,.12);border:1px solid rgba(239,159,39,.3);border-radius:12px;padding:10px 14px;margin-bottom:12px">' +
-      '<span style="color:#EF9F27;font-size:12px;font-weight:800">Mostrando retos de ' + nombreCat + '</span>' +
-      '<span onclick="_biblioFiltroCat=null;renderBiblioteca()" style="color:#8a8a9a;font-size:11px;cursor:pointer;text-decoration:underline">Ver todos</span>' +
-    '</div>';
-    if (!lista.length) {
-      html += '<div style="text-align:center;padding:26px 16px">' +
-        '<div style="font-size:34px;margin-bottom:10px">🎯</div>' +
-        '<div style="color:#e8e8f0;font-size:14px;font-weight:700;margin-bottom:6px">Aún no hay retos de ' + nombreCat + '</div>' +
-        '<div style="color:#8a8a9a;font-size:12px;line-height:1.5;margin-bottom:18px">Puedes crear el tuyo con Claude: descríbelo y él arma los niveles.</div>' +
-        '<div onclick="crearMiEjercicio()" style="background:linear-gradient(160deg,#7d3aed,#5b21b6);border-radius:13px;padding:13px;cursor:pointer;color:#fff;font-size:14px;font-weight:800">🧪 Crear mi reto</div>' +
-      '</div>';
-      cont.innerHTML = html;
-      return;
+    var esEjercicioTab = (_biblioPestana === 'ejercicio');
+    // Botón para ver TODOS los de esta categoría (mantiene el filtro de categoría, quita solo-favoritos)
+    var btnVerTodosCat = '<div onclick="_biblioSoloFav=false;renderBiblioteca()" style="background:rgba(125,58,237,.12);border:1px solid rgba(125,58,237,.35);border-radius:13px;padding:13px;cursor:pointer;color:#a78bfa;font-size:14px;font-weight:800;text-align:center;margin-bottom:14px">📚 Ver todos los de ' + nombreCat + '</div>';
+
+    if (esEjercicioTab) {
+      if (_biblioSoloFav) {
+        // MI PRÁCTICA (desde tarjeta): mostrar solo los FAVORITOS de esta categoría
+        var favoritos = lista.filter(function(x){ return esFavoritoBiblio(pid, x.clave); });
+        if (!favoritos.length) {
+          // Sin favoritos: mensaje + botón para ver todos los de esta categoría
+          html += '<div style="text-align:center;padding:22px 16px">' +
+            '<div style="font-size:34px;margin-bottom:10px">⭐</div>' +
+            '<div style="color:#e8e8f0;font-size:14px;font-weight:700;margin-bottom:6px">No tienes ejercicios de ' + nombreCat + ' marcados</div>' +
+            '<div style="color:#8a8a9a;font-size:12px;line-height:1.5;margin-bottom:16px">Elige de todos los ejercicios de ' + nombreCat + ' y marca tus favoritos ⭐.</div>' +
+            '<div onclick="_biblioSoloFav=false;renderBiblioteca()" style="background:rgba(125,58,237,.12);border:1px solid rgba(125,58,237,.35);border-radius:12px;padding:12px;cursor:pointer;color:#a78bfa;font-size:13px;font-weight:800">📚 Ver todos los de ' + nombreCat + '</div>' +
+          '</div>';
+          cont.innerHTML = html;
+          return;
+        }
+        // Sí hay favoritos: botón "ver todos de la categoría" arriba + mostrar solo favoritos
+        html += btnVerTodosCat;
+        lista = favoritos;
+      } else {
+        // "Ver todos los de [categoría]": muestra TODO el catálogo de esa categoría
+        html += '<div style="color:#8a8a9a;font-size:11px;text-align:center;margin-bottom:12px">Todos los ejercicios de ' + nombreCat + ' · marca tus ⭐ favoritos</div>';
+        if (!lista.length) {
+          html += '<div style="text-align:center;padding:22px 16px"><div style="font-size:34px;margin-bottom:10px">📭</div><div style="color:#e8e8f0;font-size:14px;font-weight:700">No hay ejercicios de ' + nombreCat + '</div></div>';
+          cont.innerHTML = html;
+          return;
+        }
+      }
+    } else {
+      // MIS RETOS: solo mostrar los retos de esa categoría (crear vive en la biblioteca grande)
+      if (!lista.length) {
+        html += '<div style="text-align:center;padding:22px 16px">' +
+          '<div style="font-size:34px;margin-bottom:10px">🎯</div>' +
+          '<div style="color:#e8e8f0;font-size:14px;font-weight:700;margin-bottom:6px">Aún no hay retos de ' + nombreCat + '</div>' +
+          '<div style="color:#8a8a9a;font-size:12px;line-height:1.5">Ve a la biblioteca para crear uno nuevo con Claude.</div>' +
+        '</div>';
+        cont.innerHTML = html;
+        return;
+      }
     }
   }
   var cats = [];
@@ -10172,10 +10334,13 @@ function renderBiblioteca() {
       var estrella = fav ? '⭐' : '☆';
       var estColor = fav ? '#EF9F27' : '#4a4a6a';
       var yaAgregado = yaEnEntrenamientoHoy(ej.clave);
-      var distTxt = ej.dist ? (' · ' + ej.dist.map(function(d){ return d.lbl.replace(' pies','').replace(' yardas','y'); }).join(', ') + ' pies') : '';
-      // Ajuste: si son yardas, no forzar "pies"
-      if (ej.dist && ej.dist[0] && ej.dist[0].lbl.indexOf('yarda') >= 0) {
-        distTxt = ' · ' + ej.dist.map(function(d){ return d.lbl; }).join(', ');
+      var distTxt = '';
+      if (ej.dist && ej.dist.length && ej.dist[0] && ej.dist[0].lbl) {
+        if (ej.dist[0].lbl.indexOf('yarda') >= 0) {
+          distTxt = ' · ' + ej.dist.map(function(d){ return (d && d.lbl) ? d.lbl : ''; }).filter(Boolean).join(', ');
+        } else {
+          distTxt = ' · ' + ej.dist.map(function(d){ return (d && d.lbl) ? d.lbl.replace(' pies','').replace(' yardas','y') : ''; }).filter(Boolean).join(', ') + ' pies';
+        }
       }
       html += '<div style="background:' + (yaAgregado ? 'rgba(29,158,117,.12)' : '#1a1f2e') + ';border:' + (yaAgregado ? '1px solid rgba(29,158,117,.5)' : '0.5px solid rgba(255,255,255,.06)') + ';border-radius:13px;padding:13px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px">' +
         '<div onclick="verFichaBiblio(\'' + ej.clave + '\')" style="flex:1;cursor:pointer">' +
@@ -10188,6 +10353,16 @@ function renderBiblioteca() {
   });
 
   cont.innerHTML = html;
+  } catch(err) {
+    // Red de seguridad: si algo falla, mostrar mensaje en vez de romper toda la vista
+    cont.innerHTML = '<div style="text-align:center;padding:30px 16px">' +
+      '<div style="font-size:34px;margin-bottom:10px">⚠️</div>' +
+      '<div style="color:#e8e8f0;font-size:14px;font-weight:700;margin-bottom:8px">Algo salió mal al cargar esta vista</div>' +
+      '<div style="color:#8a8a9a;font-size:12px;line-height:1.5;margin-bottom:16px">Intenta volver a la biblioteca completa.</div>' +
+      '<div onclick="_biblioFiltroCat=null;_biblioSoloFav=false;_biblioPestana=\'ejercicio\';renderBiblioteca()" style="background:rgba(125,58,237,.12);border:1px solid rgba(125,58,237,.35);border-radius:12px;padding:12px;cursor:pointer;color:#a78bfa;font-size:13px;font-weight:800">📚 Ver toda la biblioteca</div>' +
+    '</div>';
+    if (typeof console !== 'undefined') console.error('renderBiblioteca error:', err);
+  }
 }
 
 function toggleFavBiblioUI(clave) {
@@ -10218,6 +10393,44 @@ function agregarAlEntrenamientoDesdeFicha(clave) {
   _toastEntrenamiento('✅ Agregado a tu entrenamiento de hoy');
 }
 
+// "Hacerlo ahora": agrega el ejercicio (si no está) y lleva directo a registrarlo/jugarlo
+function hacerEjercicioAhora(clave) {
+  // Cerrar ficha y biblioteca para ir directo a la sesión
+  var ficha = document.getElementById('overlay-ficha-biblio');
+  if (ficha) ficha.remove();
+  var biblio = document.getElementById('overlay-biblioteca');
+  if (biblio) biblio.remove();
+  // Asegurar estado de sesión inicializado
+  if (!estadoSesion.programa) estadoSesion.programa = [];
+  if (!estadoSesion.completados) estadoSesion.completados = estadoSesion.programa.map(function(){ return null; });
+  if (!estadoSesion.sesionId) estadoSesion.sesionId = 'ses_' + Date.now();
+  if (!estadoSesion.tiempo) estadoSesion.tiempo = 30;
+  // ¿Ya está en el programa? buscar su índice
+  var idx = -1;
+  for (var i = 0; i < estadoSesion.programa.length; i++) {
+    var it = estadoSesion.programa[i];
+    if (it.claveNivel === clave || it.id === 'nv:' + clave || it.id === clave) { idx = i; break; }
+    if (clave === 'reto-putt-medio' && it.id === 'retoMedio') { idx = i; break; }
+    if (clave === 'reto-putt-largo' && it.id === 'retoMedioReto') { idx = i; break; }
+    if (clave === 'reto-approach' && it.id === 'retoApproach') { idx = i; break; }
+    if (clave === 'op36' && it.id === 'op36') { idx = i; break; }
+  }
+  // Si no está, agregarlo
+  if (idx < 0) {
+    var antes = estadoSesion.programa.length;
+    _procesarSiguienteFav([clave]);
+    // El nuevo ejercicio quedó al final
+    idx = estadoSesion.programa.length - 1;
+    if (estadoSesion.programa.length === antes) { idx = antes - 1; } // por si acaso
+  }
+  guardarEstadoSesion();
+  // Entrar a la vista de sesión y abrir el registro de ese ejercicio
+  irVista('view-programa');
+  if (idx >= 0 && typeof abrirRegistro === 'function') {
+    setTimeout(function(){ abrirRegistro(idx); }, 80);
+  }
+}
+
 // Pequeño aviso flotante temporal
 function _toastEntrenamiento(msg) {
   var prev = document.getElementById('toast-entreno');
@@ -10228,6 +10441,127 @@ function _toastEntrenamiento(msg) {
   t.textContent = msg;
   document.body.appendChild(t);
   setTimeout(function(){ if (t) { t.style.transition = 'opacity .4s'; t.style.opacity = '0'; setTimeout(function(){ if(t) t.remove(); }, 400); } }, 2200);
+}
+
+// ===== PANTALLA: elegir bastón para un ejercicio de hierro =====
+// Se llama al abrir un ejercicio de hierro. Muestra los bastones; al elegir uno, abre su ficha.
+function abrirSelectorHierro(claveEjercicio) {
+  var prev = document.getElementById('overlay-hierro');
+  if (prev) prev.remove();
+  var ov = document.createElement('div');
+  ov.id = 'overlay-hierro';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(8,10,18,.92);z-index:5000;overflow-y:auto;backdrop-filter:blur(3px)';
+  var pills = HIERROS_DISPONIBLES.map(function(b){
+    var label = (b === 'PW') ? 'PW' : 'Hierro ' + b;
+    return '<div onclick="abrirFichaHierro(\'' + b + '\',\'' + (claveEjercicio||'') + '\')" style="background:linear-gradient(160deg,#2a3348,#171c2a);border:1px solid rgba(120,150,255,.25);border-radius:16px;padding:20px 10px;text-align:center;cursor:pointer;transition:transform .1s">' +
+      '<div style="font-size:26px;font-weight:900;color:#fff">' + b + '</div>' +
+      '<div style="font-size:11px;color:#9ab;font-weight:700;margin-top:3px">' + (b==='PW'?'Pitching':'Hierro') + '</div>' +
+    '</div>';
+  }).join('');
+  ov.innerHTML =
+    '<div style="max-width:520px;margin:0 auto;padding:24px 20px 90px">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">' +
+        '<div onclick="document.getElementById(\'overlay-hierro\').remove()" style="color:#8a8a9a;font-size:14px;font-weight:700;cursor:pointer;background:rgba(255,255,255,.06);padding:7px 14px;border-radius:10px">← Cancelar</div>' +
+      '</div>' +
+      '<div style="text-align:center;margin:20px 0 6px"><div style="font-size:40px">🏌️</div></div>' +
+      '<div style="color:#fff;font-size:22px;font-weight:800;text-align:center;margin-bottom:4px">¿Qué hierro vas a entrenar?</div>' +
+      '<div style="color:#8a8a9a;font-size:13px;text-align:center;margin-bottom:24px">Elige tu bastón para ver tu información</div>' +
+      '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:11px">' + pills + '</div>' +
+    '</div>';
+  document.body.appendChild(ov);
+}
+
+// ===== PANTALLA: ficha del hierro (carry destacado + notas libres) =====
+function abrirFichaHierro(baston, claveEjercicio) {
+  var selector = document.getElementById('overlay-hierro');
+  if (selector) selector.remove();
+  var p = getPerfil();
+  var pid = p ? p.id : 0;
+  var ficha = getFichaHierro(pid, baston);
+  var label = (baston === 'PW') ? 'Pitching Wedge' : 'Hierro ' + baston;
+  var tieneNotas = ficha.notas && ficha.notas.trim().length > 0;
+  var placeholderNotas = '✍️ Anota aquí lo tuyo de este hierro:\n\n• Velocidad de swing: ej. 78 mph\n\n• Puntos técnicos que trabajas:\n   - Muñeca firme al impacto\n   - Manos adelante de la bola\n   - Peso al pie delantero';
+
+  var ov = document.createElement('div');
+  ov.id = 'overlay-ficha-hierro';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(8,10,18,.95);z-index:5000;overflow-y:auto;backdrop-filter:blur(3px)';
+  ov.innerHTML =
+    '<div style="max-width:520px;margin:0 auto;padding:24px 20px 90px">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">' +
+        '<div onclick="abrirSelectorHierro(\'' + (claveEjercicio||'') + '\')" style="color:#8a8a9a;font-size:14px;font-weight:700;cursor:pointer;background:rgba(255,255,255,.06);padding:7px 14px;border-radius:10px">← Cambiar hierro</div>' +
+        '<div style="background:#3B6D11;border-radius:8px;padding:5px 14px"><span style="color:#a3e635;font-size:12px;font-weight:800">' + label.toUpperCase() + '</span></div>' +
+      '</div>' +
+
+      // CARRY destacado
+      '<div style="background:linear-gradient(160deg,#1e3a2e,#0f1f18);border:1px solid rgba(74,222,128,.3);border-radius:18px;padding:20px;text-align:center;margin-bottom:16px">' +
+        '<div style="color:#4ade80;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">📏 Mi distancia de carry</div>' +
+        '<input id="hierro-carry-input" value="' + (ficha.carry || '').replace(/"/g,'&quot;') + '" placeholder="ej. 150 yardas" style="width:100%;background:transparent;border:none;text-align:center;color:#fff;font-size:30px;font-weight:900;font-family:inherit;outline:none;box-sizing:border-box" />' +
+        '<div style="color:#6b8a7a;font-size:11px;margin-top:6px">Sobre este dato se miden tus objetivos. Actualízalo cuando mejores.</div>' +
+      '</div>' +
+
+      // NOTAS libres
+      '<div style="margin-bottom:8px;color:#c8c8d5;font-size:13px;font-weight:700;padding-left:4px">📝 Mis notas de este hierro</div>' +
+      '<textarea id="hierro-notas-input" placeholder="' + placeholderNotas.replace(/"/g,'&quot;').replace(/\n/g,'&#10;') + '" style="width:100%;min-height:180px;background:#1a1f2e;border:0.5px solid rgba(255,255,255,.12);border-radius:14px;padding:15px;color:#e8e8f0;font-size:14px;font-family:inherit;line-height:1.6;resize:vertical;box-sizing:border-box;outline:none">' + (ficha.notas || '') + '</textarea>' +
+
+      // Botones
+      '<div style="display:flex;gap:9px;margin-top:16px">' +
+        '<div onclick="_dictarNotaHierro(\'' + baston + '\')" style="background:rgba(125,58,237,.15);border:1px solid rgba(125,58,237,.4);border-radius:14px;padding:15px 18px;text-align:center;cursor:pointer;color:#a78bfa;font-size:14px;font-weight:800">🎤</div>' +
+        '<div onclick="_guardarFichaHierro(\'' + baston + '\',\'' + (claveEjercicio||'') + '\')" style="flex:1;background:linear-gradient(160deg,#1D9E75,#0F6E56);border-radius:14px;padding:15px;text-align:center;cursor:pointer;color:#fff;font-size:15px;font-weight:800;box-shadow:0 4px 14px rgba(29,158,117,.35)">💾 Guardar</div>' +
+      '</div>' +
+      (claveEjercicio ? '<div onclick="_guardarYHacerHierro(\'' + baston + '\',\'' + claveEjercicio + '\')" style="margin-top:10px;background:linear-gradient(160deg,#3B82F6,#1D4ED8);border-radius:14px;padding:15px;text-align:center;cursor:pointer;color:#fff;font-size:15px;font-weight:800;box-shadow:0 4px 14px rgba(59,130,246,.4)">▶️ Guardar y hacer el ejercicio</div>' : '') +
+    '</div>';
+  document.body.appendChild(ov);
+}
+
+// Guarda la ficha (carry + notas) del hierro
+function _leerFichaDeInputs() {
+  var carry = document.getElementById('hierro-carry-input');
+  var notas = document.getElementById('hierro-notas-input');
+  return { carry: carry ? carry.value.trim() : '', notas: notas ? notas.value.trim() : '' };
+}
+function _guardarFichaHierro(baston, claveEjercicio) {
+  var p = getPerfil();
+  var pid = p ? p.id : 0;
+  setFichaHierro(pid, baston, _leerFichaDeInputs());
+  var ov = document.getElementById('overlay-ficha-hierro');
+  if (ov) ov.remove();
+  _toastEntrenamiento('✅ Guardado tu ' + (baston === 'PW' ? 'PW' : 'Hierro ' + baston));
+}
+// Guarda y lanza el ejercicio de hierro
+function _guardarYHacerHierro(baston, claveEjercicio) {
+  var p = getPerfil();
+  var pid = p ? p.id : 0;
+  setFichaHierro(pid, baston, _leerFichaDeInputs());
+  var ov = document.getElementById('overlay-ficha-hierro');
+  if (ov) ov.remove();
+  var biblio = document.getElementById('overlay-biblioteca');
+  if (biblio) biblio.remove();
+  // Guardar qué bastón se está usando para este ejercicio (para mostrarlo en el registro)
+  window._hierroBastonActivo = baston;
+  hacerEjercicioAhora(claveEjercicio);
+}
+// Dictar la nota por voz usando el reconocimiento del navegador
+function _dictarNotaHierro(baston) {
+  var notasEl = document.getElementById('hierro-notas-input');
+  if (!notasEl) return;
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    _toastEntrenamiento('Tu navegador no permite dictado. Escríbelo a mano.');
+    return;
+  }
+  var rec = new SR();
+  rec.lang = 'es-MX';
+  rec.interimResults = false;
+  rec.continuous = false;
+  var textoBase = notasEl.value;
+  _toastEntrenamiento('🎤 Escuchando… habla ahora');
+  rec.onresult = function(ev){
+    var texto = '';
+    for (var i = 0; i < ev.results.length; i++) { texto += ev.results[i][0].transcript; }
+    notasEl.value = textoBase + (textoBase ? '\n' : '') + texto;
+  };
+  rec.onerror = function(){ _toastEntrenamiento('No se pudo escuchar. Intenta de nuevo.'); };
+  try { rec.start(); } catch(e) {}
 }
 
 function verFichaBiblio(clave, distK) {
@@ -10304,7 +10638,17 @@ function verFichaBiblio(clave, distK) {
       '<div style="color:#e8e8f0;font-size:13px;font-weight:800;margin:18px 0 8px">Cómo se juega</div>' +
       (instrHtml || '<div style="color:#7a7a95;font-size:12px">Instrucciones disponibles al agregarlo.</div>') +
       (nivelesHtml ? ('<div style="color:#e8e8f0;font-size:13px;font-weight:800;margin:18px 0 6px">' + nivelesTitulo + '</div>' + nivelesHtml) : '') +
-      '<div onclick="agregarAlEntrenamientoDesdeFicha(\'' + clave + '\')" style="margin-top:22px;background:linear-gradient(160deg,#1D9E75,#0F6E56);border-radius:14px;padding:15px;text-align:center;cursor:pointer;color:#fff;font-size:15px;font-weight:800;box-shadow:0 4px 14px rgba(29,158,117,.4)">➕ Agregar a mi entrenamiento de hoy</div>' +
+      ((ej.cat === 'Hierros') ?
+        // Ejercicio de hierro: botón para ver/editar la ficha del hierro
+        '<div onclick="document.getElementById(\'overlay-ficha-biblio\').remove();abrirSelectorHierro(\'' + clave + '\')" style="margin-top:20px;background:linear-gradient(160deg,#3B6D11,#284d0b);border-radius:14px;padding:15px;text-align:center;cursor:pointer;color:#fff;font-size:15px;font-weight:800;box-shadow:0 4px 14px rgba(59,109,17,.35)">🏌️ Elegir hierro y ver mi info</div>' +
+        '<div style="color:#7a7a95;font-size:11px;text-align:center;margin-top:8px">Verás tu distancia de carry y notas de ese bastón</div>'
+        :
+        // Ejercicio normal: los dos botones de siempre
+        '<div style="display:flex;gap:9px;margin-top:22px">' +
+          '<div onclick="agregarAlEntrenamientoDesdeFicha(\'' + clave + '\')" style="flex:1;background:linear-gradient(160deg,#1D9E75,#0F6E56);border-radius:14px;padding:15px 8px;text-align:center;cursor:pointer;color:#fff;font-size:14px;font-weight:800;box-shadow:0 4px 14px rgba(29,158,117,.35)">➕ Agregar<div style="font-size:10px;font-weight:600;opacity:.85;margin-top:2px">a mi entrenamiento</div></div>' +
+          '<div onclick="hacerEjercicioAhora(\'' + clave + '\')" style="flex:1;background:linear-gradient(160deg,#3B82F6,#1D4ED8);border-radius:14px;padding:15px 8px;text-align:center;cursor:pointer;color:#fff;font-size:14px;font-weight:800;box-shadow:0 4px 14px rgba(59,130,246,.4)">▶️ Hacerlo<div style="font-size:10px;font-weight:600;opacity:.85;margin-top:2px">ahora mismo</div></div>' +
+        '</div>'
+      ) +
       '<div onclick="toggleFavFichaBiblio(\'' + clave + '\')" style="margin-top:10px;background:' + (fav ? 'rgba(239,159,39,.15)' : 'rgba(255,255,255,.06)') + ';border:1px solid ' + (fav ? 'rgba(239,159,39,.4)' : 'rgba(255,255,255,.12)') + ';border-radius:14px;padding:13px;text-align:center;cursor:pointer;color:' + (fav ? '#EF9F27' : '#c8c8d5') + ';font-size:14px;font-weight:700">' + (fav ? '⭐ En tus favoritos (toca para quitar)' : '☆ Agregar a mis favoritos') + '</div>' +
     '</div>' +
   '</div>';
@@ -10504,6 +10848,8 @@ function elegirDistanciaFavoritoMulti(ej, def, pendientes) {
 function cerrarMenuEjYAbrirBiblio() {
   var ov = document.getElementById('overlay-menu-ej');
   if (ov) ov.remove();
+  _biblioFiltroCat = null;
+  _biblioSoloFav = false;
   abrirBiblioteca();
 }
 
