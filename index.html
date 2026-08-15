@@ -989,83 +989,50 @@
       </div>
     </div>
 
-    <!-- Separador mi práctica -->
+    <!-- Separador mi entrenamiento -->
     <div style="display:flex;align-items:center;gap:11px;margin-bottom:13px">
       <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(133,183,235,.4))"></div>
-      <div style="color:#85B7EB;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;text-shadow:0 0 12px rgba(133,183,235,.4);white-space:nowrap">🏅 Mi práctica</div>
+      <div style="color:#85B7EB;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;text-shadow:0 0 12px rgba(133,183,235,.4);white-space:nowrap">🏅 Mi entrenamiento</div>
       <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(133,183,235,.4),transparent)"></div>
     </div>
 
-    <!-- 3 aros de práctica: Putt, Approach, Hierro (una sola sección azul) -->
-    <div style="display:flex;gap:9px;justify-content:space-around;background:linear-gradient(160deg,#0a2545 0%,#0f1320 100%);border:1px solid rgba(77,155,255,.45);border-radius:17px;padding:18px 12px;margin-bottom:18px;position:relative;overflow:hidden;box-shadow:0 6px 18px rgba(10,37,69,.5),inset 0 1px 0 rgba(133,183,235,.2)">
-      <div style="position:absolute;top:-25px;right:-25px;width:90px;height:90px;background:radial-gradient(circle,rgba(77,155,255,.22),transparent 70%)"></div>
-      <div style="position:absolute;bottom:-25px;left:-25px;width:80px;height:80px;background:radial-gradient(circle,rgba(77,155,255,.15),transparent 70%)"></div>
-      <div onclick="abrirBibliotecaFiltradaEjercicios('putt')" style="text-align:center;position:relative;cursor:pointer">
-        <div style="position:relative;width:62px;height:62px;margin:0 auto">
-          <svg width="62" height="62" viewBox="0 0 80 80"><defs><linearGradient id="apg-putt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f0abfc"/><stop offset="1" stop-color="#c026d3"/></linearGradient></defs><circle cx="40" cy="40" r="32" fill="none" stroke="#16213a" stroke-width="9"/><circle id="ap-putt-ring" cx="40" cy="40" r="32" fill="none" stroke="url(#apg-putt)" stroke-width="9" stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round" transform="rotate(-90 40 40)" style="filter:drop-shadow(0 0 4px rgba(232,121,249,.7))"/></svg>
-          <div id="ap-putt-med" style="position:absolute;top:-4px;right:-2px;font-size:17px;filter:drop-shadow(0 0 5px rgba(240,171,252,.9));display:none">🏅</div>
-          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)"><span id="ap-putt-val" style="color:#fff;font-size:17px;font-weight:800">0</span><span style="color:#f0abfc;font-size:9px">/10</span></div>
+    <!-- 4 cuadritos unificados: Putt, Approach, Hierro, Drive (ejercicios + retos juntos) -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+      <!-- PUTT -->
+      <div onclick="abrirAreaUnificada('putt')" style="background:linear-gradient(160deg,#3d1040 0%,#0f1320 100%);border:1px solid rgba(232,121,249,.5);border-radius:17px;padding:15px 12px;text-align:center;position:relative;overflow:hidden;box-shadow:0 6px 18px rgba(50,10,55,.5),inset 0 1px 0 rgba(240,171,252,.15);cursor:pointer">
+        <div style="position:absolute;top:-20px;right:-20px;width:70px;height:70px;background:radial-gradient(circle,rgba(232,121,249,.18),transparent 70%)"></div>
+        <div style="position:relative;width:58px;height:58px;margin:0 auto">
+          <svg width="58" height="58" viewBox="0 0 80 80"><defs><linearGradient id="cug-putt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f0abfc"/><stop offset="1" stop-color="#c026d3"/></linearGradient></defs><circle cx="40" cy="40" r="32" fill="none" stroke="#16213a" stroke-width="8"/><circle id="cu-putt-ring" cx="40" cy="40" r="32" fill="none" stroke="url(#cug-putt)" stroke-width="8" stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round" transform="rotate(-90 40 40)" style="filter:drop-shadow(0 0 4px rgba(232,121,249,.7))"/></svg>
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)"><span id="cu-putt-val" style="color:#fff;font-size:18px;font-weight:800">0</span><span style="color:#f0abfc;font-size:9px">/13</span></div>
         </div>
-        <div style="color:#f0abfc;font-size:11px;font-weight:800;margin-top:7px">Putt</div>
+        <div style="color:#f0abfc;font-size:13px;font-weight:800;margin-top:8px">Putt</div>
       </div>
-      <div onclick="abrirBibliotecaFiltradaEjercicios('approach')" style="text-align:center;position:relative;cursor:pointer">
-        <div style="position:relative;width:62px;height:62px;margin:0 auto">
-          <svg width="62" height="62" viewBox="0 0 80 80"><defs><linearGradient id="apg-app" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFC466"/><stop offset="1" stop-color="#EF9F27"/></linearGradient></defs><circle cx="40" cy="40" r="32" fill="none" stroke="#16213a" stroke-width="9"/><circle id="ap-app-ring" cx="40" cy="40" r="32" fill="none" stroke="url(#apg-app)" stroke-width="9" stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round" transform="rotate(-90 40 40)" style="filter:drop-shadow(0 0 4px rgba(239,159,39,.7))"/></svg>
-          <div id="ap-app-med" style="position:absolute;top:-4px;right:-2px;font-size:17px;filter:drop-shadow(0 0 5px rgba(239,159,39,.9));display:none">🏅</div>
-          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)"><span id="ap-app-val" style="color:#fff;font-size:17px;font-weight:800">0</span><span style="color:#FFC466;font-size:9px">/8</span></div>
+      <!-- APPROACH -->
+      <div onclick="abrirAreaUnificada('approach')" style="background:linear-gradient(160deg,#4a3810 0%,#0f1320 100%);border:1px solid rgba(239,159,39,.5);border-radius:17px;padding:15px 12px;text-align:center;position:relative;overflow:hidden;box-shadow:0 6px 18px rgba(60,45,15,.5),inset 0 1px 0 rgba(239,159,39,.15);cursor:pointer">
+        <div style="position:absolute;top:-20px;right:-20px;width:70px;height:70px;background:radial-gradient(circle,rgba(239,159,39,.18),transparent 70%)"></div>
+        <div style="position:relative;width:58px;height:58px;margin:0 auto">
+          <svg width="58" height="58" viewBox="0 0 80 80"><defs><linearGradient id="cug-app" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFC466"/><stop offset="1" stop-color="#EF9F27"/></linearGradient></defs><circle cx="40" cy="40" r="32" fill="none" stroke="#16213a" stroke-width="8"/><circle id="cu-app-ring" cx="40" cy="40" r="32" fill="none" stroke="url(#cug-app)" stroke-width="8" stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round" transform="rotate(-90 40 40)" style="filter:drop-shadow(0 0 4px rgba(239,159,39,.7))"/></svg>
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)"><span id="cu-app-val" style="color:#fff;font-size:18px;font-weight:800">0</span><span style="color:#FFC466;font-size:9px">/9</span></div>
         </div>
-        <div style="color:#FAC775;font-size:11px;font-weight:800;margin-top:7px">Approach</div>
+        <div style="color:#FAC775;font-size:13px;font-weight:800;margin-top:8px">Approach</div>
       </div>
-      <div onclick="abrirBibliotecaFiltradaEjercicios('hierros')" style="text-align:center;position:relative;cursor:pointer">
-        <div style="position:relative;width:62px;height:62px;margin:0 auto">
-          <svg width="62" height="62" viewBox="0 0 80 80"><defs><linearGradient id="apg-hierro" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5FD6AA"/><stop offset="1" stop-color="#1D9E75"/></linearGradient></defs><circle cx="40" cy="40" r="32" fill="none" stroke="#16213a" stroke-width="9"/><circle id="ap-hierro-ring" cx="40" cy="40" r="32" fill="none" stroke="url(#apg-hierro)" stroke-width="9" stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round" transform="rotate(-90 40 40)" style="filter:drop-shadow(0 0 4px rgba(29,158,117,.7))"/></svg>
-          <div id="ap-hierro-med" style="position:absolute;top:-4px;right:-2px;font-size:17px;filter:drop-shadow(0 0 5px rgba(29,158,117,.9));display:none">🏅</div>
-          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)"><span id="ap-hierro-val" style="color:#fff;font-size:17px;font-weight:800">0</span><span style="color:#5FD6AA;font-size:9px">/8</span></div>
+      <!-- HIERRO -->
+      <div onclick="abrirAreaUnificada('hierros')" style="background:linear-gradient(160deg,#0a3d2f 0%,#0f1320 100%);border:1px solid rgba(29,158,117,.5);border-radius:17px;padding:15px 12px;text-align:center;position:relative;overflow:hidden;box-shadow:0 6px 18px rgba(10,50,40,.5),inset 0 1px 0 rgba(95,214,170,.15);cursor:pointer">
+        <div style="position:absolute;top:-20px;right:-20px;width:70px;height:70px;background:radial-gradient(circle,rgba(29,158,117,.18),transparent 70%)"></div>
+        <div style="position:relative;width:58px;height:58px;margin:0 auto">
+          <svg width="58" height="58" viewBox="0 0 80 80"><defs><linearGradient id="cug-hierro" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5FD6AA"/><stop offset="1" stop-color="#1D9E75"/></linearGradient></defs><circle cx="40" cy="40" r="32" fill="none" stroke="#16213a" stroke-width="8"/><circle id="cu-hierro-ring" cx="40" cy="40" r="32" fill="none" stroke="url(#cug-hierro)" stroke-width="8" stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round" transform="rotate(-90 40 40)" style="filter:drop-shadow(0 0 4px rgba(29,158,117,.7))"/></svg>
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)"><span id="cu-hierro-val" style="color:#fff;font-size:18px;font-weight:800">0</span><span style="color:#5FD6AA;font-size:9px">/7</span></div>
         </div>
-        <div style="color:#9FE1CB;font-size:11px;font-weight:800;margin-top:7px">Hierro</div>
+        <div style="color:#9FE1CB;font-size:13px;font-weight:800;margin-top:8px">Hierro</div>
       </div>
-    </div>
-
-    <!-- Separador retos -->
-    <div style="display:flex;align-items:center;gap:11px;margin-bottom:13px">
-      <div style="flex:1;height:1px;background:linear-gradient(90deg,transparent,rgba(138,170,240,.4))"></div>
-      <div style="color:#8AAAF0;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;text-shadow:0 0 12px rgba(138,170,240,.4);white-space:nowrap">⭐ Mis retos / evaluación</div>
-      <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(138,170,240,.4),transparent)"></div>
-    </div>
-
-    <!-- 3 retos -->
-    <div style="display:flex;gap:9px;margin-bottom:18px">
-      <div onclick="abrirBibliotecaFiltrada('putt')" style="flex:1;background:linear-gradient(160deg,#3d1040 0%,#0f1320 100%);border:1px solid rgba(232,121,249,.6);border-radius:17px;padding:14px 6px;text-align:center;position:relative;overflow:hidden;box-shadow:0 6px 18px rgba(50,10,55,.55),inset 0 1px 0 rgba(240,171,252,.2);cursor:pointer">
-        <div style="position:absolute;top:-18px;right:-18px;width:55px;height:55px;background:radial-gradient(circle,rgba(232,121,249,.3),transparent 70%)"></div>
-        <div id="gamer-putt-star" style="position:absolute;top:8px;right:8px;font-size:15px;filter:drop-shadow(0 0 5px rgba(255,210,63,.8));display:none">⭐</div>
-        <div style="font-size:28px;line-height:1;filter:drop-shadow(0 2px 5px rgba(0,0,0,.4))">🚀</div>
-        <div style="color:#fff;font-size:12px;font-weight:800;margin-top:6px">Putt <span id="gamer-putt-nivel" style="color:#f0abfc;font-size:12px;font-weight:800">N1</span></div>
-        <div id="gamer-putt-dots" style="display:flex;gap:6px;justify-content:center;margin-top:9px"></div>
-      </div>
-      <div onclick="abrirBibliotecaFiltrada('approach')" style="flex:1;background:linear-gradient(160deg,#4a3810 0%,#0f1320 100%);border:1px solid rgba(239,159,39,.55);border-radius:17px;padding:14px 6px;text-align:center;position:relative;overflow:hidden;box-shadow:0 6px 18px rgba(60,45,15,.5),inset 0 1px 0 rgba(239,159,39,.2);cursor:pointer">
-        <div style="position:absolute;top:-18px;right:-18px;width:55px;height:55px;background:radial-gradient(circle,rgba(239,159,39,.25),transparent 70%)"></div>
-        <div id="gamer-app-star" style="position:absolute;top:8px;right:8px;font-size:15px;filter:drop-shadow(0 0 5px rgba(255,210,63,.8));display:none">⭐</div>
-        <div style="font-size:28px;line-height:1;filter:drop-shadow(0 2px 5px rgba(0,0,0,.4))">💥</div>
-        <div style="color:#fff;font-size:12px;font-weight:800;margin-top:6px">Approach <span id="gamer-app-nivel" style="color:#ffc466;font-size:12px;font-weight:800">N1</span></div>
-        <div id="gamer-app-dots" style="display:flex;gap:6px;justify-content:center;margin-top:9px"></div>
-      </div>
-      <div onclick="abrirBibliotecaFiltrada('simulador')" style="flex:1;background:linear-gradient(160deg,#0a3d45 0%,#0f1320 100%);border:1px solid rgba(34,211,238,.55);border-radius:17px;padding:14px 6px;text-align:center;position:relative;overflow:hidden;box-shadow:0 6px 18px rgba(10,50,55,.5),inset 0 1px 0 rgba(103,232,249,.2);cursor:pointer">
-        <div style="position:absolute;top:-18px;right:-18px;width:55px;height:55px;background:radial-gradient(circle,rgba(34,211,238,.25),transparent 70%)"></div>
-        <div id="gamer-sim-star" style="position:absolute;top:8px;right:8px;font-size:15px;filter:drop-shadow(0 0 5px rgba(255,210,63,.8));display:none">⭐</div>
-        <div style="height:28px;display:flex;align-items:center;justify-content:center">
-          <svg width="32" height="32" viewBox="0 0 48 48" style="filter:drop-shadow(0 2px 6px rgba(34,211,238,.7))">
-            <defs><linearGradient id="ghG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#67e8f9"/><stop offset="1" stop-color="#0891b2"/></linearGradient>
-            <linearGradient id="rhG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a5f3fc"/><stop offset="1" stop-color="#22d3ee"/></linearGradient></defs>
-            <path d="M8 22 L24 9 L40 22 L40 41 L8 41 Z" fill="url(#ghG)"/>
-            <path d="M5 23 L24 8 L43 23 L40 25 L24 12 L8 25 Z" fill="url(#rhG)"/>
-            <rect x="20" y="30" width="8" height="11" rx="1" fill="#0a2a2e"/>
-            <rect x="12" y="26" width="6" height="6" rx="1" fill="#0a2a2e"/>
-            <rect x="30" y="26" width="6" height="6" rx="1" fill="#0a2a2e"/>
-            <circle cx="24" cy="34" r="1" fill="#ffd23f"/>
-          </svg>
+      <!-- DRIVE -->
+      <div onclick="abrirAreaUnificada('drive')" style="background:linear-gradient(160deg,#0a3d2a 0%,#0f1320 100%);border:1px solid rgba(52,211,153,.5);border-radius:17px;padding:15px 12px;text-align:center;position:relative;overflow:hidden;box-shadow:0 6px 18px rgba(10,50,35,.5),inset 0 1px 0 rgba(110,231,183,.15);cursor:pointer">
+        <div style="position:absolute;top:-20px;right:-20px;width:70px;height:70px;background:radial-gradient(circle,rgba(52,211,153,.18),transparent 70%)"></div>
+        <div style="position:relative;width:58px;height:58px;margin:0 auto">
+          <svg width="58" height="58" viewBox="0 0 80 80"><defs><linearGradient id="cug-drive" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6ee7b7"/><stop offset="1" stop-color="#059669"/></linearGradient></defs><circle cx="40" cy="40" r="32" fill="none" stroke="#16213a" stroke-width="8"/><circle id="cu-drive-ring" cx="40" cy="40" r="32" fill="none" stroke="url(#cug-drive)" stroke-width="8" stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round" transform="rotate(-90 40 40)" style="filter:drop-shadow(0 0 4px rgba(52,211,153,.7))"/></svg>
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)"><span id="cu-drive-val" style="color:#fff;font-size:18px;font-weight:800">0</span><span style="color:#6ee7b7;font-size:9px">/2</span></div>
         </div>
-        <div style="color:#fff;font-size:12px;font-weight:800;margin-top:6px">Simulador</div>
-        <div id="gamer-sim-dots" style="display:flex;gap:6px;justify-content:center;margin-top:9px"></div>
+        <div style="color:#6ee7b7;font-size:13px;font-weight:800;margin-top:8px">Drive</div>
       </div>
     </div>
 
@@ -1078,7 +1045,7 @@
 
     <!-- 2 fichas de campo -->
     <div style="display:flex;gap:9px;margin-bottom:18px">
-      <div style="flex:1;background:linear-gradient(160deg,#421414 0%,#120f1c 100%);border:1px solid rgba(248,113,113,.5);border-radius:17px;padding:15px 11px;text-align:center;position:relative;overflow:hidden;box-shadow:0 6px 20px rgba(58,18,18,.55),inset 0 1px 0 rgba(248,113,113,.15)">
+      <div onclick="_arrancarRetoOp27()" style="flex:1;background:linear-gradient(160deg,#421414 0%,#120f1c 100%);border:1px solid rgba(248,113,113,.5);border-radius:17px;padding:15px 11px;text-align:center;position:relative;overflow:hidden;box-shadow:0 6px 20px rgba(58,18,18,.55),inset 0 1px 0 rgba(248,113,113,.15);cursor:pointer">
         <div style="position:absolute;top:-20px;right:-20px;width:70px;height:70px;background:radial-gradient(circle,rgba(248,113,113,.2),transparent 70%)"></div>
         <div style="font-size:25px;line-height:1;filter:drop-shadow(0 2px 5px rgba(0,0,0,.4))">🚩</div>
         <div style="color:#fca5a5;font-size:13px;font-weight:800;margin-top:5px">Reto OP27</div>
@@ -1100,7 +1067,7 @@
           </div>
         </div>
       </div>
-      <div style="flex:1;background:linear-gradient(160deg,#2c1849 0%,#120f1c 100%);border:1px solid rgba(125,58,237,.5);border-radius:17px;padding:15px 11px;text-align:center;position:relative;overflow:hidden;box-shadow:0 6px 20px rgba(44,24,73,.55),inset 0 1px 0 rgba(157,107,255,.15)">
+      <div onclick="iniciarRondaPerfilActivo()" style="flex:1;background:linear-gradient(160deg,#2c1849 0%,#120f1c 100%);border:1px solid rgba(125,58,237,.5);border-radius:17px;padding:15px 11px;text-align:center;position:relative;overflow:hidden;box-shadow:0 6px 20px rgba(44,24,73,.55),inset 0 1px 0 rgba(157,107,255,.15);cursor:pointer">
         <div style="position:absolute;top:-20px;right:-20px;width:70px;height:70px;background:radial-gradient(circle,rgba(157,107,255,.2),transparent 70%)"></div>
         <div style="font-size:25px;line-height:1;filter:drop-shadow(0 2px 5px rgba(0,0,0,.4))">🏌️</div>
         <div style="color:#C4A5F8;font-size:13px;font-weight:800;margin-top:5px">Mi ronda</div>
@@ -1287,6 +1254,9 @@
     </div>
 
     <div style="color:var(--text);font-size:20px;font-weight:700;margin-bottom:6px" id="reg-titulo">Reloj 4 pies</div>
+
+    <!-- Chip de notas del hierro (solo aparece en ejercicios de hierro) -->
+    <div id="reg-hierro-chip" style="display:none;margin-bottom:14px"></div>
 
     <!-- Instrucciones -->
     <div class="card" style="margin-bottom:20px" id="reg-instrucciones"></div>
@@ -2515,7 +2485,7 @@
 <div class="view" id="view-op36-intro">
   <div style="padding:22px 18px 40px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
-      <div style="color:#4a4a6a;font-size:13px;cursor:pointer" onclick="irVista('view-sesion')">← Cancelar</div>
+      <div style="color:#4a4a6a;font-size:13px;cursor:pointer" onclick="_salirOP36Intro()">← Cancelar</div>
       <div style="background:#412402;border-radius:8px;padding:4px 12px"><span style="color:#EF9F27;font-size:10px;font-weight:700">RETO OP36</span></div>
     </div>
 
@@ -2741,12 +2711,14 @@ var TABLAS_NIVELES = {
   'approach-ud2d3': { tipo:'ejec-ud', total:9, min:15, obj:{1:2,2:3,3:4,4:5,5:6} },
   'drive-handicap': { tipo:'deN', n:10, obj:{1:4,2:5,3:6,4:7,5:8} },
   'drive-record': { tipo:'racha', min:15, obj:{1:2,2:4,3:6,4:8,5:10} },
-  'hierro-handicap-corto': { tipo:'deN', n:10, obj:{1:3,2:5,3:7,4:9,5:10} },
-  'hierro-handicap-largo': { tipo:'deN', n:10, obj:{1:4,2:5,3:6,4:7,5:8} },
+  'hierro-handicap': { tipo:'deN', n:10, obj:{1:4,2:5,3:6,4:7,5:8} },
   'hierro-record': { tipo:'racha', min:15, obj:{1:2,2:4,3:6,4:8,5:10} },
   'reto-putt-medio': { tipo:'hoyos-ejec', hoyos:{1:2,2:4,3:6,4:8,5:10}, ejec:{1:5,2:4,3:3,4:2,5:1} },
   'reto-putt-largo': { tipo:'hoyos-ejec', hoyos:{1:2,2:3,3:4,4:5,5:6}, ejec:{1:5,2:4,3:3,4:2,5:1} },
-  'reto-approach': { tipo:'approach-cerca', pasos:{1:5,2:4,3:3,4:2,5:1}, metaLogros:2 }
+  'reto-approach': { tipo:'approach-cerca', pasos:{1:5,2:4,3:3,4:2,5:1}, metaLogros:2 },
+  'reto-drive-precision': { tipo:'deN', n:10, obj:{1:3,2:4,3:5,4:6,5:7}, metaLogros:2 },
+  'reto-drive-distancia': { tipo:'deN', n:10, obj:{1:3,2:4,3:5,4:6,5:7}, metaLogros:2 },
+  'reto-hierro': { tipo:'deN', n:10, obj:{1:4,2:5,3:6,4:7,5:8}, metaLogros:2 }
 };
 var DISPERSION_PALO = { 'pitching':10,'9':10,'8':10,'7':15,'6':15,'5':20,'4':20,'madera5':20,'madera3':20 };
 
@@ -2829,7 +2801,7 @@ var MAPA_EJERCICIO_NIVEL = {
   'tobogan-ap': 'approach-tobogan',
   'escalera-ap': 'approach-escalera',
   'ud2d3': 'approach-ud2d3',
-  'hierros': 'hierro-handicap-largo',
+  'hierros': 'hierro-handicap',
   'drive': 'drive-handicap'
 };
 
@@ -2895,8 +2867,6 @@ var BIBLIOTECA = [
   { clave:'approach-bunker', nom:'Bunker', grupo:'ejercicio', cat:'Approach', mins:15 },
   { clave:'approach-ud2d3', nom:'Up & Down', grupo:'ejercicio', cat:'Approach', mins:15 },
   // ---- EJERCICIOS · HIERROS ----
-  { clave:'hierro-handicap-corto', nom:'Hierro corto · Handicap', grupo:'ejercicio', cat:'Hierros', mins:15 },
-  { clave:'hierro-handicap-largo', nom:'Hierro largo · Handicap', grupo:'ejercicio', cat:'Hierros', mins:15 },
   { clave:'hierro-record', nom:'Hierro · Récord', grupo:'ejercicio', cat:'Hierros', mins:15 },
   // ---- EJERCICIOS · DRIVE ----
   { clave:'drive-handicap', nom:'Drive · Handicap', grupo:'ejercicio', cat:'Drive', mins:15 },
@@ -2907,7 +2877,10 @@ var BIBLIOTECA = [
   { clave:'reto-putt-medio', nom:'Reto Putt Corto', grupo:'reto', cat:'Reto', catGolf:'putt', mins:15 },
   { clave:'reto-putt-largo', nom:'Reto Putt Largo', grupo:'reto', cat:'Reto', catGolf:'putt', mins:15 },
   { clave:'reto-approach', nom:'Reto Approach', grupo:'reto', cat:'Reto', catGolf:'approach', mins:15 },
-  { clave:'approach-record', nom:'Récord Approach', grupo:'reto', cat:'Reto', catGolf:'approach', mins:15 }
+  { clave:'approach-record', nom:'Récord Approach', grupo:'reto', cat:'Reto', catGolf:'approach', mins:15 },
+  { clave:'reto-drive-precision', nom:'Drive · Precisión', grupo:'reto', cat:'Reto', catGolf:'drive', mins:15 },
+  { clave:'reto-drive-distancia', nom:'Drive · Distancia', grupo:'reto', cat:'Reto', catGolf:'drive', mins:15 },
+  { clave:'reto-hierro', nom:'Hierro · Reto', grupo:'reto', cat:'Reto', catGolf:'hierros', mins:15 }
 ];
 
 // ─── EJERCICIOS PERSONALIZADOS (creados con Claude, compartidos vía localStorage) ───
@@ -2957,7 +2930,7 @@ function toggleFavoritoBiblio(perfilId, clave) {
 
 // ===== FICHA DEL HIERRO (carry + notas, por bastón, compartida entre ejercicios de hierro) =====
 // Los bastones disponibles
-var HIERROS_DISPONIBLES = ['4','5','6','7','8','9','PW'];
+var HIERROS_DISPONIBLES = ['5','6','7','8','9','PW'];
 // Lee todas las fichas de hierro de un perfil: { '7': {carry:'150 yardas', notas:'...'}, ... }
 function getFichasHierro(perfilId) {
   try { return JSON.parse(localStorage.getItem('hierro_ficha_' + perfilId) || '{}'); } catch(e) { return {}; }
@@ -3251,7 +3224,7 @@ function explicacionMetrica(tipo) {
     case 'bunker': return 'Juega en tu nivel. Al final anota cuántas veces lograste sacar las 5 bolas según tu nivel (cada logro = 1 ejecución)';
     case 'ejec-ud': return 'Juega en tu nivel. Al final anota cuántas veces lograste los up&down (cada logro = 1 ejecución)';
     case 'hoyos-ejec': return 'Juega en tu nivel. Al final anota cuántas veces lograste la meta de hoyos (cada logro = 1 ejecución)';
-    case 'deN': return 'Juega en tu nivel. Al final anota cuántas veces metiste las que pide tu nivel (cada logro = 1 ejecución)';
+    case 'deN': return 'Tira <strong>bloques de ' + t.n + ' bolas</strong> durante los 15 min. En cada bloque cuenta cuántas lograste. Al final anota tu MEJOR bloque (cada bloque que llegue a tu meta = 1 logro)';
     case 'metidas': return 'Tira las 12 bolas (4 tees × 3 velocidades) varias veces en 10 min. Anota tu MEJOR resultado: cuántas metiste de 12';
     case 'racha': return 'Juega en tu nivel. Al final anota cuántas veces lograste la racha meta (cada racha lograda = 1 ejecución)';
     case 'racha-hereda': return 'Juega en tu nivel. Al final anota cuántas veces lograste la racha (cada racha lograda = 1 ejecución)';
@@ -3272,7 +3245,7 @@ function textoMetaNivel(clave, nivel, item) {
     case 'tees': return 'Nivel ' + nivel + ': pon <strong>4 tees</strong> a ' + distPies + ', 1 bola por tee. Logra <strong>' + o + (o===1?' vuelta':' vueltas') + '</strong> completas';
     case 'pos': return 'Nivel ' + nivel + ': mete <strong>' + (t.bolasMeta||4) + ' de 4 bolas</strong>' + (distPies?(' a ' + distPies):'') + ' por ubicación. Logra <strong>' + o + (o===1?' vuelta':' vueltas') + '</strong>';
     case 'suma': return 'Nivel ' + nivel + ': pon <strong>4 tees</strong> a ' + distPies + '. +1 si metes, −1 si fallas. Llega a <strong>+' + o + '</strong>';
-    case 'deN': return 'Nivel ' + nivel + ': tira <strong>' + t.n + ' bolas</strong>' + (distPies?(' desde ' + distPies):'') + '. Mete <strong>' + o + ' de ' + t.n + '</strong>';
+    case 'deN': return 'Nivel ' + nivel + ': en un bloque de <strong>' + t.n + ' bolas</strong>' + (distPies?(' desde ' + distPies):'') + ', logra <strong>' + o + ' de ' + t.n + '</strong>';
     case 'metidas': return 'Nivel ' + nivel + ': <strong>4 tees</strong>' + (distPies?(' a ' + distPies):'') + ', 3 bolas por tee con 3 velocidades (12 en total). Mete <strong>' + o + ' de ' + t.total + '</strong>';
     case 'racha':
       if (clave && (clave.indexOf('hierro') === 0 || clave.indexOf('drive') === 0)) {
@@ -3725,7 +3698,7 @@ function generarBloqueEjercicios(segundoBloque) {
   // 4. Hierros (Escalera hierros, con sus instrucciones)
   var hieDef = EJERCICIOS_DEF['hierros'];
   var hiItem = {
-    id: 'nv:hierro-handicap-largo:7', claveNivel: 'hierro-handicap-largo',
+    id: 'nv:hierro-handicap:7', claveNivel: 'hierro-handicap',
     nom: 'Hierro 7 · Handicap', cat: 'hierros', mins: 15,
     instr: (hieDef && hieDef.instrucciones) ? hieDef.instrucciones.slice() : ['Elige tu palo (ej. Hierro 7)','5 bolas consecutivas a la zona objetivo','Si fallas, reinicia el contador'],
     esNuevo: true
@@ -4473,25 +4446,27 @@ function renderHomeGamer() {
            id==='retoTrampa' || cv.indexOf('bunker')>=0 || (cat==='approach' && ej.esReto);
   }
   function esSimulador(ej){ return (ej.cat==='simulador') || ej.esSimulador; }
+  function esRetoDrive(ej){
+    var id = (ej.id||'')+'' , cv = (ej.claveNivel||'')+'';
+    return id==='retoDrivePrecision' || id==='retoDriveDistancia' ||
+           cv.indexOf('reto-drive')>=0;
+  }
   function minsEj(ej){ return (ej.datos && ej.datos.mins) ? ej.datos.mins : (ej.mins||0); }
 
   // Contar DÍAS distintos por tipo de reto en la semana
-  var diasPutt = {}, diasApp = {}, diasSimMin = {};
+  var diasPutt = {}, diasApp = {}, diasDrive = {};
   entrenos.forEach(function(e){
     if (new Date(e.fecha).getTime() < limite7) return;
     var dk = diaKey(e.fecha);
-    var minsSimDia = 0;
     (e.ejercicios||[]).forEach(function(ej){
       if (esRetoPutt(ej)) diasPutt[dk] = true;
       if (esRetoApproach(ej)) diasApp[dk] = true;
-      if (esSimulador(ej)) minsSimDia += minsEj(ej);
+      if (esRetoDrive(ej)) diasDrive[dk] = true;
     });
-    // El día de simulador cuenta solo si juntó >= 20 min ese día
-    if (minsSimDia >= 20) diasSimMin[dk] = true;
   });
   var nPutt = Object.keys(diasPutt).length;
   var nApp = Object.keys(diasApp).length;
-  var nSim = Object.keys(diasSimMin).length;
+  var nSim = Object.keys(diasDrive).length;
 
   // VOLUMEN de ejercicios por tipo (putt, approach, hierro) en la ventana de 7 días.
   // Cada reto vale por 1 ejercicio de su tipo; se suma a los ejercicios normales.
@@ -4518,29 +4493,47 @@ function renderHomeGamer() {
   });
   var metaPutt = 10, metaApp = 8, metaHierro = 8;
 
-  // Pintar los 3 aros de práctica + medallas
-  function pintarAro(ringId, valId, medId, medTrofeoId, val, meta){
+  // ===== CONTEO UNIFICADO (ejercicios + retos) por área, para los cuadritos del home =====
+  // Detecta el área de cualquier ejercicio o reto
+  function areaDe(ej){
+    var cat = (ej.cat||'')+'' , id = (ej.id||'')+'' , cv = (ej.claveNivel||'')+'';
+    if (esRetoPutt(ej) || cat==='putt' || id.indexOf('putt')>=0 || id.indexOf('circulo')>=0 || cv.indexOf('putt')>=0) return 'putt';
+    if (esRetoApproach(ej) || cat==='approach' || id.indexOf('approach')>=0 || cv.indexOf('approach')>=0 || cv.indexOf('bunker')>=0) return 'approach';
+    if (esRetoDrive(ej) || id.indexOf('drive')>=0 || cv.indexOf('drive')>=0) return 'drive';
+    if (cat==='hierros' || cat==='hierro' || id.indexOf('hierro')>=0 || cv.indexOf('hierro')>=0 || id==='retoHierro') return 'hierro';
+    return null;
+  }
+  // Contar total (cada ejercicio o reto hecho = 1) por área en la ventana de 7 días
+  var totPutt = 0, totApp = 0, totHierro = 0, totDrive = 0;
+  entrenos.forEach(function(e){
+    if (new Date(e.fecha).getTime() < limite7) return;
+    (e.ejercicios||[]).forEach(function(ej){
+      var a = areaDe(ej);
+      if (a==='putt') totPutt++;
+      else if (a==='approach') totApp++;
+      else if (a==='hierro') totHierro++;
+      else if (a==='drive' && esRetoDrive(ej)) totDrive++; // Drive solo cuenta retos
+    });
+  });
+  // Metas totales por área (ejercicios + retos): Putt 13, Approach 9, Hierro 7, Drive 2
+  var metaTotPutt = 13, metaTotApp = 9, metaTotHierro = 7, metaTotDrive = 2;
+  // Pintar cada cuadrito unificado (número total / meta + anillo)
+  function pintarCuadrito(ringId, valId, val, meta){
     var ring = document.getElementById(ringId);
     var valEl = document.getElementById(valId);
-    var med = document.getElementById(medId);
-    var medT = document.getElementById(medTrofeoId);
-    var circ = 201; // 2*PI*32
-    var frac = Math.min(1, val/meta);
-    if (ring) ring.setAttribute('stroke-dashoffset', circ*(1-frac));
     if (valEl) valEl.textContent = Math.min(val, meta);
-    var completo = val >= meta;
-    if (med) med.style.display = completo ? 'block' : 'none';
-    // Medalla del trofeo (arriba): encendida si completó ese tipo
-    if (medT){
-      if (completo){ medT.style.filter = 'drop-shadow(0 0 5px rgba(255,210,63,.6))'; medT.style.opacity = '1'; }
-      else { medT.style.filter = 'grayscale(1)'; medT.style.opacity = '.4'; }
+    if (ring) {
+      var circ = 201, frac = Math.min(1, val/meta);
+      ring.setAttribute('stroke-dashoffset', circ*(1-frac));
     }
-    return completo;
+    return val >= meta;
   }
-  var medPuttOk = pintarAro('ap-putt-ring','ap-putt-val','ap-putt-med','gamer-med-putt', volPutt, metaPutt);
-  var medAppOk = pintarAro('ap-app-ring','ap-app-val','ap-app-med','gamer-med-app', volApp, metaApp);
-  var medHierroOk = pintarAro('ap-hierro-ring','ap-hierro-val','ap-hierro-med','gamer-med-hierro', volHierro, metaHierro);
-  var medallasCompletas = medPuttOk && medAppOk && medHierroOk;
+  pintarCuadrito('cu-putt-ring','cu-putt-val', totPutt, metaTotPutt);
+  pintarCuadrito('cu-app-ring','cu-app-val', totApp, metaTotApp);
+  pintarCuadrito('cu-hierro-ring','cu-hierro-val', totHierro, metaTotHierro);
+  pintarCuadrito('cu-drive-ring','cu-drive-val', totDrive, metaTotDrive);
+
+  var medallasCompletas = (totPutt>=metaTotPutt) && (totApp>=metaTotApp) && (totHierro>=metaTotHierro);
 
   // Pintar pelotitas (n llenas de meta)
   function pintarDots(contId, n, meta, color){
@@ -4673,7 +4666,7 @@ function renderHomeGamer() {
   // Frase grande del trofeo según el estado
   var fraseTrofeo = document.getElementById('gamer-trofeo-frase');
   if (fraseTrofeo) {
-    var medallasGanadas = (medPuttOk?1:0) + (medAppOk?1:0) + (medHierroOk?1:0);
+    var medallasGanadas = ((totPutt>=metaTotPutt)?1:0) + ((totApp>=metaTotApp)?1:0) + ((totHierro>=metaTotHierro)?1:0);
     if (trofeoCompleto) fraseTrofeo.textContent = 'MANTÉN TU TROFEO, ENTRENA HOY';
     else if (estrellas >= 5 && medallasGanadas >= 2) fraseTrofeo.textContent = '¡UNA MEDALLA Y ES TUYO!';
     else if (estrellas >= 5) fraseTrofeo.textContent = '¡COMPLETA TUS MEDALLAS!';
@@ -5677,7 +5670,7 @@ function generarDatosPrueba(silencioso) {
         { id:'nv:approach-record', nom:'Récord Approach', cat:'approach', claveNivel:'approach-record' },
         { id:'nv:approach-bunker', nom:'Bunker', cat:'approach', claveNivel:'approach-bunker' },
         { id:'nv:approach-ud2d3', nom:'Up & Down', cat:'approach', claveNivel:'approach-ud2d3' },
-        { id:'nv:hierro-handicap-largo:7', nom:'Hierro 7 · Handicap', cat:'hierros', claveNivel:'hierro-handicap-largo' }
+        { id:'nv:hierro-handicap:7', nom:'Hierro 7 · Handicap', cat:'hierros', claveNivel:'hierro-handicap' }
       ];
       // Retos de putt (medio y largo) van aparte, para que salgan como tarjeta propia en el historial
       var retosPuttPrueba = [
@@ -5814,7 +5807,7 @@ function generarDatosPrueba(silencioso) {
         var fgh = new Date(); fgh.setHours(rnd(9,17), rnd(0,59), 0, 0); fgh.setDate(fgh.getDate() - (gh % 6));
         entrenos.push({
           sesionId: 'ses_gamer_hierro_' + cfg.id + '_' + gh, fecha: fgh.toISOString(),
-          ejercicios: [{ id:'nv:hierro-handicap-largo:7', nom:'Hierro 7 · Handicap', cat:'hierros', claveNivel:'hierro-handicap-largo', datos:{ mins:15, ejec:rnd(1,5) } }],
+          ejercicios: [{ id:'nv:hierro-handicap:7', nom:'Hierro 7 · Handicap', cat:'hierros', claveNivel:'hierro-handicap', datos:{ mins:15, ejec:rnd(1,5) } }],
           totalProgramados: 1, totalHechos: 1
         });
       }
@@ -5930,7 +5923,7 @@ function generarDatosPrueba(silencioso) {
         // Claves SIN distancia (un solo nivel cada una)
         var otrasClaves = ['lineal-esctob-corto','medio-escalera','medio-tobogan','largo-esctob',
           'approach-escalera','approach-tobogan','approach-record','approach-bunker','approach-ud2d3',
-          'hierro-handicap-largo','reto-putt-medio','reto-putt-largo'];
+          'hierro-handicap','reto-putt-medio','reto-putt-largo'];
         otrasClaves.forEach(function(clave) {
           var nivel = Math.max(1, Math.min(5, nivelBase + rnd(-1, 1)));
           var sesiones = [];
@@ -9789,8 +9782,21 @@ function _arrancarRetoOp27() {
   estadoSesion.completados = [];
   estadoSesion.sesionId = 'ses_' + Date.now();
   agregarEjercicioAlPrograma('op36-25');
-  renderSesion();
-  irVista('view-programa');
+  // Ir directo a la pantalla del reto OP27 (ya está definido a 25y)
+  var item = { id: 'op36-25', op36dist: '25', nom: 'OP 27 · 25y', cat: 'reto', esReto: true };
+  window._op36DesdeHome = true;
+  mostrarPantallaOP36(item);
+}
+
+// Salir de la intro del OP27: al home si vino del home, si no a la sesión
+function _salirOP36Intro() {
+  if (window._op36DesdeHome) {
+    window._op36DesdeHome = false;
+    irVista('view-home');
+    if (typeof renderHome === 'function') { try { renderHome(); } catch(e){} }
+  } else {
+    irVista('view-sesion');
+  }
 }
 
 // Modal: avisar que hay un entrenamiento pendiente antes de empezar uno nuevo
@@ -10181,11 +10187,35 @@ function yaEnEntrenamientoHoy(clave) {
     if (item.id && item.id.indexOf('nv:' + clave + '-') === 0) return true;
     if (clave === 'op36' && item.id === 'op36') return true;
     if (clave === 'reto-approach' && item.id === 'retoApproach') return true;
+    if (clave === 'reto-drive-precision' && item.id === 'retoDrivePrecision') return true;
+    if (clave === 'reto-drive-distancia' && item.id === 'retoDriveDistancia') return true;
+    if (clave === 'reto-hierro' && item.id === 'retoHierro') return true;
     if (clave === 'reto-putt-medio' && item.id === 'retoMedio') return true;
     if (clave === 'reto-putt-largo' && item.id === 'retoMedioReto') return true;
     if (item.id === clave) return true;
     return false;
   });
+}
+
+// ===== Área unificada (cuadrito del home): abre con pestañas Ejercicios/Retos =====
+var _biblioAreaUnificada = null;
+function abrirAreaUnificada(catGolf) {
+  var tieneEjercicios = BIBLIOTECA.some(function(x){ return x.grupo==='ejercicio' && catGolfDeEjercicio(x)===catGolf; });
+  var tieneRetos = BIBLIOTECA.some(function(x){ return x.grupo==='reto' && x.catGolf===catGolf; });
+  // Drive es un área solo de retos (por decisión de diseño): abre directo en retos
+  if (catGolf === 'drive') tieneEjercicios = false;
+  var pestana = tieneEjercicios ? 'ejercicio' : 'reto';
+  // Si tiene ambos y ya completó todos los ejercicios de hoy, abrir en retos (lo que le falta)
+  if (tieneEjercicios && tieneRetos) {
+    var ejerciciosArea = BIBLIOTECA.filter(function(x){ return x.grupo==='ejercicio' && catGolfDeEjercicio(x)===catGolf; });
+    var todosEjHechos = ejerciciosArea.length > 0 && ejerciciosArea.every(function(x){ return yaEnEntrenamientoHoy(x.clave); });
+    if (todosEjHechos) pestana = 'reto';
+  }
+  _biblioPestana = pestana;
+  _biblioFiltroCat = catGolf;
+  _biblioSoloFav = false;
+  _biblioAreaUnificada = (catGolf === 'drive') ? null : catGolf; // Drive sin pestañas (solo retos)
+  abrirBiblioteca();
 }
 
 // Abre la biblioteca en la pestaña de RETOS, filtrada por categoría (putt/approach/hierros/simulador)
@@ -10194,6 +10224,7 @@ function abrirBibliotecaFiltrada(catGolf) {
   _biblioPestana = 'reto';
   _biblioFiltroCat = catGolf;
   _biblioSoloFav = false;
+  _biblioAreaUnificada = null;
   abrirBiblioteca();
 }
 
@@ -10212,7 +10243,8 @@ function catGolfDeEjercicio(ej) {
 function abrirBibliotecaFiltradaEjercicios(catGolf) {
   _biblioPestana = 'ejercicio';
   _biblioFiltroCat = catGolf;
-  _biblioSoloFav = true;
+  _biblioSoloFav = false;
+  _biblioAreaUnificada = null;
   abrirBiblioteca();
 }
 
@@ -10224,8 +10256,8 @@ function abrirBiblioteca() {
   ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:520;display:flex;align-items:flex-end;justify-content:center';
   ov.innerHTML = '<div style="background:#12151f;border-radius:24px 24px 0 0;width:100%;max-width:430px;max-height:88vh;overflow-y:auto;display:flex;flex-direction:column">' +
     '<div style="display:flex;justify-content:center;padding:12px 0"><div style="width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:2px"></div></div>' +
-    '<div style="padding:0 20px 12px;display:flex;align-items:center;justify-content:space-between">' +
-      '<div><div style="color:#e8e8f0;font-size:18px;font-weight:800">📚 Biblioteca</div>' +
+    '<div style="padding:0 20px 12px;display:flex;align-items:flex-start;justify-content:space-between">' +
+      '<div id="biblio-titulo-header"><div style="color:#e8e8f0;font-size:18px;font-weight:800">📚 Biblioteca</div>' +
       '<div style="color:#8a8a9a;font-size:11px;margin-top:2px">Marca tus favoritos ⭐ para que aparezcan en tu menú de entrenamiento</div></div>' +
       '<div id="cerrar-biblio" style="color:#4a4a6a;font-size:28px;cursor:pointer;padding:4px 8px">×</div>' +
     '</div>' +
@@ -10254,6 +10286,8 @@ function renderBiblioteca() {
   // (en vista filtrada usamos el botón "Crear mi reto", para no duplicar)
   var crearHeader = document.getElementById('biblio-crear-header');
   if (crearHeader) crearHeader.style.display = _biblioFiltroCat ? 'none' : '';
+  var tituloHeader = document.getElementById('biblio-titulo-header');
+  if (tituloHeader) tituloHeader.style.display = _biblioFiltroCat ? 'none' : '';
 
   // Pestañas — solo se muestran cuando NO hay filtro por categoría (vista general)
   var tabEj = _biblioPestana === 'ejercicio';
@@ -10263,6 +10297,18 @@ function renderBiblioteca() {
       '<div onclick="_biblioPestana=\'ejercicio\';_biblioFiltroCat=null;renderBiblioteca()" style="flex:1;text-align:center;padding:11px;border-radius:12px;cursor:pointer;font-size:13px;font-weight:800;' + (tabEj ? 'background:var(--player-main,#1D9E75);color:#fff' : 'background:#1a1f2e;color:#8a8a9a') + '">Ejercicios</div>' +
       '<div onclick="_biblioPestana=\'reto\';_biblioFiltroCat=null;renderBiblioteca()" style="flex:1;text-align:center;padding:11px;border-radius:12px;cursor:pointer;font-size:13px;font-weight:800;' + (!tabEj ? 'background:#EF9F27;color:#000' : 'background:#1a1f2e;color:#8a8a9a') + '">Retos</div>' +
     '</div>';
+  } else if (_biblioAreaUnificada) {
+    // Modo cuadrito unificado: pestañas Ejercicios/Retos que MANTIENEN el filtro de categoría
+    var _cat = _biblioAreaUnificada;
+    var hayEj = BIBLIOTECA.some(function(x){ return x.grupo==='ejercicio' && catGolfDeEjercicio(x)===_cat; });
+    var hayRe = BIBLIOTECA.some(function(x){ return x.grupo==='reto' && x.catGolf===_cat; });
+    // Solo mostrar pestañas si tiene AMBOS tipos (si solo tiene uno, no ensuciar con pestañas)
+    if (hayEj && hayRe) {
+      html += '<div style="display:flex;gap:8px;margin:6px 0 16px">' +
+        '<div onclick="_biblioPestana=\'ejercicio\';renderBiblioteca()" style="flex:1;text-align:center;padding:11px;border-radius:12px;cursor:pointer;font-size:13px;font-weight:800;' + (tabEj ? 'background:var(--player-main,#1D9E75);color:#fff' : 'background:#1a1f2e;color:#8a8a9a') + '">Ejercicios</div>' +
+        '<div onclick="_biblioPestana=\'reto\';renderBiblioteca()" style="flex:1;text-align:center;padding:11px;border-radius:12px;cursor:pointer;font-size:13px;font-weight:800;' + (!tabEj ? 'background:#EF9F27;color:#000' : 'background:#1a1f2e;color:#8a8a9a') + '">Retos</div>' +
+      '</div>';
+    }
   }
 
   // Filtrar por pestaña y agrupar por categoría
@@ -10281,36 +10327,20 @@ function renderBiblioteca() {
   if (_biblioFiltroCat) {
     var nombreCat = { putt:'Putt', approach:'Approach', hierros:'Hierros', drive:'Drive', simulador:'Simulador' }[_biblioFiltroCat] || _biblioFiltroCat;
     var esEjercicioTab = (_biblioPestana === 'ejercicio');
-    // Botón para ver TODOS los de esta categoría (mantiene el filtro de categoría, quita solo-favoritos)
-    var btnVerTodosCat = '<div onclick="_biblioSoloFav=false;renderBiblioteca()" style="background:rgba(125,58,237,.12);border:1px solid rgba(125,58,237,.35);border-radius:13px;padding:13px;cursor:pointer;color:#a78bfa;font-size:14px;font-weight:800;text-align:center;margin-bottom:14px">📚 Ver todos los de ' + nombreCat + '</div>';
 
     if (esEjercicioTab) {
-      if (_biblioSoloFav) {
-        // MI PRÁCTICA (desde tarjeta): mostrar solo los FAVORITOS de esta categoría
-        var favoritos = lista.filter(function(x){ return esFavoritoBiblio(pid, x.clave); });
-        if (!favoritos.length) {
-          // Sin favoritos: mensaje + botón para ver todos los de esta categoría
-          html += '<div style="text-align:center;padding:22px 16px">' +
-            '<div style="font-size:34px;margin-bottom:10px">⭐</div>' +
-            '<div style="color:#e8e8f0;font-size:14px;font-weight:700;margin-bottom:6px">No tienes ejercicios de ' + nombreCat + ' marcados</div>' +
-            '<div style="color:#8a8a9a;font-size:12px;line-height:1.5;margin-bottom:16px">Elige de todos los ejercicios de ' + nombreCat + ' y marca tus favoritos ⭐.</div>' +
-            '<div onclick="_biblioSoloFav=false;renderBiblioteca()" style="background:rgba(125,58,237,.12);border:1px solid rgba(125,58,237,.35);border-radius:12px;padding:12px;cursor:pointer;color:#a78bfa;font-size:13px;font-weight:800">📚 Ver todos los de ' + nombreCat + '</div>' +
-          '</div>';
-          cont.innerHTML = html;
-          return;
-        }
-        // Sí hay favoritos: botón "ver todos de la categoría" arriba + mostrar solo favoritos
-        html += btnVerTodosCat;
-        lista = favoritos;
-      } else {
-        // "Ver todos los de [categoría]": muestra TODO el catálogo de esa categoría
-        html += '<div style="color:#8a8a9a;font-size:11px;text-align:center;margin-bottom:12px">Todos los ejercicios de ' + nombreCat + ' · marca tus ⭐ favoritos</div>';
-        if (!lista.length) {
-          html += '<div style="text-align:center;padding:22px 16px"><div style="font-size:34px;margin-bottom:10px">📭</div><div style="color:#e8e8f0;font-size:14px;font-weight:700">No hay ejercicios de ' + nombreCat + '</div></div>';
-          cont.innerHTML = html;
-          return;
-        }
+      // MI PRÁCTICA: mostrar TODOS los ejercicios de la categoría, con favoritos ⭐ hasta arriba
+      if (!lista.length) {
+        html += '<div style="text-align:center;padding:22px 16px"><div style="font-size:34px;margin-bottom:10px">📭</div><div style="color:#e8e8f0;font-size:14px;font-weight:700">No hay ejercicios de ' + nombreCat + '</div></div>';
+        cont.innerHTML = html;
+        return;
       }
+      // Ordenar: favoritos primero, luego el resto (manteniendo orden original dentro de cada grupo)
+      lista = lista.slice().sort(function(a, b){
+        var fa = esFavoritoBiblio(pid, a.clave) ? 0 : 1;
+        var fb = esFavoritoBiblio(pid, b.clave) ? 0 : 1;
+        return fa - fb;
+      });
     } else {
       // MIS RETOS: solo mostrar los retos de esa categoría (crear vive en la biblioteca grande)
       if (!lista.length) {
@@ -10327,9 +10357,14 @@ function renderBiblioteca() {
   var cats = [];
   lista.forEach(function(x){ if (cats.indexOf(x.cat) < 0) cats.push(x.cat); });
 
-  cats.forEach(function(cat){
-    html += '<div style="color:#6a6a85;font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;margin:14px 4px 8px">' + cat + '</div>';
-    lista.filter(function(x){ return x.cat === cat; }).forEach(function(ej){
+  // En vista filtrada de Mi Práctica: lista plana (sin encabezados de subcategoría), favoritos ya vienen arriba
+  var vistaPracticaFiltrada = (_biblioFiltroCat && _biblioPestana === 'ejercicio');
+  var gruposRender = vistaPracticaFiltrada ? [null] : cats;
+
+  gruposRender.forEach(function(cat){
+    if (cat !== null) html += '<div style="color:#6a6a85;font-size:10px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;margin:14px 4px 8px">' + cat + '</div>';
+    var delGrupo = (cat === null) ? lista : lista.filter(function(x){ return x.cat === cat; });
+    delGrupo.forEach(function(ej){
       var fav = esFavoritoBiblio(pid, ej.clave);
       var estrella = fav ? '⭐' : '☆';
       var estColor = fav ? '#EF9F27' : '#4a4a6a';
@@ -10413,6 +10448,9 @@ function hacerEjercicioAhora(clave) {
     if (clave === 'reto-putt-medio' && it.id === 'retoMedio') { idx = i; break; }
     if (clave === 'reto-putt-largo' && it.id === 'retoMedioReto') { idx = i; break; }
     if (clave === 'reto-approach' && it.id === 'retoApproach') { idx = i; break; }
+    if (clave === 'reto-drive-precision' && it.id === 'retoDrivePrecision') { idx = i; break; }
+    if (clave === 'reto-drive-distancia' && it.id === 'retoDriveDistancia') { idx = i; break; }
+    if (clave === 'reto-hierro' && it.id === 'retoHierro') { idx = i; break; }
     if (clave === 'op36' && it.id === 'op36') { idx = i; break; }
   }
   // Si no está, agregarlo
@@ -10444,10 +10482,27 @@ function _toastEntrenamiento(msg) {
 }
 
 // ===== PANTALLA: elegir bastón para un ejercicio de hierro =====
+// Cierra el selector de hierro y regresa a donde estabas (biblioteca o home)
+function _cerrarSelectorHierro() {
+  var sel = document.getElementById('overlay-hierro');
+  if (sel) sel.remove();
+  var fichaH = document.getElementById('overlay-ficha-hierro');
+  if (fichaH) fichaH.remove();
+  // Si la biblioteca ya no está abierta, regresar al home
+  var biblio = document.getElementById('overlay-biblioteca');
+  if (!biblio) {
+    if (typeof irVista === 'function') irVista('view-home');
+    if (typeof renderHome === 'function') { try { renderHome(); } catch(e){} }
+  }
+}
+
 // Se llama al abrir un ejercicio de hierro. Muestra los bastones; al elegir uno, abre su ficha.
 function abrirSelectorHierro(claveEjercicio) {
   var prev = document.getElementById('overlay-hierro');
   if (prev) prev.remove();
+  // Cerrar también la ficha del hierro si está abierta (al "cambiar hierro")
+  var fichaH = document.getElementById('overlay-ficha-hierro');
+  if (fichaH) fichaH.remove();
   var ov = document.createElement('div');
   ov.id = 'overlay-hierro';
   ov.style.cssText = 'position:fixed;inset:0;background:rgba(8,10,18,.92);z-index:5000;overflow-y:auto;backdrop-filter:blur(3px)';
@@ -10461,7 +10516,7 @@ function abrirSelectorHierro(claveEjercicio) {
   ov.innerHTML =
     '<div style="max-width:520px;margin:0 auto;padding:24px 20px 90px">' +
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">' +
-        '<div onclick="document.getElementById(\'overlay-hierro\').remove()" style="color:#8a8a9a;font-size:14px;font-weight:700;cursor:pointer;background:rgba(255,255,255,.06);padding:7px 14px;border-radius:10px">← Cancelar</div>' +
+        '<div onclick="_cerrarSelectorHierro()" style="color:#8a8a9a;font-size:14px;font-weight:700;cursor:pointer;background:rgba(255,255,255,.06);padding:7px 14px;border-radius:10px">← Cancelar</div>' +
       '</div>' +
       '<div style="text-align:center;margin:20px 0 6px"><div style="font-size:40px">🏌️</div></div>' +
       '<div style="color:#fff;font-size:22px;font-weight:800;text-align:center;margin-bottom:4px">¿Qué hierro vas a entrenar?</div>' +
@@ -10489,28 +10544,49 @@ function abrirFichaHierro(baston, claveEjercicio) {
     '<div style="max-width:520px;margin:0 auto;padding:24px 20px 90px">' +
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">' +
         '<div onclick="abrirSelectorHierro(\'' + (claveEjercicio||'') + '\')" style="color:#8a8a9a;font-size:14px;font-weight:700;cursor:pointer;background:rgba(255,255,255,.06);padding:7px 14px;border-radius:10px">← Cambiar hierro</div>' +
-        '<div style="background:#3B6D11;border-radius:8px;padding:5px 14px"><span style="color:#a3e635;font-size:12px;font-weight:800">' + label.toUpperCase() + '</span></div>' +
+        '<div style="display:flex;align-items:center;gap:10px">' +
+          '<div style="background:#3B6D11;border-radius:8px;padding:5px 14px"><span style="color:#a3e635;font-size:12px;font-weight:800">' + label.toUpperCase() + '</span></div>' +
+          '<div onclick="_cerrarFichaHierro()" style="color:#8a8a9a;font-size:20px;font-weight:700;cursor:pointer;background:rgba(255,255,255,.06);width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;line-height:1">✕</div>' +
+        '</div>' +
       '</div>' +
 
-      // CARRY destacado
+      // CARRY destacado (se guarda solo al escribir)
       '<div style="background:linear-gradient(160deg,#1e3a2e,#0f1f18);border:1px solid rgba(74,222,128,.3);border-radius:18px;padding:20px;text-align:center;margin-bottom:16px">' +
         '<div style="color:#4ade80;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px">📏 Mi distancia de carry</div>' +
-        '<input id="hierro-carry-input" value="' + (ficha.carry || '').replace(/"/g,'&quot;') + '" placeholder="ej. 150 yardas" style="width:100%;background:transparent;border:none;text-align:center;color:#fff;font-size:30px;font-weight:900;font-family:inherit;outline:none;box-sizing:border-box" />' +
+        '<input id="hierro-carry-input" oninput="_autoGuardarHierro(\'' + baston + '\')" value="' + (ficha.carry || '').replace(/"/g,'&quot;') + '" placeholder="ej. 150 yardas" style="width:100%;background:transparent;border:none;text-align:center;color:#fff;font-size:30px;font-weight:900;font-family:inherit;outline:none;box-sizing:border-box" />' +
         '<div style="color:#6b8a7a;font-size:11px;margin-top:6px">Sobre este dato se miden tus objetivos. Actualízalo cuando mejores.</div>' +
       '</div>' +
 
-      // NOTAS libres
-      '<div style="margin-bottom:8px;color:#c8c8d5;font-size:13px;font-weight:700;padding-left:4px">📝 Mis notas de este hierro</div>' +
-      '<textarea id="hierro-notas-input" placeholder="' + placeholderNotas.replace(/"/g,'&quot;').replace(/\n/g,'&#10;') + '" style="width:100%;min-height:180px;background:#1a1f2e;border:0.5px solid rgba(255,255,255,.12);border-radius:14px;padding:15px;color:#e8e8f0;font-size:14px;font-family:inherit;line-height:1.6;resize:vertical;box-sizing:border-box;outline:none">' + (ficha.notas || '') + '</textarea>' +
-
-      // Botones
-      '<div style="display:flex;gap:9px;margin-top:16px">' +
-        '<div onclick="_dictarNotaHierro(\'' + baston + '\')" style="background:rgba(125,58,237,.15);border:1px solid rgba(125,58,237,.4);border-radius:14px;padding:15px 18px;text-align:center;cursor:pointer;color:#a78bfa;font-size:14px;font-weight:800">🎤</div>' +
-        '<div onclick="_guardarFichaHierro(\'' + baston + '\',\'' + (claveEjercicio||'') + '\')" style="flex:1;background:linear-gradient(160deg,#1D9E75,#0F6E56);border-radius:14px;padding:15px;text-align:center;cursor:pointer;color:#fff;font-size:15px;font-weight:800;box-shadow:0 4px 14px rgba(29,158,117,.35)">💾 Guardar</div>' +
+      // NOTAS libres (se guardan solas al escribir) + micrófono
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 4px">' +
+        '<span style="color:#c8c8d5;font-size:13px;font-weight:700">📝 Mis notas de este hierro</span>' +
+        '<span onclick="_dictarNotaHierro(\'' + baston + '\')" style="color:#a78bfa;font-size:12px;font-weight:700;cursor:pointer;background:rgba(125,58,237,.15);border:1px solid rgba(125,58,237,.4);border-radius:9px;padding:5px 12px">🎤 Dictar</span>' +
       '</div>' +
-      (claveEjercicio ? '<div onclick="_guardarYHacerHierro(\'' + baston + '\',\'' + claveEjercicio + '\')" style="margin-top:10px;background:linear-gradient(160deg,#3B82F6,#1D4ED8);border-radius:14px;padding:15px;text-align:center;cursor:pointer;color:#fff;font-size:15px;font-weight:800;box-shadow:0 4px 14px rgba(59,130,246,.4)">▶️ Guardar y hacer el ejercicio</div>' : '') +
+      '<textarea id="hierro-notas-input" oninput="_autoGuardarHierro(\'' + baston + '\')" placeholder="' + placeholderNotas.replace(/"/g,'&quot;').replace(/\n/g,'&#10;') + '" style="width:100%;min-height:170px;background:#1a1f2e;border:0.5px solid rgba(255,255,255,.12);border-radius:14px;padding:15px;color:#e8e8f0;font-size:14px;font-family:inherit;line-height:1.6;resize:vertical;box-sizing:border-box;outline:none">' + (ficha.notas || '') + '</textarea>' +
+      '<div style="color:#6a6a85;font-size:10px;text-align:center;margin-top:6px">Se guarda solo mientras escribes ✓</div>' +
+
+      // Botones unificados (iguales a los demás ejercicios)
+      (claveEjercicio ?
+        '<div style="display:flex;gap:9px;margin-top:18px">' +
+          '<div onclick="_agregarHierroAEntrenamiento(\'' + baston + '\',\'' + claveEjercicio + '\')" style="flex:1;background:linear-gradient(160deg,#1D9E75,#0F6E56);border-radius:14px;padding:15px 8px;text-align:center;cursor:pointer;color:#fff;font-size:14px;font-weight:800;box-shadow:0 4px 14px rgba(29,158,117,.35)">➕ Agregar<div style="font-size:10px;font-weight:600;opacity:.85;margin-top:2px">a mi entrenamiento</div></div>' +
+          '<div onclick="_guardarYHacerHierro(\'' + baston + '\',\'' + claveEjercicio + '\')" style="flex:1;background:linear-gradient(160deg,#3B82F6,#1D4ED8);border-radius:14px;padding:15px 8px;text-align:center;cursor:pointer;color:#fff;font-size:14px;font-weight:800;box-shadow:0 4px 14px rgba(59,130,246,.4)">▶️ Hacerlo<div style="font-size:10px;font-weight:600;opacity:.85;margin-top:2px">ahora mismo</div></div>' +
+        '</div>'
+        : '') +
     '</div>';
   document.body.appendChild(ov);
+}
+
+// Cierra la ficha del hierro y regresa (a biblioteca o home), sin meter nada al entrenamiento
+function _cerrarFichaHierro() {
+  var ov = document.getElementById('overlay-ficha-hierro');
+  if (ov) ov.remove();
+  var sel = document.getElementById('overlay-hierro');
+  if (sel) sel.remove();
+  var biblio = document.getElementById('overlay-biblioteca');
+  if (!biblio) {
+    if (typeof irVista === 'function') irVista('view-home');
+    if (typeof renderHome === 'function') { try { renderHome(); } catch(e){} }
+  }
 }
 
 // Guarda la ficha (carry + notas) del hierro
@@ -10519,13 +10595,21 @@ function _leerFichaDeInputs() {
   var notas = document.getElementById('hierro-notas-input');
   return { carry: carry ? carry.value.trim() : '', notas: notas ? notas.value.trim() : '' };
 }
-function _guardarFichaHierro(baston, claveEjercicio) {
+// Autoguardado: se llama en cada tecla, guarda sin cerrar nada
+function _autoGuardarHierro(baston) {
   var p = getPerfil();
   var pid = p ? p.id : 0;
   setFichaHierro(pid, baston, _leerFichaDeInputs());
+}
+// Agregar el ejercicio de hierro al entrenamiento (sin hacerlo ahora)
+function _agregarHierroAEntrenamiento(baston, claveEjercicio) {
+  var p = getPerfil();
+  var pid = p ? p.id : 0;
+  setFichaHierro(pid, baston, _leerFichaDeInputs());
+  window._hierroBastonActivo = baston;
   var ov = document.getElementById('overlay-ficha-hierro');
   if (ov) ov.remove();
-  _toastEntrenamiento('✅ Guardado tu ' + (baston === 'PW' ? 'PW' : 'Hierro ' + baston));
+  agregarAlEntrenamientoDesdeFicha(claveEjercicio);
 }
 // Guarda y lanza el ejercicio de hierro
 function _guardarYHacerHierro(baston, claveEjercicio) {
@@ -10562,6 +10646,37 @@ function _dictarNotaHierro(baston) {
   };
   rec.onerror = function(){ _toastEntrenamiento('No se pudo escuchar. Intenta de nuevo.'); };
   try { rec.start(); } catch(e) {}
+}
+
+// Muestra un pop-up con las notas del hierro mientras haces el ejercicio (solo lectura + editar)
+function _verNotasHierroEnRegistro(baston) {
+  var p = getPerfil();
+  var pid = p ? p.id : 0;
+  var ficha = getFichaHierro(pid, baston);
+  var lblB = (baston === 'PW') ? 'Pitching Wedge' : 'Hierro ' + baston;
+  var prev = document.getElementById('overlay-notas-hierro');
+  if (prev) prev.remove();
+  var ov = document.createElement('div');
+  ov.id = 'overlay-notas-hierro';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(8,10,18,.92);z-index:6000;overflow-y:auto;backdrop-filter:blur(3px)';
+  ov.innerHTML =
+    '<div style="max-width:520px;margin:0 auto;padding:24px 20px 90px">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">' +
+        '<div onclick="document.getElementById(\'overlay-notas-hierro\').remove()" style="color:#8a8a9a;font-size:14px;font-weight:700;cursor:pointer;background:rgba(255,255,255,.06);padding:7px 14px;border-radius:10px">← Volver al ejercicio</div>' +
+        '<div style="background:#3B6D11;border-radius:8px;padding:5px 14px"><span style="color:#a3e635;font-size:12px;font-weight:800">' + lblB.toUpperCase() + '</span></div>' +
+      '</div>' +
+      '<div style="background:linear-gradient(160deg,#1e3a2e,#0f1f18);border:1px solid rgba(74,222,128,.3);border-radius:16px;padding:16px;text-align:center;margin-bottom:16px">' +
+        '<div style="color:#4ade80;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">📏 Mi carry</div>' +
+        '<input id="hierro-carry-input" oninput="_autoGuardarHierro(\'' + baston + '\')" value="' + (ficha.carry || '').replace(/"/g,'&quot;') + '" placeholder="ej. 150 yardas" style="width:100%;background:transparent;border:none;text-align:center;color:#fff;font-size:26px;font-weight:900;font-family:inherit;outline:none;box-sizing:border-box" />' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 4px">' +
+        '<span style="color:#c8c8d5;font-size:13px;font-weight:700">📝 Mis notas</span>' +
+        '<span onclick="_dictarNotaHierro(\'' + baston + '\')" style="color:#a78bfa;font-size:12px;font-weight:700;cursor:pointer;background:rgba(125,58,237,.15);border:1px solid rgba(125,58,237,.4);border-radius:9px;padding:5px 12px">🎤 Dictar</span>' +
+      '</div>' +
+      '<textarea id="hierro-notas-input" oninput="_autoGuardarHierro(\'' + baston + '\')" style="width:100%;min-height:200px;background:#1a1f2e;border:0.5px solid rgba(255,255,255,.12);border-radius:14px;padding:15px;color:#e8e8f0;font-size:14px;font-family:inherit;line-height:1.6;resize:vertical;box-sizing:border-box;outline:none">' + (ficha.notas || '') + '</textarea>' +
+      '<div style="color:#6a6a85;font-size:10px;text-align:center;margin-top:6px">Se guarda solo mientras escribes ✓</div>' +
+    '</div>';
+  document.body.appendChild(ov);
 }
 
 function verFichaBiblio(clave, distK) {
@@ -10638,8 +10753,8 @@ function verFichaBiblio(clave, distK) {
       '<div style="color:#e8e8f0;font-size:13px;font-weight:800;margin:18px 0 8px">Cómo se juega</div>' +
       (instrHtml || '<div style="color:#7a7a95;font-size:12px">Instrucciones disponibles al agregarlo.</div>') +
       (nivelesHtml ? ('<div style="color:#e8e8f0;font-size:13px;font-weight:800;margin:18px 0 6px">' + nivelesTitulo + '</div>' + nivelesHtml) : '') +
-      ((ej.cat === 'Hierros') ?
-        // Ejercicio de hierro: botón para ver/editar la ficha del hierro
+      ((ej.cat === 'Hierros' || clave === 'reto-hierro') ?
+        // Ejercicio o reto de hierro: botón para ver/editar la ficha del hierro
         '<div onclick="document.getElementById(\'overlay-ficha-biblio\').remove();abrirSelectorHierro(\'' + clave + '\')" style="margin-top:20px;background:linear-gradient(160deg,#3B6D11,#284d0b);border-radius:14px;padding:15px;text-align:center;cursor:pointer;color:#fff;font-size:15px;font-weight:800;box-shadow:0 4px 14px rgba(59,109,17,.35)">🏌️ Elegir hierro y ver mi info</div>' +
         '<div style="color:#7a7a95;font-size:11px;text-align:center;margin-top:8px">Verás tu distancia de carry y notas de ese bastón</div>'
         :
@@ -10792,6 +10907,29 @@ function _procesarSiguienteFav(pendientes) {
     _procesarSiguienteFav(pendientes);
     return;
   }
+  if (clave === 'reto-drive-precision') {
+    estadoSesion.programa.push({ id: 'retoDrivePrecision', nom: 'Drive · Precisión', cat: 'drive', claveNivel: 'reto-drive-precision', mins: 15, esReto: true });
+    if (!estadoSesion.completados) estadoSesion.completados = []; estadoSesion.completados.push(null);
+    renderSesionSync(); guardarEstadoSesion();
+    _procesarSiguienteFav(pendientes);
+    return;
+  }
+  if (clave === 'reto-drive-distancia') {
+    estadoSesion.programa.push({ id: 'retoDriveDistancia', nom: 'Drive · Distancia', cat: 'drive', claveNivel: 'reto-drive-distancia', mins: 15, esReto: true });
+    if (!estadoSesion.completados) estadoSesion.completados = []; estadoSesion.completados.push(null);
+    renderSesionSync(); guardarEstadoSesion();
+    _procesarSiguienteFav(pendientes);
+    return;
+  }
+  if (clave === 'reto-hierro') {
+    var bastonR = window._hierroBastonActivo || '7';
+    var nomR = (bastonR === 'PW') ? 'PW · Reto' : 'Hierro ' + bastonR + ' · Reto';
+    estadoSesion.programa.push({ id: 'retoHierro', nom: nomR, cat: 'hierros', claveNivel: 'reto-hierro', mins: 15, esReto: true, hierroBaston: bastonR });
+    if (!estadoSesion.completados) estadoSesion.completados = []; estadoSesion.completados.push(null);
+    renderSesionSync(); guardarEstadoSesion();
+    _procesarSiguienteFav(pendientes);
+    return;
+  }
   if (clave === 'reto-putt-medio') {
     estadoSesion.programa.push({ id: 'retoMedio', nom: 'Reto Putt Corto', cat: 'reto', claveNivel: 'reto-putt-medio', mins: 15, esReto: true, retoTipo: 'medio' });
     if (!estadoSesion.completados) estadoSesion.completados = []; estadoSesion.completados.push(null);
@@ -10850,6 +10988,7 @@ function cerrarMenuEjYAbrirBiblio() {
   if (ov) ov.remove();
   _biblioFiltroCat = null;
   _biblioSoloFav = false;
+  _biblioAreaUnificada = null;
   abrirBiblioteca();
 }
 
@@ -11241,7 +11380,7 @@ function claveHierro(palo, mecanica) {
     return (palo.grupo === 'drive') ? 'drive-record' : 'hierro-record';
   } else { // handicap
     if (palo.grupo === 'drive') return 'drive-handicap';
-    return (palo.grupo === 'corto') ? 'hierro-handicap-corto' : 'hierro-handicap-largo';
+    return 'hierro-handicap';
   }
 }
 
@@ -11634,8 +11773,14 @@ function salirOp36() {
     try { op36Reconocimiento.stop(); } catch(e) {}
     op36VozActiva = false;
   }
-  irVista('view-programa');
-  renderSesion();
+  if (window._op36DesdeHome) {
+    window._op36DesdeHome = false;
+    irVista('view-home');
+    if (typeof renderHome === 'function') { try { renderHome(); } catch(e){} }
+  } else {
+    irVista('view-programa');
+    renderSesion();
+  }
 }
 
 function regresarAHoras() {
@@ -12010,6 +12155,34 @@ function instruccionesDinamicas(item, clave) {
   if (!t) return null;
   var perfil = getPerfil();
   var nivel = perfil ? getNivelReg(perfil, clave).nivel : 1;
+
+  // Retos de drive: 3 tandas de 10 bolas, anota la mejor
+  if (clave === 'reto-drive-precision') {
+    var oP = t.obj ? t.obj[nivel] : 6;
+    return [
+      '🎯 Objetivo (nivel ' + nivel + '): elige un rango de fairway (dos límites imaginarios). Pega 3 tandas de 10 bolas con tu driver.',
+      'En cada tanda cuenta cuántas de las 10 cayeron DENTRO del rango.',
+      'Anota tu MEJOR tanda de las 3. Meta de tu nivel: ' + oP + ' de 10 dentro del rango.'
+    ];
+  }
+  if (clave === 'reto-drive-distancia') {
+    var oD = t.obj ? t.obj[nivel] : 6;
+    return [
+      '🎯 Objetivo (nivel ' + nivel + '): fija una distancia que quieras superar. Pega 3 tandas de 10 bolas con tu driver.',
+      'En cada tanda cuenta cuántas de las 10 superaron esa distancia.',
+      'Anota tu MEJOR tanda de las 3. Meta de tu nivel: ' + oD + ' de 10 que superen tu distancia.'
+    ];
+  }
+  if (clave === 'reto-hierro') {
+    var oH = t.obj ? t.obj[nivel] : 6;
+    var bH = (typeof window !== 'undefined' && window._hierroBastonActivo) ? window._hierroBastonActivo : null;
+    var paloTxt = bH ? (bH === 'PW' ? 'tu PW' : 'tu hierro ' + bH) : 'tu hierro';
+    return [
+      '🎯 Objetivo (nivel ' + nivel + '): elige una zona objetivo (un green o rango a tu distancia con ' + paloTxt + ').',
+      'Pega 10 bolas con ' + paloTxt + ' y cuenta cuántas cayeron dentro de la zona.',
+      'Anota cuántas de las 10 lograste. Meta de tu nivel: ' + oH + ' de 10 en la zona.'
+    ];
+  }
   // Ejercicio personalizado (creado con Claude): usa su instrucción propia + objetivo del nivel
   var bibEj = (typeof BIBLIOTECA !== 'undefined') ? BIBLIOTECA.find(function(x){ return x.clave === clave && x.custom; }) : null;
   if (bibEj && bibEj.instrCustom) {
@@ -12230,6 +12403,26 @@ function abrirRegistro(idx) {
   document.getElementById('reg-badge').style.background = catC[def.cat]||'#185FA5';
   document.getElementById('reg-badge-txt').style.color = catT[def.cat]||'#B5D4F4';
   document.getElementById('reg-badge-txt').textContent = def.cat.toUpperCase();
+
+  // Chip de notas del hierro (solo en ejercicios de hierro, si hay bastón activo)
+  var hierroChip = document.getElementById('reg-hierro-chip');
+  if (hierroChip) {
+    if (def.cat === 'hierros' && window._hierroBastonActivo) {
+      var bAct = window._hierroBastonActivo;
+      var pAct = getPerfil();
+      var fAct = getFichaHierro(pAct ? pAct.id : 0, bAct);
+      var carryTxt = fAct.carry ? (' · ' + fAct.carry) : '';
+      var lblB = (bAct === 'PW') ? 'PW' : 'Hierro ' + bAct;
+      hierroChip.style.display = 'block';
+      hierroChip.innerHTML = '<div onclick="_verNotasHierroEnRegistro(\'' + bAct + '\')" style="display:inline-flex;align-items:center;gap:8px;background:rgba(59,109,17,.15);border:1px solid rgba(163,230,53,.35);border-radius:12px;padding:8px 14px;cursor:pointer">' +
+        '<span style="color:#a3e635;font-size:13px;font-weight:800">🏌️ ' + lblB + carryTxt + '</span>' +
+        '<span style="color:#7a9a4a;font-size:11px">📝 ver notas</span>' +
+      '</div>';
+    } else {
+      hierroChip.style.display = 'none';
+      hierroChip.innerHTML = '';
+    }
+  }
 
   var instHtml = '';
   if (def.instrucciones) {
