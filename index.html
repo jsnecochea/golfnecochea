@@ -6324,6 +6324,9 @@ async function dictarAClaude(textoUsuario, systemPrompt, opciones) {
     try { var ed = await response.json(); errTxt = (ed && ed.error && ed.error.message) ? ed.error.message : ('HTTP ' + response.status); }
     catch(e) { errTxt = 'HTTP ' + response.status; }
     if (response.status === 401) throw new Error('CLAVE_INVALIDA');
+    if (response.status === 400 && /credit|balance|billing/i.test(errTxt)) throw new Error('SIN_CREDITO');
+    if (response.status === 429) throw new Error('MUCHAS_PETICIONES');
+    if (response.status === 529 || response.status === 503) throw new Error('CLAUDE_OCUPADO');
     throw new Error(errTxt);
   }
 
@@ -6446,7 +6449,7 @@ function _systemPromptDictado() {
     'PERFILES disponibles (mapea los nombres/apodos dictados al id correcto):\n' + _listaPerfilesParaClaude() + '\n\n' +
     'CATÁLOGO de ejercicios (mapea lo que se dicte al ejercicio y su clave; ej. "círculo de 8 pasos" o "círculo de 8 pies" → usa la clave con -8):\n' + _catalogoParaClaude() + '\n\n' +
     'TÉRMINOS de golf por hoyo (score relativo al par): "águila"/"aguilita"/"eagle"/"menos dos" = -2; "birdie"/"verde"/"verdi"/"menos uno" = -1; "par"/"empate"/"al par" = 0; "bogey"/"bogui"/"más uno" = +1; "doble bogey"/"doble bogui"/"sopi"/"más dos" = +2; "triple bogey"/"triple bogui"/"doble sopi"/"más tres" = +3. Los "pasos" o "yardas" que menciona son la distancia a la que quedó del hoyo.\n\n' +
-    'DETALLE DE TIROS (para rondas): cuando el jugador narra sus tiros del hoyo (ej. "salí con drive al fairway, de 150 le pegué con hierro 7, caí en búnker, me subí al green e hice 2 putts"), captura cada tiro con su palo, distancia y dónde cayó, en el campo "tiros" del hoyo. Esto sirve para análisis de distancias. Si no narra los tiros, deja "tiros" vacío.\n\n' +
+    'DETALLE DE TIROS (para rondas y reto27): cuando el jugador narra sus tiros del hoyo (ej. "salí con drive al fairway, de 150 le pegué con hierro 7, caí en búnker, me subí al green e hice 2 putts"), captura cada tiro con su palo, distancia y dónde cayó, en el campo "tiros" del hoyo. Esto sirve para análisis de distancias. Anima al jugador a narrar sus tiros para tener buenos datos, pero SIN ser pesado. IMPORTANTE — DISTANCIA DEL PRIMER PUTT: la distancia desde donde empezó a putear (el putt más largo del hoyo) es CLAVE porque mide la calidad del approach y si tripoteó. Captúrala en "distPrimerPutt". Si el jugador narró putts pero NO dijo desde qué distancia, pon en "preguntar": "¿De qué distancia fue tu putt más largo?". Idealmente capta la distancia de todos los putts en "tiros", pero como mínimo la del primero (más largo).\n\n' +
     'La fecha de hoy es ' + fechaHoy + '.\n\n' +
     'Devuelve SOLO un JSON válido (sin markdown, sin explicaciones) con esta estructura exacta:\n' +
     '{\n' +
@@ -6457,7 +6460,7 @@ function _systemPromptDictado() {
     '      "ejercicioClave": "<clave del catálogo, solo si es entrenamiento>",\n' +
     '      "ejercicioNombre": "<nombre legible del ejercicio o actividad>",\n' +
     '      "valor": <número que logró: vueltas/rondas/racha/up&downs, solo entrenamiento>,\n' +
-    '      "hoyos": { "1": {"score": <número relativo al par>, "par": <3|4|5 o null>, "pasos": <número o null>, "putts": <número o null>, "tiros": [ {"palo":"<driver/hierro 7/60°/etc o null>", "yardas":<número o null>, "cayo":"<fairway/bunker/green/rough o null>"} ] }, ... }  // solo reto27/ronda\n' +
+    '      "hoyos": { "1": {"score": <número relativo al par>, "par": <3|4|5 o null>, "pasos": <número o null>, "putts": <número o null>, "distPrimerPutt": <yardas o pasos del PUTT MÁS LARGO del hoyo, número o null>, "tiros": [ {"palo":"<driver/hierro 7/60°/etc o null>", "yardas":<número o null>, "cayo":"<fairway/bunker/green/rough o null>"} ] }, ... }  // solo reto27/ronda\n' +
     '    }\n' +
     '  ],\n' +
     '  "dudas": "<si algo no quedó claro, descríbelo brevemente; si todo claro, cadena vacía>",\n' +
@@ -6729,7 +6732,11 @@ async function procesarGuiaConClaude(texto) {
   } catch(e) {
     if (est) est.textContent = 'Toca para hablar';
     var msg = e.message;
-    if (msg === 'SIN_CLAVE' || msg === 'CLAVE_INVALIDA') msg = 'Revisa tu clave en Enlazar Claude.';
+    if (msg === 'SIN_CLAVE') msg = 'No has enlazado tu clave. Menú → Enlazar Claude.';
+    else if (msg === 'CLAVE_INVALIDA') msg = 'La clave no es válida o está incompleta. Vuelve a pegarla en Menú → Enlazar Claude (cópiala completa, empieza con sk-ant-).';
+    else if (msg === 'SIN_CREDITO') msg = 'No hay crédito en tu cuenta de Anthropic. Carga saldo en platform.claude.com → Billing.';
+    else if (msg === 'MUCHAS_PETICIONES') msg = 'Demasiadas peticiones seguidas. Espera unos segundos e intenta de nuevo.';
+    else if (msg === 'CLAUDE_OCUPADO') msg = 'Claude está ocupado ahorita. Intenta de nuevo en un momento.';
     var cap = document.getElementById('dictado-captado');
     if (cap) cap.innerHTML = '<div style="background:rgba(226,75,74,.12);border:1px solid rgba(226,75,74,.35);border-radius:12px;padding:13px 14px;color:#E88;font-size:12px">No pude procesar: ' + msg + '</div>';
   }
@@ -6790,7 +6797,11 @@ async function procesarDictadoConClaude(texto) {
     if (est) est.textContent = 'Toca para dictar más';
     if (sub) sub.textContent = '';
     var msg = e.message;
-    if (msg === 'SIN_CLAVE' || msg === 'CLAVE_INVALIDA') msg = 'Revisa tu clave en Enlazar Claude.';
+    if (msg === 'SIN_CLAVE') msg = 'No has enlazado tu clave. Menú → Enlazar Claude.';
+    else if (msg === 'CLAVE_INVALIDA') msg = 'La clave no es válida o está incompleta. Vuelve a pegarla en Menú → Enlazar Claude (cópiala completa, empieza con sk-ant-).';
+    else if (msg === 'SIN_CREDITO') msg = 'No hay crédito en tu cuenta de Anthropic. Carga saldo en platform.claude.com → Billing.';
+    else if (msg === 'MUCHAS_PETICIONES') msg = 'Demasiadas peticiones seguidas. Espera unos segundos e intenta de nuevo.';
+    else if (msg === 'CLAUDE_OCUPADO') msg = 'Claude está ocupado ahorita. Intenta de nuevo en un momento.';
     var cap = document.getElementById('dictado-captado');
     if (cap) cap.innerHTML = '<div style="background:rgba(226,75,74,.12);border:1px solid rgba(226,75,74,.35);border-radius:12px;padding:13px 14px;color:#E88;font-size:12px">No pude interpretar el dictado: ' + msg + '<br><br>Lo que dictaste: "' + texto + '"</div>';
   }
@@ -7024,6 +7035,8 @@ function _hoyosDictadoAOp27(hoyos) {
         golpes: 3 + d.score,
         gir: null,
         pasos: (typeof d.pasos === 'number') ? d.pasos : null,
+        distPrimerPutt: (typeof d.distPrimerPutt === 'number') ? d.distPrimerPutt : null,
+        putts: (typeof d.putts === 'number') ? d.putts : null,
         puttCortoFallado: null
       });
     }
@@ -7106,6 +7119,7 @@ function _guardarRondaDictado(a) {
         pasos: (typeof d.pasos === 'number' ? d.pasos : null),
         par: (typeof d.par === 'number' ? d.par : null),
         putts: (typeof d.putts === 'number' ? d.putts : null),
+        distPrimerPutt: (typeof d.distPrimerPutt === 'number' ? d.distPrimerPutt : null),  // de dónde empezó a putear
         tiros: Array.isArray(d.tiros) ? d.tiros : null  // detalle de tiros para análisis de distancias
       });
       scoreReal += d.score;
@@ -7294,7 +7308,7 @@ function iniciarDictadoEscuchar() {
     _dictadoReconocimiento.start();
     _dictadoEscuchando = true;
     var est = document.getElementById('dictado-estado'); if (est) est.textContent = 'Escuchando…';
-    var circ = document.getElementById('dictado-mic-circ'); if (circ) circ.style.transform = 'scale(1.1)';
+    var circ = document.getElementById('dictado-mic-circ'); if (circ) circ.style.transform = 'scale(1)';
     _iconoDictado('stop');
     mostrarOndasDictado(true);
   } catch(e) {
@@ -7302,7 +7316,7 @@ function iniciarDictadoEscuchar() {
   }
 }
 
-// Temporizador de silencio: si pasan ~4.5s sin hablar, procesa solo
+// Temporizador de silencio: si pasan ~2.5s sin hablar tras una frase clara, procesa solo (más conversacional)
 var _dictadoSilencioTimer = null;
 function reiniciarSilencioDictado() {
   if (_dictadoSilencioTimer) clearTimeout(_dictadoSilencioTimer);
@@ -7311,7 +7325,7 @@ function reiniciarSilencioDictado() {
     if (_dictadoEscuchando && (_dictadoTextoAcum || '').trim()) {
       detenerDictadoEscuchar();
     }
-  }, 4500);
+  }, 2500);
 }
 
 function mostrarOndasDictado(mostrar) {
@@ -7320,14 +7334,14 @@ function mostrarOndasDictado(mostrar) {
   if (mostrar) {
     ond.style.display = 'flex';
     var barras = '';
-    var alturas = [14,22,12,26,15,20,13];
+    var alturas = [8,14,20,26,20,14,8,16,22,12];
     for (var i = 0; i < alturas.length; i++) {
-      barras += '<div style="width:3px;height:' + alturas[i] + 'px;background:#E24B4A;border-radius:2px;animation:dictadoPulso 0.8s ease-in-out ' + (i*0.1) + 's infinite"></div>';
+      barras += '<div style="width:3px;height:' + alturas[i] + 'px;background:linear-gradient(180deg,#E24B4A,#ff7a6b);border-radius:3px;animation:dictadoPulso 1.1s ease-in-out ' + (i*0.09) + 's infinite"></div>';
     }
     ond.innerHTML = barras;
     if (!document.getElementById('dictado-kf')) {
       var st = document.createElement('style'); st.id = 'dictado-kf';
-      st.textContent = '@keyframes dictadoPulso{0%,100%{transform:scaleY(0.5)}50%{transform:scaleY(1.3)}}';
+      st.textContent = '@keyframes dictadoPulso{0%,100%{transform:scaleY(0.35);opacity:.6}50%{transform:scaleY(1.25);opacity:1}}';
       document.head.appendChild(st);
     }
   } else {
