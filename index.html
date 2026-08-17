@@ -6446,6 +6446,7 @@ function _systemPromptDictado() {
     'PERFILES disponibles (mapea los nombres/apodos dictados al id correcto):\n' + _listaPerfilesParaClaude() + '\n\n' +
     'CATÁLOGO de ejercicios (mapea lo que se dicte al ejercicio y su clave; ej. "círculo de 8 pasos" o "círculo de 8 pies" → usa la clave con -8):\n' + _catalogoParaClaude() + '\n\n' +
     'TÉRMINOS de golf por hoyo (score relativo al par): "águila"/"aguilita"/"eagle"/"menos dos" = -2; "birdie"/"verde"/"verdi"/"menos uno" = -1; "par"/"empate"/"al par" = 0; "bogey"/"bogui"/"más uno" = +1; "doble bogey"/"doble bogui"/"sopi"/"más dos" = +2; "triple bogey"/"triple bogui"/"doble sopi"/"más tres" = +3. Los "pasos" o "yardas" que menciona son la distancia a la que quedó del hoyo.\n\n' +
+    'DETALLE DE TIROS (para rondas): cuando el jugador narra sus tiros del hoyo (ej. "salí con drive al fairway, de 150 le pegué con hierro 7, caí en búnker, me subí al green e hice 2 putts"), captura cada tiro con su palo, distancia y dónde cayó, en el campo "tiros" del hoyo. Esto sirve para análisis de distancias. Si no narra los tiros, deja "tiros" vacío.\n\n' +
     'La fecha de hoy es ' + fechaHoy + '.\n\n' +
     'Devuelve SOLO un JSON válido (sin markdown, sin explicaciones) con esta estructura exacta:\n' +
     '{\n' +
@@ -6456,11 +6457,17 @@ function _systemPromptDictado() {
     '      "ejercicioClave": "<clave del catálogo, solo si es entrenamiento>",\n' +
     '      "ejercicioNombre": "<nombre legible del ejercicio o actividad>",\n' +
     '      "valor": <número que logró: vueltas/rondas/racha/up&downs, solo entrenamiento>,\n' +
-    '      "hoyos": { "1": {"score": <número relativo al par>, "pasos": <número o null>}, ... }  // solo reto27/ronda\n' +
+    '      "hoyos": { "1": {"score": <número relativo al par>, "par": <3|4|5 o null>, "pasos": <número o null>, "putts": <número o null>, "tiros": [ {"palo":"<driver/hierro 7/60°/etc o null>", "yardas":<número o null>, "cayo":"<fairway/bunker/green/rough o null>"} ] }, ... }  // solo reto27/ronda\n' +
     '    }\n' +
     '  ],\n' +
-    '  "dudas": "<si algo no quedó claro, descríbelo brevemente; si todo claro, cadena vacía>"\n' +
+    '  "dudas": "<si algo no quedó claro, descríbelo brevemente; si todo claro, cadena vacía>",\n' +
+    '  "preguntar": "<si necesitas confirmar algo con el jugador antes de registrar el hoyo, escribe aquí la pregunta CORTA; si no, cadena vacía>"\n' +
     '}\n\n' +
+    'REGLAS DE RONDA (versión simple, ágil, a prueba de errores):\n' +
+    '(A) RESULTADO: si el jugador YA dijo su resultado del hoyo ("hice par", "bogey", "verde"...), regístralo y NO preguntes. Si NO lo dijo, pon "preguntar": "¿Qué hiciste, par, bogey o birdie?".\n' +
+    '(B) CONFIRMAR PAR: si puedes deducir el par contando los tiros que narró (ej. narró drive + hierro + 2 putts = 4 tiros e hizo par → par 4), pon ese "par" y confírmalo con "preguntar": "¿Fue par 4, verdad?". Si no puedes deducirlo y hace falta para el resultado, pregúntalo corto.\n' +
+    '(C) NÚMERO DE HOYO — ARRANQUE: en el PRIMER hoyo de una ronda nueva (cuando NO hay ronda en progreso en el CONTEXTO), pregunta UNA sola vez: "¿Arrancaron por el hoyo 1 o por el 10?". Con la respuesta, numera así: si arrancaron por el 1 entonces hoyos 1,2,3...; si arrancaron por el 10 entonces hoyos 10,11,...,18 y luego 1,2,...,9. Esto ordena la tarjeta como en el campo. NUNCA preguntes en qué hoyo específico va después del primero; solo continúa la numeración en orden desde el último hoyo del CONTEXTO. Si el jugador ya dijo por dónde arrancó (ej. "salimos por el 10"), NO preguntes, solo numera correcto.\n' +
+    '(D) NO seas sobrado: pregunta SOLO lo mínimo (resultado si falta, o confirmar par). Si ya tienes todo, registra sin preguntar.\n\n' +
     'Reglas: (1) Si el dictado menciona varios jugadores en un mismo reto/ronda, crea una actividad por jugador. (2) Si solo dan el score de un hoyo sin pasos, pon "pasos": null. (3) Si no estás seguro de a qué perfil se refiere, usa perfilId null y explícalo en "dudas". (4) No inventes datos que no se dictaron. (5) IMPORTANTE errores de dictado por voz: "precio 27", "presión 27", "operation 27", "presios 27" siempre significan "Reto 27" (reto27). "tiro verde"/"quedó verde" = birdie (-1). "bogui"/"bogey" = +1. "par"/"al par" = 0. (6) Si en CONTEXTO de abajo hay un reto/ronda en progreso de un jugador y el nuevo dictado menciona hoyos SIN decir el nombre del jugador, asígnalos a ese jugador en progreso. (7) CRÍTICO: incluye en "hoyos" ÚNICAMENTE los hoyos que se mencionan EN ESTE dictado. NO rellenes ni inventes los demás hoyos con par ni con ningún valor. Si solo se dictó el hoyo 9, devuelve solo el hoyo 9. Los hoyos anteriores ya están guardados y NO deben repetirse. (8) Si el usuario dice explícitamente que CORRIGE o CAMBIA un hoyo (ej. "corrige el hoyo 3", "el hoyo 2 fue bogey no par", "me equivoqué en el 4"), incluye ese hoyo con un campo extra "corregir": true, para permitir sobrescribir el valor anterior.';
 }
 
@@ -6767,6 +6774,18 @@ async function procesarDictadoConClaude(texto) {
     if (sub) sub.textContent = '';
     renderDictadoFichas(r.dudas);
     _guardarBorradorDictado();
+    // Si Claude necesita confirmar algo (resultado del hoyo, par...), preguntarlo por voz
+    if (r.preguntar && r.preguntar.trim()) {
+      var capP = document.getElementById('dictado-captado');
+      if (capP) {
+        capP.innerHTML = '<div style="background:linear-gradient(160deg,rgba(59,109,17,.18),rgba(29,158,117,.12));border:1px solid rgba(95,214,170,.35);border-radius:16px;padding:16px 18px;margin-bottom:10px">' +
+          '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:18px">🏌️</span><span style="color:#9FE1CB;font-size:12px;font-weight:800">Tu entrenador</span></div>' +
+          '<div style="color:#e8e8f0;font-size:15px;line-height:1.5;font-weight:600">' + r.preguntar + '</div>' +
+        '</div>' + (capP.innerHTML || '');
+      }
+      // Decirlo por voz y volver a escuchar la respuesta
+      try { _hablarGuia(r.preguntar, function(){ setTimeout(function(){ iniciarDictadoEscuchar(); }, 200); }); } catch(e) {}
+    }
   } catch(e) {
     if (est) est.textContent = 'Toca para dictar más';
     if (sub) sub.textContent = '';
@@ -7082,7 +7101,13 @@ function _guardarRondaDictado(a) {
   for (var h = 1; h <= 18; h++) {
     var d = hoyos[String(h)] || hoyos[h];
     if (d && typeof d.score === 'number') {
-      arrHoyos.push({ num: h, res: d.score, ok: true, pasos: (typeof d.pasos === 'number' ? d.pasos : null) });
+      arrHoyos.push({
+        num: h, res: d.score, ok: true,
+        pasos: (typeof d.pasos === 'number' ? d.pasos : null),
+        par: (typeof d.par === 'number' ? d.par : null),
+        putts: (typeof d.putts === 'number' ? d.putts : null),
+        tiros: Array.isArray(d.tiros) ? d.tiros : null  // detalle de tiros para análisis de distancias
+      });
       scoreReal += d.score;
       nJugados++;
     } else {
