@@ -8493,6 +8493,7 @@ function guardarPerfilesLocal() {
 
 function selPerfil(id) {
   perfilActivo = id;
+  try { localStorage.setItem('ultimo_perfil', String(id)); } catch(e) {}
   cerrarOverlay('overlay-perfiles');
   // Bajar de la nube los datos de este perfil antes de mostrar
   try {
@@ -15192,6 +15193,14 @@ function mostrarResumenOp36(golpes, acum, hoyos) {
 // ── INIT ──────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
   cargarPerfilesLocal();
+  // Abrir en el ÚLTIMO perfil usado en este dispositivo (así el iPad de cada quien abre en su jugador)
+  try {
+    var ultimo = localStorage.getItem('ultimo_perfil');
+    if (ultimo) {
+      var idU = parseInt(ultimo, 10);
+      if (PERFILES.find(function(p){ return p.id === idU; })) perfilActivo = idU;
+    }
+  } catch(e) {}
   // Integrar ejercicios personalizados creados con Claude
   try { integrarEjerciciosCustom(); } catch(e) {}
   // Integrar formatos de torneo personalizados
