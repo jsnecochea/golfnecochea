@@ -10811,6 +10811,13 @@ function recomendarEjercicio(catGolf, pestana, _excluir) {
 
   // Para putt: aplicar balance corto/largo (3 cortos : 1 largo)
   if (catGolf === 'putt') {
+    // EJERCICIO DE CASA: cuando el niño pica "Otro" (ya excluyó la 1ª sugerencia),
+    // ofrecer primero el de Línea 4-8-12-16 (el que trabajan en alfombra), si sigue disponible.
+    // Si pide otro más (ya excluido el de casa), continúa la variación normal.
+    if (pestana === 'ejercicio' && _excluir.length > 0 && _excluir.indexOf('lineal-esctob-corto') < 0) {
+      var casaCand = candidatos.find(function(x){ return x.clave === 'lineal-esctob-corto'; });
+      if (casaCand) return casaCand;
+    }
     var hecho = _contarSemaforoHoy('putt');
     var subHecho = (pestana === 'reto') ? { corto: hecho.corto.re, largo: hecho.largo.re } : { corto: hecho.corto.ej, largo: hecho.largo.ej };
     // ¿Toca largo? Si por cada 3 cortos no ha hecho al menos 1 largo
