@@ -996,43 +996,60 @@
       <div style="flex:1;height:1px;background:linear-gradient(90deg,rgba(133,183,235,.4),transparent)"></div>
     </div>
 
-    <!-- 4 cuadritos unificados: Putt, Approach, Hierro, Drive (ejercicios + retos juntos) -->
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px">
+    <!-- 4 renglones con barra segmentada: Putt, Approach, Hierro, Drive -->
+    <div style="margin-bottom:18px">
       <!-- PUTT -->
-      <div onclick="abrirAreaUnificada('putt')" style="background:linear-gradient(160deg,#3d1040 0%,#0f1320 100%);border:1px solid rgba(232,121,249,.5);border-radius:17px;padding:15px 12px;text-align:center;position:relative;overflow:hidden;box-shadow:0 6px 18px rgba(50,10,55,.5),inset 0 1px 0 rgba(240,171,252,.15);cursor:pointer">
-        <div style="position:absolute;top:-20px;right:-20px;width:70px;height:70px;background:radial-gradient(circle,rgba(232,121,249,.18),transparent 70%)"></div>
-        <div style="position:relative;width:58px;height:58px;margin:0 auto">
-          <svg width="58" height="58" viewBox="0 0 80 80"><defs><linearGradient id="cug-putt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f0abfc"/><stop offset="1" stop-color="#c026d3"/></linearGradient></defs><circle cx="40" cy="40" r="32" fill="none" stroke="#16213a" stroke-width="8"/><circle id="cu-putt-ring" cx="40" cy="40" r="32" fill="none" stroke="url(#cug-putt)" stroke-width="8" stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round" transform="rotate(-90 40 40)" style="filter:drop-shadow(0 0 4px rgba(232,121,249,.7))"/></svg>
-          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)"><span id="cu-putt-val" style="color:#fff;font-size:18px;font-weight:800">0</span><span style="color:#f0abfc;font-size:9px">/13</span></div>
+      <div onclick="abrirAreaUnificada('putt')" style="display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(255,255,255,.04),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08);border-radius:15px;padding:13px 15px;margin-bottom:9px;cursor:pointer;position:relative;overflow:hidden">
+        <div style="flex-shrink:0;width:62px;text-align:left">
+          <div style="color:#f0abfc;font-size:12px;font-weight:800;line-height:1.1;white-space:nowrap">Putt</div>
         </div>
-        <div style="color:#f0abfc;font-size:13px;font-weight:800;margin-top:8px">Putt</div>
+        <div style="flex:1;min-width:0">
+          <div id="cu-putt-bar" style="display:flex;gap:3px;align-items:center;height:16px"></div>
+        </div>
+        <div style="flex-shrink:0;display:flex;align-items:baseline;gap:1px;min-width:38px;justify-content:flex-end">
+          <span id="cu-putt-val" style="color:#fff;font-size:17px;font-weight:800">−13</span>
+          
+        </div>
       </div>
       <!-- APPROACH -->
-      <div onclick="abrirAreaUnificada('approach')" style="background:linear-gradient(160deg,#4a3810 0%,#0f1320 100%);border:1px solid rgba(239,159,39,.5);border-radius:17px;padding:15px 12px;text-align:center;position:relative;overflow:hidden;box-shadow:0 6px 18px rgba(60,45,15,.5),inset 0 1px 0 rgba(239,159,39,.15);cursor:pointer">
-        <div style="position:absolute;top:-20px;right:-20px;width:70px;height:70px;background:radial-gradient(circle,rgba(239,159,39,.18),transparent 70%)"></div>
-        <div style="position:relative;width:58px;height:58px;margin:0 auto">
-          <svg width="58" height="58" viewBox="0 0 80 80"><defs><linearGradient id="cug-app" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFC466"/><stop offset="1" stop-color="#EF9F27"/></linearGradient></defs><circle cx="40" cy="40" r="32" fill="none" stroke="#16213a" stroke-width="8"/><circle id="cu-app-ring" cx="40" cy="40" r="32" fill="none" stroke="url(#cug-app)" stroke-width="8" stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round" transform="rotate(-90 40 40)" style="filter:drop-shadow(0 0 4px rgba(239,159,39,.7))"/></svg>
-          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)"><span id="cu-app-val" style="color:#fff;font-size:18px;font-weight:800">0</span><span style="color:#FFC466;font-size:9px">/9</span></div>
+      <div onclick="abrirAreaUnificada('approach')" style="display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(255,255,255,.04),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08);border-radius:15px;padding:13px 15px;margin-bottom:9px;cursor:pointer;position:relative;overflow:hidden">
+        <div style="flex-shrink:0;width:62px;text-align:left">
+          <div style="color:#FAC775;font-size:12px;font-weight:800;line-height:1.1;white-space:nowrap">Approach</div>
         </div>
-        <div style="color:#FAC775;font-size:13px;font-weight:800;margin-top:8px">Approach</div>
+        <div style="flex:1;min-width:0">
+          <div id="cu-app-bar" style="display:flex;gap:3px;align-items:center;height:16px"></div>
+        </div>
+        <div style="flex-shrink:0;display:flex;align-items:baseline;gap:1px;min-width:38px;justify-content:flex-end">
+          <span id="cu-app-val" style="color:#fff;font-size:17px;font-weight:800">−9</span>
+          
+        </div>
       </div>
       <!-- HIERRO -->
-      <div onclick="abrirAreaUnificada('hierros')" style="background:linear-gradient(160deg,#0a3d2f 0%,#0f1320 100%);border:1px solid rgba(29,158,117,.5);border-radius:17px;padding:15px 12px;text-align:center;position:relative;overflow:hidden;box-shadow:0 6px 18px rgba(10,50,40,.5),inset 0 1px 0 rgba(95,214,170,.15);cursor:pointer">
-        <div style="position:absolute;top:-20px;right:-20px;width:70px;height:70px;background:radial-gradient(circle,rgba(29,158,117,.18),transparent 70%)"></div>
-        <div style="position:relative;width:58px;height:58px;margin:0 auto">
-          <svg width="58" height="58" viewBox="0 0 80 80"><defs><linearGradient id="cug-hierro" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5FD6AA"/><stop offset="1" stop-color="#1D9E75"/></linearGradient></defs><circle cx="40" cy="40" r="32" fill="none" stroke="#16213a" stroke-width="8"/><circle id="cu-hierro-ring" cx="40" cy="40" r="32" fill="none" stroke="url(#cug-hierro)" stroke-width="8" stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round" transform="rotate(-90 40 40)" style="filter:drop-shadow(0 0 4px rgba(29,158,117,.7))"/></svg>
-          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)"><span id="cu-hierro-val" style="color:#fff;font-size:18px;font-weight:800">0</span><span style="color:#5FD6AA;font-size:9px">/7</span></div>
+      <div onclick="abrirAreaUnificada('hierros')" style="display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(255,255,255,.04),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08);border-radius:15px;padding:13px 15px;margin-bottom:9px;cursor:pointer;position:relative;overflow:hidden">
+        <div style="flex-shrink:0;width:62px;text-align:left">
+          <div style="color:#9FE1CB;font-size:12px;font-weight:800;line-height:1.1;white-space:nowrap">Hierro</div>
         </div>
-        <div style="color:#9FE1CB;font-size:13px;font-weight:800;margin-top:8px">Hierro</div>
+        <div style="flex:1;min-width:0">
+          <div id="cu-hierro-bar" style="display:flex;gap:3px;align-items:center;height:16px"></div>
+        </div>
+        <div style="flex-shrink:0;display:flex;align-items:baseline;gap:1px;min-width:38px;justify-content:flex-end">
+          <span id="cu-hierro-val" style="color:#fff;font-size:17px;font-weight:800">−7</span>
+          
+        </div>
+        <div id="cu-hierro-niveles" style="position:absolute;top:5px;right:6px;display:flex;gap:3px;align-items:center;z-index:2"></div>
       </div>
       <!-- DRIVE -->
-      <div onclick="abrirAreaUnificada('drive')" style="background:linear-gradient(160deg,#0a3d2a 0%,#0f1320 100%);border:1px solid rgba(52,211,153,.5);border-radius:17px;padding:15px 12px;text-align:center;position:relative;overflow:hidden;box-shadow:0 6px 18px rgba(10,50,35,.5),inset 0 1px 0 rgba(110,231,183,.15);cursor:pointer">
-        <div style="position:absolute;top:-20px;right:-20px;width:70px;height:70px;background:radial-gradient(circle,rgba(52,211,153,.18),transparent 70%)"></div>
-        <div style="position:relative;width:58px;height:58px;margin:0 auto">
-          <svg width="58" height="58" viewBox="0 0 80 80"><defs><linearGradient id="cug-drive" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6ee7b7"/><stop offset="1" stop-color="#059669"/></linearGradient></defs><circle cx="40" cy="40" r="32" fill="none" stroke="#16213a" stroke-width="8"/><circle id="cu-drive-ring" cx="40" cy="40" r="32" fill="none" stroke="url(#cug-drive)" stroke-width="8" stroke-dasharray="201" stroke-dashoffset="201" stroke-linecap="round" transform="rotate(-90 40 40)" style="filter:drop-shadow(0 0 4px rgba(52,211,153,.7))"/></svg>
-          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)"><span id="cu-drive-val" style="color:#fff;font-size:18px;font-weight:800">0</span><span style="color:#6ee7b7;font-size:9px">/2</span></div>
+      <div onclick="abrirAreaUnificada('drive')" style="display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(255,255,255,.04),rgba(255,255,255,.015));border:1px solid rgba(255,255,255,.08);border-radius:15px;padding:13px 15px;margin-bottom:9px;cursor:pointer;position:relative;overflow:hidden">
+        <div style="flex-shrink:0;width:62px;text-align:left">
+          <div style="color:#6ee7b7;font-size:12px;font-weight:800;line-height:1.1;white-space:nowrap">Drive</div>
         </div>
-        <div style="color:#6ee7b7;font-size:13px;font-weight:800;margin-top:8px">Drive</div>
+        <div style="flex:1;min-width:0">
+          <div id="cu-drive-bar" style="display:flex;gap:3px;align-items:center;height:16px"></div>
+        </div>
+        <div style="flex-shrink:0;display:flex;align-items:baseline;gap:1px;min-width:38px;justify-content:flex-end">
+          <span id="cu-drive-val" style="color:#fff;font-size:17px;font-weight:800">−2</span>
+          
+        </div>
       </div>
     </div>
 
@@ -1052,7 +1069,7 @@
         <div style="color:#c98080;font-size:9px;font-weight:600">25 yardas</div>
         <div style="margin-top:9px;display:flex;align-items:baseline;gap:4px;justify-content:center">
           <span id="gamer-op27-sem" style="color:#f87171;font-size:22px;font-weight:800;text-shadow:0 2px 10px rgba(248,113,113,.5)">0</span>
-          <span style="color:#9a5555;font-size:11px;font-weight:700">/ 1 semana</span>
+          <span style="color:#9a5555;font-size:11px;font-weight:700">esta semana</span>
         </div>
         <div style="margin-top:10px;display:flex;gap:6px">
           <div style="flex:1;background:linear-gradient(135deg,rgba(248,113,113,.18),rgba(248,113,113,.06));border:0.5px solid rgba(248,113,113,.3);border-radius:10px;padding:7px 4px;box-shadow:inset 0 1px 0 rgba(252,165,165,.15)">
@@ -1074,7 +1091,7 @@
         <div style="color:#9a7ac7;font-size:9px;font-weight:600">en el campo</div>
         <div style="margin-top:9px;display:flex;align-items:baseline;gap:4px;justify-content:center">
           <span id="gamer-ronda-sem" style="color:#9D6BFF;font-size:22px;font-weight:800;text-shadow:0 2px 10px rgba(157,107,255,.5)">0</span>
-          <span style="color:#7a6a9a;font-size:11px;font-weight:700">/ 1 semana</span>
+          <span style="color:#7a6a9a;font-size:11px;font-weight:700">esta semana</span>
         </div>
         <div style="margin-top:10px;display:flex;gap:6px">
           <div style="flex:1;background:linear-gradient(135deg,rgba(125,58,237,.18),rgba(125,58,237,.06));border:0.5px solid rgba(125,58,237,.3);border-radius:10px;padding:7px 4px;box-shadow:inset 0 1px 0 rgba(196,165,248,.15)">
@@ -1092,24 +1109,13 @@
     </div>
 
     <!-- Botones de acción (Ronda, Entrenar, Retos) + micrófono inteligente incrustado -->
-    <div style="position:relative;margin-top:8px;padding-top:26px;padding-bottom:calc(env(safe-area-inset-bottom, 12px) + 10px)">
-      <!-- Micrófono inteligente sobresaliendo del centro -->
-      <div onclick="abrirDictadoGlobal()" style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:52px;height:52px;border-radius:50%;background:linear-gradient(160deg,#E24B4A,#b8322f);display:flex;align-items:center;justify-content:center;border:4px solid var(--bg, #0a0e14);box-shadow:0 4px 14px rgba(226,75,74,.6);z-index:5;cursor:pointer">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg>
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px">
-        <div onclick="iniciarRondaPerfilActivo()" style="background:linear-gradient(160deg,#1D9E75,#0F6E56);border:1px solid rgba(95,214,170,.5);border-radius:15px;padding:22px 6px 13px;text-align:center;cursor:pointer;box-shadow:0 6px 16px rgba(10,50,40,.5),inset 0 1px 0 rgba(95,214,170,.3)">
-          <div style="font-size:23px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))">🏌️</div>
-          <div style="color:white;font-size:11px;font-weight:800;margin-top:4px">Ronda</div>
+    <div style="position:relative;margin-top:18px;padding-bottom:calc(env(safe-area-inset-bottom, 12px) + 16px);display:flex;justify-content:center">
+      <!-- Micrófono inteligente: único botón de la barra (todo lo demás se pica directo en el home) -->
+      <div onclick="abrirDictadoGlobal()" style="display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer">
+        <div style="width:62px;height:62px;border-radius:50%;background:linear-gradient(160deg,#E24B4A,#b8322f);display:flex;align-items:center;justify-content:center;box-shadow:0 5px 18px rgba(226,75,74,.6);border:3px solid rgba(255,160,160,.25)">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg>
         </div>
-        <div onclick="entrarAEntrenar()" style="background:linear-gradient(160deg,#1D9E75,#0F6E56);border:1px solid rgba(95,214,170,.5);border-radius:15px;padding:22px 6px 13px;text-align:center;cursor:pointer;box-shadow:0 6px 16px rgba(10,50,40,.5),inset 0 1px 0 rgba(95,214,170,.3)">
-          <div style="font-size:23px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4));transform:translateY(7px)"><svg width="25" height="25" viewBox="0 0 32 32" style="display:inline-block;vertical-align:middle"><circle cx="16" cy="6" r="3.5" fill="#fff"/><circle cx="11" cy="12.5" r="3.5" fill="#fff"/><circle cx="21" cy="12.5" r="3.5" fill="#f2f2f2"/><circle cx="6.5" cy="19" r="3.5" fill="#fff"/><circle cx="16" cy="19" r="3.5" fill="#f2f2f2"/><circle cx="25.5" cy="19" r="3.5" fill="#fff"/><circle cx="15.2" cy="5" r="0.55" fill="#c8c8c8"/><circle cx="16.9" cy="6.3" r="0.5" fill="#c8c8c8"/><circle cx="10.2" cy="11.6" r="0.55" fill="#c8c8c8"/><circle cx="11.6" cy="13" r="0.5" fill="#c8c8c8"/><path d="M3 22 L29 22 L27.5 26.5 L4.5 26.5 Z" fill="#0d0d0d" stroke="#000" stroke-width="0.5"/></svg></div>
-          <div style="color:white;font-size:11px;font-weight:800;margin-top:4px">Entrenar</div>
-        </div>
-        <div onclick="entrarARetos()" style="background:linear-gradient(160deg,#1D9E75,#0F6E56);border:1px solid rgba(95,214,170,.5);border-radius:15px;padding:22px 6px 13px;text-align:center;cursor:pointer;box-shadow:0 6px 16px rgba(10,50,40,.5),inset 0 1px 0 rgba(95,214,170,.3)">
-          <div style="font-size:23px;line-height:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.4))">🔥</div>
-          <div style="color:white;font-size:11px;font-weight:800;margin-top:4px">Retos</div>
-        </div>
+        <div style="color:#9FE1CB;font-size:11px;font-weight:800">Pregúntame qué entrenar</div>
       </div>
     </div>
 
@@ -2713,6 +2719,7 @@ var TABLAS_NIVELES = {
   'drive-record': { tipo:'racha', min:15, obj:{1:2,2:4,3:6,4:8,5:10} },
   'hierro-handicap': { tipo:'deN', n:10, obj:{1:4,2:5,3:6,4:7,5:8} },
   'hierro-record': { tipo:'racha', min:15, obj:{1:2,2:4,3:6,4:8,5:10} },
+  'hierro-rachas5': { tipo:'rachas-de-5', min:15, obj:{1:1,2:2,3:3,4:4,5:5} },
   'reto-putt-medio': { tipo:'hoyos-ejec', hoyos:{1:2,2:4,3:6,4:8,5:10}, ejec:{1:5,2:4,3:3,4:2,5:1} },
   'reto-putt-largo': { tipo:'hoyos-ejec', hoyos:{1:2,2:3,3:4,4:5,5:6}, ejec:{1:5,2:4,3:3,4:2,5:1} },
   'reto-approach': { tipo:'approach-cerca', pasos:{1:5,2:4,3:3,4:2,5:1}, metaLogros:2 },
@@ -2720,6 +2727,10 @@ var TABLAS_NIVELES = {
   'reto-drive-distancia': { tipo:'deN', n:10, obj:{1:3,2:4,3:5,4:6,5:7}, metaLogros:2 },
   'reto-hierro': { tipo:'deN', n:10, obj:{1:4,2:5,3:6,4:7,5:8}, metaLogros:2 }
 };
+// Cada bastón del reto de hierro tiene su PROPIO nivel: generamos reto-hierro-5, -6, ... -PW
+['5','6','7','8','9','PW'].forEach(function(b){
+  TABLAS_NIVELES['reto-hierro-' + b] = { tipo:'deN', n:10, obj:{1:4,2:5,3:6,4:7,5:8}, metaLogros:2 };
+});
 var DISPERSION_PALO = { 'pitching':10,'9':10,'8':10,'7':15,'6':15,'5':20,'4':20,'madera5':20,'madera3':20 };
 
 /* ============================================================
@@ -2860,14 +2871,16 @@ var BIBLIOTECA = [
   { clave:'medio-escalera', nom:'Escalera Putt Corto', grupo:'ejercicio', cat:'Putt corto', mins:10 },
   { clave:'medio-tobogan', nom:'Tobogán Putt Corto', grupo:'ejercicio', cat:'Putt corto', mins:10 },
   // ---- EJERCICIOS · PUTT LARGO ----
-  { clave:'largo-esctob', nom:'Escalera + Tobogán Largo', grupo:'ejercicio', cat:'Putt largo', mins:15 },
+  { clave:'largo-esctob', nom:'Tobogán Largo', grupo:'ejercicio', cat:'Putt largo', mins:15 },
   // ---- EJERCICIOS · APPROACH ----
   { clave:'approach-escalera', nom:'Escalera Approach', grupo:'ejercicio', cat:'Approach', mins:15 },
   { clave:'approach-tobogan', nom:'Tobogán Approach', grupo:'ejercicio', cat:'Approach', mins:15 },
   { clave:'approach-bunker', nom:'Bunker', grupo:'ejercicio', cat:'Approach', mins:15 },
   { clave:'approach-ud2d3', nom:'Up & Down', grupo:'ejercicio', cat:'Approach', mins:15 },
   // ---- EJERCICIOS · HIERROS ----
+  { clave:'hierro-rachas5', nom:'Hierro · Rachas de 5', grupo:'ejercicio', cat:'Hierros', mins:15 },
   { clave:'hierro-record', nom:'Hierro · Récord', grupo:'ejercicio', cat:'Hierros', mins:15 },
+  { clave:'hierro-handicap', nom:'Hierro · Handicap', grupo:'ejercicio', cat:'Hierros', mins:15 },
   // ---- EJERCICIOS · DRIVE ----
   { clave:'drive-handicap', nom:'Drive · Handicap', grupo:'ejercicio', cat:'Drive', mins:15 },
   { clave:'drive-record', nom:'Drive · Récord', grupo:'ejercicio', cat:'Drive', mins:15 },
@@ -2879,8 +2892,7 @@ var BIBLIOTECA = [
   { clave:'reto-approach', nom:'Reto Approach', grupo:'reto', cat:'Reto', catGolf:'approach', mins:15 },
   { clave:'approach-record', nom:'Récord Approach', grupo:'reto', cat:'Reto', catGolf:'approach', mins:15 },
   { clave:'reto-drive-precision', nom:'Drive · Precisión', grupo:'reto', cat:'Reto', catGolf:'drive', mins:15 },
-  { clave:'reto-drive-distancia', nom:'Drive · Distancia', grupo:'reto', cat:'Reto', catGolf:'drive', mins:15 },
-  { clave:'reto-hierro', nom:'Hierro · Reto', grupo:'reto', cat:'Reto', catGolf:'hierros', mins:15 }
+  { clave:'reto-drive-distancia', nom:'Drive · Distancia', grupo:'reto', cat:'Reto', catGolf:'drive', mins:15 }
 ];
 
 // ─── EJERCICIOS PERSONALIZADOS (creados con Claude, compartidos vía localStorage) ───
@@ -2978,7 +2990,7 @@ var CATALOGO_NUEVO = {
   'medio-tobogan': { nom:'Tobogán Putt Corto', cat:'putt', seccion:'Putt corto', mins:10, distancias:['12 yardas','15 yardas'],
     instr:['1 bola, corrida de 6 → 9 → 12 → 15 yardas','Emboca en cada estación para avanzar a la siguiente','Si fallas, vuelves al inicio','Cuenta tus rondas completas en 10 min'] },
   // ---- PUTT LARGO ----
-  'largo-esctob': { nom:'Escalera + Tobogán Largo', cat:'putt', seccion:'Putt largo', mins:15,
+  'largo-esctob': { nom:'Tobogán Largo', cat:'putt', seccion:'Putt largo', mins:15,
     instr:['4 estaciones: 15, 20, 25 y 30 yardas','3 bolas por estación; evita el 4-putt','Cuenta tus pares (2 putts) en tu mejor ronda (ver objetivo abajo)'] },
   // ---- APPROACH ----
   'approach-escalera': { nom:'Escalera Approach', cat:'approach', seccion:'Approach', mins:15,
@@ -2990,8 +3002,17 @@ var CATALOGO_NUEVO = {
   'approach-bunker': { nom:'Bunker', cat:'approach', seccion:'Approach', mins:15,
     instr:['5 bolas seguidas desde el bunker','Sácalas a green según el objetivo de tu nivel','La exigencia sube por nivel (ver objetivo abajo)'] },
   'approach-ud2d3': { nom:'Up & Down', cat:'approach', seccion:'Approach', mins:15,
-    instr:['3 rondas de 3 bolas (9 intentos en total)','Up & down = approach + 1 putt para embocar','Equivale a una vuelta de 9 hoyos','Cuenta tus up & downs de 9 (ver objetivo abajo)'] },
-  // ---- HIERROS / DRIVE (se eligen por palo aparte) ----
+    instr:['⛳ Busca un green libre (vas a subir la bola y putear)','3 rondas de 3 bolas (9 intentos en total)','Up & down = approach + 1 putt para embocar','Equivale a una vuelta de 9 hoyos','Cuenta tus up & downs de 9 (ver objetivo abajo)'] },
+  // ---- HIERROS (elige distancia 30-180, luego bastón; en objetivo = carry cerca, dispersión <10yd) ----
+  'hierro-rachas5': { nom:'Hierro · Rachas de 5', cat:'hierros', seccion:'Hierros', mins:15,
+    distancias:[{lbl:'30 yardas',k:'30'},{lbl:'40 yardas',k:'40'},{lbl:'50 yardas',k:'50'},{lbl:'60 yardas',k:'60'},{lbl:'70 yardas',k:'70'},{lbl:'80 yardas',k:'80'},{lbl:'90 yardas',k:'90'},{lbl:'100 yardas',k:'100'},{lbl:'110 yardas',k:'110'},{lbl:'120 yardas',k:'120'},{lbl:'130 yardas',k:'130'},{lbl:'140 yardas',k:'140'},{lbl:'150 yardas',k:'150'},{lbl:'160 yardas',k:'160'},{lbl:'170 yardas',k:'170'},{lbl:'180 yardas',k:'180'}],
+    instr:['🎯 Elige la distancia y con qué bastón la vas a trabajar','Pégale buscando que el carry caiga cerca de esa distancia','✅ En objetivo = cae a menos de 10 yardas de la distancia','Cuenta cuántas veces logras 5 bolas seguidas en objetivo','Anota tus rachas de 5 completas'] },
+  'hierro-record': { nom:'Hierro · Récord', cat:'hierros', seccion:'Hierros', mins:15,
+    distancias:[{lbl:'30 yardas',k:'30'},{lbl:'40 yardas',k:'40'},{lbl:'50 yardas',k:'50'},{lbl:'60 yardas',k:'60'},{lbl:'70 yardas',k:'70'},{lbl:'80 yardas',k:'80'},{lbl:'90 yardas',k:'90'},{lbl:'100 yardas',k:'100'},{lbl:'110 yardas',k:'110'},{lbl:'120 yardas',k:'120'},{lbl:'130 yardas',k:'130'},{lbl:'140 yardas',k:'140'},{lbl:'150 yardas',k:'150'},{lbl:'160 yardas',k:'160'},{lbl:'170 yardas',k:'170'},{lbl:'180 yardas',k:'180'}],
+    instr:['🎯 Elige la distancia y con qué bastón la vas a trabajar','Pégale buscando que el carry caiga cerca de esa distancia','✅ En objetivo = cae a menos de 10 yardas de la distancia','Cuenta tu racha seguida sin fallar','Anota tu récord de bolas consecutivas en objetivo'] },
+  'hierro-handicap': { nom:'Hierro · Handicap', cat:'hierros', seccion:'Hierros', mins:15,
+    distancias:[{lbl:'30 yardas',k:'30'},{lbl:'40 yardas',k:'40'},{lbl:'50 yardas',k:'50'},{lbl:'60 yardas',k:'60'},{lbl:'70 yardas',k:'70'},{lbl:'80 yardas',k:'80'},{lbl:'90 yardas',k:'90'},{lbl:'100 yardas',k:'100'},{lbl:'110 yardas',k:'110'},{lbl:'120 yardas',k:'120'},{lbl:'130 yardas',k:'130'},{lbl:'140 yardas',k:'140'},{lbl:'150 yardas',k:'150'},{lbl:'160 yardas',k:'160'},{lbl:'170 yardas',k:'170'},{lbl:'180 yardas',k:'180'}],
+    instr:['🎯 Elige la distancia y con qué bastón la vas a trabajar','Pégale buscando que el carry caiga cerca de esa distancia','✅ En objetivo = cae a menos de 10 yardas de la distancia','Tira un bloque de 10 bolas','Cuenta cuántas quedaron en objetivo'] },
   // ---- RETO PUTT ----
   'reto-putt': { nom:'Reto Putt', cat:'reto', seccion:'Retos', mins:0,
     distancias:[{lbl:'Putt Corto',k:'medio'},{lbl:'Putt Largo',k:'largo'}],
@@ -3019,6 +3040,11 @@ var PALOS_HIERROS = [
 function normalizarClaveNivel(clave) {
   if (!clave) return clave;
   if (TABLAS_NIVELES[clave]) return clave; // ya es válida
+  // ¿Es un hierro con distancia? (hierro-rachas5-30 → hierro-rachas5). El nivel es por ejercicio, no por distancia.
+  if (clave.indexOf('hierro-') === 0) {
+    var baseHierro = clave.replace(/-\d+$/, '');
+    if (TABLAS_NIVELES[baseHierro]) return baseHierro;
+  }
   // ¿Es un círculo sin distancia? (existe la versión con -4/-6/-8)
   if (clave.indexOf('circulo-') === 0 && !/-(\d+)$/.test(clave)) {
     // Por defecto 4 pies (la base, siempre congruente). Si no existe, probar 6 y 8.
@@ -3145,6 +3171,7 @@ function objetivoGrande(clave, nivel) {
       var ps = t.pasos ? t.pasos[nivel] : 3;
       return { num: 'a ' + ps, lbl: (ps===1?'paso':'pasos') };
     case 'racha': return { num: String(o), lbl: (o===1?'seguida':'seguidas') };
+    case 'rachas-de-5': return { num: String(o), lbl: (o===1?'racha de 5':'rachas de 5') };
     case 'corridas':
       if (o === 0) { var myd = (nivel === 1) ? '12' : '15'; return { num: myd, lbl: 'yardas' }; }
       return { num: String(o), lbl: (o===1?'ronda completa':'rondas completas') };
@@ -3204,6 +3231,7 @@ function etiquetaMetrica(tipo) {
     case 'metidas': return 'Metidas (de 12)';
     case 'approach-cerca': return 'Veces';
     case 'racha': return 'Mejor racha';
+    case 'rachas-de-5': return 'Rachas de 5 logradas';
     case 'racha-hereda': return 'Tu mejor racha';
     case 'racha-margen': return 'Mejor racha';
     default: return 'Veces que lo lograste';
@@ -3227,6 +3255,7 @@ function explicacionMetrica(tipo) {
     case 'deN': return 'Tira <strong>bloques de ' + t.n + ' bolas</strong> durante los 15 min. En cada bloque cuenta cuántas lograste. Al final anota tu MEJOR bloque (cada bloque que llegue a tu meta = 1 logro)';
     case 'metidas': return 'Tira las 12 bolas (4 tees × 3 velocidades) varias veces en 10 min. Anota tu MEJOR resultado: cuántas metiste de 12';
     case 'racha': return 'Juega en tu nivel. Al final anota cuántas veces lograste la racha meta (cada racha lograda = 1 ejecución)';
+    case 'rachas-de-5': return 'Pega bolas a tu distancia. Cada vez que logres <strong>5 en objetivo seguidas</strong> = 1 racha. Anota cuántas rachas de 5 completaste';
     case 'racha-hereda': return 'Juega en tu nivel. Al final anota cuántas veces lograste la racha (cada racha lograda = 1 ejecución)';
     default: return 'Juega en tu nivel. Al final anota cuántas veces lo completaste (cada logro = 1 ejecución)';
   }
@@ -3252,6 +3281,7 @@ function textoMetaNivel(clave, nivel, item) {
         return 'Nivel ' + nivel + ': racha de <strong>' + o + ' seguidas</strong> dentro de tu zona';
       }
       return 'Nivel ' + nivel + ': pon <strong>4 tees</strong>' + (distPies?(' a ' + distPies):'') + '. Racha de aciertos, cambia de tee al fallar. Meta: <strong>' + o + ' seguidas</strong>';
+    case 'rachas-de-5': return 'Nivel ' + nivel + ': logra <strong>' + o + (o===1?' racha':' rachas') + ' de 5 bolas seguidas</strong> en objetivo (carry cerca, dispersión menos de 10 yd)';
     case 'corridas':
       if (nivel === 1) return 'Nivel 1: llega hasta la estación de <strong>12 yardas</strong>';
       if (nivel === 2) return 'Nivel 2: llega hasta la estación de <strong>15 yardas</strong>';
@@ -3423,11 +3453,11 @@ function preguntarDistanciaPalo(paloK, paloLbl, callback) {
 // ── DATOS ────────────────────────────────────────
 
 var PERFILES = [
-  { id: 1, nom: 'Salvador (papá)', iniciales: 'PA', color: '#185FA5', hcp: null, objetivo: null, version: 'pro', nivelPutt: 3 },
-  { id: 2, nom: 'Salvador',        iniciales: 'SN', color: '#1D9E75', hcp: null, objetivo: null, version: 'pro', nivelPutt: 3 },
-  { id: 3, nom: 'Constanza',       iniciales: 'CO', color: '#7F77DD', hcp: null, objetivo: null, version: 'pro', nivelPutt: 3 },
-  { id: 4, nom: 'Elisa',           iniciales: 'EL', color: '#D4537E', hcp: null, objetivo: null, version: 'pro', nivelPutt: 3 },
-  { id: 5, nom: 'Prueba',          iniciales: 'PR', color: '#EF9F27', hcp: null, objetivo: null, version: 'pro', nivelPutt: 3 },
+  { id: 1, nom: 'Salvador (papá)', iniciales: 'PA', color: '#185FA5', hcp: null, objetivo: null, version: 'gamer', nivelPutt: 3 },
+  { id: 2, nom: 'Salvador',        iniciales: 'SN', color: '#1D9E75', hcp: null, objetivo: null, version: 'gamer', nivelPutt: 3 },
+  { id: 3, nom: 'Constanza',       iniciales: 'CO', color: '#7F77DD', hcp: null, objetivo: null, version: 'gamer', nivelPutt: 3 },
+  { id: 4, nom: 'Elisa',           iniciales: 'EL', color: '#D4537E', hcp: null, objetivo: null, version: 'gamer', nivelPutt: 3 },
+  { id: 5, nom: 'Prueba',          iniciales: 'PR', color: '#EF9F27', hcp: null, objetivo: null, version: 'gamer', nivelPutt: 3 },
 ];
 
 var perfilActivo = 1;
@@ -3611,24 +3641,31 @@ function debeSugerirOp27() {
 function elegirDistanciaCirculo(claveBase, def) {
   var p = getPerfil();
   var dists = def.distancias; // [{lbl:'4 pies',k:'4'}, {6...}, {8...}]
-  // Nivel de cada distancia (default 1 si nunca la jugó)
   function nivelDe(k) {
     if (!p) return 1;
     try { return getNivelReg(p, claveBase + '-' + k).nivel || 1; } catch(e) { return 1; }
   }
+  function vecesDe(k) {
+    if (!p) return 0;
+    return _vecesEjercicioReciente(p, claveBase + '-' + k);
+  }
   var n4 = nivelDe('4'), n6 = nivelDe('6');
-  // Construir lista de distancias DESBLOQUEADAS
+  // Desbloqueo por dominio (nivel 3 = domina) — metodología: subir solo cuando controla
+  var DOMINIO = 3;
   var disponibles = [dists[0]]; // 4 pies siempre
-  if (n4 >= 2 && dists[1]) disponibles.push(dists[1]); // 6 pies si 4 ya en nivel 2+
-  if (n6 >= 2 && dists[2]) disponibles.push(dists[2]); // 8 pies si 6 ya en nivel 2+
-  // Elegir entre las disponibles. Damos más peso a la más corta desbloqueada
-  // que aún no domina, pero con variedad: 60% la más corta, resto reparte las demás.
+  if (n4 >= DOMINIO && dists[1]) disponibles.push(dists[1]); // 6 pies si domina 4
+  if (n4 >= DOMINIO && n6 >= DOMINIO && dists[2]) disponibles.push(dists[2]); // 8 pies si domina 6
   if (disponibles.length === 1) return disponibles[0];
-  var r = Math.random();
-  if (r < 0.55) return disponibles[0];
-  // del resto, una al azar
-  var resto = disponibles.slice(1);
-  return resto[Math.floor(Math.random() * resto.length)];
+  // Rolar dando MÁS repetición a las cortas (lo más importante en putt).
+  // peso mayor = aparece menos seguido. Elegimos la de menor (veces+1)*peso.
+  var pesos = { '4': 1, '6': 2, '8': 3 };
+  var mejor = disponibles[0], mejorScore = Infinity;
+  disponibles.forEach(function(dObj){
+    var k = dObj.k || dObj;
+    var score = (vecesDe(k) + 1) * (pesos[k] || 2);
+    if (score < mejorScore) { mejorScore = score; mejor = dObj; }
+  });
+  return mejor;
 }
 
 function itemDesdeCatalogo(clave) {
@@ -4519,12 +4556,46 @@ function renderHomeGamer() {
   var metaTotPutt = 13, metaTotApp = 9, metaTotHierro = 7, metaTotDrive = 2;
   // Pintar cada cuadrito unificado (número total / meta + anillo)
   function pintarCuadrito(ringId, valId, val, meta){
-    var ring = document.getElementById(ringId);
     var valEl = document.getElementById(valId);
-    if (valEl) valEl.textContent = Math.min(val, meta);
-    if (ring) {
-      var circ = 201, frac = Math.min(1, val/meta);
-      ring.setAttribute('stroke-dashoffset', circ*(1-frac));
+    var falta = meta - val;
+    if (valEl) {
+      if (falta > 0) {
+        valEl.textContent = '−' + falta;   // cuánto falta (regresivo)
+        valEl.style.color = '#fff';
+      } else {
+        valEl.textContent = '✓';           // completado
+        valEl.style.color = '#34d399';
+      }
+    }
+    // La barra segmentada: el id es cu-<area>-bar
+    var area = valId.replace('cu-','').replace('-val','');
+    var barEl = document.getElementById('cu-' + area + '-bar');
+    if (barEl) {
+      // Color tipo velocímetro según % de avance
+      var frac = Math.min(1, val/meta);
+      var colorLleno;
+      if (frac < 0.34) colorLleno = '#f87171';       // rojo (va bajo)
+      else if (frac < 0.67) colorLleno = '#fbbf24';  // amarillo (a medias)
+      else if (frac < 1) colorLleno = '#a3e635';     // verde-lima (casi)
+      else colorLleno = '#34d399';                   // verde (completo)
+      // Cuántos bloquecitos: la meta (máx 13 para que quepan). Cap visual.
+      var segs = meta;
+      var maxSegs = 13;
+      var factor = 1;
+      if (segs > maxSegs) { factor = segs / maxSegs; segs = maxSegs; }
+      var llenos = Math.round(Math.min(val, meta) / meta * segs);
+      // Excedente (2da "vuelta"): si val > meta, los bloques brillan más
+      var hayExceso = val > meta;
+      var html = '';
+      for (var i=0; i<segs; i++) {
+        var on = i < llenos;
+        html += '<div style="flex:1;height:14px;border-radius:3px;transition:.3s;' +
+          (on
+            ? 'background:' + (hayExceso ? '#34d399' : colorLleno) + ';box-shadow:0 0 6px ' + (hayExceso ? '#34d399' : colorLleno) + 'aa'
+            : 'background:rgba(255,255,255,.07)') +
+          '"></div>';
+      }
+      barEl.innerHTML = html;
     }
     return val >= meta;
   }
@@ -4532,6 +4603,23 @@ function renderHomeGamer() {
   pintarCuadrito('cu-app-ring','cu-app-val', totApp, metaTotApp);
   pintarCuadrito('cu-hierro-ring','cu-hierro-val', totHierro, metaTotHierro);
   pintarCuadrito('cu-drive-ring','cu-drive-val', totDrive, metaTotDrive);
+
+  // Lista de niveles por bastón en la esquina del cuadrito de hierro (solo los que ya empezó)
+  var nivHierroEl = document.getElementById('cu-hierro-niveles');
+  if (nivHierroEl) {
+    var bastonesOrden = ['PW','9','8','7','6','5'];
+    var filas = '';
+    bastonesOrden.forEach(function(b){
+      var claveB = 'reto-hierro-' + b;
+      // Solo mostrar si ya tiene sesiones registradas de ese bastón
+      var reg = (p.niveles && p.niveles[claveB]) ? p.niveles[claveB] : null;
+      if (reg && reg.sesiones && reg.sesiones.length > 0) {
+        var etq = (b === 'PW') ? 'PW' : b;
+        filas += '<div style="background:rgba(29,158,117,.22);border:0.5px solid rgba(95,214,170,.35);border-radius:6px;padding:1px 5px;font-size:8px;font-weight:800;color:#9FE1CB;line-height:1.4;white-space:nowrap">' + etq + '·N' + reg.nivel + '</div>';
+      }
+    });
+    nivHierroEl.innerHTML = filas;
+  }
 
   var medallasCompletas = (totPutt>=metaTotPutt) && (totApp>=metaTotApp) && (totHierro>=metaTotHierro);
 
@@ -4546,32 +4634,17 @@ function renderHomeGamer() {
     }
     cont.innerHTML = html;
   }
-  pintarDots('gamer-putt-dots', nPutt, 4, {claro:'#f0abfc',base:'#d946ef',glow:'rgba(232,121,249,.8)'});
-  pintarDots('gamer-app-dots', nApp, 4, {claro:'#ffc466',base:'#EF9F27',glow:'rgba(239,159,39,.8)'});
-  pintarDots('gamer-sim-dots', nSim, 4, {claro:'#a5f3fc',base:'#22d3ee',glow:'rgba(34,211,238,.8)'});
-
-  // Estrellas de cada reto cuando completa los 4 días
-  document.getElementById('gamer-putt-star').style.display = (nPutt>=4)?'block':'none';
-  document.getElementById('gamer-app-star').style.display = (nApp>=4)?'block':'none';
-  document.getElementById('gamer-sim-star').style.display = (nSim>=4)?'block':'none';
-
-  // Nivel del jugador en putt y approach (al lado del nombre del reto)
-  function nivelDe(clave){
-    try { return getNivelReg(p, clave).nivel || 1; } catch(e) { return 1; }
-  }
-  // Para putt, usar el mejor nivel entre los retos de putt (medio/largo); para approach, el reto approach
-  var nivPutt = Math.max(nivelDe('reto-putt-medio'), nivelDe('reto-putt-largo'));
-  var nivApp = nivelDe('reto-approach');
-  var puttNivEl = document.getElementById('gamer-putt-nivel');
-  var appNivEl = document.getElementById('gamer-app-nivel');
-  if (puttNivEl) puttNivEl.textContent = 'N' + nivPutt;
-  if (appNivEl) appNivEl.textContent = 'N' + nivApp;
+  // (Las pelotitas y estrellas de las tarjetas viejas se removieron al unificar en cuadritos)
 
   // OP27 de la semana + récord + último
   function fmtGolpe(v){ return v===0 ? 'E' : (v>0 ? '+'+v : ''+v); }
   function fmtFecha(f){ var d=new Date(f); var ms=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic']; return d.getDate()+' '+ms[d.getMonth()]; }
   var op27Sem = op27.filter(function(h){ return new Date(h.fecha).getTime()>=limite7; }).length;
-  document.getElementById('gamer-op27-sem').textContent = op27Sem;
+  var op27El = document.getElementById('gamer-op27-sem');
+  if (op27El) {
+    if (op27Sem >= 1) { op27El.textContent = '✓'; op27El.style.color = '#34d399'; }
+    else { op27El.textContent = '−1'; op27El.style.color = '#f87171'; }
+  }
   if (op27 && op27.length){
     var recOp = Math.min.apply(null, op27.map(function(h){return h.acum;}));
     var recOpObj = op27.filter(function(h){return h.acum===recOp;})[0];
@@ -4587,7 +4660,11 @@ function renderHomeGamer() {
   // Rondas de la semana + récord + última
   var rondas = getHistorialRondas(p.id) || [];
   var rondasSemObj = getRondasPeriodo(7) || [];
-  document.getElementById('gamer-ronda-sem').textContent = rondasSemObj.length>0 ? 1 : 0;
+  var rondaEl = document.getElementById('gamer-ronda-sem');
+  if (rondaEl) {
+    if (rondasSemObj.length > 0) { rondaEl.textContent = '✓'; rondaEl.style.color = '#34d399'; }
+    else { rondaEl.textContent = '−1'; rondaEl.style.color = '#9D6BFF'; }
+  }
   if (rondas.length){
     // Las rondas guardan scoreReal (relativo al par). Usar ese campo; fallback a scoreNormalizado/score.
     function scoreDe(r){
@@ -5664,7 +5741,7 @@ function generarDatosPrueba(silencioso) {
         { id:'nv:circulo-velocidades-8', nom:'Círculo Velocidades · 8 pies', cat:'putt', claveNivel:'circulo-velocidades-8' },
         { id:'nv:medio-escalera', nom:'Escalera Putt Corto', cat:'putt', claveNivel:'medio-escalera' },
         { id:'nv:medio-tobogan', nom:'Tobogán Putt Corto', cat:'putt', claveNivel:'medio-tobogan' },
-        { id:'nv:largo-esctob', nom:'Escalera + Tobogán Largo', cat:'putt', claveNivel:'largo-esctob' },
+        { id:'nv:largo-esctob', nom:'Tobogán Largo', cat:'putt', claveNivel:'largo-esctob' },
         { id:'nv:approach-escalera', nom:'Escalera Approach', cat:'approach', claveNivel:'approach-escalera' },
         { id:'nv:approach-tobogan', nom:'Tobogán Approach', cat:'approach', claveNivel:'approach-tobogan' },
         { id:'nv:approach-record', nom:'Récord Approach', cat:'approach', claveNivel:'approach-record' },
@@ -6332,7 +6409,7 @@ function _catalogoParaClaude() {
     '- medio-escalera: "Escalera Putt Corto" (mide: rondas)',
     '- medio-tobogan: "Tobogán Putt Corto" (mide: rondas)',
     'PUTT LARGO:',
-    '- largo-esctob: "Escalera + Tobogán Largo" (mide: pares en la mejor ronda)',
+    '- largo-esctob: "Tobogán Largo" (mide: pares en la mejor ronda)',
     'APPROACH:',
     '- approach-escalera: "Escalera Approach" (mide: rondas)',
     '- approach-tobogan: "Tobogán Approach" (mide: rondas)',
@@ -6504,7 +6581,158 @@ function programarAutoSubidaMedianoche() {
   }, ms);
 }
 
+// ===== ASISTENTE GUÍA CONVERSACIONAL (voz ida y vuelta) =====
+
+// Calcula qué le falta al perfil activo HOY, por área, para darle contexto a Claude
+function _contextoEntrenamientoHoy() {
+  var p = getPerfil();
+  if (!p) return '';
+  var metas = { putt:13, approach:9, hierro:7, drive:2 };
+  var hist = [];
+  try { hist = JSON.parse(localStorage.getItem('entreno_hist_' + p.id) || '[]'); } catch(e) {}
+  var hoyKey = _fechaHoyDictado();
+  var hechoHoy = { putt:0, approach:0, hierro:0, drive:0 };
+  hist.forEach(function(e){
+    if (!e.fecha) return;
+    if ((e.fecha||'').substring(0,10) !== hoyKey) return;
+    (e.ejercicios||[]).forEach(function(ej){
+      var cat=(ej.cat||'')+'', id=(ej.id||'')+'', cv=(ej.claveNivel||'')+'';
+      if (cat==='putt'||id.indexOf('putt')>=0||id.indexOf('circulo')>=0||cv.indexOf('putt')>=0||id==='retoMedio') hechoHoy.putt++;
+      else if (cat==='approach'||cv.indexOf('approach')>=0||id==='retoApproach') hechoHoy.approach++;
+      else if (id.indexOf('drive')>=0||cv.indexOf('drive')>=0) hechoHoy.drive++;
+      else if (cat==='hierros'||cv.indexOf('hierro')>=0||id==='retoHierro') hechoHoy.hierro++;
+    });
+  });
+  var pendientes = {};
+  ['putt','approach','hierros','drive'].forEach(function(catG){
+    var lista = BIBLIOTECA.filter(function(x){
+      var cg = (x.grupo==='reto') ? x.catGolf : catGolfDeEjercicio(x);
+      return cg === catG;
+    });
+    var falt = lista.filter(function(x){ return !yaEnEntrenamientoHoy(x.clave); });
+    pendientes[catG] = falt.map(function(x){ return x.nom + ' (clave: ' + x.clave + ')'; });
+  });
+  var txt = 'PROGRESO DE HOY del jugador ' + p.nombre + ':\n';
+  txt += '- Putt: ' + hechoHoy.putt + ' de ' + metas.putt + '\n';
+  txt += '- Approach: ' + hechoHoy.approach + ' de ' + metas.approach + '\n';
+  txt += '- Hierro: ' + hechoHoy.hierro + ' de ' + metas.hierro + '\n';
+  txt += '- Drive: ' + hechoHoy.drive + ' de ' + metas.drive + '\n\n';
+  txt += 'EJERCICIOS/RETOS que le FALTAN hoy (puedes sugerir y abrir estos, usa la clave exacta):\n';
+  ['putt','approach','hierros','drive'].forEach(function(cg){
+    if (pendientes[cg] && pendientes[cg].length) {
+      txt += '- ' + cg + ': ' + pendientes[cg].slice(0,6).join('; ') + '\n';
+    }
+  });
+  return txt;
+}
+
+function _systemPromptGuia() {
+  return 'Eres el entrenador de golf de un niño y le hablas por voz. ' +
+    'REGLA DE ORO: sé BREVÍSIMO. Una sola frase corta, natural, al grano. Como un cuate, no como un maestro. ' +
+    'NADA de solemnidad, sermones, ni frases motivacionales largas. NADA de repetir lo que ya dijiste. ' +
+    'Ejemplos del tono correcto: "Va putt: Círculo Tobogán." / "Ahora approach." / "Órale, va." / "¿Otro o le paras?". ' +
+    'Máximo 8-10 palabras por respuesta.\n\n' +
+    _contextoEntrenamientoHoy() + '\n' +
+    'QUÉ HACER:\n' +
+    '1. Si pregunta qué entrenar, dile UN ejercicio que le falte (prioriza Putt > Approach > Hierro > Drive). Ej: "Va con Putt: Círculo Tobogán."\n' +
+    '2. Si dice que sí/vamos, ábrelo (accion abrir) con un "¡Va!" y ya.\n' +
+    '3. Si dice que no/otro, di rapidísimo otra opción.\n' +
+    '4. No expliques de más. No motivas con discursos. Directo.\n\n' +
+    'Devuelve SOLO JSON (sin markdown):\n' +
+    '{ "mensaje": "<frase cortísima al niño>", "accion": "sugerir" | "abrir" | "charlar", "ejercicioClave": "<clave exacta si sugerir/abrir>", "ejercicioNombre": "<nombre corto>" }\n\n' +
+    'Ejemplos:\n' +
+    '- "¿qué me toca?" -> {"mensaje":"Va Putt: Círculo Tobogán. ¿Le entras?","accion":"sugerir","ejercicioClave":"circulo-tobogan","ejercicioNombre":"Círculo Tobogán"}\n' +
+    '- "sí" (tras sugerir) -> {"mensaje":"¡Va!","accion":"abrir","ejercicioClave":"circulo-tobogan","ejercicioNombre":"Círculo Tobogán"}\n' +
+    '- "no, otro" -> {"mensaje":"Approach entonces: Reto Approach.","accion":"sugerir","ejercicioClave":"reto-approach","ejercicioNombre":"Reto Approach"}';
+}
+
+function _esPeticionDeGuia(texto) {
+  var t = (texto||'').toLowerCase();
+  var señales = ['qué me toca','que me toca','qué entreno','que entreno','qué hago','que hago','qué sigue','que sigue',
+    'ayúdame','ayudame','qué practico','que practico','con qué empiezo','con que empiezo','qué falta','que falta',
+    'qué me falta','que me falta','recomiénda','recomienda','sugiere','guíame','guiame','no sé qué','no se que',
+    'quiero entrenar','vamos a entrenar','qué toca','que toca','ayuda','empezar','empiezo'];
+  return señales.some(function(s){ return t.indexOf(s) >= 0; });
+}
+
+var _vozGuiaActiva = false;
+function _hablarGuia(texto, alTerminar) {
+  try {
+    if (!window.speechSynthesis) { if (alTerminar) alTerminar(); return; }
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(texto);
+    u.lang = 'es-MX'; u.rate = 1.02; u.pitch = 1.05;
+    var vEs = _mejorVozEspanol();
+    if (vEs) u.voice = vEs;
+    u.lang = (vEs && vEs.lang) ? vEs.lang : 'es-MX';
+    u.onend = function(){ if (alTerminar) alTerminar(); };
+    u.onerror = function(){ if (alTerminar) alTerminar(); };
+    window.speechSynthesis.speak(u);
+  } catch(e) { if (alTerminar) alTerminar(); }
+}
+
+var _guiaUltimoSugerido = null;
+async function procesarGuiaConClaude(texto) {
+  var est = document.getElementById('dictado-estado');
+  var sub = document.getElementById('dictado-texto-vivo');
+  if (est) est.textContent = 'Tu entrenador está pensando…';
+  if (sub) sub.textContent = '';
+  try {
+    var r = await dictarAClaudeJSON(texto, _systemPromptGuia(), { maxTokens: 512 });
+    var mensaje = r.mensaje || '¿Con qué quieres empezar?';
+    var accion = r.accion || 'charlar';
+    var clave = r.ejercicioClave || null;
+    var nombre = r.ejercicioNombre || '';
+    _guiaUltimoSugerido = clave;
+    var cap = document.getElementById('dictado-captado');
+    if (cap) {
+      cap.innerHTML = '<div style="background:linear-gradient(160deg,rgba(59,109,17,.18),rgba(29,158,117,.12));border:1px solid rgba(95,214,170,.35);border-radius:16px;padding:16px 18px;margin-bottom:10px">' +
+        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:18px">🏌️</span><span style="color:#9FE1CB;font-size:12px;font-weight:800">Tu entrenador</span></div>' +
+        '<div style="color:#e8e8f0;font-size:15px;line-height:1.5;font-weight:600">' + mensaje + '</div>' +
+        (clave && (accion==='sugerir'||accion==='abrir') ?
+          '<div style="display:flex;gap:8px;margin-top:14px">' +
+            '<div onclick="_guiaAbrirEjercicio(\'' + clave + '\',\'' + (nombre||'').replace(/'/g,"") + '\')" style="flex:1;background:linear-gradient(160deg,#3B6D11,#284d0b);border-radius:12px;padding:12px;text-align:center;color:#fff;font-size:14px;font-weight:800;cursor:pointer">▶️ ¡Vamos!</div>' +
+            '<div onclick="_guiaEscucharDeNuevo()" style="flex:1;background:#1a1f2e;border-radius:12px;padding:12px;text-align:center;color:#8a8a9a;font-size:14px;font-weight:700;cursor:pointer">🎤 Cambiar</div>' +
+          '</div>'
+        : '<div onclick="_guiaEscucharDeNuevo()" style="margin-top:14px;background:#1a1f2e;border-radius:12px;padding:12px;text-align:center;color:#8a8a9a;font-size:14px;font-weight:700;cursor:pointer">🎤 Seguir hablando</div>') +
+      '</div>';
+    }
+    if (est) est.textContent = 'Escucha a tu entrenador';
+    _hablarGuia(mensaje, function(){
+      if (accion === 'abrir' && clave) { _guiaAbrirEjercicio(clave, nombre); }
+    });
+  } catch(e) {
+    if (est) est.textContent = 'Toca para hablar';
+    var msg = e.message;
+    if (msg === 'SIN_CLAVE' || msg === 'CLAVE_INVALIDA') msg = 'Revisa tu clave en Enlazar Claude.';
+    var cap = document.getElementById('dictado-captado');
+    if (cap) cap.innerHTML = '<div style="background:rgba(226,75,74,.12);border:1px solid rgba(226,75,74,.35);border-radius:12px;padding:13px 14px;color:#E88;font-size:12px">No pude procesar: ' + msg + '</div>';
+  }
+}
+
+function _guiaAbrirEjercicio(clave, nombre) {
+  try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch(e){}
+  cerrarDictadoGlobal();
+  if (typeof hacerEjercicioAhora === 'function') { hacerEjercicioAhora(clave); }
+}
+
+function _guiaEscucharDeNuevo() {
+  _dictadoTextoAcum = '';
+  try { window.speechSynthesis && window.speechSynthesis.cancel(); } catch(e){}
+  setTimeout(function(){ iniciarDictadoEscuchar(); }, 200);
+}
+
 async function procesarDictadoConClaude(texto) {
+  // Si es una petición de guía ("¿qué me toca hoy?"), usar el asistente conversacional
+  if (_esPeticionDeGuia(texto)) {
+    _dictadoProcesando = true;
+    var circG = document.getElementById('dictado-mic-circ');
+    await procesarGuiaConClaude(texto);
+    if (circG) circG.style.transform = 'scale(1)';
+    _iconoDictado('mic');
+    _dictadoProcesando = false;
+    return;
+  }
   _dictadoProcesando = true;
   var est = document.getElementById('dictado-estado');
   var sub = document.getElementById('dictado-texto-vivo');
@@ -6538,7 +6766,7 @@ async function procesarDictadoConClaude(texto) {
 function reiniciarDictado() {
   _dictadoTextoAcum = '';
   var est = document.getElementById('dictado-estado'); if (est) est.textContent = 'Escuchando…';
-  var sub = document.getElementById('dictado-texto-vivo'); if (sub) sub.textContent = 'Di lo que hiciste, natural…';
+  var sub = document.getElementById('dictado-texto-vivo'); if (sub) sub.textContent = 'Pregúntame qué entrenar, o dime qué hiciste…';
   iniciarDictadoEscuchar();
 }
 
@@ -6945,7 +7173,7 @@ function abrirDictadoGlobal() {
         '</div>' +
         '<div id="dictado-ondas" style="display:none;padding:10px 0 0;justify-content:center;gap:4px;align-items:center;height:24px"></div>' +
         '<div id="dictado-estado" style="color:#e8e8f0;font-size:14px;font-weight:800;margin-top:10px">Escuchando…</div>' +
-        '<div id="dictado-texto-vivo" style="color:#8a8a9a;font-size:11px;font-style:italic;min-height:14px;text-align:center;margin-top:3px;padding:0 10px">Di lo que hiciste, natural…</div>' +
+        '<div id="dictado-texto-vivo" style="color:#8a8a9a;font-size:11px;font-style:italic;min-height:14px;text-align:center;margin-top:3px;padding:0 10px">Pregúntame qué entrenar, o dime qué hiciste…</div>' +
       '</div>' +
       '<div id="dictado-captado" style="padding:14px 16px 0"></div>' +
     '</div>';
@@ -7093,6 +7321,10 @@ function abrirMenuPro() {
       '<div onclick="document.getElementById(\'overlay-menu-pro\').remove();abrirEnlazarClaude()" style="display:flex;align-items:center;gap:14px;padding:15px 20px;cursor:pointer;border-top:1px solid rgba(255,255,255,.06);margin-top:6px">' +
         '<div style="width:40px;height:40px;border-radius:11px;background:rgba(217,119,87,.15);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#D97757" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg></div>' +
         '<div><div style="color:#e8e8f0;font-size:15px;font-weight:700">Enlazar Claude</div><div style="color:#9a9ab0;font-size:11px">Dictado por voz inteligente</div></div>' +
+      '</div>' +
+      '<div onclick="document.getElementById(\'overlay-menu-pro\').remove();_mostrarSelectorVoz()" style="display:flex;align-items:center;gap:14px;padding:15px 20px;cursor:pointer">' +
+        '<div style="width:40px;height:40px;border-radius:11px;background:rgba(95,214,170,.15);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#5FD6AA" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"/></svg></div>' +
+        '<div><div style="color:#e8e8f0;font-size:15px;font-weight:700">Elegir voz</div><div style="color:#9a9ab0;font-size:11px">Cambia la voz que lee los ejercicios</div></div>' +
       '</div>' +
       '<div onclick="document.getElementById(\'overlay-menu-pro\').remove();generarDatosPrueba()" style="display:flex;align-items:center;gap:14px;padding:15px 20px;cursor:pointer;border-top:1px solid rgba(255,255,255,.06);margin-top:6px">' +
         '<div style="width:40px;height:40px;border-radius:11px;background:rgba(96,165,250,.15);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6EA8FE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7V4h16v3M9 20h6M12 4v16"/><rect x="3" y="9" width="18" height="6" rx="1"/></svg></div>' +
@@ -8809,6 +9041,23 @@ function guardarRegistro() {
 
   // Elegir y mostrar celebración, luego volver al programa
   var tipo = elegirCelebracion(esRecord, esUltimo, esPutt);
+
+  // Si el ejercicio vino DIRECTO del recomendador: guardar en historial y regresar al home
+  if (window._ejercicioDirecto) {
+    window._ejercicioDirecto = false;
+    try { guardarEntrenamientoHistorial(); } catch(e){}
+    var alTerminarDirecto = function(){
+      irVista('view-home');
+      if (typeof renderHome === 'function') { try { renderHome(); } catch(e){} }
+    };
+    if (resultadoNivel && resultadoNivel.subio) {
+      celebrarSubidaNivel(resultadoNivel.nivelActual, function(){ mostrarCelebracion(tipo, alTerminarDirecto); });
+    } else {
+      mostrarCelebracion(tipo, alTerminarDirecto);
+    }
+    return;
+  }
+
   irVista('view-programa');
   // Render DESPUÉS de cambiar a la vista de programa, para que el tablero de
   // actividad se actualice en pantalla al momento (no hasta salir y volver).
@@ -8847,6 +9096,14 @@ function getRecordEjercicio(ejId) {
 }
 
 function cerrarRegistro() {
+  // Si el ejercicio se abrió directo desde el recomendador, salir sin guardar regresa al home
+  if (window._ejercicioDirecto) {
+    window._ejercicioDirecto = false;
+    // Limpiar el ejercicio del programa (no se completó, no se guarda)
+    irVista('view-home');
+    if (typeof renderHome === 'function') { try { renderHome(); } catch(e){} }
+    return;
+  }
   irVista('view-programa');
 }
 
@@ -9513,6 +9770,8 @@ var EJERCICIOS_DEF = {
   'op36-25':    { nom: 'OP 27 - 25y',   cat: 'reto',     instrucciones: ['9 hoyos par 3 desde 25 yardas','Par del campo = 27 golpes','Meta alto rendimiento: -5'], esReto: true },
   'op36':       { nom: 'Reto OP27',   cat: 'reto',     instrucciones: ['9 hoyos par 3 desde 25 yardas','Par del campo = 27 golpes','Anota tus golpes por hoyo'], esReto: true },
   'op36-50':    { nom: 'OP 27 - 50y',   cat: 'reto',     instrucciones: ['9 hoyos par 3 desde 50 yardas','Par del campo = 27 golpes','Meta alto rendimiento: -3'], esReto: true },
+  'op36-75':    { nom: 'OP 27 - 75y',   cat: 'reto',     instrucciones: ['9 hoyos par 3 desde 75 yardas','Par del campo = 27 golpes','Meta alto rendimiento: -2'], esReto: true },
+  'op36-125':   { nom: 'OP 27 - 125y',  cat: 'reto',     instrucciones: ['9 hoyos par 3 desde 125 yardas','Par del campo = 27 golpes','Meta alto rendimiento: 0'], esReto: true },
   'op36-100':   { nom: 'OP 27 - 100y',  cat: 'reto',     instrucciones: ['9 hoyos par 3 desde 100 yardas','Par del campo = 27 golpes','Meta alto rendimiento: -1'], esReto: true },
   'op36-150':   { nom: 'OP 27 - 150y',  cat: 'reto',     instrucciones: ['9 hoyos par 3 desde 150 yardas','Par del campo = 27 golpes','Meta alto rendimiento: +2'], esReto: true },
   'op36-200':   { nom: 'OP 27 - 200y',  cat: 'reto',     instrucciones: ['9 hoyos par 3 desde 200 yardas','Par del campo = 27 golpes','Meta alto rendimiento: +5'], esReto: true },
@@ -9777,15 +10036,212 @@ function irAlRetoOp27() {
 }
 
 function _arrancarRetoOp27() {
+  _mostrarPanelOP27();
+}
+
+// Estado de lo que el niño ha seleccionado en el panel
+var _panelOP27 = { op27dist: null, evalDist: null, evalBaston: null, bunker: false };
+
+function _mostrarPanelOP27() {
+  _panelOP27 = { op27dist: null, evalDist: null, evalBaston: null, bunker: false };
+  var prev = document.getElementById('overlay-op27-dist');
+  if (prev) prev.remove();
+  var ov = document.createElement('div');
+  ov.id = 'overlay-op27-dist';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.78);z-index:300;display:flex;align-items:flex-end;justify-content:center';
+
+  // Chips de distancia OP27
+  var op27Dists = ['25','50','75','100','125','150'];
+  var chipsOP27 = op27Dists.map(function(d){
+    return '<div id="op27chip-' + d + '" onclick="_togglePanelOP27(\'op27\',\'' + d + '\')" style="flex:1;min-width:0;background:#1a1018;border:1.5px solid rgba(248,113,113,.25);border-radius:11px;padding:11px 2px;text-align:center;cursor:pointer">' +
+      '<div style="color:#fca5a5;font-size:15px;font-weight:800;line-height:1">' + d + '</div><div style="color:#8a5a5a;font-size:8px;margin-top:1px">yd</div></div>';
+  }).join('');
+
+  // Stepper de evaluación de distancia (30 a 180 de 10 en 10) — más limpio que 16 chips
+  var evalStepperHTML = '<div style="display:flex;align-items:center;justify-content:center;gap:16px">' +
+      '<div onclick="_stepperEval(-10)" style="width:46px;height:46px;border-radius:50%;background:#101a18;border:1px solid rgba(29,158,117,.3);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#5FD6AA;font-size:24px;font-weight:800;user-select:none">−</div>' +
+      '<div style="text-align:center;min-width:96px">' +
+        '<div id="evalStepperNum" style="color:#8a8a9a;font-size:38px;font-weight:800;line-height:1">--</div>' +
+        '<div style="color:#4a7a68;font-size:11px;font-weight:700;margin-top:2px">yardas</div>' +
+      '</div>' +
+      '<div onclick="_stepperEval(10)" style="width:46px;height:46px;border-radius:50%;background:#101a18;border:1px solid rgba(29,158,117,.3);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#5FD6AA;font-size:24px;font-weight:800;user-select:none">+</div>' +
+    '</div>';
+
+  // Chips de bastón para la evaluación (wedges por grados, luego hierros y maderas)
+  var evalBastones = ['60°','56°','52°','PW','9','8','7','6','5','4','H','5w','3w'];
+  var chipsBaston = evalBastones.map(function(b){
+    return '<div id="evalbaston-' + b + '" onclick="_togglePanelOP27(\'evalbaston\',\'' + b + '\')" style="flex:0 0 auto;background:#141018;border:1.5px solid rgba(250,199,117,.25);border-radius:10px;padding:9px 11px;text-align:center;cursor:pointer">' +
+      '<div style="color:#FAC775;font-size:13px;font-weight:800;line-height:1">' + b + '</div></div>';
+  }).join('');
+
+  ov.innerHTML = '<div style="background:#0d0a0f;border-radius:22px 22px 0 0;padding:20px 16px calc(env(safe-area-inset-bottom,12px) + 16px);width:100%;max-width:520px;max-height:90vh;overflow-y:auto">' +
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">' +
+      '<div style="color:#fff;font-size:18px;font-weight:800">Elige tus retos</div>' +
+      '<div onclick="document.getElementById(\'overlay-op27-dist\').remove()" style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:18px">✕</div>' +
+    '</div>' +
+    '<div style="color:#8a8a9a;font-size:12px;margin-bottom:18px">Toca lo que quieras hacer. Puedes elegir uno o varios.</div>' +
+
+    // Sección OP27
+    '<div style="background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.2);border-radius:16px;padding:14px;margin-bottom:12px">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:11px"><span style="font-size:17px">🚩</span><span style="color:#fca5a5;font-size:13px;font-weight:800">RETO OP 27</span><span style="color:#8a5a5a;font-size:10px">· 9 hoyos, elige distancia</span></div>' +
+      '<div style="display:flex;gap:5px">' + chipsOP27 + '</div>' +
+    '</div>' +
+
+    // Sección Evaluación de distancia
+    '<div style="background:rgba(29,158,117,.06);border:1px solid rgba(29,158,117,.2);border-radius:16px;padding:14px;margin-bottom:12px">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:11px"><span style="font-size:17px">📏</span><span style="color:#5FD6AA;font-size:13px;font-weight:800">EVALUACIÓN DE DISTANCIA</span></div>' +
+      '<div style="color:#6a8a80;font-size:10px;margin-bottom:12px">1) Elige la distancia · 2) Elige el bastón (las dos)</div>' +
+      evalStepperHTML +
+      '<div id="evalBastonWrap" style="display:none;margin-top:12px;padding-top:11px;border-top:1px solid rgba(29,158,117,.15)">' +
+        '<div style="color:#FAC775;font-size:10px;font-weight:700;margin-bottom:8px">¿Con qué bastón vas a evaluar esta distancia?</div>' +
+        '<div style="display:flex;gap:6px;flex-wrap:wrap">' + chipsBaston + '</div>' +
+      '</div>' +
+    '</div>' +
+
+    // Botón iniciar
+    '<div id="op27IniciarBtn" onclick="_iniciarPanelOP27()" style="background:#2a2a35;border-radius:15px;padding:16px;text-align:center;color:#6a6a75;font-size:16px;font-weight:800;cursor:not-allowed;transition:.2s">Elige algo para empezar</div>' +
+  '</div>';
+  document.body.appendChild(ov);
+  ov.onclick = function(e){ if (e.target === ov) ov.remove(); };
+}
+
+// Stepper de la evaluación de distancia: sube/baja de 10 en 10 (30-180)
+function _stepperEval(delta) {
+  var cur = _panelOP27.evalDist ? parseInt(_panelOP27.evalDist, 10) : null;
+  if (cur === null) {
+    // Primera vez: arrancar en 100 (o el delta desde ahí)
+    cur = 100;
+  } else {
+    cur = cur + delta;
+  }
+  cur = Math.max(30, Math.min(180, cur));
+  _panelOP27.evalDist = String(cur);
+  var num = document.getElementById('evalStepperNum');
+  if (num) { num.textContent = cur; num.style.color = '#5FD6AA'; }
+  // Mostrar la fila de bastón (ya hay distancia)
+  var wrap = document.getElementById('evalBastonWrap');
+  if (wrap) wrap.style.display = 'block';
+  _actualizarBotonOP27();
+}
+
+// Actualiza el botón Iniciar del panel según lo elegido
+function _actualizarBotonOP27() {
+  var btn = document.getElementById('op27IniciarBtn');
+  if (!btn) return;
+  var evalCompleta = _panelOP27.evalDist && _panelOP27.evalBaston;
+  var evalIncompleta = _panelOP27.evalDist && !_panelOP27.evalBaston;
+  var algo = _panelOP27.op27dist || evalCompleta;
+  if (evalIncompleta && !_panelOP27.op27dist) {
+    btn.style.background = '#2a2a35'; btn.style.color = '#FAC775'; btn.style.cursor = 'not-allowed';
+    btn.textContent = 'Elige el bastón para evaluar';
+  } else if (algo) {
+    btn.style.background = 'linear-gradient(160deg,#1D9E75,#0F6E56)'; btn.style.color = '#fff'; btn.style.cursor = 'pointer';
+    btn.textContent = '▶️ Iniciar';
+  } else {
+    btn.style.background = '#2a2a35'; btn.style.color = '#6a6a75'; btn.style.cursor = 'not-allowed';
+    btn.textContent = 'Elige algo para empezar';
+  }
+}
+
+function _togglePanelOP27(tipo, valor) {
+  if (tipo === 'op27') {
+    _panelOP27.op27dist = (_panelOP27.op27dist === valor) ? null : valor;
+    // Repintar chips OP27
+    ['25','50','75','100','125','150'].forEach(function(d){
+      var el = document.getElementById('op27chip-' + d);
+      if (el) {
+        var on = (_panelOP27.op27dist === d);
+        el.style.background = on ? 'rgba(248,113,113,.25)' : '#1a1018';
+        el.style.border = on ? '1.5px solid #f87171' : '1.5px solid rgba(248,113,113,.25)';
+      }
+    });
+  } else if (tipo === 'evalbaston') {
+    _panelOP27.evalBaston = (_panelOP27.evalBaston === valor) ? null : valor;
+    ['60°','56°','52°','PW','9','8','7','6','5','4','H','5w','3w'].forEach(function(b){
+      var el = document.getElementById('evalbaston-' + b);
+      if (el) {
+        var on = (_panelOP27.evalBaston === b);
+        el.style.background = on ? 'rgba(250,199,117,.28)' : '#141018';
+        el.style.border = on ? '1.5px solid #FAC775' : '1.5px solid rgba(250,199,117,.25)';
+      }
+    });
+  } else if (tipo === 'bunker') {
+    _panelOP27.bunker = !_panelOP27.bunker;
+    var chip = document.getElementById('bunkerchip');
+    if (chip) {
+      chip.style.background = _panelOP27.bunker ? 'rgba(239,159,39,.25)' : '#1a1410';
+      chip.style.border = _panelOP27.bunker ? '1.5px solid #EF9F27' : '1.5px solid rgba(239,159,39,.25)';
+    }
+  }
+  // Actualizar botón iniciar
+  var btn = document.getElementById('op27IniciarBtn');
+  // La evaluación de distancia requiere AMBOS: distancia + bastón
+  var evalCompleta = _panelOP27.evalDist && _panelOP27.evalBaston;
+  var evalIncompleta = _panelOP27.evalDist && !_panelOP27.evalBaston;
+  var algo = _panelOP27.op27dist || evalCompleta;
+  if (btn) {
+    if (evalIncompleta && !_panelOP27.op27dist) {
+      // Distancia elegida pero falta el bastón
+      btn.style.background = '#2a2a35';
+      btn.style.color = '#FAC775';
+      btn.style.cursor = 'not-allowed';
+      btn.textContent = 'Elige el bastón para evaluar';
+    } else if (algo) {
+      btn.style.background = 'linear-gradient(160deg,#1D9E75,#0F6E56)';
+      btn.style.color = '#fff';
+      btn.style.cursor = 'pointer';
+      btn.textContent = '▶️ Iniciar';
+    } else {
+      btn.style.background = '#2a2a35';
+      btn.style.color = '#6a6a75';
+      btn.style.cursor = 'not-allowed';
+      btn.textContent = 'Elige algo para empezar';
+    }
+  }
+}
+
+function _iniciarPanelOP27() {
+  var sel = _panelOP27;
+  if (!sel.op27dist && !sel.evalDist && !sel.bunker) return; // nada elegido
+  // La evaluación de distancia requiere bastón: si hay distancia pero no bastón, no iniciar
+  if (sel.evalDist && !sel.evalBaston) return;
+  var ov = document.getElementById('overlay-op27-dist');
+  if (ov) ov.remove();
+
   estadoSesion.tiempo = 0;
-  estadoSesion.programa = [];
-  estadoSesion.completados = [];
   estadoSesion.sesionId = 'ses_' + Date.now();
-  agregarEjercicioAlPrograma('op36-25');
-  // Ir directo a la pantalla del reto OP27 (ya está definido a 25y)
-  var item = { id: 'op36-25', op36dist: '25', nom: 'OP 27 · 25y', cat: 'reto', esReto: true };
+  estadoSesion.ejActivo = 0;
+  estadoSesion.completados = [];
   window._op36DesdeHome = true;
-  mostrarPantallaOP36(item);
+
+  if (sel.op27dist) {
+    // Jugar OP27 con las evaluaciones activadas como extras (flujo existente)
+    retoConfig = { op36dist: sel.op27dist, conDist: !!sel.evalDist, yardas: sel.evalDist || null, evalBaston: sel.evalBaston || null, conTrampa: !!sel.bunker };
+    estadoSesion.programa = [{ id: 'op36-' + sel.op27dist, mins: 60, esReto: true, conDist: !!sel.evalDist, yardas: sel.evalDist || null, evalBaston: sel.evalBaston || null, conTrampa: !!sel.bunker }];
+    var item = { id: 'op36-' + sel.op27dist, op36dist: sel.op27dist, nom: 'OP 27 · ' + sel.op27dist + 'y', cat: 'reto', esReto: true, conDist: !!sel.evalDist, yardas: sel.evalDist || null, evalBaston: sel.evalBaston || null, conTrampa: !!sel.bunker };
+    mostrarPantallaOP36(item);
+  } else {
+    // Solo evaluaciones sueltas (sin OP27): usar el reto de distancia / búnker
+    retoConfig = { op36dist: null, conDist: !!sel.evalDist, yardas: sel.evalDist || null, evalBaston: sel.evalBaston || null, conTrampa: !!sel.bunker, soloEval: true };
+    _iniciarEvaluacionSuelta(sel.evalDist, sel.bunker, sel.evalBaston);
+  }
+}
+
+// Inicia evaluación de distancia y/o búnker SIN OP27
+function _iniciarEvaluacionSuelta(evalDist, bunker, evalBaston) {
+  estadoSesion.programa = [];
+  if (evalDist) {
+    estadoSesion.programa.push({ id: 'retoDist', mins: 15, esReto: true, yardas: evalDist, hierroBaston: evalBaston || null });
+  }
+  if (bunker) {
+    estadoSesion.programa.push({ id: 'retoTrampa', mins: 15, esReto: true });
+  }
+  estadoSesion.completados = [];
+  estadoSesion.ejActivo = 0;
+  // Abrir el primero directo
+  if (estadoSesion.programa.length > 0) {
+    abrirRegistro(0);
+  }
 }
 
 // Salir de la intro del OP27: al home si vino del home, si no a la sesión
@@ -10199,22 +10655,691 @@ function yaEnEntrenamientoHoy(clave) {
 
 // ===== Área unificada (cuadrito del home): abre con pestañas Ejercicios/Retos =====
 var _biblioAreaUnificada = null;
+// ===== RECOMENDADOR: elige EL mejor ejercicio/reto para un área =====
+// Lógica: 1) lo que falta, 2) balance corto/largo, 3) variedad + nivel
+// _excluir: claves que el niño ya rechazó con "Otro" en esta tanda
+function recomendarEjercicio(catGolf, pestana, _excluir) {
+  _excluir = _excluir || [];
+  var p = getPerfil();
+  // Candidatos: de la categoría y pestaña, que NO estén hechos hoy ni excluidos
+  var candidatos = BIBLIOTECA.filter(function(x){
+    if (x.grupo !== pestana) return false;
+    var cg = (x.grupo === 'reto') ? x.catGolf : catGolfDeEjercicio(x);
+    if (cg !== catGolf) return false;
+    if (yaEnEntrenamientoHoy(x.clave)) return false;
+    if (_excluir.indexOf(x.clave) >= 0) return false;
+    return true;
+  });
+  // Si ya no queda nada pendiente (todo hecho o excluido), reabrir todos los no hechos
+  if (!candidatos.length) {
+    candidatos = BIBLIOTECA.filter(function(x){
+      if (x.grupo !== pestana) return false;
+      var cg = (x.grupo === 'reto') ? x.catGolf : catGolfDeEjercicio(x);
+      return cg === catGolf && !yaEnEntrenamientoHoy(x.clave);
+    });
+  }
+  if (!candidatos.length) return null;
+
+  // Para approach: rolar 3 ejercicios normales (Escalera, Tobogán, Up&Down) : 1 búnker.
+  // Cada 3 approach normales, toca búnker. Al picar "Otro", solo rola dentro del grupo que toca.
+  if (catGolf === 'approach' && pestana === 'ejercicio' && p) {
+    var esBunkerClave = function(cl){ return (cl||'').indexOf('bunker')>=0 || (cl||'').indexOf('búnker')>=0; };
+    // Contar approach NORMALES y BÚNKER hechos recientemente (últimos 7 días)
+    var histAp = [];
+    try { histAp = JSON.parse(localStorage.getItem('entreno_hist_' + p.id) || '[]'); } catch(e) {}
+    var limite7Ap = Date.now() - 7*86400000;
+    var normSem = 0, bunkerSem = 0;
+    histAp.forEach(function(e){
+      if (!e.fecha || new Date(e.fecha).getTime() < limite7Ap) return;
+      (e.ejercicios||[]).forEach(function(ej){
+        var id=(ej.id||'')+'', cv=(ej.claveNivel||'')+'';
+        var esApp = cv.indexOf('approach')>=0 || id.indexOf('approach')>=0 || (ej.cat||'').toLowerCase().indexOf('approach')>=0;
+        if (!esApp) return;
+        if (esBunkerClave(id) || esBunkerClave(cv)) bunkerSem++;
+        else normSem++;
+      });
+    });
+    // EVALUACIÓN de búnker: 1 por semana. Si NO la hizo por ninguna vía (OP27 o suelta)
+    // y ya lleva bastante approach (6+), pedírsela aquí (retoTrampa).
+    var yaEvaluoBunker = _evaluoEstaSemana(p, 'bunker');
+    if (!yaEvaluoBunker && normSem >= 6 && !yaEnEntrenamientoHoy('retoTrampa')) {
+      var retoBunker = BIBLIOTECA.find(function(x){ return x.clave === 'retoTrampa'; });
+      // retoTrampa puede no estar en BIBLIOTECA como tarjeta; construir uno mínimo si hace falta
+      if (retoBunker) return retoBunker;
+      return { clave:'retoTrampa', nom:'Evaluar búnker', grupo:'reto', cat:'Reto', catGolf:'approach' };
+    }
+    // ¿Toca búnker (entrenamiento)? Cuando por cada 3 normales no ha hecho al menos 1 búnker
+    var tocaBunker = (normSem >= 3 * (bunkerSem + 1));
+    var bunkerCands = candidatos.filter(function(x){ return esBunkerClave(x.clave); });
+    var normalCands = candidatos.filter(function(x){ return !esBunkerClave(x.clave); });
+    if (tocaBunker && bunkerCands.length) {
+      // Toca búnker: solo búnker (al picar "Otro" sigue siendo búnker)
+      candidatos = bunkerCands;
+    } else if (tocaBunker && !bunkerCands.length) {
+      // Toca búnker pero ya no queda en candidatos (excluido por "Otro"): reofrecerlo igual, es lo que toca
+      var bunkerTodos = BIBLIOTECA.filter(function(x){ return x.grupo==='ejercicio' && catGolfDeEjercicio(x)==='approach' && esBunkerClave(x.clave); });
+      if (bunkerTodos.length) return bunkerTodos[0];
+    } else if (!tocaBunker && normalCands.length) {
+      // Toca normal: solo los 3 ejercicios normales (nunca búnker)
+      candidatos = normalCands;
+    }
+  }
+
+  // Para approach en pestaña RETOS: alternar entre Reto Approach y Récord Approach
+  if (catGolf === 'approach' && pestana === 'reto' && p) {
+    var histApR = [];
+    try { histApR = JSON.parse(localStorage.getItem('entreno_hist_' + p.id) || '[]'); } catch(e) {}
+    var limite7ApR = Date.now() - 7*86400000;
+    var retoAppSem = 0, recordAppSem = 0;
+    histApR.forEach(function(e){
+      if (!e.fecha || new Date(e.fecha).getTime() < limite7ApR) return;
+      (e.ejercicios||[]).forEach(function(ej){
+        var id=(ej.id||'')+'', cv=(ej.claveNivel||'')+'';
+        if (id.indexOf('reto-approach')>=0 || cv.indexOf('reto-approach')>=0) retoAppSem++;
+        if (id.indexOf('approach-record')>=0 || cv.indexOf('approach-record')>=0) recordAppSem++;
+      });
+    });
+    // Alternar: si hizo más reto-approach, tocar récord, y viceversa
+    var prefiereRecord = (retoAppSem > recordAppSem);
+    var recordCands = candidatos.filter(function(x){ return (x.clave||'').indexOf('approach-record')>=0; });
+    var retoCands = candidatos.filter(function(x){ return (x.clave||'').indexOf('reto-approach')>=0; });
+    if (prefiereRecord && recordCands.length) candidatos = recordCands;
+    else if (!prefiereRecord && retoCands.length) candidatos = retoCands;
+  }
+
+  // Para putt: aplicar balance corto/largo (3 cortos : 1 largo)
+  if (catGolf === 'putt') {
+    var hecho = _contarSemaforoHoy('putt');
+    var subHecho = (pestana === 'reto') ? { corto: hecho.corto.re, largo: hecho.largo.re } : { corto: hecho.corto.ej, largo: hecho.largo.ej };
+    // ¿Toca largo? Si por cada 3 cortos no ha hecho al menos 1 largo
+    var tocaLargo = (subHecho.corto >= 3 * (subHecho.largo + 1));
+    var esLargoEj = function(x){ return ((x.cat||'').toLowerCase().indexOf('largo')>=0) || (x.clave||'').indexOf('largo')>=0; };
+    var largos = candidatos.filter(esLargoEj);
+    var cortos = candidatos.filter(function(x){ return !esLargoEj(x); });
+    if (tocaLargo && largos.length) candidatos = largos;
+    else if (!tocaLargo && cortos.length) candidatos = cortos;
+  }
+
+  // Puntuar cada candidato: menor nivel = más prioridad (necesita trabajo), favorito suma un poco
+  candidatos = candidatos.map(function(x){
+    var nivel = 1;
+    try { nivel = getNivelReg(p, normalizarClaveNivel(x.clave)).nivel || 1; } catch(e) {}
+    var fav = (p && esFavoritoBiblio(p.id, x.clave)) ? 1 : 0;
+    // Variedad: cuántas veces lo ha hecho en los últimos 7 días (menos = mejor)
+    var vecesReciente = _vecesEjercicioReciente(p, x.clave);
+    // Score: prioriza nivel bajo, poca repetición reciente, y un pelín los favoritos
+    var score = (nivel * 10) + (vecesReciente * 5) - fav;
+    return { ej: x, score: score };
+  });
+  // Ordenar por score ascendente (menor score = más recomendado)
+  candidatos.sort(function(a,b){ return a.score - b.score; });
+  return candidatos[0].ej;
+}
+
+// Cuántas veces hizo un ejercicio en los últimos 7 días (para variedad)
+// Detecta si el jugador evaluó búnker o distancia esta semana, por CUALQUIER vía:
+// (a) evaluación suelta (retoTrampa/retoDist en entreno_hist), o
+// (b) dentro del OP27 (trampaRondas/distRondas en op36_hist).
+// tipo: 'bunker' o 'distancia'
+function _evaluoEstaSemana(perfil, tipo) {
+  if (!perfil) return false;
+  var limite7 = Date.now() - 7*86400000;
+  // (a) Evaluaciones sueltas en entreno_hist
+  try {
+    var hist = JSON.parse(localStorage.getItem('entreno_hist_' + perfil.id) || '[]');
+    for (var i=0; i<hist.length; i++) {
+      var e = hist[i];
+      if (!e.fecha || new Date(e.fecha).getTime() < limite7) continue;
+      var ejs = e.ejercicios || [];
+      for (var j=0; j<ejs.length; j++) {
+        var id = (ejs[j].id||'')+'', cv = (ejs[j].claveNivel||'')+'';
+        if (tipo === 'bunker' && (id==='retoTrampa' || cv==='retoTrampa')) return true;
+        if (tipo === 'distancia' && (id==='retoDist' || cv==='retoDist')) return true;
+      }
+    }
+  } catch(e) {}
+  // (b) Evaluaciones dentro del OP27 en op36_hist
+  try {
+    var op = JSON.parse(localStorage.getItem('op36_hist_' + perfil.id) || '[]');
+    for (var k=0; k<op.length; k++) {
+      var r = op[k];
+      if (!r.fecha || new Date(r.fecha).getTime() < limite7) continue;
+      if (tipo === 'bunker' && r.trampaRondas !== null && r.trampaRondas !== undefined) return true;
+      if (tipo === 'distancia' && r.distRondas !== null && r.distRondas !== undefined) return true;
+    }
+  } catch(e) {}
+  return false;
+}
+
+function _vecesEjercicioReciente(perfil, clave) {
+  if (!perfil) return 0;
+  var hist = [];
+  try { hist = JSON.parse(localStorage.getItem('entreno_hist_' + perfil.id) || '[]'); } catch(e) { return 0; }
+  var limite = Date.now() - 7*86400000;
+  var n = 0;
+  hist.forEach(function(e){
+    if (!e.fecha || new Date(e.fecha).getTime() < limite) return;
+    (e.ejercicios||[]).forEach(function(ej){
+      var cv = (ej.claveNivel||'')+'', id=(ej.id||'')+'';
+      if (cv === clave || cv.indexOf(clave)>=0 || id.indexOf(clave)>=0) n++;
+    });
+  });
+  return n;
+}
+
 function abrirAreaUnificada(catGolf) {
   var tieneEjercicios = BIBLIOTECA.some(function(x){ return x.grupo==='ejercicio' && catGolfDeEjercicio(x)===catGolf; });
   var tieneRetos = BIBLIOTECA.some(function(x){ return x.grupo==='reto' && x.catGolf===catGolf; });
-  // Drive es un área solo de retos (por decisión de diseño): abre directo en retos
   if (catGolf === 'drive') tieneEjercicios = false;
   var pestana = tieneEjercicios ? 'ejercicio' : 'reto';
-  // Si tiene ambos y ya completó todos los ejercicios de hoy, abrir en retos (lo que le falta)
   if (tieneEjercicios && tieneRetos) {
     var ejerciciosArea = BIBLIOTECA.filter(function(x){ return x.grupo==='ejercicio' && catGolfDeEjercicio(x)===catGolf; });
     var todosEjHechos = ejerciciosArea.length > 0 && ejerciciosArea.every(function(x){ return yaEnEntrenamientoHoy(x.clave); });
     if (todosEjHechos) pestana = 'reto';
   }
+  // Mostrar la TARJETA de recomendación (un solo ejercicio), no la lista
+  _mostrarTarjetaRecomendada(catGolf, pestana, []);
+}
+
+// Muestra una tarjeta grande con UN ejercicio recomendado + botón "Otro"
+// Diagrama animado SVG según el tipo de ejercicio (ayuda visual para niños)
+function _diagramaEjercicio(clave, colorArea) {
+  var c = (clave||'').toLowerCase();
+  var TEE = '#8a7a5a', ROJO = '#f87171', BLANCO = '#fff';
+  function hoyo(cx, cy){ return '<ellipse cx="'+cx+'" cy="'+cy+'" rx="10" ry="6.5" fill="#0a0e14" stroke="'+colorArea+'" stroke-width="2"/><circle cx="'+cx+'" cy="'+cy+'" r="2.5" fill="'+colorArea+'"/>'; }
+  function tee(cx, cy){ return '<circle cx="'+cx+'" cy="'+cy+'" r="4" fill="'+TEE+'"/>'; }
+  function etiqueta(txt){ return '<text x="100" y="125" text-anchor="middle" fill="#8a8a9a" font-size="8.5" font-family="sans-serif">'+txt+'</text>'; }
+
+  // Los ejercicios de approach/hierro/drive/OP usan SIEMPRE la animación de vuelo (aunque su nombre diga escalera/tobogán)
+  var esVuelo = (c.indexOf('approach') >= 0 || c.indexOf('hierro') >= 0 || c.indexOf('drive') >= 0 || c.indexOf('op36') >= 0);
+
+  // ===== CÍRCULO: N tees alrededor del hoyo, bola de cada uno rueda al hoyo en secuencia =====
+  // Handicap = 8 bolas (8 tees); los demás círculos = 4 tees.
+  if (!esVuelo && (c.indexOf('circulo') >= 0 || c.indexOf('reloj') >= 0) && c.indexOf('escalera') < 0) {
+    var nTees = (c.indexOf('handicap') >= 0) ? 8 : 4;
+    var cxH = 100, cyH = 65, radio = 42;
+    // Calcular posiciones de los tees repartidos en el círculo (empezando arriba)
+    var t = [];
+    for (var a=0; a<nTees; a++){
+      var ang = (-90 + a * (360/nTees)) * Math.PI/180;
+      t.push([ +(cxH + radio*Math.cos(ang)).toFixed(1), +(cyH + radio*Math.sin(ang)).toFixed(1) ]);
+    }
+    var svg = '<svg viewBox="0 0 200 130" style="width:100%;max-width:230px;height:auto">' + hoyo(cxH,cyH);
+    t.forEach(function(p){ svg += tee(p[0],p[1]); });
+    // Una bola por tee, cada una entra al hoyo en su turno (delay escalonado), en bucle
+    var ciclo = nTees * 0.8; // duración total proporcional al número de tees
+    for (var i=0;i<nTees;i++){
+      var p = t[i];
+      var begin = (i*0.8) + 's';
+      svg += '<circle r="5" fill="'+BLANCO+'" stroke="'+colorArea+'" stroke-width="1.5" opacity="0">' +
+        '<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.05;0.4;0.5;1" dur="'+ciclo+'s" begin="'+begin+'" repeatCount="indefinite"/>' +
+        '<animateMotion dur="'+ciclo+'s" begin="'+begin+'" repeatCount="indefinite" keyPoints="0;0;1;1;1" keyTimes="0;0.05;0.45;0.5;1" calcMode="linear" path="M'+p[0]+','+p[1]+' L'+cxH+','+cyH+' L'+cxH+','+cyH+'"/>' +
+      '</circle>';
+    }
+    var txtCirc = (nTees === 8) ? 'Tira 8 bolas alrededor del hoyo' : 'Mete desde cada tee, dando la vuelta';
+    svg += etiqueta(txtCirc) + '</svg>';
+    return svg;
+  }
+
+  // ===== CÍRCULO ESCALERA: en cada tee mete N seguidas antes de avanzar al siguiente =====
+  if (!esVuelo && c.indexOf('circulo') >= 0 && c.indexOf('escalera') >= 0) {
+    var t2 = [[100,25],[160,65],[100,105],[40,65]];
+    var svg2 = '<svg viewBox="0 0 200 130" style="width:100%;max-width:230px;height:auto">' + hoyo(100,65);
+    t2.forEach(function(p){ svg2 += tee(p[0],p[1]); });
+    // En el tee 1: 3 bolas seguidas al hoyo; luego tee 2: 3 seguidas; (mostramos 2 tees para no saturar)
+    // Bolas del tee 1 (3 putts rápidos)
+    for (var j=0;j<3;j++){
+      var b1 = (j*0.5) + 's';
+      svg2 += '<circle r="5" fill="'+BLANCO+'" stroke="'+colorArea+'" stroke-width="1.5" opacity="0">' +
+        '<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.05;0.25;0.3;1" dur="6s" begin="'+b1+'" repeatCount="indefinite"/>' +
+        '<animateMotion dur="6s" begin="'+b1+'" repeatCount="indefinite" keyPoints="0;0;1;1;1" keyTimes="0;0.05;0.28;0.3;1" calcMode="linear" path="M100,25 L100,65 L100,65"/>' +
+      '</circle>';
+    }
+    // Bolas del tee 2 (3 putts, empiezan después)
+    for (var k=0;k<3;k++){
+      var b2 = (2 + k*0.5) + 's';
+      svg2 += '<circle r="5" fill="'+BLANCO+'" stroke="'+colorArea+'" stroke-width="1.5" opacity="0">' +
+        '<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;0.05;0.25;0.3;1" dur="6s" begin="'+b2+'" repeatCount="indefinite"/>' +
+        '<animateMotion dur="6s" begin="'+b2+'" repeatCount="indefinite" keyPoints="0;0;1;1;1" keyTimes="0;0.05;0.28;0.3;1" calcMode="linear" path="M160,65 L100,65 L100,65"/>' +
+      '</circle>';
+    }
+    svg2 += etiqueta('Mete varias seguidas en un tee, luego avanza') + '</svg>';
+    return svg2;
+  }
+
+  // ===== TOBOGÁN LARGO / 3 BOLAS POR ESTACIÓN: en cada estación salen 3 bolas seguidas al hoyo =====
+  if (!esVuelo && c.indexOf('largo-esctob') >= 0) {
+    var hxL = 26, hyL = 65;
+    var estL = [[62,65],[98,65],[134,65],[172,65]];
+    var svgL = '<svg viewBox="0 0 200 130" style="width:100%;max-width:230px;height:auto">' + hoyo(hxL,hyL);
+    svgL += '<line x1="36" y1="65" x2="176" y2="65" stroke="'+colorArea+'2a" stroke-width="1.5" stroke-dasharray="3 3"/>';
+    estL.forEach(function(p){ svgL += tee(p[0],p[1]); });
+    // 4 estaciones × 3 bolas = 12 bolas. Ciclo 12s: cada estación toma 3s (3 bolas de 1s).
+    var cicloL = 12;
+    for (var e2=0; e2<estL.length; e2++){
+      for (var b=0; b<3; b++){
+        var t0 = (e2*3 + b*1) / cicloL;          // inicio de esta bola (fracción)
+        var t1 = t0 + (0.9/cicloL);              // llega al hoyo
+        var pL = estL[e2];
+        svgL += '<circle r="5" fill="'+BLANCO+'" stroke="'+colorArea+'" stroke-width="1.5" opacity="0">' +
+          '<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;'+t0.toFixed(3)+';'+(t1-0.01).toFixed(3)+';'+t1.toFixed(3)+';1" dur="'+cicloL+'s" repeatCount="indefinite"/>' +
+          '<animateMotion dur="'+cicloL+'s" repeatCount="indefinite" keyPoints="0;0;1;1;1" keyTimes="0;'+t0.toFixed(3)+';'+(t1-0.01).toFixed(3)+';'+t1.toFixed(3)+';1" calcMode="linear" path="M'+pL[0]+','+pL[1]+' L'+pL[0]+','+pL[1]+' L'+hxL+','+hyL+' L'+hxL+','+hyL+' L'+hxL+','+hyL+'"/>' +
+        '</circle>';
+      }
+    }
+    svgL += etiqueta('3 bolas seguidas en cada estación') + '</svg>';
+    return svgL;
+  }
+
+  // ===== ESCALERA/LÍNEA (4-8-12-16): cada bola sale de su tee -> hoyo -> desaparece; al fallar, roja se pasa y flecha de regreso =====
+  if (!esVuelo && (c.indexOf('lineal') >= 0 || c.indexOf('linea') >= 0 || c.indexOf('4-8-12') >= 0 || c.indexOf('esctob') >= 0 || c.indexOf('escalera') >= 0)) {
+    // Hoyo a la izquierda; 4 estaciones (tees) alineadas a la derecha, cada vez más lejos
+    var hx = 26, hy = 65;
+    var est = [[62,65],[98,65],[134,65],[172,65]];
+    var svg3 = '<svg viewBox="0 0 200 130" style="width:100%;max-width:230px;height:auto">' + hoyo(hx,hy);
+    svg3 += '<line x1="36" y1="65" x2="176" y2="65" stroke="'+colorArea+'2a" stroke-width="1.5" stroke-dasharray="3 3"/>';
+    est.forEach(function(p){ svg3 += tee(p[0],p[1]); });
+    // Ciclo total 8s. 4 fases de 2s: tee1 OK, tee2 OK, tee3 FALLA (roja se pasa + flecha regreso), vuelve a tee1.
+    // Cada bola: aparece en su tee, rueda al hoyo, desaparece. Solo una visible a la vez.
+    function bolaOK(tx, ty, t0, t1){
+      // aparece en tee (t0), rueda a hoyo, desaparece (t1). Tiempos en fracción de 8s.
+      return '<circle r="5.5" fill="'+BLANCO+'" stroke="'+colorArea+'" stroke-width="1.5" opacity="0">' +
+        '<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;'+t0+';'+(t1-0.02)+';'+t1+';1" dur="8s" repeatCount="indefinite"/>' +
+        '<animateMotion dur="8s" repeatCount="indefinite" keyPoints="0;0;1;1;1" keyTimes="0;'+t0+';'+(t1-0.02)+';'+t1+';1" calcMode="linear" path="M'+tx+','+ty+' L'+tx+','+ty+' L'+hx+','+hy+' L'+hx+','+hy+' L'+hx+','+hy+'"/>' +
+      '</circle>';
+    }
+    // Fase 1: tee1 -> hoyo (mete)  [0.00-0.22]
+    svg3 += bolaOK(est[0][0], est[0][1], 0.02, 0.22);
+    // Fase 2: tee2 -> hoyo (mete)  [0.25-0.47]
+    svg3 += bolaOK(est[1][0], est[1][1], 0.27, 0.47);
+    // Fase 3: tee3 -> FALLA: bola ROJA rueda al hoyo y SE PASA (sigue de largo hacia la izquierda)  [0.52-0.74]
+    svg3 += '<circle r="5.5" fill="'+ROJO+'" opacity="0">' +
+      '<animate attributeName="opacity" values="0;1;1;1;0;0" keyTimes="0;0.52;0.66;0.70;0.74;1" dur="8s" repeatCount="indefinite"/>' +
+      '<animateMotion dur="8s" repeatCount="indefinite" keyPoints="0;0;1;1;1" keyTimes="0;0.52;0.70;0.74;1" calcMode="linear" path="M'+est[2][0]+','+est[2][1]+' L'+est[2][0]+','+est[2][1]+' L'+(hx-14)+','+hy+' L'+(hx-14)+','+hy+' L'+(hx-14)+','+hy+'"/>' +
+    '</circle>';
+    // Flecha curva de regreso al INICIO (del tee3 de vuelta al tee1) + texto
+    svg3 += '<path d="M'+est[2][0]+',52 Q'+((est[0][0]+est[2][0])/2)+',30 '+est[0][0]+',52" fill="none" stroke="'+ROJO+'" stroke-width="1.5" marker-end="" opacity="0" stroke-dasharray="3 2">' +
+      '<animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.70;0.74;0.90;0.95" dur="8s" repeatCount="indefinite"/>' +
+    '</path>';
+    // Punta de flecha en el tee1
+    svg3 += '<path d="M'+est[0][0]+',52 l5,-2 l-1,5 z" fill="'+ROJO+'" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.70;0.74;0.90;0.95" dur="8s" repeatCount="indefinite"/></path>';
+    svg3 += '<text x="100" y="20" text-anchor="middle" fill="'+ROJO+'" font-size="8" font-family="sans-serif" opacity="0">falló · vuelve al inicio<animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.70;0.74;0.90;0.95" dur="8s" repeatCount="indefinite"/></text>';
+    svg3 += etiqueta('Mete y avanza · si fallas, vuelves al inicio') + '</svg>';
+    return svg3;
+  }
+
+  // ===== TOBOGÁN MEDIO: 1 bola, corrida por estaciones; cada tramo sale del tee -> hoyo -> desaparece; si falla vuelve al inicio =====
+  if (!esVuelo && c.indexOf('tobogan') >= 0) {
+    var hx2 = 26, hy2 = 65;
+    var est2 = [[62,65],[98,65],[134,65],[172,65]];
+    var svg4 = '<svg viewBox="0 0 200 130" style="width:100%;max-width:230px;height:auto">' + hoyo(hx2,hy2);
+    svg4 += '<line x1="36" y1="65" x2="176" y2="65" stroke="'+colorArea+'2a" stroke-width="1.5" stroke-dasharray="3 3"/>';
+    est2.forEach(function(p){ svg4 += tee(p[0],p[1]); });
+    function bolaOK2(tx, ty, t0, t1){
+      return '<circle r="5.5" fill="'+BLANCO+'" stroke="'+colorArea+'" stroke-width="1.5" opacity="0">' +
+        '<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;'+t0+';'+(t1-0.02)+';'+t1+';1" dur="8s" repeatCount="indefinite"/>' +
+        '<animateMotion dur="8s" repeatCount="indefinite" keyPoints="0;0;1;1;1" keyTimes="0;'+t0+';'+(t1-0.02)+';'+t1+';1" calcMode="linear" path="M'+tx+','+ty+' L'+tx+','+ty+' L'+hx2+','+hy2+' L'+hx2+','+hy2+' L'+hx2+','+hy2+'"/>' +
+      '</circle>';
+    }
+    // est1 mete, est2 mete, est3 FALLA (roja se pasa) y vuelve al inicio
+    svg4 += bolaOK2(est2[0][0], est2[0][1], 0.02, 0.22);
+    svg4 += bolaOK2(est2[1][0], est2[1][1], 0.27, 0.47);
+    svg4 += '<circle r="5.5" fill="'+ROJO+'" opacity="0">' +
+      '<animate attributeName="opacity" values="0;1;1;1;0;0" keyTimes="0;0.52;0.66;0.70;0.74;1" dur="8s" repeatCount="indefinite"/>' +
+      '<animateMotion dur="8s" repeatCount="indefinite" keyPoints="0;0;1;1;1" keyTimes="0;0.52;0.70;0.74;1" calcMode="linear" path="M'+est2[2][0]+','+est2[2][1]+' L'+est2[2][0]+','+est2[2][1]+' L'+(hx2-14)+','+hy2+' L'+(hx2-14)+','+hy2+' L'+(hx2-14)+','+hy2+'"/>' +
+    '</circle>';
+    svg4 += '<path d="M'+est2[2][0]+',52 Q'+((est2[0][0]+est2[2][0])/2)+',30 '+est2[0][0]+',52" fill="none" stroke="'+ROJO+'" stroke-width="1.5" opacity="0" stroke-dasharray="3 2"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.70;0.74;0.90;0.95" dur="8s" repeatCount="indefinite"/></path>';
+    svg4 += '<path d="M'+est2[0][0]+',52 l5,-2 l-1,5 z" fill="'+ROJO+'" opacity="0"><animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.70;0.74;0.90;0.95" dur="8s" repeatCount="indefinite"/></path>';
+    svg4 += '<text x="100" y="20" text-anchor="middle" fill="'+ROJO+'" font-size="8" font-family="sans-serif" opacity="0">falló · vuelve al inicio<animate attributeName="opacity" values="0;0;1;1;0" keyTimes="0;0.70;0.74;0.90;0.95" dur="8s" repeatCount="indefinite"/></text>';
+    svg4 += etiqueta('Emboca y avanza · si fallas, vuelves al inicio') + '</svg>';
+    return svg4;
+  }
+
+  // ===== DRIVE: tiro potente y largo desde el tee, vuela lejísimo por el fairway =====
+  if (c.indexOf('drive') >= 0) {
+    var teeX = 18, teeY = 110;
+    var caeX = 178, caeY = 104;
+    var svgD = '<svg viewBox="0 0 200 130" style="width:100%;max-width:230px;height:auto">';
+    // Fairway (calle) en perspectiva: se ensancha hacia el jugador, se angosta a lo lejos
+    svgD += '<path d="M8,120 L60,66 L140,66 L192,120 Z" fill="'+colorArea+'12" stroke="'+colorArea+'2e" stroke-width="1"/>';
+    // Líneas de calle (perspectiva)
+    svgD += '<line x1="100" y1="66" x2="100" y2="120" stroke="'+colorArea+'22" stroke-width="1" stroke-dasharray="4 4"/>';
+    // Banderas de distancia a lo lejos (marcadores)
+    svgD += '<circle cx="100" cy="66" r="2.5" fill="'+colorArea+'66"/>';
+    // Tee de salida con soporte
+    svgD += '<circle cx="'+teeX+'" cy="'+teeY+'" r="4.5" fill="'+TEE+'"/>';
+    svgD += '<line x1="'+teeX+'" y1="'+teeY+'" x2="'+teeX+'" y2="'+(teeY+6)+'" stroke="'+TEE+'" stroke-width="2"/>';
+    // Líneas de "potencia" al momento del golpe (aparecen y desaparecen al inicio)
+    svgD += '<g opacity="0"><animate attributeName="opacity" values="1;0;0;1" keyTimes="0;0.15;0.9;1" dur="3.2s" repeatCount="indefinite"/>' +
+      '<line x1="'+(teeX+8)+'" y1="'+(teeY-6)+'" x2="'+(teeX+18)+'" y2="'+(teeY-8)+'" stroke="'+colorArea+'" stroke-width="1.5"/>' +
+      '<line x1="'+(teeX+8)+'" y1="'+teeY+'" x2="'+(teeX+20)+'" y2="'+teeY+'" stroke="'+colorArea+'" stroke-width="1.5"/>' +
+      '<line x1="'+(teeX+8)+'" y1="'+(teeY+6)+'" x2="'+(teeX+18)+'" y2="'+(teeY+8)+'" stroke="'+colorArea+'" stroke-width="1.5"/></g>';
+    // Trayectoria larga y alta (guía punteada)
+    svgD += '<path d="M'+teeX+','+teeY+' Q100,-8 '+caeX+','+caeY+'" fill="none" stroke="'+colorArea+'33" stroke-width="1.2" stroke-dasharray="2 4"/>';
+    // Estela de la bola (rastro que la sigue)
+    svgD += '<circle r="3" fill="'+colorArea+'55">' +
+      '<animateMotion dur="3.2s" repeatCount="indefinite" keyPoints="0;0.05;0.7;0.7;0.7" keyTimes="0;0.1;0.62;0.63;1" calcMode="linear" path="M'+teeX+','+teeY+' Q100,-8 '+caeX+','+caeY+'"/>' +
+      '<animate attributeName="opacity" values="0;0.6;0.6;0;0" keyTimes="0;0.12;0.6;0.65;1" dur="3.2s" repeatCount="indefinite"/>' +
+    '</circle>';
+    // La bola: vuela alto y lejos (0-63%), aterriza y da un botecito rodando (63-100%)
+    svgD += '<circle r="5" fill="'+BLANCO+'" stroke="'+colorArea+'" stroke-width="1.5">' +
+      '<animateMotion dur="3.2s" repeatCount="indefinite" keyPoints="0;0.63;0.85;1;1" keyTimes="0;0.63;0.8;0.92;1" calcMode="linear" ' +
+        'path="M'+teeX+','+teeY+' Q100,-8 '+caeX+','+caeY+' L'+(caeX+8)+','+(caeY-4)+' L'+(caeX+12)+','+caeY+'"/>' +
+    '</circle>';
+    svgD += etiqueta('¡Pégale fuerte y lejos por la calle!') + '</svg>';
+    return svgD;
+  }
+
+  // ===== APPROACH con estaciones: tira desde varias posiciones (cerca, medio, lejos) hacia el green =====
+  var esApproachMultiple = (c.indexOf('approach') >= 0) && (c.indexOf('escalera') >= 0 || c.indexOf('tobogan') >= 0 || c.indexOf('record') >= 0 || c.indexOf('ud2d3') >= 0 || c.indexOf('reto-approach') >= 0);
+  if (esApproachMultiple) {
+    var bX = 172, bY = 100;  // bandera (green a la derecha)
+    // 3 posiciones de salida a distintas distancias (más lejos = más a la izquierda y abajo)
+    var pos = [[110,102],[68,106],[24,110]]; // cerca, medio, lejos
+    var svgA = '<svg viewBox="0 0 200 130" style="width:100%;max-width:230px;height:auto">';
+    // Green con bandera
+    svgA += '<ellipse cx="168" cy="103" rx="26" ry="8" fill="'+colorArea+'1e" stroke="'+colorArea+'44" stroke-width="1.5"/>';
+    svgA += '<line x1="'+bX+'" y1="'+bY+'" x2="'+bX+'" y2="58" stroke="#c8c8d5" stroke-width="2"/>';
+    svgA += '<path d="M'+bX+',58 L'+(bX+14)+',63 L'+bX+',68 Z" fill="'+colorArea+'"/>';
+    // Marcas de las 3 posiciones de salida
+    pos.forEach(function(p){ svgA += '<circle cx="'+p[0]+'" cy="'+p[1]+'" r="4" fill="'+TEE+'"/>'; });
+    // Ciclo 9s: 3s por posición. Cada bola vuela en arco desde su posición y cae en el green.
+    var cicloA = 9;
+    for (var pi=0; pi<pos.length; pi++){
+      var t0 = (pi*3)/cicloA;
+      var tVuela = t0 + (1.6/cicloA);  // llega al green
+      var tFin = t0 + (2.6/cicloA);     // desaparece
+      var ps = pos[pi];
+      // altura del arco: más lejos = arco más alto y largo
+      var apex = 30 - pi*4;
+      var midX = (ps[0]+bX)/2;
+      svgA += '<circle r="5" fill="'+BLANCO+'" stroke="'+colorArea+'" stroke-width="1.5" opacity="0">' +
+        '<animate attributeName="opacity" values="0;1;1;0;0" keyTimes="0;'+t0.toFixed(3)+';'+(tFin-0.02).toFixed(3)+';'+tFin.toFixed(3)+';1" dur="'+cicloA+'s" repeatCount="indefinite"/>' +
+        '<animateMotion dur="'+cicloA+'s" repeatCount="indefinite" keyPoints="0;0;1;1;1" keyTimes="0;'+t0.toFixed(3)+';'+tVuela.toFixed(3)+';'+tFin.toFixed(3)+';1" calcMode="linear" ' +
+          'path="M'+ps[0]+','+ps[1]+' Q'+midX+','+apex+' '+bX+','+bY+' L'+bX+','+bY+' L'+bX+','+bY+'"/>' +
+      '</circle>';
+    }
+    svgA += etiqueta('Cambia de distancia: cerca, medio y lejos') + '</svg>';
+    return svgA;
+  }
+
+  // ===== HIERRO / OP / approach simple: la bola VUELA con arco alto, aterriza y RUEDA hasta la bandera =====
+  if (c.indexOf('hierro') >= 0 || c.indexOf('approach') >= 0 || c.indexOf('op36') >= 0) {
+    var salidaX = 22, salidaY = 108;   // punto de salida (abajo izq)
+    var aterrizaX = 128, aterrizaY = 100; // donde cae (suelo, antes de la bandera)
+    var banderaX = 170, banderaY = 100;   // base de la bandera
+    return '<svg viewBox="0 0 200 130" style="width:100%;max-width:230px;height:auto">' +
+      // Suelo/green
+      '<ellipse cx="150" cy="105" rx="40" ry="9" fill="'+colorArea+'1e" stroke="'+colorArea+'44" stroke-width="1.5"/>' +
+      // Bandera
+      '<line x1="'+banderaX+'" y1="'+banderaY+'" x2="'+banderaX+'" y2="56" stroke="#c8c8d5" stroke-width="2"/>' +
+      '<path d="M'+banderaX+',56 L'+(banderaX+15)+',61 L'+banderaX+',66 Z" fill="'+colorArea+'"/>' +
+      // Tee de salida
+      '<circle cx="'+salidaX+'" cy="'+salidaY+'" r="4" fill="'+TEE+'"/>' +
+      // Trayectoria de vuelo (arco punteado, guía visual)
+      '<path d="M'+salidaX+','+salidaY+' Q80,12 '+aterrizaX+','+aterrizaY+'" fill="none" stroke="'+colorArea+'33" stroke-width="1.2" stroke-dasharray="2 3"/>' +
+      // La bola: FASE 1 vuela en arco alto (0-55%), FASE 2 rueda por el suelo hasta la bandera (55-100%)
+      '<circle r="5" fill="'+BLANCO+'" stroke="'+colorArea+'" stroke-width="1.5">' +
+        '<animateMotion dur="3s" repeatCount="indefinite" keyPoints="0;0.55;1;1" keyTimes="0;0.55;0.9;1" calcMode="linear" ' +
+          'path="M'+salidaX+','+salidaY+' Q80,12 '+aterrizaX+','+aterrizaY+' L'+banderaX+','+banderaY+' L'+banderaX+','+banderaY+'"/>' +
+      '</circle>' +
+      etiqueta('Vuela por el aire, cae y rueda al hoyo') +
+    '</svg>';
+  }
+  return '';
+}
+
+// Leer las instrucciones en voz alta (para niños que leen poco)
+// Elige la mejor voz en español, priorizando México, evitando voces raras
+function _mejorVozEspanol() {
+  try {
+    var voces = window.speechSynthesis.getVoices() || [];
+    if (!voces.length) return null;
+    // 1) Si el usuario eligió una voz manualmente, usar esa
+    var pref = null;
+    try { pref = localStorage.getItem('voz_preferida'); } catch(e) {}
+    if (pref) {
+      var elegida = voces.find(function(v){ return v.name === pref; });
+      if (elegida) return elegida;
+    }
+    // 2) Si no, elegir automáticamente priorizando México
+    var nombresMX = /paulina|juan|angelica|roberto|espa[ñn]ol \(m[eé]xico\)|spanish \(mexico\)|m[eé]xico|mexican/i;
+    var prefs = [
+      function(v){ return v.lang === 'es-MX'; },
+      function(v){ return nombresMX.test(v.name||''); },
+      function(v){ return v.lang === 'es-US'; },
+      function(v){ return v.lang === 'es-419'; },
+      function(v){ return (v.lang||'').indexOf('es-')===0 && !/es-ES/.test(v.lang); },
+      function(v){ return v.lang === 'es-ES'; },
+      function(v){ return (v.lang||'').indexOf('es')===0; }
+    ];
+    for (var i=0; i<prefs.length; i++) {
+      var hit = voces.find(prefs[i]);
+      if (hit) return hit;
+    }
+  } catch(e) {}
+  return null;
+}
+
+// Muestra un selector con las voces en español del dispositivo para que el usuario elija
+function _mostrarSelectorVoz() {
+  var voces = [];
+  try { voces = (window.speechSynthesis.getVoices() || []).filter(function(v){ return (v.lang||'').indexOf('es')===0; }); } catch(e) {}
+  var prev = document.getElementById('overlay-voz');
+  if (prev) prev.remove();
+  var ov = document.createElement('div');
+  ov.id = 'overlay-voz';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px';
+  var prefActual = '';
+  try { prefActual = localStorage.getItem('voz_preferida') || ''; } catch(e) {}
+
+  var filas = '';
+  if (!voces.length) {
+    filas = '<div style="color:#8a8a9a;font-size:13px;text-align:center;padding:20px;line-height:1.5">Tu dispositivo no tiene voces en español instaladas.<br><br>En iPhone: Ajustes → Accesibilidad → Contenido hablado → Voces → Español → descarga <b>Paulina</b> (México).</div>';
+  } else {
+    filas = voces.map(function(v){
+      var sel = (v.name === prefActual);
+      var etiquetaPais = '';
+      if (v.lang === 'es-MX') etiquetaPais = '🇲🇽 México';
+      else if (v.lang === 'es-US') etiquetaPais = 'Latino/EE.UU.';
+      else if (v.lang === 'es-ES') etiquetaPais = '🇪🇸 España';
+      else if (v.lang === 'es-419') etiquetaPais = 'Latinoamérica';
+      else etiquetaPais = v.lang;
+      return '<div onclick="_elegirVoz(\'' + v.name.replace(/'/g,"\\\\'") + '\')" style="display:flex;align-items:center;justify-content:space-between;gap:12px;background:' + (sel?'rgba(29,158,117,.18)':'#1a1f2e') + ';border:' + (sel?'1.5px solid #1D9E75':'0.5px solid rgba(255,255,255,.1)') + ';border-radius:12px;padding:14px 16px;margin-bottom:8px;cursor:pointer">' +
+        '<div style="text-align:left"><div style="color:#fff;font-size:14px;font-weight:700">' + v.name + '</div><div style="color:#8a8a9a;font-size:11px;margin-top:2px">' + etiquetaPais + '</div></div>' +
+        '<div onclick="event.stopPropagation();_probarVoz(\'' + v.name.replace(/'/g,"\\\\'") + '\')" style="background:rgba(95,214,170,.15);border-radius:9px;padding:7px 12px;cursor:pointer;flex-shrink:0"><span style="color:#5FD6AA;font-size:12px;font-weight:700">🔊 Probar</span></div>' +
+      '</div>';
+    }).join('');
+  }
+
+  ov.innerHTML = '<div style="background:#12131f;border-radius:20px;width:100%;max-width:400px;max-height:80vh;overflow-y:auto;padding:22px">' +
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">' +
+      '<div style="color:#fff;font-size:18px;font-weight:800">Elige la voz</div>' +
+      '<div onclick="document.getElementById(\'overlay-voz\').remove()" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#8a8a9a;font-size:17px">✕</div>' +
+    '</div>' +
+    '<div style="color:#8a8a9a;font-size:12px;margin-bottom:16px">Toca 🔊 Probar para escucharla, luego elígela</div>' +
+    filas +
+  '</div>';
+  document.body.appendChild(ov);
+  ov.onclick = function(e){ if (e.target === ov) ov.remove(); };
+}
+
+function _probarVoz(nombre) {
+  try {
+    window.speechSynthesis.cancel();
+    var voces = window.speechSynthesis.getVoices() || [];
+    var v = voces.find(function(x){ return x.name === nombre; });
+    var u = new SpeechSynthesisUtterance('Hola, así se escucha esta voz. Vamos a practicar golf.');
+    if (v) { u.voice = v; u.lang = v.lang; }
+    u.rate = 0.95; u.pitch = 1.05;
+    window.speechSynthesis.speak(u);
+  } catch(e) {}
+}
+
+function _elegirVoz(nombre) {
+  try { localStorage.setItem('voz_preferida', nombre); } catch(e) {}
+  var ov = document.getElementById('overlay-voz');
+  if (ov) ov.remove();
+  _probarVoz(nombre); // confirmación audible
+}
+
+var _leyendoFicha = false;
+function _leerFichaEjecucion() {
+  _leerFichaEnVoz(window._textoVozEjecucion || '');
+}
+function _leerFichaEnVoz(textoPlano) {
+  try {
+    if (!window.speechSynthesis) return;
+    if (_leyendoFicha) { window.speechSynthesis.cancel(); _leyendoFicha = false; return; }
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(textoPlano);
+    u.lang = 'es-MX'; u.rate = 0.95; u.pitch = 1.05;
+    var vEs = _mejorVozEspanol();
+    if (vEs) u.voice = vEs;
+    u.lang = (vEs && vEs.lang) ? vEs.lang : 'es-MX';
+    u.onend = function(){ _leyendoFicha = false; };
+    u.onerror = function(){ _leyendoFicha = false; };
+    _leyendoFicha = true;
+    window.speechSynthesis.speak(u);
+  } catch(e) { _leyendoFicha = false; }
+}
+
+function _mostrarTarjetaRecomendada(catGolf, pestana, excluidos) {
+  var nombreArea = { putt:'Putt', approach:'Approach', hierros:'Hierro', drive:'Drive' }[catGolf] || catGolf;
+  var colorArea = { putt:'#f0abfc', approach:'#FAC775', hierros:'#9FE1CB', drive:'#6ee7b7' }[catGolf] || '#9FE1CB';
+  var ej = recomendarEjercicio(catGolf, pestana, excluidos);
+
+  var prev = document.getElementById('overlay-recomendado');
+  if (prev) prev.remove();
+  var ov = document.createElement('div');
+  ov.id = 'overlay-recomendado';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:300;display:flex;align-items:center;justify-content:center;padding:20px';
+
+  if (!ej) {
+    // Ya completó todo en esta área
+    ov.innerHTML = '<div style="background:#12131f;border-radius:22px;padding:30px 24px;width:100%;max-width:400px;text-align:center">' +
+      '<div style="font-size:52px;margin-bottom:14px">🎉</div>' +
+      '<div style="color:#fff;font-size:20px;font-weight:800;margin-bottom:8px">¡Terminaste ' + nombreArea + '!</div>' +
+      '<div style="color:#8a8a9a;font-size:14px;margin-bottom:22px">Completaste todo por hoy. ¡Bien hecho!</div>' +
+      '<div onclick="document.getElementById(\'overlay-recomendado\').remove()" style="background:linear-gradient(160deg,#1D9E75,#0F6E56);border-radius:14px;padding:15px;color:#fff;font-size:16px;font-weight:800;cursor:pointer">Volver</div>' +
+    '</div>';
+    document.body.appendChild(ov);
+    ov.onclick = function(e){ if (e.target === ov) ov.remove(); };
+    return;
+  }
+
+  var p = getPerfil();
+  var nivel = 1;
+  try { nivel = getNivelReg(p, normalizarClaveNivel(ej.clave)).nivel || 1; } catch(e) {}
+  var esReto = (ej.grupo === 'reto');
+  var subInfo = '';
+  var cat = (ej.cat||'')+'';
+  if (catGolf === 'putt') subInfo = (cat.toLowerCase().indexOf('largo')>=0) ? 'Putt largo' : 'Putt corto';
+  else subInfo = nombreArea;
+
+  // Instrucciones COMPLETAS: las mismas que aparecen en la ejecución del ejercicio
+  var defCat = (typeof CATALOGO_NUEVO !== 'undefined') ? CATALOGO_NUEVO[ej.clave] : null;
+  var instrucciones = [];
+  // Intentar obtener las instrucciones dinámicas (con distancia/tees/meta del nivel real)
+  try {
+    var claveNivelInstr = normalizarClaveNivel(ej.clave);
+    var itemTmp = { id: ej.clave, claveNivel: ej.clave, esNuevo: true, cat: (defCat ? defCat.cat : catGolf) };
+    var dinam = instruccionesDinamicas(itemTmp, claveNivelInstr);
+    if (dinam && dinam.length) {
+      instrucciones = dinam.slice();
+    }
+  } catch(e) {}
+  // Fallback: instrucciones base del catálogo
+  if (!instrucciones.length) {
+    // Buscar en EJERCICIOS_DEF (las de ejecución) primero, luego en CATALOGO_NUEVO
+    var defEjec = (typeof EJERCICIOS_DEF !== 'undefined') ? EJERCICIOS_DEF[ej.clave] : null;
+    if (defEjec && defEjec.instrucciones) instrucciones = defEjec.instrucciones.slice();
+    else if (defCat && defCat.instr) instrucciones = defCat.instr.slice();
+  }
+  // Agregar el objetivo del nivel al final (como en la ejecución)
+  try {
+    var claveObj = normalizarClaveNivel(ej.clave);
+    if (claveObj && TABLAS_NIVELES[claveObj]) {
+      var perfilObj = getPerfil();
+      var nivelObj = perfilObj ? getNivelReg(perfilObj, claveObj).nivel : 1;
+      var og = objetivoGrande(claveObj, nivelObj);
+      if (og) instrucciones.push('🎯 Tu objetivo: ' + og.num + ' ' + og.lbl);
+    }
+  } catch(e) {}
+
+  // Diagrama animado
+  var diagrama = _diagramaEjercicio(ej.clave, colorArea);
+  // Texto plano para la voz (nombre + instrucciones)
+  var textoVoz = ej.nom + '. ' + instrucciones.map(function(x){ return (''+x).replace(/[🎯📍⭐📌•🏌️🔥]/g,'').replace(/<br>/g,' ').replace(/\n/g,' ').trim(); }).join('. ');
+  window._textoVozFicha = textoVoz;
+
+  var instrHTML = '';
+  if (instrucciones.length) {
+    instrHTML = '<div style="background:rgba(255,255,255,.03);border-radius:14px;padding:14px 16px;margin-bottom:16px;text-align:left">' +
+      instrucciones.map(function(linea){
+        return '<div style="color:#d8d8e5;font-size:13px;line-height:1.5;margin-bottom:7px">' + (''+linea).replace(/\n/g,'<br>') + '</div>';
+      }).join('') +
+    '</div>';
+  }
+
+  ov.innerHTML = '<div style="background:linear-gradient(165deg,#1a1b2e,#12131f);border:1px solid ' + colorArea + '44;border-radius:24px;padding:24px 20px;width:100%;max-width:410px;max-height:92vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,.5)">' +
+    // Cabecera
+    '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">' +
+      '<div style="color:' + colorArea + ';font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:1px">🎯 Te toca</div>' +
+      '<div onclick="document.getElementById(\'overlay-recomendado\').remove()" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#8a8a9a;font-size:17px">✕</div>' +
+    '</div>' +
+    // Nombre + nivel
+    '<div style="text-align:center;margin-bottom:14px">' +
+      '<div style="color:#fff;font-size:21px;font-weight:800;line-height:1.2;margin-bottom:8px">' + ej.nom + '</div>' +
+      '<div style="display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.06);border-radius:20px;padding:5px 14px">' +
+        '<span style="color:' + colorArea + ';font-size:12px;font-weight:700">' + subInfo + '</span>' +
+        '<span style="color:#5a5a6a">·</span>' +
+        '<span style="color:#c8c8d5;font-size:12px;font-weight:700">Nivel ' + nivel + '</span>' +
+      '</div>' +
+    '</div>' +
+    // Diagrama animado
+    (diagrama ? '<div style="display:flex;justify-content:center;background:rgba(0,0,0,.25);border-radius:16px;padding:12px;margin-bottom:14px">' + diagrama + '</div>' : '') +
+    // Botón de voz (leer instrucciones)
+    '<div onclick="_leerFichaEnVoz(window._textoVozFicha)" style="display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(255,255,255,.06);border:1px solid ' + colorArea + '33;border-radius:12px;padding:11px;margin-bottom:14px;cursor:pointer">' +
+      '<span style="font-size:18px">🔊</span><span style="color:' + colorArea + ';font-size:13px;font-weight:700">Escuchar cómo se hace</span>' +
+    '</div>' +
+    // Instrucciones
+    instrHTML +
+    // Botones
+    '<div onclick="_empezarRecomendado(\'' + ej.clave + '\')" style="background:linear-gradient(160deg,' + colorArea + ',' + colorArea + 'cc);border-radius:15px;padding:16px;text-align:center;color:#12131f;font-size:17px;font-weight:800;cursor:pointer;margin-bottom:10px;box-shadow:0 4px 16px ' + colorArea + '44">▶️ Empezar</div>' +
+    '<div style="display:flex;gap:9px">' +
+      '<div onclick="_otroRecomendado(\'' + catGolf + '\',\'' + pestana + '\',\'' + ej.clave + '\')" style="flex:1;background:rgba(255,255,255,.06);border-radius:13px;padding:13px;text-align:center;color:#c8c8d5;font-size:14px;font-weight:700;cursor:pointer">🔄 Otro</div>' +
+      '<div onclick="_verTodosDelArea(\'' + catGolf + '\',\'' + pestana + '\')" style="flex:1;background:rgba(255,255,255,.06);border-radius:13px;padding:13px;text-align:center;color:#c8c8d5;font-size:14px;font-weight:700;cursor:pointer">📋 Ver todos</div>' +
+    '</div>' +
+  '</div>';
+  document.body.appendChild(ov);
+  ov.onclick = function(e){ if (e.target === ov) { try{window.speechSynthesis&&window.speechSynthesis.cancel();}catch(er){} ov.remove(); } };
+  window._recomExcluidos = excluidos;
+}
+
+// Empezar el ejercicio recomendado
+function _empezarRecomendado(clave) {
+  var ov = document.getElementById('overlay-recomendado');
+  if (ov) ov.remove();
+  window._ejercicioDirecto = true; // viene del recomendador: al terminar/salir → home
+  if (typeof hacerEjercicioAhora === 'function') hacerEjercicioAhora(clave);
+}
+
+// Mostrar OTRO ejercicio (excluye el actual)
+function _otroRecomendado(catGolf, pestana, claveActual) {
+  var excl = (window._recomExcluidos || []).slice();
+  excl.push(claveActual);
+  _mostrarTarjetaRecomendada(catGolf, pestana, excl);
+}
+
+// Ver la lista completa (abre la biblioteca tradicional)
+function _verTodosDelArea(catGolf, pestana) {
+  var ov = document.getElementById('overlay-recomendado');
+  if (ov) ov.remove();
   _biblioPestana = pestana;
   _biblioFiltroCat = catGolf;
   _biblioSoloFav = false;
-  _biblioAreaUnificada = (catGolf === 'drive') ? null : catGolf; // Drive sin pestañas (solo retos)
+  _biblioAreaUnificada = (catGolf === 'drive') ? null : catGolf;
   abrirBiblioteca();
 }
 
@@ -10266,13 +11391,76 @@ function abrirBiblioteca() {
         '<span style="font-size:15px">🧪</span><span style="color:#a78bfa;font-size:13px;font-weight:700">Crear mi ejercicio</span>' +
       '</div>' +
     '</div>' +
-    '<div id="biblio-contenido" style="padding:0 16px 40px;overflow-y:auto"></div>' +
+    '<div id="biblio-contenido" style="padding:0 16px 40px;overflow-y:auto;min-height:60vh"></div>' +
   '</div>';
   document.body.appendChild(ov);
   ov.addEventListener('click', function(e){
     if (e.target.id === 'cerrar-biblio' || e.target === ov) { ov.remove(); return; }
   });
   renderBiblioteca();
+}
+
+// ===== SEMÁFORO DE PROGRESO POR SUB-ÁREA (corto/largo) =====
+var _METAS_SEMAFORO = {
+  putt: {
+    corto: { ej: 6, re: 2, label: 'Putt corto' },
+    largo: { ej: 2, re: 1, label: 'Putt largo' }
+  }
+};
+
+function _contarSemaforoHoy(catGolf) {
+  var p = getPerfil();
+  var res = { corto:{ej:0,re:0}, largo:{ej:0,re:0} };
+  if (!p) return res;
+  var hist = [];
+  try { hist = JSON.parse(localStorage.getItem('entreno_hist_' + p.id) || '[]'); } catch(e) { return res; }
+  var hoyKey = (new Date()).toISOString().substring(0,10);
+  hist.forEach(function(e){
+    if (!e.fecha || (e.fecha||'').substring(0,10) !== hoyKey) return;
+    (e.ejercicios||[]).forEach(function(ej){
+      var id=(ej.id||'')+'', cv=(ej.claveNivel||'')+'', esReto=!!ej.esReto || cv.indexOf('reto')>=0 || id.indexOf('reto')>=0;
+      if (catGolf === 'putt') {
+        var esPutt = cv.indexOf('putt')>=0 || id.indexOf('putt')>=0 || id.indexOf('circulo')>=0 || cv.indexOf('circulo')>=0 || id==='retoMedio' || (ej.cat||'').toLowerCase().indexOf('putt')>=0;
+        if (!esPutt) return;
+        var esLargo = cv.indexOf('largo')>=0 || id.indexOf('largo')>=0 || (ej.cat||'').toLowerCase().indexOf('largo')>=0;
+        var sub = esLargo ? 'largo' : 'corto';
+        if (esReto) res[sub].re++; else res[sub].ej++;
+      }
+    });
+  });
+  return res;
+}
+
+function _bolitasHTML(hechas, meta, colorLleno) {
+  var out = '';
+  for (var i=0; i<meta; i++) {
+    var lleno = i < hechas;
+    out += '<div style="width:9px;height:9px;border-radius:50%;flex-shrink:0;' +
+      (lleno ? 'background:' + colorLleno + ';box-shadow:0 0 5px ' + colorLleno + '99' : 'background:transparent;border:1.5px solid rgba(255,255,255,.2)') + '"></div>';
+  }
+  return out;
+}
+
+function _semaforoHTML(catGolf) {
+  var metas = _METAS_SEMAFORO[catGolf];
+  if (!metas) return '';
+  var hecho = _contarSemaforoHoy(catGolf);
+  var colEj = '#5FD6AA';
+  var colRe = '#EF9F27';
+  function renglon(sub) {
+    var m = metas[sub], h = hecho[sub];
+    return '<div style="display:flex;align-items:center;gap:10px;padding:9px 4px">' +
+      '<div style="color:#c8c8d5;font-size:11px;font-weight:700;width:66px;flex-shrink:0">' + m.label + '</div>' +
+      '<div style="display:flex;gap:4px;align-items:center">' + _bolitasHTML(h.ej, m.ej, colEj) + '</div>' +
+      '<div style="width:1px;height:14px;background:rgba(255,255,255,.12);margin:0 3px"></div>' +
+      '<div style="display:flex;gap:4px;align-items:center">' + _bolitasHTML(h.re, m.re, colRe) + '</div>' +
+    '</div>';
+  }
+  return '<div style="background:rgba(255,255,255,.03);border:0.5px solid rgba(255,255,255,.08);border-radius:14px;padding:6px 12px;margin:2px 0 14px">' +
+    renglon('corto') +
+    '<div style="height:0.5px;background:rgba(255,255,255,.06)"></div>' +
+    renglon('largo') +
+  '</div>';
 }
 
 function renderBiblioteca() {
@@ -10309,6 +11497,10 @@ function renderBiblioteca() {
         '<div onclick="_biblioPestana=\'reto\';renderBiblioteca()" style="flex:1;text-align:center;padding:11px;border-radius:12px;cursor:pointer;font-size:13px;font-weight:800;' + (!tabEj ? 'background:#EF9F27;color:#000' : 'background:#1a1f2e;color:#8a8a9a') + '">Retos</div>' +
       '</div>';
     }
+    // Semáforo de progreso corto/largo (por ahora solo Putt)
+    if (_METAS_SEMAFORO[_cat]) {
+      html += _semaforoHTML(_cat);
+    }
   }
 
   // Filtrar por pestaña y agrupar por categoría
@@ -10321,6 +11513,14 @@ function renderBiblioteca() {
     } else {
       // Los retos usan su campo catGolf
       lista = lista.filter(function(x){ return x.catGolf === _biblioFiltroCat; });
+    }
+  }
+  // MODO ÁREA UNIFICADA: mostrar solo lo que FALTA hoy. Si ya completó todo, mostrar todo (para seguir avanzando).
+  if (_biblioAreaUnificada && lista.length) {
+    var pendientesHoy = lista.filter(function(x){ return !yaEnEntrenamientoHoy(x.clave); });
+    // Solo filtrar si queda al menos uno pendiente; si ya hizo todos, deja la lista completa
+    if (pendientesHoy.length > 0) {
+      lista = pendientesHoy;
     }
   }
   // Vista filtrada (desde una tarjeta del home): encabezado limpio + botón crear arriba
@@ -10455,9 +11655,19 @@ function hacerEjercicioAhora(clave) {
   }
   // Si no está, agregarlo
   if (idx < 0) {
+    // ¿El ejercicio tiene distancias? (círculos en biblioteca, o hierros en catálogo)
+    var ejBib = BIBLIOTECA.find(function(x){ return x.clave === clave; });
+    var defCat = CATALOGO_NUEVO[clave];
+    var tieneDist = (ejBib && ejBib.dist && ejBib.dist.length) || (defCat && defCat.distancias && defCat.distancias.length);
+    if (tieneDist) {
+      // Marcar que al elegir distancia se debe abrir el registro directo
+      window._abrirRegistroTrasDistancia = true;
+      _procesarSiguienteFav([clave]);
+      // NO abrir registro aquí: lo hará el flujo de distancia al terminar
+      return;
+    }
     var antes = estadoSesion.programa.length;
     _procesarSiguienteFav([clave]);
-    // El nuevo ejercicio quedó al final
     idx = estadoSesion.programa.length - 1;
     if (estadoSesion.programa.length === antes) { idx = antes - 1; } // por si acaso
   }
@@ -10590,16 +11800,25 @@ function _cerrarFichaHierro() {
 }
 
 // Guarda la ficha (carry + notas) del hierro
-function _leerFichaDeInputs() {
+function _leerFichaDeInputs(fichaPrevia) {
+  fichaPrevia = fichaPrevia || {};
   var carry = document.getElementById('hierro-carry-input');
   var notas = document.getElementById('hierro-notas-input');
-  return { carry: carry ? carry.value.trim() : '', notas: notas ? notas.value.trim() : '' };
+  var vel = document.getElementById('hierro-vel-input');
+  var profe = document.getElementById('hierro-profe-input');
+  // Si un input no está en pantalla, conservar el valor previo (no borrarlo)
+  return {
+    carry: carry ? carry.value.trim() : (fichaPrevia.carry || ''),
+    velocidad: vel ? vel.value.trim() : (fichaPrevia.velocidad || ''),
+    profe: profe ? profe.value.trim() : (fichaPrevia.profe || ''),
+    notas: notas ? notas.value.trim() : (fichaPrevia.notas || '')
+  };
 }
 // Autoguardado: se llama en cada tecla, guarda sin cerrar nada
 function _autoGuardarHierro(baston) {
   var p = getPerfil();
   var pid = p ? p.id : 0;
-  setFichaHierro(pid, baston, _leerFichaDeInputs());
+  setFichaHierro(pid, baston, _leerFichaDeInputs(getFichaHierro(pid, baston)));
 }
 // Agregar el ejercicio de hierro al entrenamiento (sin hacerlo ahora)
 function _agregarHierroAEntrenamiento(baston, claveEjercicio) {
@@ -10653,7 +11872,7 @@ function _verNotasHierroEnRegistro(baston) {
   var p = getPerfil();
   var pid = p ? p.id : 0;
   var ficha = getFichaHierro(pid, baston);
-  var lblB = (baston === 'PW') ? 'Pitching Wedge' : 'Hierro ' + baston;
+  var lblB = /°/.test(baston) ? ('Wedge ' + baston) : (baston === 'PW' ? 'Pitching Wedge' : (/^\d+$/.test(baston) ? 'Hierro ' + baston : baston));
   var prev = document.getElementById('overlay-notas-hierro');
   if (prev) prev.remove();
   var ov = document.createElement('div');
@@ -10665,15 +11884,27 @@ function _verNotasHierroEnRegistro(baston) {
         '<div onclick="document.getElementById(\'overlay-notas-hierro\').remove()" style="color:#8a8a9a;font-size:14px;font-weight:700;cursor:pointer;background:rgba(255,255,255,.06);padding:7px 14px;border-radius:10px">← Volver al ejercicio</div>' +
         '<div style="background:#3B6D11;border-radius:8px;padding:5px 14px"><span style="color:#a3e635;font-size:12px;font-weight:800">' + lblB.toUpperCase() + '</span></div>' +
       '</div>' +
-      '<div style="background:linear-gradient(160deg,#1e3a2e,#0f1f18);border:1px solid rgba(74,222,128,.3);border-radius:16px;padding:16px;text-align:center;margin-bottom:16px">' +
-        '<div style="color:#4ade80;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">📏 Mi carry</div>' +
+      // Carry promedio
+      '<div style="background:linear-gradient(160deg,#1e3a2e,#0f1f18);border:1px solid rgba(74,222,128,.3);border-radius:16px;padding:16px;text-align:center;margin-bottom:12px">' +
+        '<div style="color:#4ade80;font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px">📏 Mi carry promedio</div>' +
         '<input id="hierro-carry-input" oninput="_autoGuardarHierro(\'' + baston + '\')" value="' + (ficha.carry || '').replace(/"/g,'&quot;') + '" placeholder="ej. 150 yardas" style="width:100%;background:transparent;border:none;text-align:center;color:#fff;font-size:26px;font-weight:900;font-family:inherit;outline:none;box-sizing:border-box" />' +
       '</div>' +
+      // Velocidad promedio (de swing / cabeza de palo)
+      '<div style="background:rgba(56,132,255,.08);border:1px solid rgba(56,132,255,.3);border-radius:14px;padding:14px 16px;margin-bottom:14px">' +
+        '<div style="color:#7ab0ff;font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;margin-bottom:6px">⚡ Velocidad promedio</div>' +
+        '<input id="hierro-vel-input" oninput="_autoGuardarHierro(\'' + baston + '\')" value="' + (ficha.velocidad || '').replace(/"/g,'&quot;') + '" placeholder="ej. 78 mph" style="width:100%;background:transparent;border:none;color:#fff;font-size:18px;font-weight:800;font-family:inherit;outline:none;box-sizing:border-box" />' +
+      '</div>' +
+      // Encargos del profesor / técnica
+      '<div style="background:rgba(239,159,39,.08);border:1px solid rgba(239,159,39,.3);border-radius:14px;padding:14px 16px;margin-bottom:14px">' +
+        '<div style="color:#FAC775;font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;margin-bottom:6px">🎓 Lo que me encargó el profe</div>' +
+        '<textarea id="hierro-profe-input" oninput="_autoGuardarHierro(\'' + baston + '\')" placeholder="Técnica a practicar, drills, correcciones..." style="width:100%;min-height:70px;background:transparent;border:none;color:#e8e8f0;font-size:14px;font-family:inherit;line-height:1.5;resize:vertical;box-sizing:border-box;outline:none">' + (ficha.profe || '') + '</textarea>' +
+      '</div>' +
+      // Notas libres
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 4px">' +
-        '<span style="color:#c8c8d5;font-size:13px;font-weight:700">📝 Mis notas</span>' +
+        '<span style="color:#c8c8d5;font-size:13px;font-weight:700">📝 Otras notas</span>' +
         '<span onclick="_dictarNotaHierro(\'' + baston + '\')" style="color:#a78bfa;font-size:12px;font-weight:700;cursor:pointer;background:rgba(125,58,237,.15);border:1px solid rgba(125,58,237,.4);border-radius:9px;padding:5px 12px">🎤 Dictar</span>' +
       '</div>' +
-      '<textarea id="hierro-notas-input" oninput="_autoGuardarHierro(\'' + baston + '\')" style="width:100%;min-height:200px;background:#1a1f2e;border:0.5px solid rgba(255,255,255,.12);border-radius:14px;padding:15px;color:#e8e8f0;font-size:14px;font-family:inherit;line-height:1.6;resize:vertical;box-sizing:border-box;outline:none">' + (ficha.notas || '') + '</textarea>' +
+      '<textarea id="hierro-notas-input" oninput="_autoGuardarHierro(\'' + baston + '\')" style="width:100%;min-height:120px;background:#1a1f2e;border:0.5px solid rgba(255,255,255,.12);border-radius:14px;padding:15px;color:#e8e8f0;font-size:14px;font-family:inherit;line-height:1.6;resize:vertical;box-sizing:border-box;outline:none">' + (ficha.notas || '') + '</textarea>' +
       '<div style="color:#6a6a85;font-size:10px;text-align:center;margin-top:6px">Se guarda solo mientras escribes ✓</div>' +
     '</div>';
   document.body.appendChild(ov);
@@ -10924,7 +12155,9 @@ function _procesarSiguienteFav(pendientes) {
   if (clave === 'reto-hierro') {
     var bastonR = window._hierroBastonActivo || '7';
     var nomR = (bastonR === 'PW') ? 'PW · Reto' : 'Hierro ' + bastonR + ' · Reto';
-    estadoSesion.programa.push({ id: 'retoHierro', nom: nomR, cat: 'hierros', claveNivel: 'reto-hierro', mins: 15, esReto: true, hierroBaston: bastonR });
+    // Clave de nivel POR bastón (reto-hierro-7, reto-hierro-PW, etc.) para que cada uno tenga su nivel
+    var claveNivelR = 'reto-hierro-' + bastonR;
+    estadoSesion.programa.push({ id: 'retoHierro', nom: nomR, cat: 'hierros', claveNivel: claveNivelR, mins: 15, esReto: true, hierroBaston: bastonR });
     if (!estadoSesion.completados) estadoSesion.completados = []; estadoSesion.completados.push(null);
     renderSesionSync(); guardarEstadoSesion();
     _procesarSiguienteFav(pendientes);
@@ -10947,13 +12180,54 @@ function _procesarSiguienteFav(pendientes) {
 
   var def = CATALOGO_NUEVO[clave] || { nom: ej.nom, cat: (ej.grupo==='reto'?'reto':'putt'), mins: ej.mins, instr: [] };
 
-  if (ej.dist && ej.dist.length) {
-    // Preguntar distancia; al elegir, continúa con el resto
+  // Distancias: pueden venir de la biblioteca (ej.dist, círculos) o del catálogo (def.distancias, hierros)
+  var distProp = (ej.dist && ej.dist.length) ? ej.dist : (def.distancias && def.distancias.length ? def.distancias : null);
+  if (distProp) {
+    // Asegurar que ej.dist exista para el selector (elegirDistanciaFavoritoMulti usa ej.dist)
+    if (!ej.dist || !ej.dist.length) ej.dist = distProp;
+    // Preguntar distancia; al elegir, continúa con el resto (y para hierros, pregunta bastón)
     elegirDistanciaFavoritoMulti(ej, def, pendientes);
   } else {
     agregarEjercicioNivel(null, def, clave, null);
     _procesarSiguienteFav(pendientes);
   }
+}
+
+// Pregunta con qué bastón va a trabajar la distancia elegida (para estadística completa)
+function _preguntarBastonHierro(ej, def, claveNivel, distK, pendientes) {
+  var prev = document.getElementById('overlay-baston-hierro');
+  if (prev) prev.remove();
+  var ov = document.createElement('div');
+  ov.id = 'overlay-baston-hierro';
+  ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:570;display:flex;align-items:center;justify-content:center;padding:22px';
+  // Lista de bastones: wedges por GRADOS, luego PW y hierros, hasta maderas (distancia 30-180)
+  var bastones = ['60°','56°','52°','PW','9','8','7','6','5','4','H','5w','3w'];
+  var nombres = { '60°':'Wedge','56°':'Wedge','52°':'Wedge','PW':'Pitching','H':'Híbrido','5w':'Madera 5','3w':'Madera 3' };
+  var distLbl = distK + ' yardas';
+  var chips = bastones.map(function(b){
+    var sub = nombres[b] || 'Hierro ' + b;
+    return '<div class="baston-chip" data-b="' + b + '" style="background:#1a1f2e;border:0.5px solid rgba(255,255,255,.12);border-radius:12px;padding:13px 6px;text-align:center;cursor:pointer">' +
+      '<div style="color:#fff;font-size:15px;font-weight:800;line-height:1">' + b + '</div>' +
+      '<div style="color:#8a8a9a;font-size:9px;font-weight:600;margin-top:3px">' + sub + '</div>' +
+    '</div>';
+  }).join('');
+  ov.innerHTML = '<div style="background:#12151f;border-radius:20px;width:100%;max-width:360px;max-height:82vh;overflow-y:auto;padding:22px">' +
+    '<div style="color:#fff;font-size:17px;font-weight:800;text-align:center;margin-bottom:3px">¿Con qué bastón?</div>' +
+    '<div style="color:#8a8a9a;font-size:12px;text-align:center;margin-bottom:16px">Vas a trabajar <b style="color:#FAC775">' + distLbl + '</b>. ¿Qué palo usarás?</div>' +
+    '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">' + chips + '</div>' +
+  '</div>';
+  document.body.appendChild(ov);
+  ov.onclick = function(e){ if (e.target === ov) ov.remove(); };
+  ov.querySelectorAll('.baston-chip').forEach(function(chip){
+    chip.onclick = function(){
+      var baston = chip.getAttribute('data-b');
+      ov.remove();
+      window._hierroBastonSel = baston;
+      window._hierroDistSel = distK;
+      agregarEjercicioNivel(null, def, claveNivel, distK, baston);
+      _procesarSiguienteFav(pendientes);
+    };
+  });
 }
 
 function elegirDistanciaFavoritoMulti(ej, def, pendientes) {
@@ -10962,24 +12236,76 @@ function elegirDistanciaFavoritoMulti(ej, def, pendientes) {
   var ov = document.createElement('div');
   ov.id = 'overlay-dist-fav';
   ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:560;display:flex;align-items:center;justify-content:center;padding:24px';
+
+  var esHierro = (ej.clave||'').indexOf('hierro') === 0;
+
+  function continuar(distK){
+    ov.remove();
+    var claveNivel = ej.clave + '-' + distK;
+    if (esHierro) { _preguntarBastonHierro(ej, def, claveNivel, distK, pendientes); return; }
+    agregarEjercicioNivel(null, def, claveNivel, distK);
+    _procesarSiguienteFav(pendientes);
+  }
+
+  // MUCHAS distancias (hierros): usar STEPPER (− número +), más limpio en el iPhone
+  if (ej.dist.length > 6) {
+    var keys = ej.dist.map(function(d){ return parseInt(d.k, 10); });
+    var minD = Math.min.apply(null, keys), maxD = Math.max.apply(null, keys);
+    // Empezar en un valor medio cómodo (100 si existe, si no el del medio)
+    var startIdx = keys.indexOf(100); if (startIdx < 0) startIdx = Math.floor(keys.length/2);
+    window._distStepperVal = keys[startIdx];
+    ov.innerHTML = '<div style="background:#12151f;border-radius:20px;width:100%;max-width:320px;padding:24px">' +
+      '<div style="color:#fff;font-size:17px;font-weight:800;text-align:center;margin-bottom:4px">' + ej.nom + '</div>' +
+      '<div style="color:#8a8a9a;font-size:12px;text-align:center;margin-bottom:20px">Elige la distancia a trabajar</div>' +
+      '<div style="display:flex;align-items:center;justify-content:center;gap:18px;margin-bottom:22px">' +
+        '<div id="distMenos" style="width:54px;height:54px;border-radius:50%;background:#1a1f2e;border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:26px;font-weight:800;user-select:none">−</div>' +
+        '<div style="text-align:center;min-width:110px">' +
+          '<div id="distStepperNum" style="color:#FAC775;font-size:44px;font-weight:800;line-height:1">' + window._distStepperVal + '</div>' +
+          '<div style="color:#8a8a9a;font-size:12px;font-weight:700;margin-top:2px">yardas</div>' +
+        '</div>' +
+        '<div id="distMas" style="width:54px;height:54px;border-radius:50%;background:#1a1f2e;border:1px solid rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:26px;font-weight:800;user-select:none">+</div>' +
+      '</div>' +
+      '<div id="distConfirm" style="background:linear-gradient(160deg,#FAC775,#E0A945);border-radius:14px;padding:15px;text-align:center;color:#1a1200;font-size:16px;font-weight:800;cursor:pointer">Continuar</div>' +
+    '</div>';
+    document.body.appendChild(ov);
+    ov.onclick = function(e){ if (e.target === ov) ov.remove(); };
+    function pintarStepper(){
+      var n = document.getElementById('distStepperNum');
+      if (n) n.textContent = window._distStepperVal;
+    }
+    document.getElementById('distMenos').onclick = function(){
+      window._distStepperVal = Math.max(minD, window._distStepperVal - 10); pintarStepper();
+    };
+    document.getElementById('distMas').onclick = function(){
+      window._distStepperVal = Math.min(maxD, window._distStepperVal + 10); pintarStepper();
+    };
+    document.getElementById('distConfirm').onclick = function(){
+      continuar(String(window._distStepperVal));
+    };
+    return;
+  }
+
+  // POCAS distancias (círculos): pills con recomendada
+  var recomendadaK = null;
+  if ((ej.clave||'').indexOf('circulo') === 0 && def.distancias) {
+    try { var dRec = elegirDistanciaCirculo(ej.clave, def); recomendadaK = dRec ? (dRec.k || dRec) : null; } catch(e) {}
+  }
   var pills = ej.dist.map(function(d){
-    return '<div class="dist-pill-fav" data-k="' + d.k + '" style="background:#1a1f2e;border:0.5px solid rgba(255,255,255,.1);border-radius:12px;padding:16px;text-align:center;cursor:pointer;color:#e8e8f0;font-size:15px;font-weight:800;margin-bottom:8px">' + d.lbl + '</div>';
+    var esRec = (d.k === recomendadaK);
+    return '<div class="dist-pill-fav" data-k="' + d.k + '" style="background:' + (esRec ? 'rgba(29,158,117,.18)' : '#1a1f2e') + ';border:' + (esRec ? '1.5px solid #1D9E75' : '0.5px solid rgba(255,255,255,.1)') + ';border-radius:12px;padding:16px;text-align:center;cursor:pointer;color:#e8e8f0;font-size:15px;font-weight:800;margin-bottom:8px;position:relative">' +
+      d.lbl +
+      (esRec ? '<div style="position:absolute;top:-9px;right:10px;background:#1D9E75;color:#fff;font-size:9px;font-weight:800;padding:2px 8px;border-radius:8px;text-transform:uppercase;letter-spacing:.5px">⭐ Recomendada</div>' : '') +
+    '</div>';
   }).join('');
   ov.innerHTML = '<div style="background:#12151f;border-radius:20px;width:100%;max-width:320px;padding:22px">' +
     '<div style="color:#fff;font-size:17px;font-weight:800;text-align:center;margin-bottom:4px">' + ej.nom + '</div>' +
-    '<div style="color:#8a8a9a;font-size:12px;text-align:center;margin-bottom:16px">¿A qué distancia lo quieres?</div>' +
+    '<div style="color:#8a8a9a;font-size:12px;text-align:center;margin-bottom:16px">Te recomiendo esta distancia, pero tú eliges</div>' +
     pills +
   '</div>';
   document.body.appendChild(ov);
-  // Al elegir una distancia, agregar y continuar con los pendientes
+  ov.onclick = function(e){ if (e.target === ov) ov.remove(); };
   ov.querySelectorAll('.dist-pill-fav').forEach(function(pill){
-    pill.onclick = function(){
-      var distK = pill.getAttribute('data-k');
-      ov.remove();
-      var claveNivel = ej.clave + '-' + distK;
-      agregarEjercicioNivel(null, def, claveNivel, distK);
-      _procesarSiguienteFav(pendientes);
-    };
+    pill.onclick = function(){ continuar(pill.getAttribute('data-k')); };
   });
 }
 
@@ -11386,7 +12712,7 @@ function claveHierro(palo, mecanica) {
 
 
 // Agrega un ejercicio del catálogo nuevo al programa (con clave de motor)
-function agregarEjercicioNivel(catItem, def, clave, distK) {
+function agregarEjercicioNivel(catItem, def, clave, distK, baston) {
   var ov = document.getElementById('overlay-menu-ej');
   if (ov) ov.remove();
   var nom = def.nom;
@@ -11394,12 +12720,14 @@ function agregarEjercicioNivel(catItem, def, clave, distK) {
     var dd = def.distancias.find(function(x){ return x.k === distK; });
     if (dd) nom = def.nom + ' · ' + dd.lbl;
   }
+  // Si hay bastón (hierros), agregarlo al nombre para que se vea la estadística completa
+  if (baston) nom = nom + ' · ' + baston;
   // Reto Putt necesita configuración especial (medio/largo ya viene en distK)
   if (!estadoSesion.programa) estadoSesion.programa = [];
   if (!estadoSesion.completados) estadoSesion.completados = estadoSesion.programa.map(function(){ return null; });
   if (!estadoSesion.sesionId) estadoSesion.sesionId = 'ses_' + Date.now();
   if (!estadoSesion.tiempo) estadoSesion.tiempo = 30;
-  estadoSesion.programa.push({
+  var itemNuevo = {
     id: 'nv:' + clave,        // prefijo nv: para identificar ejercicios de nivel
     claveNivel: clave,
     nom: nom,
@@ -11407,13 +12735,23 @@ function agregarEjercicioNivel(catItem, def, clave, distK) {
     mins: def.mins || (def.cat==='putt'?10:15),
     instr: def.instr || [],
     esNuevo: true
-  });
+  };
+  // Guardar datos de hierro para la estadística (distancia + bastón)
+  if (baston) { itemNuevo.hierroBaston = baston; itemNuevo.hierroDist = distK; }
+  estadoSesion.programa.push(itemNuevo);
   estadoSesion.completados.push(null);
   renderSesionSync();
   guardarEstadoSesion();
+  // Si venía del recomendador (ejercicio directo con distancia), abrir su registro ahora
+  if (window._abrirRegistroTrasDistancia) {
+    window._abrirRegistroTrasDistancia = false;
+    var idxNuevo = estadoSesion.programa.length - 1;
+    irVista('view-programa');
+    if (typeof abrirRegistro === 'function') {
+      setTimeout(function(){ abrirRegistro(idxNuevo); }, 80);
+    }
+  }
 }
-
-// Agrega un ejercicio de hierro/drive directo (clave ya resuelta)
 function agregarEjercicioNivelDirecto(clave, nom, cat, paloK, mecanica) {
   var ov = document.getElementById('overlay-menu-ej');
   if (ov) ov.remove();
@@ -12173,9 +13511,12 @@ function instruccionesDinamicas(item, clave) {
       'Anota tu MEJOR tanda de las 3. Meta de tu nivel: ' + oD + ' de 10 que superen tu distancia.'
     ];
   }
-  if (clave === 'reto-hierro') {
+  if (clave === 'reto-hierro' || (clave && clave.indexOf('reto-hierro-') === 0)) {
     var oH = t.obj ? t.obj[nivel] : 6;
-    var bH = (typeof window !== 'undefined' && window._hierroBastonActivo) ? window._hierroBastonActivo : null;
+    var bH = null;
+    var mB = clave.match(/^reto-hierro-(.+)$/);
+    if (mB) bH = mB[1];
+    else if (typeof window !== 'undefined' && window._hierroBastonActivo) bH = window._hierroBastonActivo;
     var paloTxt = bH ? (bH === 'PW' ? 'tu PW' : 'tu hierro ' + bH) : 'tu hierro';
     return [
       '🎯 Objetivo (nivel ' + nivel + '): elige una zona objetivo (un green o rango a tu distancia con ' + paloTxt + ').',
@@ -12237,7 +13578,7 @@ function instruccionesDinamicas(item, clave) {
         ];
       }
       return null;
-    case 'pares-ronda': // Escalera + Tobogán Largo (15, 20, 25, 30 yardas; 3 bolas; cuenta pares)
+    case 'pares-ronda': // Tobogán Largo (15, 20, 25, 30 yardas; 3 bolas; cuenta pares)
       var paresMeta = t.obj ? t.obj[nivel] : 0;
       if (paresMeta === 0) {
         return [
@@ -12370,6 +13711,14 @@ function instruccionesDinamicas(item, clave) {
         ];
       }
       return null;
+    case 'rachas-de-5': // Hierro Rachas de 5 (elige distancia + bastón)
+      var recR5 = recordEjercicio(clave);
+      var recR5Txt = recR5 ? (' Tu récord es ' + recR5.valor + ' rachas de 5. ¡Supéralo!') : ' Aún no tienes récord: ¡hoy puedes hacer el primero!';
+      var distR5 = (item && item.hierroDist) ? (item.hierroDist + ' yardas') : 'tu distancia';
+      var bastonR5 = (item && item.hierroBaston) ? (' con tu ' + item.hierroBaston) : '';
+      return [
+        '🎯 Objetivo (nivel ' + nivel + '): pégale a ' + distR5 + bastonR5 + '. Cada bola que caiga en objetivo (carry cerca de la distancia, a menos de 10 yardas) cuenta para tu racha. Cuando logres 5 seguidas en objetivo, ¡esa es 1 racha de 5! Si fallas, la racha vuelve a empezar. Anota cuántas rachas de 5 completaste. Tu meta es ' + o + '.' + recR5Txt
+      ];
     case 'estaciones': // 4-8-12-16 (putt corto: 4, 8, 12 y 16 pies). Siempre 4 bolas por estación.
       var mf = t.metasFijas || [4,3,2,1];
       var dists4 = ['4 pies','8 pies','12 pies','16 pies'];
@@ -12404,15 +13753,16 @@ function abrirRegistro(idx) {
   document.getElementById('reg-badge-txt').style.color = catT[def.cat]||'#B5D4F4';
   document.getElementById('reg-badge-txt').textContent = def.cat.toUpperCase();
 
-  // Chip de notas del hierro (solo en ejercicios de hierro, si hay bastón activo)
+  // Chip de notas del hierro (solo en ejercicios de hierro, con el bastón del ejercicio)
   var hierroChip = document.getElementById('reg-hierro-chip');
   if (hierroChip) {
-    if (def.cat === 'hierros' && window._hierroBastonActivo) {
-      var bAct = window._hierroBastonActivo;
+    // El bastón viene del item de sesión (nuevo flujo por distancia) o de la variable vieja
+    var bAct = item.hierroBaston || window._hierroBastonActivo || null;
+    if (def.cat === 'hierros' && bAct) {
       var pAct = getPerfil();
       var fAct = getFichaHierro(pAct ? pAct.id : 0, bAct);
       var carryTxt = fAct.carry ? (' · ' + fAct.carry) : '';
-      var lblB = (bAct === 'PW') ? 'PW' : 'Hierro ' + bAct;
+      var lblB = /°/.test(bAct) ? bAct : (bAct === 'PW' ? 'PW' : (/^\d+$/.test(bAct) ? 'Hierro ' + bAct : bAct));
       hierroChip.style.display = 'block';
       hierroChip.innerHTML = '<div onclick="_verNotasHierroEnRegistro(\'' + bAct + '\')" style="display:inline-flex;align-items:center;gap:8px;background:rgba(59,109,17,.15);border:1px solid rgba(163,230,53,.35);border-radius:12px;padding:8px 14px;cursor:pointer">' +
         '<span style="color:#a3e635;font-size:13px;font-weight:800">🏌️ ' + lblB + carryTxt + '</span>' +
@@ -12426,7 +13776,10 @@ function abrirRegistro(idx) {
 
   var instHtml = '';
   if (def.instrucciones) {
-    instHtml += '<div style="color:#1D9E75;font-size:11px;font-weight:700;letter-spacing:.6px;margin-bottom:10px">COMO SE JUEGA</div>';
+    instHtml += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">';
+    instHtml += '<div style="color:#1D9E75;font-size:11px;font-weight:700;letter-spacing:.6px">COMO SE JUEGA</div>';
+    instHtml += '<div onclick="_leerFichaEjecucion()" style="display:inline-flex;align-items:center;gap:6px;background:rgba(29,158,117,.12);border:1px solid rgba(29,158,117,.3);border-radius:10px;padding:6px 12px;cursor:pointer"><span style="font-size:15px">🔊</span><span style="color:#5FD6AA;font-size:11px;font-weight:700">Escuchar</span></div>';
+    instHtml += '</div>';
     // Instrucciones: si el ejercicio tiene números por nivel (círculos), generarlas
     // específicas con la distancia, tees y meta reales del nivel del jugador.
     var claveInstr = null;
@@ -12472,6 +13825,14 @@ function abrirRegistro(idx) {
     } catch(e) {}
   }
   document.getElementById('reg-instrucciones').innerHTML = instHtml;
+  // Guardar texto plano para el botón de escuchar (nombre + instrucciones)
+  try {
+    var _txtVoz = def.nom + '. ';
+    if (typeof instrucciones !== 'undefined' && instrucciones) {
+      _txtVoz += instrucciones.map(function(x){ return (''+x).replace(/[🎯📍⭐📌•🏌️🔥]/g,'').replace(/<br>/g,' ').replace(/\n/g,' ').trim(); }).join('. ');
+    }
+    window._textoVozEjecucion = _txtVoz;
+  } catch(e) { window._textoVozEjecucion = def.nom; }
 
   // Mostrar nivel actual, meta y pelotitas (sistema de niveles)
   try { mostrarNivelEnRegistro(item); } catch(e) { var nw=document.getElementById('reg-nivel-wrap'); if(nw) nw.style.display='none'; }
