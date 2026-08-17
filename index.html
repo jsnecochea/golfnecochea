@@ -7320,6 +7320,10 @@ function abrirMenuPro() {
     '<div style="background:#1a1a2e;border-radius:24px 24px 0 0;width:100%;max-width:430px;padding:8px 0 30px">' +
       '<div style="display:flex;justify-content:center;padding:10px 0"><div style="width:36px;height:4px;border-radius:2px;background:rgba(255,255,255,.15)"></div></div>' +
       '<div style="padding:6px 20px 14px"><div style="color:#e8e8f0;font-size:17px;font-weight:700">Menú</div></div>' +
+      '<div onclick="document.getElementById(\'overlay-menu-pro\').remove();_abrirDashboardFamiliar()" style="display:flex;align-items:center;gap:14px;padding:15px 20px;cursor:pointer">' +
+        '<div style="width:40px;height:40px;border-radius:11px;background:rgba(56,132,255,.15);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#3884ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>' +
+        '<div><div style="color:#e8e8f0;font-size:15px;font-weight:700">Dashboard familiar</div><div style="color:#9a9ab0;font-size:11px">Qué entrenó cada quien, día por día</div></div>' +
+      '</div>' +
       '<div onclick="document.getElementById(\'overlay-menu-pro\').remove();irVista(\'view-stats\')" style="display:flex;align-items:center;gap:14px;padding:15px 20px;cursor:pointer">' +
         '<div style="width:40px;height:40px;border-radius:11px;background:rgba(29,158,117,.15);display:flex;align-items:center;justify-content:center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1D9E75" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><rect x="7" y="12" width="3" height="6"/><rect x="12" y="8" width="3" height="10"/><rect x="17" y="5" width="3" height="13"/></svg></div>' +
         '<div><div style="color:#e8e8f0;font-size:15px;font-weight:700">Estadísticas</div><div style="color:#9a9ab0;font-size:11px">Tu juego a detalle</div></div>' +
@@ -20372,6 +20376,118 @@ if (typeof window !== 'undefined') {
   window.addEventListener('load', function(){
     setTimeout(_fbSincronizarAlAbrir, 1200);
   });
+}
+
+/* ============================================================
+   DASHBOARD FAMILIAR — ver qué entrenó cada quien, día por día
+   Baja los datos de TODOS los perfiles desde la nube.
+   ============================================================ */
+function _abrirDashboardFamiliar() {
+  var prev = document.getElementById('overlay-dashboard-fam');
+  if (prev) prev.remove();
+  var ov = document.createElement('div');
+  ov.id = 'overlay-dashboard-fam';
+  ov.style.cssText = 'position:fixed;inset:0;background:#0a0d16;z-index:6000;overflow-y:auto';
+  ov.innerHTML =
+    '<div style="max-width:520px;margin:0 auto;padding:22px 18px 90px">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">' +
+        '<div style="color:#fff;font-size:20px;font-weight:800">👨‍👩‍👧‍👦 Dashboard familiar</div>' +
+        '<div onclick="document.getElementById(\'overlay-dashboard-fam\').remove()" style="width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;color:#8a8a9a;font-size:18px">✕</div>' +
+      '</div>' +
+      '<div id="dashfam-contenido"><div style="text-align:center;color:#8a8a9a;font-size:14px;padding:40px 0">Cargando datos de la nube...</div></div>' +
+    '</div>';
+  document.body.appendChild(ov);
+  _cargarDashboardFamiliar();
+}
+
+// Baja los datos de todos los perfiles y arma la vista día por día
+function _cargarDashboardFamiliar() {
+  var cont = document.getElementById('dashfam-contenido');
+  if (!cont) return;
+  if (!_fbInit()) {
+    cont.innerHTML = '<div style="text-align:center;color:#f87171;font-size:14px;padding:40px 20px;line-height:1.6">No se pudo conectar a la nube.<br>Revisa tu internet e intenta de nuevo.</div>';
+    return;
+  }
+  // Bajar todos los documentos de la colección perfiles
+  _fb.db.collection('perfiles').get()
+    .then(function(snap){
+      var perfilesData = [];
+      snap.forEach(function(doc){
+        var d = doc.data() || {};
+        perfilesData.push(d);
+      });
+      _pintarDashboardFamiliar(perfilesData);
+    })
+    .catch(function(e){
+      cont.innerHTML = '<div style="text-align:center;color:#f87171;font-size:14px;padding:40px 20px">Error al cargar: ' + (e && e.message ? e.message : 'desconocido') + '</div>';
+    });
+}
+
+function _pintarDashboardFamiliar(perfilesData) {
+  var cont = document.getElementById('dashfam-contenido');
+  if (!cont) return;
+  if (!perfilesData.length) {
+    cont.innerHTML = '<div style="text-align:center;color:#8a8a9a;font-size:14px;padding:40px 20px;line-height:1.6">Todavía no hay datos en la nube.<br>Cuando entrenen, aparecerán aquí.</div>';
+    return;
+  }
+  // Construir los últimos 7 días
+  var dias = [];
+  var hoy = new Date(); hoy.setHours(0,0,0,0);
+  for (var i=6; i>=0; i--) {
+    var d = new Date(hoy); d.setDate(hoy.getDate() - i);
+    dias.push(d);
+  }
+  var nombresDia = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  var coloresPerfil = { 1:'#185FA5', 2:'#1D9E75', 3:'#7F77DD', 4:'#D4537E', 5:'#EF9F27' };
+
+  // Ordenar perfiles por id
+  perfilesData.sort(function(a,b){ return (a._perfilId||0) - (b._perfilId||0); });
+
+  var html = '';
+  perfilesData.forEach(function(pd){
+    var pid = pd._perfilId || 0;
+    var nombre = pd._nombre || ('Perfil ' + pid);
+    var color = coloresPerfil[pid] || '#888';
+    // Parsear el historial de entrenamientos
+    var hist = [];
+    try { hist = JSON.parse(pd['entreno_hist_' + pid] || '[]'); } catch(e) {}
+    // Contar ejercicios por día
+    var porDia = {};
+    hist.forEach(function(sesion){
+      if (!sesion.fecha) return;
+      var f = new Date(sesion.fecha); f.setHours(0,0,0,0);
+      var key = f.getTime();
+      var nEj = (sesion.ejercicios || []).length;
+      porDia[key] = (porDia[key] || 0) + nEj;
+    });
+    // Total de la semana
+    var totalSemana = 0;
+    dias.forEach(function(d){ totalSemana += (porDia[d.getTime()] || 0); });
+
+    // Tarjeta del jugador
+    html += '<div style="background:#12151f;border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:16px;margin-bottom:14px">' +
+      '<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">' +
+        '<div style="width:36px;height:36px;border-radius:50%;background:' + color + ';display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:800">' + (nombre[0]||'?') + '</div>' +
+        '<div style="flex:1"><div style="color:#fff;font-size:15px;font-weight:800">' + nombre + '</div>' +
+        '<div style="color:#8a8a9a;font-size:11px">' + totalSemana + ' ejercicios esta semana</div></div>' +
+      '</div>' +
+      // Fila de días
+      '<div style="display:flex;gap:5px">';
+    dias.forEach(function(d){
+      var n = porDia[d.getTime()] || 0;
+      var activo = n > 0;
+      html += '<div style="flex:1;text-align:center">' +
+        '<div style="color:#6a6a7a;font-size:9px;font-weight:700;margin-bottom:4px">' + nombresDia[d.getDay()] + '</div>' +
+        '<div style="height:44px;border-radius:9px;background:' + (activo ? color + '22' : 'rgba(255,255,255,.03)') + ';border:1px solid ' + (activo ? color + '66' : 'rgba(255,255,255,.06)') + ';display:flex;align-items:center;justify-content:center">' +
+          '<span style="color:' + (activo ? color : '#4a4a55') + ';font-size:16px;font-weight:800">' + (activo ? n : '·') + '</span>' +
+        '</div>' +
+      '</div>';
+    });
+    html += '</div></div>';
+  });
+
+  html += '<div style="color:#6a6a7a;font-size:11px;text-align:center;margin-top:8px">Número = ejercicios entrenados ese día</div>';
+  cont.innerHTML = html;
 }
 
 </script>
