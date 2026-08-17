@@ -2584,6 +2584,21 @@
 
 </div>
 
+<!-- ===== FIREBASE SDK (compat, para app de un solo archivo sin bundler) ===== -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+/* ===== Config de Firebase (proyecto golf-necochea) ===== */
+window._FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBXaylgSGEbihHCpRHuoRgBAz1losDgWNk",
+  authDomain: "golf-necochea.firebaseapp.com",
+  projectId: "golf-necochea",
+  storageBucket: "golf-necochea.firebasestorage.app",
+  messagingSenderId: "25647862625",
+  appId: "1:25647862625:web:fd332f38f9003c52256b20"
+};
+</script>
+
 <script>
 /* ============================================================
    SISTEMA DE NIVELES — Motor universal + Tablas
@@ -2948,7 +2963,7 @@ function getFichasHierro(perfilId) {
   try { return JSON.parse(localStorage.getItem('hierro_ficha_' + perfilId) || '{}'); } catch(e) { return {}; }
 }
 function setFichasHierro(perfilId, fichas) {
-  try { localStorage.setItem('hierro_ficha_' + perfilId, JSON.stringify(fichas)); } catch(e) {}
+  try { localStorage.setItem('hierro_ficha_' + perfilId, JSON.stringify(fichas)); sincronizarNube(); } catch(e) {}
 }
 // Lee la ficha de un bastón específico
 function getFichaHierro(perfilId, baston) {
@@ -5725,6 +5740,7 @@ function generarDatosPrueba(silencioso) {
       }
       rondas.sort(function(a,b){ return b.timestamp - a.timestamp; });
       localStorage.setItem('historial_' + cfg.id, JSON.stringify(rondas));
+      try { sincronizarNube(); } catch(e){}
 
       // ---------- ENTRENAMIENTOS (18 sesiones: varias esta semana) ----------
       var entrenos = [];
@@ -5908,6 +5924,7 @@ function generarDatosPrueba(silencioso) {
 
       entrenos.sort(function(a,b){ return new Date(b.fecha) - new Date(a.fecha); });
       localStorage.setItem('entreno_hist_' + cfg.id, JSON.stringify(entrenos));
+      try { sincronizarNube(); } catch(e){}
       // ---------- OP36 (variedad por distancia: cada una con varios registros) ----------
       var op36 = [];
       var distancias = ['25','50','100','150','200'];
@@ -5958,6 +5975,7 @@ function generarDatosPrueba(silencioso) {
       });
       op36.sort(function(a,b){ return new Date(b.fecha) - new Date(a.fecha); });
       localStorage.setItem('op36_hist_' + cfg.id, JSON.stringify(op36));
+      try { sincronizarNube(); } catch(e){}
 
       // ---------- NIVELES (registrar sesiones para que tengan nivel real) ----------
       var perfil = PERFILES.find(function(pp){ return pp.id === cfg.id; });
@@ -7578,7 +7596,7 @@ function borrarRondaIndividual(i) {
   if (i < 0 || i >= rondas.length) return;
   confirmarBorrado('¿Borrar esta ronda? Dejará de contar en tus estadísticas.', function() {
     rondas.splice(i, 1);
-    try { localStorage.setItem('historial_' + p.id, JSON.stringify(rondas)); } catch(e) {}
+    try { localStorage.setItem('historial_' + p.id, JSON.stringify(rondas)); sincronizarNube(); } catch(e) {}
     var ov = document.getElementById('overlay-historial');
     if (ov) ov.remove();
     abrirHistorialRondas();
@@ -7720,7 +7738,7 @@ function borrarEntrenoIndividual(i) {
   if (i < 0 || i >= entrenos.length) return;
   confirmarBorrado('¿Borrar este entrenamiento? Dejará de contar en tus estadísticas.', function() {
     entrenos.splice(i, 1);
-    try { localStorage.setItem('entreno_hist_' + p.id, JSON.stringify(entrenos)); } catch(e) {}
+    try { localStorage.setItem('entreno_hist_' + p.id, JSON.stringify(entrenos)); sincronizarNube(); } catch(e) {}
     var ov = document.getElementById('overlay-historial');
     if (ov) ov.remove();
     abrirHistorialRondas();
@@ -7734,7 +7752,7 @@ function borrarOp27Individual(i) {
   if (i < 0 || i >= op27.length) return;
   confirmarBorrado('¿Borrar este reto OP27? Dejará de contar en tus estadísticas.', function() {
     op27.splice(i, 1);
-    try { localStorage.setItem('op36_hist_' + p.id, JSON.stringify(op27)); } catch(e) {}
+    try { localStorage.setItem('op36_hist_' + p.id, JSON.stringify(op27)); sincronizarNube(); } catch(e) {}
     var ov = document.getElementById('overlay-historial');
     if (ov) ov.remove();
     abrirHistorialRondas();
@@ -8470,11 +8488,19 @@ function quitarFotoPerfil() {
 
 function guardarPerfilesLocal() {
   try { localStorage.setItem('perfiles_data', JSON.stringify(PERFILES)); } catch(e) {}
+  try { if (typeof sincronizarNube === 'function') sincronizarNube(); } catch(e) {}
 }
 
 function selPerfil(id) {
   perfilActivo = id;
   cerrarOverlay('overlay-perfiles');
+  // Bajar de la nube los datos de este perfil antes de mostrar
+  try {
+    if (typeof _fbBajarPerfil === 'function') {
+      _fbBajarPerfil(id, function(bajo){ renderHome(); });
+      return;
+    }
+  } catch(e) {}
   renderHome();
 }
 
@@ -20224,6 +20250,119 @@ function iniciarDesdeRegistroOP36() {
   retoConfig.yardas = item.yardas || null;
   retoConfig.conTrampa = !!item.conTrampa;
   iniciarRetoCompleto();
+}
+
+/* ============================================================
+   SINCRONIZACIÓN CON LA NUBE (Firebase Firestore)
+   Sube y baja las estadísticas de cada perfil para que el papá
+   pueda ver todo y para que se sincronice entre dispositivos.
+   ============================================================ */
+var _fb = { app: null, db: null, listo: false, syncEnCurso: false };
+
+// Keys de localStorage que se sincronizan por perfil (estadísticas)
+function _keysSyncDePerfil(pid) {
+  return [
+    'entreno_hist_' + pid,   // historial de entrenamientos
+    'historial_' + pid,      // rondas
+    'op36_hist_' + pid,      // OP27 + evaluaciones
+    'biblio_fav_' + pid,     // favoritos
+    'gamer_festejos_' + pid, // festejos
+    'hierro_ficha_' + pid,   // notas y fichas de hierro
+    'torneo_fav_' + pid      // torneos favoritos
+  ];
+}
+
+// Inicializa Firebase (una sola vez). Devuelve true si quedó listo.
+function _fbInit() {
+  if (_fb.listo) return true;
+  try {
+    if (typeof firebase === 'undefined' || !window._FIREBASE_CONFIG) return false;
+    _fb.app = firebase.apps && firebase.apps.length ? firebase.app() : firebase.initializeApp(window._FIREBASE_CONFIG);
+    _fb.db = firebase.firestore();
+    _fb.listo = true;
+    return true;
+  } catch(e) {
+    console.warn('Firebase no disponible:', e && e.message);
+    return false;
+  }
+}
+
+// Sube TODAS las estadísticas del perfil a la nube (con pequeño debounce)
+var _fbSubirTimers = {};
+function _fbSubirPerfil(pid) {
+  if (!pid) return;
+  if (_fbSubirTimers[pid]) clearTimeout(_fbSubirTimers[pid]);
+  _fbSubirTimers[pid] = setTimeout(function(){
+    if (!_fbInit()) return;
+    var datos = { _updated: Date.now(), _perfilId: pid };
+    // Nombre del perfil para que el papá lo identifique
+    try {
+      var pf = (PERFILES || []).find(function(p){ return p.id === pid; });
+      if (pf) { datos._nombre = pf.nom; datos._version = pf.version; datos._niveles = pf.niveles || {}; }
+    } catch(e) {}
+    _keysSyncDePerfil(pid).forEach(function(k){
+      try { datos[k] = localStorage.getItem(k) || null; } catch(e) {}
+    });
+    _fb.db.collection('perfiles').doc('perfil_' + pid).set(datos, { merge: true })
+      .catch(function(e){ console.warn('No se pudo subir a la nube:', e && e.message); });
+  }, 1500);
+}
+
+// Baja las estadísticas del perfil desde la nube y las escribe en localStorage.
+// Solo sobrescribe si la nube tiene datos (para no borrar lo local en primer uso).
+function _fbBajarPerfil(pid, callback) {
+  if (!_fbInit() || !pid) { if (callback) callback(false); return; }
+  _fb.db.collection('perfiles').doc('perfil_' + pid).get()
+    .then(function(doc){
+      if (doc && doc.exists) {
+        var d = doc.data() || {};
+        _keysSyncDePerfil(pid).forEach(function(k){
+          if (d[k] !== undefined && d[k] !== null) {
+            try { localStorage.setItem(k, d[k]); } catch(e) {}
+          }
+        });
+        // Niveles del perfil (viven en perfiles_data)
+        if (d._niveles) {
+          try {
+            var pf = (PERFILES || []).find(function(p){ return p.id === pid; });
+            if (pf) { pf.niveles = d._niveles; guardarPerfilesLocal(); }
+          } catch(e) {}
+        }
+        if (callback) callback(true);
+      } else {
+        if (callback) callback(false);
+      }
+    })
+    .catch(function(e){ console.warn('No se pudo bajar de la nube:', e && e.message); if (callback) callback(false); });
+}
+
+// Se llama tras cada guardado importante: sube el perfil activo a la nube
+function sincronizarNube() {
+  try {
+    var p = getPerfil();
+    if (p) _fbSubirPerfil(p.id);
+  } catch(e) {}
+}
+
+// Al cargar la app: bajar los datos del perfil activo desde la nube
+function _fbSincronizarAlAbrir() {
+  try {
+    var p = getPerfil();
+    if (!p) return;
+    _fbBajarPerfil(p.id, function(bajo){
+      if (bajo) {
+        // Refrescar la vista si hay datos nuevos
+        try { if (typeof renderHomeGamer === 'function') renderHomeGamer(); } catch(e) {}
+      }
+    });
+  } catch(e) {}
+}
+
+// Intentar sincronizar al abrir (cuando Firebase haya cargado)
+if (typeof window !== 'undefined') {
+  window.addEventListener('load', function(){
+    setTimeout(_fbSincronizarAlAbrir, 1200);
+  });
 }
 
 </script>
