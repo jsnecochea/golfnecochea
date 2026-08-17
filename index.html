@@ -195,7 +195,7 @@
 .add-player-btn { display:flex; align-items:center; justify-content:center; gap:8px; padding:14px; border-radius:16px; border:1.5px dashed rgba(255,255,255,.1); background:rgba(255,255,255,.02); color:var(--text-dim); font-size:13px; font-weight:600; cursor:pointer; width:100%; }
 
 /* ── HEADER VERDE ── */
-.header-green { background:var(--player-main, var(--green)); border-radius:0 0 22px 22px; padding:16px 18px 14px; }
+.header-green { background:var(--player-main, var(--green)); border-radius:0 0 22px 22px; padding:calc(env(safe-area-inset-top, 20px) + 14px) 18px 14px; }
 .header-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
 .jugador-pill { display:flex; align-items:center; gap:10px; background:rgba(255,255,255,.12); border-radius:20px; padding:7px 14px 7px 8px; cursor:pointer; }
 .jugador-nombre { color:white; font-size:14px; font-weight:600; }
@@ -437,7 +437,7 @@
 
 /* ── RESUMEN FINAL ── */
 #view-resumen { background:var(--bg); overflow-y:auto; }
-.resumen-header { background:var(--green); padding:20px 20px 18px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:6px; }
+.resumen-header { background:var(--green); padding:calc(env(safe-area-inset-top, 20px) + 14px) 20px 18px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:6px; }
 .resumen-
 .stats-grid { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
 .stat-card { background:rgba(255,255,255,.04); border-radius:16px; padding:16px 14px; }
@@ -1108,16 +1108,8 @@
       </div>
     </div>
 
-    <!-- Botones de acción (Ronda, Entrenar, Retos) + micrófono inteligente incrustado -->
-    <div style="position:relative;margin-top:18px;padding-bottom:calc(env(safe-area-inset-bottom, 12px) + 16px);display:flex;justify-content:center">
-      <!-- Micrófono inteligente: único botón de la barra (todo lo demás se pica directo en el home) -->
-      <div onclick="abrirDictadoGlobal()" style="display:flex;flex-direction:column;align-items:center;gap:7px;cursor:pointer">
-        <div style="width:62px;height:62px;border-radius:50%;background:linear-gradient(160deg,#E24B4A,#b8322f);display:flex;align-items:center;justify-content:center;box-shadow:0 5px 18px rgba(226,75,74,.6);border:3px solid rgba(255,160,160,.25)">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg>
-        </div>
-        <div style="color:#9FE1CB;font-size:11px;font-weight:800">Pregúntame qué entrenar</div>
-      </div>
-    </div>
+    <!-- Botones de acción: el niño pica directo la sección que quiere. El micrófono vive dentro de Reto y Ronda. -->
+    <div style="padding-bottom:calc(env(safe-area-inset-bottom, 12px) + 8px)"></div>
 
   </div><!-- /home-view-gamer -->
 
@@ -1181,7 +1173,7 @@
      VISTA: PROGRAMA DEL DÍA
 ================================================ -->
 <div class="view" id="view-programa">
-  <div style="padding: 22px 18px 40px;">
+  <div style="padding: calc(env(safe-area-inset-top, 22px) + 12px) 18px 40px;">
 
     <!-- Header -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
@@ -1226,7 +1218,7 @@
      VISTA: SESIÓN EN CURSO
 ================================================ -->
 <div class="view" id="view-sesion">
-  <div style="padding: 24px 20px; padding-bottom: 90px;">
+  <div style="padding: calc(env(safe-area-inset-top, 24px) + 14px) 20px 90px;">
 
     <!-- Header sesión -->
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
@@ -1252,7 +1244,7 @@
      VISTA: REGISTRO EJERCICIO
 ================================================ -->
 <div class="view" id="view-registro">
-  <div style="padding: 24px 20px; padding-bottom: 90px;">
+  <div style="padding: calc(env(safe-area-inset-top, 24px) + 14px) 20px 90px;">
 
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
       <div style="color:var(--text-muted);font-size:14px;font-weight:700;cursor:pointer;background:rgba(255,255,255,.06);padding:7px 14px;border-radius:10px" onclick="cerrarRegistro()">← Cancelar</div>
@@ -1346,7 +1338,7 @@
      VISTA: RESUMEN SESIÓN
 ================================================ -->
 <div class="view" id="view-resumen-sesion">
-  <div style="padding-bottom:90px">
+  <div style="padding-top:calc(env(safe-area-inset-top, 0px));padding-bottom:90px">
 
     <div style="background:var(--green-dark);padding:32px 20px 24px;text-align:center">
       <div style="font-size:40px;margin-bottom:10px">🏅</div>
@@ -1779,7 +1771,7 @@
   <div class="dictar-wrap" id="dictar-wrap">
     <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:20px 0">
       <button class="btn-mic-circulo" id="btn-mic" onclick="toggleVoz()">
-        <span id="mic-emoji" style="font-size:52px;line-height:1">🎤</span>
+        <span id="mic-emoji" style="line-height:1;display:flex"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg></span>
         <span id="mic-label" style="color:white;font-size:22px;font-weight:700;letter-spacing:1px;display:none">LISTO</span>
       </button>
       <span class="dictar-hint" style="font-size:12px" id="mic-hint">Toca para hablar</span>
@@ -2434,7 +2426,7 @@
 
 <!-- VISTA: CONFIG RETO OP27 -->
 <div class="view" id="view-config-reto">
-  <div style="padding:24px 18px 80px;overflow-y:auto">
+  <div style="padding:calc(env(safe-area-inset-top, 24px) + 14px) 18px 80px;overflow-y:auto">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
       <div style="color:#4a4a6a;font-size:13px;cursor:pointer" onclick="volverDeConfigReto()">&#8592; Volver</div>
       <div style="color:#e8e8f0;font-size:15px;font-weight:700" id="cr-titulo">OP 27</div>
@@ -2489,7 +2481,7 @@
      VISTA: INTRO RETO OP36 (25/50/100y)
 ════════════════════════════════════════ -->
 <div class="view" id="view-op36-intro">
-  <div style="padding:22px 18px 40px">
+  <div style="padding:calc(env(safe-area-inset-top, 22px) + 12px) 18px 40px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
       <div style="color:#4a4a6a;font-size:13px;cursor:pointer" onclick="_salirOP36Intro()">← Cancelar</div>
       <div style="background:#412402;border-radius:8px;padding:4px 12px"><span style="color:#EF9F27;font-size:10px;font-weight:700">RETO OP36</span></div>
@@ -2516,7 +2508,7 @@
 <div class="view" id="view-op36">
   <!-- Header verde -->
   <div style="background:var(--player-main, #0F6E56);border-radius:0 0 22px 22px">
-    <div style="padding:16px 18px 14px;display:flex;align-items:center;justify-content:space-between">
+    <div style="padding:calc(env(safe-area-inset-top, 20px) + 14px) 18px 14px;display:flex;align-items:center;justify-content:space-between">
       <div style="display:flex;align-items:center;gap:8px">
         <div onclick="confirmarSalirOp36()" style="width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
@@ -2551,7 +2543,7 @@
   <!-- Micrófono -->
   <div style="display:flex;flex-direction:column;align-items:center;gap:14px;padding:20px 0 24px">
     <button id="op36-mic-btn" onclick="toggleVozOp36()" style="width:96px;height:96px;border-radius:50%;background:var(--player-main, #1D9E75);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer">
-      <span id="op36-mic-emoji" style="font-size:48px;line-height:1">🎤</span>
+      <span id="op36-mic-emoji" style="line-height:1;display:flex"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg></span>
     </button>
     <span id="op36-mic-hint" style="color:#4a4a6a;font-size:13px">Toca para dictar tus golpes</span>
     <div id="op36-mic-debug" style="color:#34d399;font-size:12px;text-align:center;padding:0 20px;min-height:18px;max-width:300px"></div>
@@ -14604,6 +14596,8 @@ function op36RetoVal(tipo, ronda, campo, delta) {
 }
 
 var op36VozActiva = false, op36Reconocimiento = null, op36TextoVoz = '';
+var _SVG_MIC = '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2M12 19v3"/></svg>';
+var _SVG_STOP = '<svg width="40" height="40" viewBox="0 0 24 24" fill="#fff"><rect x="6" y="6" width="12" height="12" rx="2.5"/></svg>';
 
 function toggleVozOp36() {
   var btn = document.getElementById('op36-mic-btn');
@@ -14618,7 +14612,7 @@ function toggleVozOp36() {
     op36VozActiva = true;
     op36TextoVoz = '';
     if (btn) btn.style.background = '#E24B4A';
-    if (emoji) emoji.textContent = '⏹';
+    if (emoji) emoji.innerHTML = _SVG_STOP;
     if (hint) hint.textContent = 'Escuchando... toca para terminar';
     if (debug) debug.textContent = '';
 
@@ -14659,7 +14653,7 @@ function resetMicOp36() {
   var hint = document.getElementById('op36-mic-hint');
   var p = getPerfil();
   if (btn) btn.style.background = (p && p.color) ? p.color : '#1D9E75';
-  if (emoji) emoji.textContent = '🎤';
+  if (emoji) emoji.innerHTML = _SVG_MIC;
   if (hint) hint.textContent = 'Toca para dictar tus golpes';
 }
 
@@ -18922,7 +18916,7 @@ function setBtnEstado(grabando) {
     if (hint) hint.textContent = 'Toca LISTO cuando termines';
   } else {
     btn.classList.remove('grabando');
-    if (emoji) emoji.style.display = 'block';
+    if (emoji) emoji.style.display = 'flex';
     if (lbl) lbl.style.display = 'none';
     if (hint) hint.textContent = 'Toca para hablar';
   }
