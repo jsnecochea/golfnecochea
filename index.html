@@ -2226,7 +2226,7 @@
         <span class="ct-check">✅</span>
       </div>
     </div>
-    <div class="conf-faltante" id="conf-faltante">
+    <div class="conf-faltante" id="conf-faltante" style="display:none">
       <div class="conf-falt-hdr">❓ Falta un dato</div>
       <div class="conf-pregunta">¿Tuviste un putt de menos de 2 pasos?</div>
       <div class="conf-opciones">
@@ -18689,6 +18689,17 @@ function selBench(el,b){
 let tirosHoyo = {};
 let reconocimiento = null;
 let modoGrabando = false;
+
+// Cuando la app se oculta (el usuario sale a otra app o pestaña) y regresa,
+// el reconocimiento de voz muere. Reseteamos el estado para que el botón no se trabe.
+document.addEventListener('visibilitychange', function() {
+  if (document.hidden && modoGrabando) {
+    // La app se ocultó mientras grababa: parar limpio
+    modoGrabando = false;
+    try { if (reconocimiento) { reconocimiento.stop(); reconocimiento = null; } } catch(e) {}
+    try { if (typeof setBtnEstado === 'function') setBtnEstado(false); } catch(e) {}
+  }
+});
 let textoAcumulado = '';
 let editando = false;
 let datosAnteriores = null;
@@ -18777,17 +18788,32 @@ function combinarDatos(nuevos, anteriores) {
 // RONDA · dictado inteligente con Claude (un hoyo con confirmación)
 // ═══════════════════════════════════════════════════════════
 function _systemPromptRonda() {
-  return 'Interpretas el dictado por voz de un golfista registrando UN hoyo de su ronda de golf. Extrae los datos que mencione.\n\n' +
-    'SCORE relativo al par: "águila"/"eagle" = -2; "birdie"/"verde"/"verdi" = -1; "par"/"empate" = 0; "bogey"/"bogui" = +1; "doble bogey"/"sopi" = +2; "triple"/"doble sopi" = +3; también acepta "más N"/"menos N".\n' +
-    'DRIVE: si menciona el drive puede ser "fairway"/"calle" (en la calle), "izquierda", "derecha", "búnker", "rough"/"pasto", "agua". \n' +
-    'HIERROS: puede mencionar uno o más tiros de hierro y a dónde fueron (green, cerca, corto, largo, izquierda, derecha, búnker).\n' +
-    'APPROACH: tiro de approach y resultado.\n' +
-    'PUTTS: cuántos putts hizo (número). PASOS: distancia del primer putt en pasos. Si dice "un putt" = 1 putt.\n' +
-    '"la metí de fuera"/"chip in" = metió sin putt (putts:0, pasos:0).\n\n' +
-    'Errores de voz: "verde"/"verdi" = birdie; "bogui" = bogey; "sopi" = doble bogey.\n\n' +
-    'Devuelve SOLO JSON válido (sin markdown):\n' +
-    '{ "score": <número relativo al par, ej -1, 0, 1, o null>, "drive": "<descripción corta o null>", "hierros": [<lista de strings o vacío>], "approach": "<o null>", "putts": <número o null>, "pasos": <número o null>, "puttCorto": "<no-hubo|metido|fallado o null>", "metidaFuera": <true|false> }\n\n' +
-    'Incluye SOLO lo que se mencione; lo no dicho va como null (o [] para hierros, false para metidaFuera). No inventes.';
+  return 'Eres un caddie experto que interpreta el dictado por voz de un golfista registrando UN hoyo. Cada jugador narra distinto: unos dan mucho detalle, otros poco. Tu trabajo es entender CUALQUIER modalidad y capturar todo lo que se pueda, sin inventar lo que no se dijo.\\n\\n' +
+    '== SCORE (resultado del hoyo) ==\\n' +
+    'aguila/eagle = -2; birdie/verde/verdi/pajaro = -1; par/empate/al par = 0; bogey/bogui/boggy/go boggy = +1; doble bogey/doble bogui/sopi = +2; triple/doble sopi = +3. Tambien mas N o menos N. Si no lo dice, score = null.\\n\\n' +
+    '== DRIVE / SALIDA ==\\n' +
+    'Primer tiro largo. Donde quedo: fairway/calle/pista = fairway; izquierda/derecha/rough/pasto/arboles = rough; bunker/arena/trampa = bunker; agua/lago/OB/fuera/penalidad = castigo. Si no menciona drive, drive = null.\\n\\n' +
+    '== TIROS INTERMEDIOS (hierros, wedges, maderas, approach) - LO MAS IMPORTANTE ==\\n' +
+    'Cada tiro que no es drive ni putt es un objeto: {palo, dist, resultado}.\\n' +
+    '- palo: el baston si lo dice (hierro 7, fierro 4, 56 grados, pitching, gap, sand, madera 3, hibrido, driver). Si no lo dice, null.\\n' +
+    '- dist: las YARDAS desde donde pego ese tiro (numero). Si no lo dice, null.\\n' +
+    '- resultado: donde quedo la bola despues de ese tiro. REGLAS CLAVE PARA RESULTADO:\\n' +
+    '   * Si dice PASOS (ej quede a 6 pasos) = esta EN el green (ya llego). resultado = green, y guarda esos pasos como distancia del putt.\\n' +
+    '   * Si dice YARDAS (ej quede a 80 yardas) = esta FUERA del green (aun no llega). Esas yardas son la dist del SIGUIENTE tiro. resultado = ese numero de yardas.\\n' +
+    '   * bunker/arena/trampa = bunker (si dice a 30 yardas en el bunker, resultado = bunker y la dist del siguiente tiro es 30).\\n' +
+    '   * barbas/orilla/fringe/cerca del green/pegado = barbas.\\n' +
+    '   * rough/pasto/izquierda/derecha = rough. agua/OB = castigo.\\n' +
+    '   * green/al green/lo puse en green/pin/bandera (sin pasos) = green.\\n' +
+    'ENCADENADO: la distancia a la que queda un tiro es la distancia de donde pega el siguiente. Ejemplo completo: driver al fairway, hierro 4 de 250 quede a 80, 56 grados de 80 quede a 35, aproche con 56 de 35 quede a 6 pasos, dos putts. Da: drive=fairway; hierros=[{palo:hierro 4,dist:250,resultado:80},{palo:56 grados,dist:80,resultado:35},{palo:56 grados,dist:35,resultado:green}]; putts=2; pasos=6.\\n\\n' +
+    '== SI SOLO DAN TIROS SIN DETALLE ==\\n' +
+    'Si el jugador solo dice cuantos tiros o solo el resultado (ej hice bogey, o pegue 3 veces y dos putts) sin distancias ni palos: captura lo que haya (score, putts) y deja hierros con lo minimo o vacio. NO inventes distancias.\\n\\n' +
+    '== PUTTS ==\\n' +
+    'putts = cuantos putts (numero). un putt = 1, dos putts = 2. pasos = distancia del primer putt (el mas largo) en pasos. la meti de fuera/chip in/embuchada = putts 0, pasos 0. PUTT CORTO (menos de 2 pasos): capturalo del dictado, NO hay que preguntarlo. Si dice dado/gimme/me lo dieron/de un pie/cortito/tap-in y lo metio = puttCorto metido. Si dice falle el corto/falle el cortito/se me fue el corto = puttCorto fallado. Ejemplo: dos putts de 8 pasos y dado significa primer putt de 8 pasos (no metido) y segundo corto que le dieron = puttCorto metido. Si no hubo putt corto o no lo menciona = puttCorto null.\\n\\n' +
+    '== ERRORES DE VOZ COMUNES ==\\n' +
+    'fierro = hierro; pods/potts/pots/spots = putts; grados tras numero = wedge (56 grados = 56 grados); aprovecho/aproche/approach = tiro de approach; verdi/verde = birdie; bogui/boggy/go boggy = bogey; sopi = doble bogey; drai = driver; guedge/wedge = wedge.\\n\\n' +
+    '== FORMATO DE SALIDA (SOLO JSON, sin markdown) ==\\n' +
+    '{ "score": <numero o null>, "drive": "<fairway/rough/bunker/castigo o null>", "hierros": [ {"palo":"<o null>","dist":<numero o null>,"resultado":"<green/bunker/barbas/rough/castigo o numero de yardas o null>"} ], "putts": <numero o null>, "pasos": <numero o null>, "puttCorto": "<no-hubo|metido|fallado o null>", "metidaFuera": <true|false> }\\n\\n' +
+    'Captura TODOS los tiros mencionados con su maximo detalle. Distingue SIEMPRE pasos (en green) de yardas (fuera del green). No inventes datos no dichos.';
 }
 
 async function interpretarHoyoConClaude(texto, callback) {
@@ -18801,7 +18827,15 @@ async function interpretarHoyoConClaude(texto, callback) {
     var datos = {
       score: (typeof r.score === 'number') ? r.score : null,
       drive: r.drive || null,
-      hierros: Array.isArray(r.hierros) ? r.hierros : [],
+      hierros: Array.isArray(r.hierros) ? r.hierros.map(function(h){
+        // Aceptar tanto objetos {palo,dist,resultado} (nuevo) como strings (viejo)
+        if (typeof h === 'string') return { palo: null, dist: null, resultado: h };
+        return {
+          palo: h.palo || null,
+          dist: (typeof h.dist === 'number') ? h.dist : (h.dist ? parseInt(h.dist,10) : null),
+          resultado: (h.resultado !== undefined && h.resultado !== null) ? h.resultado : null
+        };
+      }).filter(function(h){ return h.dist !== null || h.resultado !== null || h.palo !== null; }) : [],
       approach: r.approach || null,
       putts: (typeof r.putts === 'number') ? r.putts : null,
       pasos: (typeof r.pasos === 'number') ? r.pasos : null,
@@ -18842,16 +18876,27 @@ function toggleVoz() {
     };
 
     reconocimiento.onerror = function(ev) {
-      if (ev.error === 'not-allowed') {
+      // Ante cualquier error (permiso, red, o pausa de la app), resetear el estado
+      // para que el botón no se quede trabado en "grabando".
+      if (ev.error === 'not-allowed' || ev.error === 'service-not-allowed') {
         modoGrabando = false;
         setBtnEstado(false);
-        alert('Permiso de micrófono denegado.');
+        alert('Permiso de micrófono denegado. Actívalo en ajustes del navegador.');
+      } else if (ev.error === 'no-speech' || ev.error === 'aborted' || ev.error === 'network') {
+        // Errores recuperables: si seguimos grabando, dejar que onend reintente; si no, resetear UI
+        if (!modoGrabando) { setBtnEstado(false); }
       }
     };
 
     reconocimiento.onend = function() {
-      if (modoGrabando) {
-        try { reconocimiento.start(); } catch(e) {}
+      // Solo reintentar si seguimos en modo grabando Y el reconocimiento sigue vivo
+      if (modoGrabando && reconocimiento) {
+        try { reconocimiento.start(); }
+        catch(e) {
+          // Si no se puede reiniciar (app pausada, etc.), resetear para no trabarse
+          modoGrabando = false;
+          setBtnEstado(false);
+        }
       }
     };
 
@@ -19644,12 +19689,9 @@ function mostrarConfirmacion(textoOriginal, datos) {
   // 4. El menor paso mencionado es <= 2 (o no se mencionaron pasos)
   var faltante = document.getElementById('conf-faltante');
   if (faltante) {
-    // Solo preguntar si: hay putts, no hay puttCorto detectado, no es hoyo en uno
-    // Si ya detectamos puttCorto en interpretarHoyo → NO preguntar
-    var necesitaPreguntar = datos.putts && datos.putts > 0 &&
-                            !datos.puttCorto &&
-                            !datos.metidaFuera;
-    faltante.style.display = necesitaPreguntar ? 'block' : 'none';
+    // Ya NO se pregunta: el putt corto se captura del dictado del jugador
+    // (ej. "dos putts de 8 pasos y dado" = el segundo fue corto y lo metió).
+    faltante.style.display = 'none';
   }
 
   // Abrir modal
@@ -19991,6 +20033,11 @@ function cargarRondaDesdeStorage() {
     E.totalHoyos = data.totalHoyos;
     E.torneoActivo = data.torneoActivo;
     E.hoyos = data.hoyos;
+    // Resetear cualquier estado de grabación trabado (por si se salió a media grabación)
+    modoGrabando = false;
+    try { if (reconocimiento) { reconocimiento.stop(); reconocimiento = null; } } catch(e) {}
+    textoAcumulado = '';
+    try { if (typeof setBtnEstado === 'function') setBtnEstado(false); } catch(e) {}
     return true;
   } catch(e) {
     console.warn('No se pudo cargar desde storage:', e);
