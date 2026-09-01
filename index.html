@@ -1005,7 +1005,7 @@ function updateCount(){
   window.META = META;
 
   var got = { precios:false, hist:false, claude:false };
-  var LIVE = {}; window.LIVE = LIVE; window.__APPVER = "vivo-293";
+  var LIVE = {}; window.LIVE = LIVE; window.__APPVER = "vivo-295";
 
   /* ===================== AUDITORIA INTERNA =====================
      No se muestra en pantalla. Escribe en window.AUDIT y en la consola.
@@ -2217,6 +2217,55 @@ window.M = (function(){
             (MV.fuera.length? ' · SIN PRECIO: '+MV.fuera.join(','):'')+
             (MVst.length? ' · SERIE NO LLEGA A HOY, sin medir '+MVst.length+': '+MVst.join(','):''),
             MV.fuera.length>0 || MVst.length>0);
+      }
+    }catch(e){}
+
+    // --- 6r-bis. COBERTURA DE LA SERIE DE PRECIOS ---
+    //     No basta con que la serie traiga muchos dias. Hacen falta tres
+    //     cosas, y si falla cualquiera el calculo se cae en silencio:
+    //     · que la serie llegue a HOY
+    //     · que cada accion DEL TRIMESTRE tenga precio en la ultima fecha.
+    //       Eso incluye las que arrancaron el trimestre, las compradas
+    //       durante el trimestre, y las que venian del trimestre anterior
+    //       sin vender. La UNICA que no necesita precio es la que se vendio
+    //       ANTES de que arrancara este trimestre: esa ya no mueve nada.
+    //     · que ningun dia intermedio venga cojo (menos tickers que el resto)
+    //     Un ticker sin precio no da error: desaparece del promedio sin avisar.
+    try{
+      var F=window.PXFECHAS||[], PD=window.PXDIA||{};
+      if(F.length){
+        var ultF=F[F.length-1];
+        var iniT=(M && M.iniTrim)? M.iniTrim : null;
+        var fxT =(M && M.fecha)? M.fecha : null;
+        var necesita={}, nNec=0, fueraTrim=0;
+        (window.POSICIONES||[]).forEach(function(p){
+          if(!(p.monto>0) || !p.tk) return;
+          if(p.vendida && iniT && fxT){
+            var dvT=fxT(p.venta);
+            // vendida antes de que arrancara el trimestre -> no necesita precio
+            if(dvT && dvT<iniT){ fueraTrim++; return; }
+          }
+          if(!necesita[p.tk]){ necesita[p.tk]=1; nNec++; }
+        });
+        var sinUlt=[];
+        Object.keys(necesita).forEach(function(tk){
+          if(!(PD[ultF] && PD[ultF][tk])) sinUlt.push(tk);
+        });
+        var maxT=0;
+        F.forEach(function(f){ var c=Object.keys(PD[f]||{}).length; if(c>maxT) maxT=c; });
+        var cojos=[];
+        F.forEach(function(f){ var c=Object.keys(PD[f]||{}).length; if(c<maxT) cojos.push(f+'('+c+')'); });
+        var hoyIsoC=new Date().getFullYear()+'-'+
+                    ('0'+(new Date().getMonth()+1)).slice(-2)+'-'+
+                    ('0'+new Date().getDate()).slice(-2);
+        chk('serie_cobertura', sinUlt.length===0 && cojos.length===0 && ultF>=hoyIsoC,
+            F.length+' dias · '+F[0]+' a '+ultF+
+            (ultF<hoyIsoC? ' · NO LLEGA A HOY ('+hoyIsoC+')' : ' · al dia')+
+            ' · '+nNec+' acciones que requieren precio, '+sinUlt.length+' sin precio en '+ultF+
+            (sinUlt.length? ': '+sinUlt.join(','):'')+
+            (cojos.length? ' · dias incompletos (max '+maxT+'): '+cojos.slice(0,8).join(',')+
+              (cojos.length>8? ' y '+(cojos.length-8)+' mas':'') : ' · sin dias cojos'),
+            false);
       }
     }catch(e){}
 
